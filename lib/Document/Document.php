@@ -13,19 +13,85 @@ declare(strict_types=1);
 namespace YetiPDF\Document;
 
 /**
- * Class Document
+ * Class YetiPDF_Document
  */
 class Document
 {
-
-	protected $pages = [];
+	/**
+	 * Main output buffer / content for pdf file
+	 * @var string
+	 */
+	protected $buffer = '';
+	/**
+	 * @var \YetiPDF\Document\Catalog $catalog
+	 */
+	protected $catalog;
+	/**
+	 * Body containing objects, pages and so on
+	 * @var array
+	 */
+	protected $body = [];
+	/**
+	 * @var int $pageIndex - current page in array
+	 */
+	protected $pageIndex = -1;
+	/**
+	 * @var string default page format
+	 */
+	protected $defaultFormat;
+	/**
+	 * @var string default page orientation
+	 */
+	protected $defaultOrientation;
 
 	/**
 	 * Document constructor.
 	 */
-	public function __construct()
+	public function __construct(string $defaultFormat = 'A4', string $defautlOrientation = \YetiPDF\Document\Page::ORIENTATION_PORTRAIT)
 	{
+		$this->catalog = new \YetiPDF\Document\Catalog();
+		$this->defaultFormat = $defaultFormat;
+		$this->defaultOrientation = $defautlOrientation;
+		$this->addPage($defaultFormat, $defautlOrientation);
+	}
 
+	/**
+	 * Add page to the document
+	 * @param string $defaultFormat
+	 * @param string $defautlOrientation
+	 * @return \YetiPDF\Document\YetiPDFPage
+	 */
+	public function addPage(string $defaultFormat = 'A4', string $defautlOrientation = \YetiPDF\Document\Page::ORIENTATION_PORTRAIT): \YetiPDF\Document\Page
+	{
+		$this->body[] = new \YetiPDF\Document\Page($defaultFormat, $defautlOrientation);
+		$this->pageIndex++;
+		return $this->body[$this->pageIndex];
+	}
+
+	/**
+	 * Get document header
+	 * @return string
+	 */
+	protected function getDocumentHeader(): string
+	{
+		return "%PDF-1.7\n\n";
+	}
+
+	protected function getDocumentFooter(): string
+	{
+		return '%%EOF';
+	}
+
+	/**
+	 * Render document content to pdf string
+	 * @return string
+	 */
+	public function render()
+	{
+		$this->buffer = '';
+		$this->buffer .= $this->getDocumentHeader();
+		$this->buffer .= $this->getDocumentFooter();
+		return $this->buffer;
 	}
 
 }

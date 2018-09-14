@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace YetiPDF;
 
+
 /**
  * Class YetiPDF
  */
