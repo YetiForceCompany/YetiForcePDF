@@ -1,0 +1,21 @@
+{
+  "name": "YetiForceCompany/YetiPDF",
+  "description": "Library that generate pdf files from html.",
+  "type": "library",
+  "keywords": [
+    "pdf",
+    "html",
+    "html to pdf"
+  ],
+  "homepage": "http://yetiforce.com",
+  "license": "",
+  "authors": [
+    {
+      "name": "Rafal Pospiech",
+      "email": "r.pospiech@yetiforce.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2"
+  }
+}
