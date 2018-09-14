@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class DictionaryObject
  */
-class DictionaryObject
+class DictionaryObject extends \YetiPDF\Document\PdfObject
 {
 }

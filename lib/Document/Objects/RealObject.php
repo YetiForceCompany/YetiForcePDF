@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class RealObject
  */
-class RealObject
+class RealObject extends \YetiPDF\Document\PdfObject
 {
 }

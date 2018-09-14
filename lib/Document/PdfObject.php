@@ -18,4 +18,5 @@ namespace YetiPDF\Document;
 class PdfObject
 {
 	protected $type = '';
+	protected $id = 0;
 }

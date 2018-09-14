@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class NullObject
  */
-class NullObject
+class NullObject extends \YetiPDF\Document\PdfObject
 {
 }

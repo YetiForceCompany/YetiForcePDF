@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class StreamObject
  */
-class StreamObject
+class StreamObject extends \YetiPDF\Document\PdfObject
 {
 }

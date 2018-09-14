@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class IntegerObject
  */
-class IntegerObject
+class IntegerObject extends \YetiPDF\Document\PdfObject
 {
 }

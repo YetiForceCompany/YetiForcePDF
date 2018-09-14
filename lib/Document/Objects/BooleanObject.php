@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class BooleanObject
  */
-class BooleanObject
+class BooleanObject extends \YetiPDF\Document\PdfObject
 {
 }

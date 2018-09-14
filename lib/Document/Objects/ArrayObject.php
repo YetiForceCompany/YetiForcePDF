@@ -15,6 +15,6 @@ namespace YetiPDF\Document\Objects;
 /**
  * Class ArrayObject
  */
-class ArrayObject
+class ArrayObject extends \YetiPDF\Document\PdfObject
 {
 }

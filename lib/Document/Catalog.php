@@ -15,8 +15,7 @@ namespace YetiPDF\Document;
 /**
  * Class Catalog
  */
-class Catalog extends \YetiPDF\Document\PdfObject
+class Catalog extends \YetiPDF\Document\Objects\DictionaryObject
 {
-	protected $type = 'Catalog';
-	protected $pages = [];
+
 }
