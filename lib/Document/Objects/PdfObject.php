@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * RealObject class (real number)
+ * PdfObject class
  *
  * @package   YetiPDF\Document\Objects
  *
@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace YetiPDF\Document\Objects;
 
 /**
- * Class RealObject
+ * Class PdfObject
  */
-class RealObject extends \YetiPDF\Document\PdfObject
+class PdfObject
 {
+	protected $type = '';
+	protected $id = 0;
 }

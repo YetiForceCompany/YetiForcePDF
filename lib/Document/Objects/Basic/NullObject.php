@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 /**
- * StringObject class
+ * NullObject class
  *
- * @package   YetiPDF\Document\Objects
+ * @package   YetiPDF\Document\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
  * @license   YetiForce Public License 3.0 (licenses/LicenseEN.txt or yetiforce.com)
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Document\Objects;
+namespace YetiPDF\Document\Objects\Basic;
 
 /**
- * Class StringObject
+ * Class NullObject
  */
-class StringObject extends \YetiPDF\Document\PdfObject
+class NullObject extends \YetiPDF\Document\Objects\PdfObject
 {
 }
