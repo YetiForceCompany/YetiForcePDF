@@ -1,5 +1,5 @@
 {
-  "name": "YetiForceCompany/YetiPDF",
+  "name": "yetiforce/yetipdf",
   "description": "Library that generate pdf files from html.",
   "type": "library",
   "keywords": [
