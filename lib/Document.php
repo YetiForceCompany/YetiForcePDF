@@ -56,6 +56,11 @@ class Document
 	 * @var \YetiPDF\Objects\Font[]
 	 */
 	protected $fonts = [];
+	/**
+	 * Stream objects
+	 * @var \YetiPDF\Objects\Basic\StreamObject
+	 */
+	protected $streams = [];
 
 	/**
 	 * Document constructor.
@@ -101,6 +106,15 @@ class Document
 	}
 
 	/**
+	 * Get current page
+	 * @return \YetiPDF\Page
+	 */
+	public function getCurrentPage(): \YetiPDF\Page
+	{
+		return $this->currentPageObject;
+	}
+
+	/**
 	 * Add font to document
 	 * @param \YetiPDF\Objects\Font $font
 	 * @return \YetiPDF\Document
@@ -126,6 +140,18 @@ class Document
 		return '%%EOF';
 	}
 
+	public function addText(string $text, float $fontSize, float $x, float $y): \YetiPDF\Objects\TextStream
+	{
+		$textStream = new \YetiPDF\Objects\TextStream($this->getActualId());
+		$textStream->setText($text);
+		$textStream->setFont($this->fonts[0], $fontSize);
+		$textStream->setX($x);
+		$textStream->setY($y);
+		$this->currentPageObject->setContentStream($textStream);
+		$this->streams[] = $textStream;
+		return $textStream;
+	}
+
 	/**
 	 * Render document content to pdf string
 	 * @return string
@@ -141,6 +167,9 @@ class Document
 		}
 		foreach ($this->fonts as $font) {
 			$this->buffer .= $font->render() . "\n";
+		}
+		foreach ($this->streams as $stream) {
+			$this->buffer .= $stream->render() . "\n";
 		}
 		$trailer = new \YetiPDF\Objects\Trailer(0);
 		$trailer->setRootObject($this->catalog);

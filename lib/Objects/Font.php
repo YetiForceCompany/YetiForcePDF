@@ -45,6 +45,15 @@ class Font extends \YetiPDF\Objects\Resource
 	}
 
 	/**
+	 * Get font number
+	 * @return string
+	 */
+	public function getNumber(): string
+	{
+		return $this->fontNumber;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function getReference(): string

@@ -27,6 +27,11 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	protected $resources = [];
 	/**
+	 * Page content streams
+	 * @var \YetiPDF\Objects\Basic\StreamObject
+	 */
+	protected $contentStream;
+	/**
 	 * Portrait page orientation
 	 */
 	const ORIENTATION_PORTRAIT = 'P';
@@ -79,6 +84,17 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Add content stream
+	 * @param \YetiPDF\Objects\Basic\StreamObject $stream
+	 * @return \YetiPDF\Page
+	 */
+	public function setContentStream(\YetiPDF\Objects\Basic\StreamObject $stream): \YetiPDF\Page
+	{
+		$this->contentStream = $stream;
+		return $this;
+	}
+
+	/**
 	 * Render page resources
 	 * @return string
 	 */
@@ -91,12 +107,22 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 		return $rendered . ">>";
 	}
 
+
 	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
 	{
-		return $this->getRawId() . " obj\n<<\n/Type /Page\n/Parent " . $this->parent->getReference() . "\n" . $this->renderResources() . "\n>>\nendobj\n";
+		return implode("\n", [
+			$this->getRawId() . " obj",
+			"<<",
+			"/Type /Page",
+			"/Parent " . $this->parent->getReference(),
+			$this->renderResources(),
+			"/Contents " . $this->contentStream->getReference(),
+			">>",
+			"endobj"
+		]);
 	}
 
 }
