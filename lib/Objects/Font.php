@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace YetiPDF\Objects;
 
 /**
- * Class DictionaryObject
+ * Class Font
  */
 class Font extends \YetiPDF\Objects\Resource
 {

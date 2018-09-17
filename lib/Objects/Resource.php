@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * Font class
+ * Resource class
  *
  * @package   YetiPDF\Objects
  *
@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace YetiPDF\Objects;
 
 /**
- * Class DictionaryObject
+ * Class Resource
  */
 class Resource extends \YetiPDF\Objects\PdfObject
 {
