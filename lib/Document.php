@@ -79,7 +79,7 @@ class Document
 	 * @param string $orientation - optional orientation 'P' or 'L'
 	 * @return \YetiPDF\Page
 	 */
-	public function addPage(string $format = '', string $orientation): \YetiPDF\Page
+	public function addPage(string $format = '', string $orientation = ''): \YetiPDF\Page
 	{
 		$page = new \YetiPDF\Page($this->getActualId());
 		if ($format === '') {
@@ -116,6 +116,7 @@ class Document
 	{
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
+
 		$this->buffer .= $this->getDocumentFooter();
 		return $this->buffer;
 	}

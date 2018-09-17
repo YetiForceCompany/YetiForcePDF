@@ -36,4 +36,10 @@ class DictionaryObject extends \YetiPDF\Objects\PdfObject
 	{
 		return $this->dictionaryType;
 	}
+
+
+	public function render()
+	{
+		return "<<\n\t/Type /{$this->dictionaryType}\n>>\n";
+	}
 }

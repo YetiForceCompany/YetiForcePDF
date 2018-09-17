@@ -95,14 +95,32 @@ class PdfObject
 	 * Add child object
 	 * @param \YetiPDF\Objects\PdfObject $child
 	 * @return \YetiPDF\Objects\PdfObject
-	 * @throws \Exception
+	 * @throws \InvalidArgumentException
 	 */
 	public function addChild(\YetiPDF\Objects\PdfObject $child)
 	{
 		if (in_array($this->getBasicType(), ['dictionary', 'array'])) {
+			$child->setParent($this);
 			return $this->children[] = $child;
 		}
 		throw new \InvalidArgumentException("Object of basic type '{$this->basicType}' cannot have a child.");
 	}
+
+	/**
+	 * Set parent object
+	 * @param \YetiPDF\Objects\PdfObject $parent
+	 * @return \YetiPDF\Objects\PdfObject
+	 */
+	public function setParent(\YetiPDF\Objects\PdfObject $parent): \YetiPDF\Objects\PdfObject
+	{
+		$this->parent = $parent;
+		return $this;
+	}
+
+	/**
+	 * Render current object
+	 * @return string
+	 */
+	public abstract function render();
 
 }
