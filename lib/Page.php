@@ -6,16 +6,16 @@ declare(strict_types=1);
  * @package   YetiPDF\Document
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License 3.0 (licenses/LicenseEN.txt or yetiforce.com)
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Document;
+namespace YetiPDF;
 
 /**
  * Class Page
  */
-class Page extends \YetiPDF\Document\Objects\Basic\DictionaryObject
+class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * {@inheritdoc}
@@ -33,22 +33,33 @@ class Page extends \YetiPDF\Document\Objects\Basic\DictionaryObject
 	 * Current page format
 	 * @var string $format
 	 */
-	protected $format;
+	protected $format = 'A4';
 	/**
 	 * Current page orientation
 	 * @var string $orientation
 	 */
-	protected $orientation;
+	protected $orientation = 'P';
 
 	/**
-	 * Document constructor.
+	 * Set page format
 	 * @param string $format
-	 * @param string $orientation
+	 * @return \YetiPDF\Page
 	 */
-	public function __construct(string $format = 'A4', string $orientation = self::ORIENTATION_PORTRAIT)
+	public function setFormat(string $format): \YetiPDF\Page
 	{
 		$this->format = $format;
+		return $this;
+	}
+
+	/**
+	 * Set page orientation
+	 * @param string $orientation
+	 * @return \YetiPDF\Page
+	 */
+	public function setOrientation(string $orientation): \YetiPDF\Page
+	{
 		$this->orientation = $orientation;
+		return $this;
 	}
 
 }

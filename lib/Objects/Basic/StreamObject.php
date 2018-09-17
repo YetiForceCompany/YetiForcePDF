@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * StreamObject class
  *
- * @package   YetiPDF\Document\Objects\Basic
+ * @package   YetiPDF\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License 3.0 (licenses/LicenseEN.txt or yetiforce.com)
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Document\Objects\Basic;
+namespace YetiPDF\Objects\Basic;
 
 /**
  * Class StreamObject
  */
-class StreamObject extends \YetiPDF\Document\Objects\PdfObject
+class StreamObject extends \YetiPDF\Objects\PdfObject
 {
 	/**
 	 * Basic object type (integer, string, boolean, dictionary etc..)

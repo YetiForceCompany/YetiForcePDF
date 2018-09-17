@@ -6,16 +6,16 @@ declare(strict_types=1);
  * @package   YetiPDF\Document
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License 3.0 (licenses/LicenseEN.txt or yetiforce.com)
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Document;
+namespace YetiPDF;
 
 /**
  * Class Pages
  */
-class Pages extends \YetiPDF\Document\Objects\Basic\DictionaryObject
+class Pages extends \YetiPDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * {@inheritdoc}
