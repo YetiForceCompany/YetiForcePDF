@@ -62,4 +62,12 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 		return $this;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function render(): string
+	{
+		return 'page';
+	}
+
 }

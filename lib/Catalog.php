@@ -27,4 +27,12 @@ class Catalog extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	protected $children = [];
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function render(): string
+	{
+		return '';
+	}
+
 }

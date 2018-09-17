@@ -22,4 +22,12 @@ class NullObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'null';
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function render(): string
+	{
+		return '';
+	}
 }

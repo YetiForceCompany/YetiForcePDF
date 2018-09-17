@@ -22,4 +22,12 @@ class StringObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'string';
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function render(): string
+	{
+		return '';
+	}
 }

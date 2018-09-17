@@ -20,7 +20,13 @@ class Pages extends \YetiPDF\Objects\Basic\DictionaryObject
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $dictionaryType = 'Page';
+	protected $dictionaryType = 'Pages';
 
-
+	/**
+	 * {@inheritdoc}
+	 */
+	public function render(): string
+	{
+		return '';
+	}
 }

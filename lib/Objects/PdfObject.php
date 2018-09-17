@@ -121,6 +121,9 @@ class PdfObject
 	 * Render current object
 	 * @return string
 	 */
-	public abstract function render();
+	public function render(): string
+	{
+		return '';
+	}
 
 }
