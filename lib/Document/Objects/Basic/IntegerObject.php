@@ -17,4 +17,9 @@ namespace YetiPDF\Document\Objects\Basic;
  */
 class IntegerObject extends \YetiPDF\Document\Objects\PdfObject
 {
+	/**
+	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * @var string
+	 */
+	protected $basicType = 'integer';
 }

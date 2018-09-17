@@ -17,4 +17,10 @@ namespace YetiPDF\Document\Objects\Basic;
  */
 class BooleanObject extends \YetiPDF\Document\Objects\PdfObject
 {
+
+	/**
+	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * @var string
+	 */
+	protected $basicType = 'boolean';
 }

@@ -27,10 +27,10 @@ class Document
 	 */
 	protected $catalog;
 	/**
-	 * Body containing objects, pages and so on
+	 * All content goes here
 	 * @var array
 	 */
-	protected $body = [];
+	protected $objects = [];
 	/**
 	 * @var int $pageIndex - current page in array
 	 */
@@ -58,12 +58,12 @@ class Document
 	/**
 	 * Add page to the document
 	 * @param string $defaultFormat
-	 * @param string $defautlOrientation
+	 * @param string $defaultOrientation
 	 * @return \YetiPDF\Document\YetiPDFPage
 	 */
-	public function addPage(string $defaultFormat = 'A4', string $defautlOrientation = \YetiPDF\Document\Page::ORIENTATION_PORTRAIT): \YetiPDF\Document\Page
+	public function addPage(string $defaultFormat = 'A4', string $defaultOrientation = \YetiPDF\Document\Page::ORIENTATION_PORTRAIT): \YetiPDF\Document\Page
 	{
-		$this->body[] = new \YetiPDF\Document\Page($defaultFormat, $defautlOrientation);
+		$this->objects[] = new \YetiPDF\Document\Page($defaultFormat, $defaultOrientation);
 		$this->pageIndex++;
 		return $this->body[$this->pageIndex];
 	}

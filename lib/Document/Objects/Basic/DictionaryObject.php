@@ -17,4 +17,23 @@ namespace YetiPDF\Document\Objects\Basic;
  */
 class DictionaryObject extends \YetiPDF\Document\Objects\PdfObject
 {
+	/**
+	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * @var string
+	 */
+	protected $basicType = 'dictionary';
+	/**
+	 * Which type of dictionary (Page, Catalog, Font etc...)
+	 * @var string
+	 */
+	protected $dictionaryType = '';
+
+	/**
+	 * Get dictionary type (Page, Catalog, Font etc...)
+	 * @return string
+	 */
+	public function getDictionaryType()
+	{
+		return $this->dictionaryType;
+	}
 }

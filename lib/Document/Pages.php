@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * Catalog class
+ * Page class
  *
  * @package   YetiPDF\Document
  *
@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace YetiPDF\Document;
 
 /**
- * Class Catalog
+ * Class Document
  */
-class Catalog extends \YetiPDF\Document\Objects\DictionaryObject
+class Pages extends \YetiPDF\Document\Objects\Basic\DictionaryObject
 {
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $dictionaryType = 'Catalog';
+	protected $dictionaryType = 'Page';
 
 
 }

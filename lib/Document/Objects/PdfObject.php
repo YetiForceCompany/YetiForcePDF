@@ -17,6 +17,41 @@ namespace YetiPDF\Document\Objects;
  */
 class PdfObject
 {
-	protected $type = '';
+	/**
+	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * @var string
+	 */
+	protected $basicType = '';
+	/**
+	 * Id of the current object
+	 * @var int
+	 */
 	protected $id = 0;
+
+	/**
+	 * Get object id
+	 * @return int
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * Get raw id (that will exists in pdf file)
+	 * @return string
+	 */
+	public function getRawId()
+	{
+		return $this->id . ' 0';
+	}
+
+	/**
+	 * Get object basic type (integer,string, boolean, dictionary etc..)
+	 * @return string
+	 */
+	public function getBasicType()
+	{
+		return $this->basicType;
+	}
 }

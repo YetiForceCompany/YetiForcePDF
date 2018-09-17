@@ -15,8 +15,12 @@ namespace YetiPDF\Document;
 /**
  * Class Document
  */
-class Page
+class Page extends \YetiPDF\Document\Objects\Basic\DictionaryObject
 {
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $dictionaryType = 'Page';
 	/**
 	 * Portrait page orientation
 	 */
@@ -25,7 +29,6 @@ class Page
 	 * Landscape page orientation
 	 */
 	const ORIENTATION_LANDSCAPE = 'L';
-
 	/**
 	 * Current page format
 	 * @var string $format
