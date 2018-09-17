@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace YetiPDF\Document;
 
 /**
- * Class Document
+ * Class Pages
  */
 class Pages extends \YetiPDF\Document\Objects\Basic\DictionaryObject
 {
