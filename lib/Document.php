@@ -90,7 +90,6 @@ class Document
 		}
 		$page->setFormat($format)->setOrientation($orientation);
 		return $this->catalog->pagesObject->addChild($page);
-
 	}
 
 
@@ -112,7 +111,7 @@ class Document
 	 * Render document content to pdf string
 	 * @return string
 	 */
-	public function render()
+	public function render(): string
 	{
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
