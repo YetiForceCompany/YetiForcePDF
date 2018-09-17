@@ -142,6 +142,9 @@ class Document
 		foreach ($this->fonts as $font) {
 			$this->buffer .= $font->render() . "\n";
 		}
+		$trailer = new \YetiPDF\Objects\Trailer(0);
+		$trailer->setRootObject($this->catalog);
+		$this->buffer .= $trailer->render();
 		$this->buffer .= $this->getDocumentFooter();
 		return $this->buffer;
 	}
