@@ -32,7 +32,7 @@ class Catalog extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	public function render(): string
 	{
-		return '';
+		return $this->getRawId() . " obj\n<<\n/Type /Catalog\n/Pages " . $this->children[0]->getReference() . "\n>>\nendobj\n";
 	}
 
 }

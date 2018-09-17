@@ -51,6 +51,11 @@ class Document
 	 * @var string default page orientation
 	 */
 	protected $defaultOrientation;
+	/**
+	 * Fonts for document
+	 * @var \YetiPDF\Objects\Font[]
+	 */
+	protected $fonts = [];
 
 	/**
 	 * Document constructor.
@@ -59,7 +64,7 @@ class Document
 	{
 		$this->catalog = new \YetiPDF\Catalog($this->getActualId());
 		$this->pagesObject = $this->catalog->addChild(new \YetiPDF\Pages($this->getActualId()));
-		$this->currentPageObject = $this->pagesObject->addChild(new \YetiPDF\Page($this->getActualId()))->setFormat($defaultFormat)->setOrientation($defautlOrientation);
+		$this->currentPageObject = $this->addPage($defaultFormat, $defautlOrientation);
 		$this->defaultFormat = $defaultFormat;
 		$this->defaultOrientation = $defautlOrientation;
 	}
@@ -88,8 +93,22 @@ class Document
 		if ($orientation === '') {
 			$orientation = $this->defaultOrientation;
 		}
-		$page->setFormat($format)->setOrientation($orientation);
-		return $this->catalog->pagesObject->addChild($page);
+		$font = new \YetiPDF\Objects\Font($this->getActualId());
+		$this->fonts[] = $font;
+		$font->setNumber('F' . count($this->fonts));
+		$page->setFormat($format)->setOrientation($orientation)->addResource($font);
+		return $this->pagesObject->addChild($page);
+	}
+
+	/**
+	 * Add font to document
+	 * @param \YetiPDF\Objects\Font $font
+	 * @return \YetiPDF\Document
+	 */
+	public function addFont(\YetiPDF\Objects\Font $font): \YetiPDF\Document
+	{
+		$this->fonts[] = $font;
+		return $this;
 	}
 
 
@@ -115,7 +134,14 @@ class Document
 	{
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
-
+		$objects = [$this->catalog];
+		$this->catalog->getChildren(true, $objects);
+		foreach ($objects as $object) {
+			$this->buffer .= $object->render() . "\n";
+		}
+		foreach ($this->fonts as $font) {
+			$this->buffer .= $font->render() . "\n";
+		}
 		$this->buffer .= $this->getDocumentFooter();
 		return $this->buffer;
 	}

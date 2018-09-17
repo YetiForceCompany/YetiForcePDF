@@ -22,6 +22,11 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dictionaryType = 'Page';
 	/**
+	 * Page resources
+	 * @var \YetiPDF\Objects\Resource[]
+	 */
+	protected $resources = [];
+	/**
 	 * Portrait page orientation
 	 */
 	const ORIENTATION_PORTRAIT = 'P';
@@ -63,11 +68,35 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Add page resource
+	 * @param \YetiPDF\Objects\PdfObject $resource
+	 * @return \YetiPDF\Page
+	 */
+	public function addResource(\YetiPDF\Objects\PdfObject $resource): \YetiPDF\Page
+	{
+		$this->resources[] = $resource;
+		return $this;
+	}
+
+	/**
+	 * Render page resources
+	 * @return string
+	 */
+	public function renderResources(): string
+	{
+		$rendered = '/Resources <<';
+		foreach ($this->resources as $resource) {
+			$rendered .= "\n/" . $resource->getResourceType() . ' ' . $resource->getReference() . "\n";
+		}
+		return $rendered . ">>";
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
 	{
-		return 'page';
+		return $this->getRawId() . " obj\n<<\n/Type /Page\n/Parent " . $this->parent->getReference() . "\n" . $this->renderResources() . "\n>>\nendobj\n";
 	}
 
 }

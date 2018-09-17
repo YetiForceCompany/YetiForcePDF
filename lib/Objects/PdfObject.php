@@ -52,7 +52,7 @@ class PdfObject
 	 * Get object id
 	 * @return int
 	 */
-	public function getId()
+	public function getId(): int
 	{
 		return $this->id;
 	}
@@ -61,7 +61,7 @@ class PdfObject
 	 * Get raw id (that will exists in pdf file)
 	 * @return string
 	 */
-	public function getRawId()
+	public function getRawId(): string
 	{
 		return $this->id . ' 0';
 	}
@@ -70,7 +70,7 @@ class PdfObject
 	 * Get object basic type (integer,string, boolean, dictionary etc..)
 	 * @return string
 	 */
-	public function getBasicType()
+	public function getBasicType(): string
 	{
 		return $this->basicType;
 	}
@@ -97,7 +97,7 @@ class PdfObject
 	 * @return \YetiPDF\Objects\PdfObject
 	 * @throws \InvalidArgumentException
 	 */
-	public function addChild(\YetiPDF\Objects\PdfObject $child)
+	public function addChild(\YetiPDF\Objects\PdfObject $child): \YetiPDF\Objects\PdfObject
 	{
 		if (in_array($this->getBasicType(), ['dictionary', 'array'])) {
 			$child->setParent($this);
@@ -115,6 +115,15 @@ class PdfObject
 	{
 		$this->parent = $parent;
 		return $this;
+	}
+
+	/**
+	 * Get object reference string
+	 * @return string
+	 */
+	public function getReference(): string
+	{
+		return $this->getRawId() . ' R';
 	}
 
 	/**
