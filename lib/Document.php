@@ -239,6 +239,7 @@ class Document
 			}
 		}
 		$this->buffer .= $this->getDocumentFooter();
+		$this->removeObject($trailer);
 		return $this->buffer;
 	}
 
