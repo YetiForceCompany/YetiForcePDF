@@ -27,7 +27,7 @@ class Pages extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	public function render(): string
 	{
-		$rendered = $this->getRawId() . " obj\n<<\n/Type /Pages\n/MediaBox [ 0 0 200 200 ]\n/Count " . count($this->children) . "\n/Kids [";
+		$rendered = $this->getRawId() . " obj\n<<\n/Type /Pages\n/Count " . count($this->children) . "\n/Kids [";
 		foreach ($this->children as $child) {
 			$rendered .= $child->getReference() . ' ';
 		}
