@@ -3,7 +3,7 @@ declare(strict_types=1);
 /**
  * Document class
  *
- * @package   YetiPDF\Document
+ * @package   YetiPDF
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
@@ -58,7 +58,7 @@ class Document
 	protected $fonts = [];
 	/**
 	 * Stream objects
-	 * @var \YetiPDF\Objects\Basic\StreamObject
+	 * @var \YetiPDF\Objects\Basic\StreamObject[]
 	 */
 	protected $streams = [];
 
@@ -102,7 +102,8 @@ class Document
 		$this->fonts[] = $font;
 		$font->setNumber('F' . count($this->fonts));
 		$page->setFormat($format)->setOrientation($orientation)->addResource($font);
-		return $this->pagesObject->addChild($page);
+		$this->currentPageObject = $this->pagesObject->addChild($page);
+		return $page;
 	}
 
 	/**
