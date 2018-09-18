@@ -23,6 +23,11 @@ class Font extends \YetiPDF\Objects\Resource
 	 */
 	protected $resourceType = 'Font';
 	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Font';
+	/**
 	 * Base font type
 	 * @var string
 	 */

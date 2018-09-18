@@ -22,15 +22,20 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dictionaryType = 'Page';
 	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Page';
+	/**
 	 * Page resources
 	 * @var \YetiPDF\Objects\Resource[]
 	 */
 	protected $resources = [];
 	/**
 	 * Page content streams
-	 * @var \YetiPDF\Objects\Basic\StreamObject
+	 * @var \YetiPDF\Objects\Basic\ArrayObject
 	 */
-	protected $contentStream;
+	protected $contentStreams;
 	/**
 	 * Portrait page orientation
 	 */
@@ -401,6 +406,13 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 		'FR_POT' => [878.740, 1133.858], // = (  310 x 400  ) mm  = ( 12.20 x 15.75 ) in
 	];
 
+	public function __construct(\YetiPDF\Document $document)
+	{
+		parent::__construct($document);
+		$this->contentStreams = new \YetiPDF\Objects\Basic\ArrayObject($document);
+		$document->addObject($this->contentStreams);
+	}
+
 	/**
 	 * Set page format
 	 * @param string $format
@@ -439,9 +451,9 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	 * @param \YetiPDF\Objects\Basic\StreamObject $stream
 	 * @return \YetiPDF\Page
 	 */
-	public function setContentStream(\YetiPDF\Objects\Basic\StreamObject $stream): \YetiPDF\Page
+	public function addContentStream(\YetiPDF\Objects\Basic\StreamObject $stream): \YetiPDF\Page
 	{
-		$this->contentStream = $stream;
+		$this->contentStreams->addChild($stream);
 		return $this;
 	}
 
@@ -476,7 +488,7 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 			"/MediaBox [0 0 " . $dimensions[0] . ' ' . $dimensions[1] . ']',
 			"/Rotate 0",
 			$this->renderResources(),
-			"/Contents " . $this->contentStream->getReference(),
+			"/Contents " . $this->contentStreams->getReference(),
 			">>",
 			"endobj"
 		]);

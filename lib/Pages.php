@@ -21,6 +21,11 @@ class Pages extends \YetiPDF\Objects\Basic\DictionaryObject
 	 * {@inheritdoc}
 	 */
 	protected $dictionaryType = 'Pages';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Pages';
 
 	/**
 	 * {@inheritdoc}

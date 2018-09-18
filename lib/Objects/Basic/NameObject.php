@@ -22,6 +22,11 @@ class NameObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'name';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Name';
 
 	/**
 	 * {@inheritdoc}

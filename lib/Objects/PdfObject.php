@@ -23,11 +23,19 @@ class PdfObject
 	 */
 	protected $basicType = '';
 	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'PdfObject';
+	/**
 	 * Id of the current object
 	 * @var int
 	 */
 	protected $id = 1;
-
+	/**
+	 * @var \YetiPDF\Document
+	 */
+	protected $document;
 	/**
 	 * Children elements - referenced
 	 * @var array
@@ -43,9 +51,10 @@ class PdfObject
 	 * PdfObject constructor.
 	 * @param int $id
 	 */
-	public function __construct(int $id)
+	public function __construct(\YetiPDF\Document $document)
 	{
-		$this->id = $id;
+		$this->id = $document->getActualId();
+		$this->document = $document;
 	}
 
 	/**
@@ -55,6 +64,15 @@ class PdfObject
 	public function getId(): int
 	{
 		return $this->id;
+	}
+
+	/**
+	 * Get object name
+	 * @return string
+	 */
+	public function getName(): string
+	{
+		return $this->name;
 	}
 
 	/**

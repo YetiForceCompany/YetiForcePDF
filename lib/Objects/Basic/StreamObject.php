@@ -22,6 +22,11 @@ class StreamObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'stream';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Stream';
 
 	/**
 	 * {@inheritdoc}

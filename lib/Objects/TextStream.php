@@ -18,6 +18,11 @@ namespace YetiPDF\Objects;
 class TextStream extends \YetiPDF\Objects\Basic\StreamObject
 {
 	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'TextStream';
+	/**
 	 * Text stream
 	 * @var string
 	 */
@@ -59,9 +64,19 @@ class TextStream extends \YetiPDF\Objects\Basic\StreamObject
 	 * @param \YetiPDF\Objects\Font $font
 	 * @return \YetiPDF\Objects\TextStream
 	 */
-	public function setFont(\YetiPDF\Objects\Font $font, float $fontSize): \YetiPDF\Objects\TextStream
+	public function setFont(\YetiPDF\Objects\Font $font): \YetiPDF\Objects\TextStream
 	{
 		$this->font = $font;
+		return $this;
+	}
+
+	/**
+	 * Set font size
+	 * @param float $fontSize
+	 * @return \YetiPDF\Objects\TextStream
+	 */
+	public function setFontSize(float $fontSize): \YetiPDF\Objects\TextStream
+	{
 		$this->fontSize = $fontSize;
 		return $this;
 	}
@@ -99,11 +114,20 @@ class TextStream extends \YetiPDF\Objects\Basic\StreamObject
 	}
 
 	/**
+	 * Get raw text stream
+	 * @return string
+	 */
+	public function getRawStream(): string
+	{
+		return 'BT ' . $this->x . ' ' . $this->y . ' Td /' . $this->font->getNumber() . ' ' . $this->fontSize . ' Tf (' . $this->text . ') Tj ET';
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
 	{
-		$stream = 'BT ' . $this->x . ' ' . $this->y . ' Td /' . $this->font->getNumber() . ' ' . $this->fontSize . ' Tf (' . $this->text . ') Tj ET';
+		$stream = $this->getRawStream();
 		return implode("\n", [
 			$this->getRawId() . ' obj',
 			"<<\n",

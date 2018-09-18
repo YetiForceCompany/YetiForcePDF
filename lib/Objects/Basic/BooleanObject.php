@@ -23,6 +23,11 @@ class BooleanObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'boolean';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Boolean';
 
 	/**
 	 * {@inheritdoc}

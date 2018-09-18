@@ -22,6 +22,11 @@ class RealObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'real';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Real';
 
 	/**
 	 * {@inheritdoc}

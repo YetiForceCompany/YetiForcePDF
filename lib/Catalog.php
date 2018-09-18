@@ -22,6 +22,11 @@ class Catalog extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dictionaryType = 'Catalog';
 	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Catalog';
+	/**
 	 * Children elements
 	 * @var \YetiPDF\Objects\PdfObject[]
 	 */

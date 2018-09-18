@@ -52,23 +52,20 @@ class Document
 	 */
 	protected $defaultOrientation;
 	/**
-	 * Fonts for document
-	 * @var \YetiPDF\Objects\Font[]
+	 * All objects inside document
+	 * @var \YetiPDF\Objects\PdfObject[]
 	 */
-	protected $fonts = [];
-	/**
-	 * Stream objects
-	 * @var \YetiPDF\Objects\Basic\StreamObject[]
-	 */
-	protected $streams = [];
+	protected $objects = [];
 
 	/**
 	 * Document constructor.
 	 */
 	public function __construct(string $defaultFormat = 'A4', string $defautlOrientation = \YetiPDF\Page::ORIENTATION_PORTRAIT)
 	{
-		$this->catalog = new \YetiPDF\Catalog($this->getActualId());
-		$this->pagesObject = $this->catalog->addChild(new \YetiPDF\Pages($this->getActualId()));
+		$this->catalog = new \YetiPDF\Catalog($this);
+		$this->addObject($this->catalog);
+		$this->pagesObject = $this->catalog->addChild(new \YetiPDF\Pages($this));
+		$this->addObject($this->pagesObject);
 		$this->currentPageObject = $this->addPage($defaultFormat, $defautlOrientation);
 		$this->defaultFormat = $defaultFormat;
 		$this->defaultOrientation = $defautlOrientation;
@@ -91,16 +88,17 @@ class Document
 	 */
 	public function addPage(string $format = '', string $orientation = ''): \YetiPDF\Page
 	{
-		$page = new \YetiPDF\Page($this->getActualId());
+		$page = new \YetiPDF\Page($this);
+		$this->addObject($page);
 		if ($format === '') {
 			$format = $this->defaultFormat;
 		}
 		if ($orientation === '') {
 			$orientation = $this->defaultOrientation;
 		}
-		$font = new \YetiPDF\Objects\Font($this->getActualId());
-		$this->fonts[] = $font;
-		$font->setNumber('F' . count($this->fonts));
+		$font = new \YetiPDF\Objects\Font($this);
+		$this->addObject($font);
+		$font->setNumber('F' . ($this->countObjects('Font') + 1));
 		$page->setFormat($format)->setOrientation($orientation)->addResource($font);
 		$this->currentPageObject = $this->pagesObject->addChild($page);
 		return $page;
@@ -114,18 +112,6 @@ class Document
 	{
 		return $this->currentPageObject;
 	}
-
-	/**
-	 * Add font to document
-	 * @param \YetiPDF\Objects\Font $font
-	 * @return \YetiPDF\Document
-	 */
-	public function addFont(\YetiPDF\Objects\Font $font): \YetiPDF\Document
-	{
-		$this->fonts[] = $font;
-		return $this;
-	}
-
 
 	/**
 	 * Get document header
@@ -155,14 +141,43 @@ class Document
 	 */
 	public function addText(string $text, float $fontSize, float $x, float $y): \YetiPDF\Objects\TextStream
 	{
-		$textStream = new \YetiPDF\Objects\TextStream($this->getActualId());
+		$textStream = new \YetiPDF\Objects\TextStream($this);
 		$textStream->setText($text);
-		$textStream->setFont($this->fonts[0], $fontSize);
+		$textStream->setFontSize($fontSize);
 		$textStream->setX($x);
 		$textStream->setY($y);
-		$this->currentPageObject->setContentStream($textStream);
-		$this->streams[] = $textStream;
+		$this->currentPageObject->addContentStream($textStream);
 		return $textStream;
+	}
+
+	/**
+	 * Add object to document
+	 * @param \YetiPDF\Objects\Basic\StreamObject $stream
+	 * @return \YetiPDF\Document
+	 */
+	public function addObject(\YetiPDF\Objects\PdfObject $object): \YetiPDF\Document
+	{
+		$this->objects[] = $object;
+		return $this;
+	}
+
+	/**
+	 * Count objects
+	 * @param string $name - object name
+	 * @return int
+	 */
+	public function countObjects(string $name = ''): int
+	{
+		if ($name === '') {
+			return count($this->objects);
+		}
+		$typeCount = 0;
+		foreach ($this->objects as $object) {
+			if ($object->getName() === $name) {
+				$typeCount++;
+			}
+		}
+		return $typeCount;
 	}
 
 	/**
@@ -173,18 +188,10 @@ class Document
 	{
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
-		$objects = [$this->catalog];
-		$this->catalog->getChildren(true, $objects);
-		foreach ($objects as $object) {
+		foreach ($this->objects as $object) {
 			$this->buffer .= $object->render() . "\n";
 		}
-		foreach ($this->fonts as $font) {
-			$this->buffer .= $font->render() . "\n";
-		}
-		foreach ($this->streams as $stream) {
-			$this->buffer .= $stream->render() . "\n";
-		}
-		$trailer = new \YetiPDF\Objects\Trailer(0);
+		$trailer = new \YetiPDF\Objects\Trailer($this);
 		$trailer->setRootObject($this->catalog);
 		$this->buffer .= $trailer->render();
 		$this->buffer .= $this->getDocumentFooter();

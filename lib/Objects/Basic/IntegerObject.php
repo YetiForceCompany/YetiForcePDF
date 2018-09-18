@@ -22,6 +22,11 @@ class IntegerObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'integer';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Integer';
 
 	/**
 	 * {@inheritdoc}

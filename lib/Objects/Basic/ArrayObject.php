@@ -22,6 +22,11 @@ class ArrayObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $basicType = 'array';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Array';
 
 	/**
 	 * {@inheritdoc}

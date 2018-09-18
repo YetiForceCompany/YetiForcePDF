@@ -21,7 +21,12 @@ class Resource extends \YetiPDF\Objects\PdfObject
 	 * Resource type
 	 * @var string
 	 */
-	protected $resourceType = '';
+	protected $resourceType = 'resource';
+	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Resource';
 
 	/**
 	 * Get resource type

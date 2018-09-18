@@ -23,6 +23,11 @@ class DictionaryObject extends \YetiPDF\Objects\PdfObject
 	 */
 	protected $basicType = 'dictionary';
 	/**
+	 * Object name
+	 * @var string
+	 */
+	protected $name = 'Dictionary';
+	/**
 	 * Which type of dictionary (Page, Catalog, Font etc...)
 	 * @var string
 	 */
