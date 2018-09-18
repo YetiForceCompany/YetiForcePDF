@@ -32,12 +32,18 @@ class Pages extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	public function render(): string
 	{
-		$rendered = $this->getRawId() . " obj\n<<\n/Type /Pages\n/Count " . count($this->children) . "\n/Kids [";
 		$kids = [];
 		foreach ($this->children as $child) {
 			$kids[] = $child->getReference();
 		}
-		$rendered .= implode("\n", $kids);
-		return $rendered . "]\n>>\nendobj\n";
+		return implode("\n", [
+			$this->getRawId() . ' obj',
+			'<<',
+			'  /Type /Pages',
+			'  /Count ' . count($kids),
+			'  /Kids [' . implode("\n    ", $kids) . ']',
+			'>>',
+			'endobj'
+		]);
 	}
 }

@@ -22,7 +22,7 @@ class BooleanObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'boolean';
+	protected $basicType = 'Boolean';
 	/**
 	 * Object name
 	 * @var string

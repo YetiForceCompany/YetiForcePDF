@@ -18,6 +18,10 @@ namespace YetiPDF\Objects;
 class Trailer extends \YetiPDF\Objects\PdfObject
 {
 	/**
+	 * @var string
+	 */
+	protected $basicType = 'Trailer';
+	/**
 	 * Object name
 	 * @var string
 	 */

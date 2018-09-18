@@ -21,7 +21,7 @@ class StringObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'string';
+	protected $basicType = 'String';
 	/**
 	 * Object name
 	 * @var string

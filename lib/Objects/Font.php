@@ -39,6 +39,20 @@ class Font extends \YetiPDF\Objects\Resource
 	protected $fontNumber = 'F1';
 
 	/**
+	 * Font constructor.
+	 * @param \YetiPDF\Document $document
+	 * @param bool              $addToDocument
+	 */
+	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	{
+		$this->fontNumber = 'F' . $document->getActualFontId();
+		parent::__construct($document);
+		foreach ($document->getObjects('Page') as $page) {
+			$page->addResource($this);
+		}
+	}
+
+	/**
 	 * Set font number
 	 * @param string $number
 	 * @return \YetiPDF\Objects\Font
@@ -63,7 +77,7 @@ class Font extends \YetiPDF\Objects\Resource
 	 */
 	public function getReference(): string
 	{
-		return '<< /' . $this->fontNumber . ' ' . $this->getRawId() . ' R >>';
+		return '/' . $this->fontNumber . ' ' . $this->getRawId() . ' R';
 	}
 
 	/**
@@ -73,9 +87,9 @@ class Font extends \YetiPDF\Objects\Resource
 	{
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
-			"/Type /Font",
-			"/Subtype /TrueType",
-			"/BaseFont /" . $this->baseFont,
+			"  /Type /Font",
+			"  /Subtype /TrueType",
+			"  /BaseFont /" . $this->baseFont,
 			">>",
 			"endobj"]);
 	}

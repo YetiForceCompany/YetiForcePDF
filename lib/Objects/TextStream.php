@@ -130,13 +130,13 @@ class TextStream extends \YetiPDF\Objects\Basic\StreamObject
 		$stream = $this->getRawStream();
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			"<<\n",
-			"/Length " . strlen($stream),
-			">>\n",
-			"stream\n",
+			"<<",
+			" /Length " . strlen($stream),
+			">>",
+			"stream",
 			$stream,
-			"endstream\n",
-			"endobj\n"
+			"endstream",
+			"endobj"
 		]);
 	}
 

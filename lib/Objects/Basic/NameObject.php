@@ -21,7 +21,7 @@ class NameObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'name';
+	protected $basicType = 'Name';
 	/**
 	 * Object name
 	 * @var string

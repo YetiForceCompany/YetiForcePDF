@@ -15,13 +15,13 @@ namespace YetiPDF\Objects;
 /**
  * Class Resource
  */
-class Resource extends \YetiPDF\Objects\PdfObject
+class Resource extends \YetiPDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * Resource type
 	 * @var string
 	 */
-	protected $resourceType = 'resource';
+	protected $resourceType = 'Resource';
 	/**
 	 * Object name
 	 * @var string

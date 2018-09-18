@@ -21,7 +21,7 @@ class NullObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'null';
+	protected $basicType = 'Null';
 	/**
 	 * Object name
 	 * @var string

@@ -21,7 +21,7 @@ class DictionaryObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'dictionary';
+	protected $basicType = 'Dictionary';
 	/**
 	 * Object name
 	 * @var string
@@ -32,6 +32,17 @@ class DictionaryObject extends \YetiPDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $dictionaryType = '';
+
+	/**
+	 * DictionaryObject constructor.
+	 * @param \YetiPDF\Document $document
+	 * @param bool              $addToDocument
+	 */
+	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	{
+		$this->id = $document->getActualId();
+		parent::__construct($document, $addToDocument);
+	}
 
 	/**
 	 * Get dictionary type (Page, Catalog, Font etc...)

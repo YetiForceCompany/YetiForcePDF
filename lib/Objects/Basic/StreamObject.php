@@ -21,12 +21,18 @@ class StreamObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'stream';
+	protected $basicType = 'Stream';
 	/**
 	 * Object name
 	 * @var string
 	 */
 	protected $name = 'Stream';
+
+	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	{
+		$this->id = $document->getActualId();
+		parent::__construct($document, $addToDocument);
+	}
 
 	/**
 	 * {@inheritdoc}

@@ -30,10 +30,9 @@ class Parser
 	 */
 	protected $html = '';
 	/**
-	 * Root element style
-	 * @var \YetiPDF\Html\Style
+	 * @var \YetiPDF\Html\Element
 	 */
-	protected $rootStyle;
+	protected $rootElement;
 
 	/**
 	 * HtmlParser constructor.
@@ -47,31 +46,28 @@ class Parser
 	/**
 	 * Load html string
 	 * @param string $html
-	 * @return \YetiPDF\Parser
+	 * @return \YetiPDF\Html\Parser
 	 */
-	public function loadHtml(string $html): \YetiPDF\Parser
+	public function loadHtml(string $html): \YetiPDF\Html\Parser
 	{
 		$this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
-		$this->domDocument->loadHTML($this->html);
+		$this->domDocument->loadHTML($this->html, LIBXML_HTML_NOIMPLIED);
 		return $this;
 	}
 
 	/**
 	 * Convert loaded html to pdf objects
-	 * @return array
+	 * @return \YetiPDF\Html\Element|null
 	 */
-	public function convertToObjects(): array
+	public function parse()
 	{
-		$objects = [];
 		if ($this->html === '') {
-			return $objects;
+			return null;
 		}
-		$root = $this->domDocument->documentElement;
-		if ($root->hasAttribute('style')) {
-			$this->rootStyle = new \YetiPDF\Html\Style($root->getAttribute('style'));
-		}
-		return $objects;
+		$this->rootElement = new \YetiPDF\Html\Element($this->document, $this->domDocument->documentElement);
+		$this->rootElement->parse();
+		return $this->rootElement;
 	}
 
 }

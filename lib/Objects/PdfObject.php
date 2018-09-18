@@ -49,12 +49,15 @@ class PdfObject
 
 	/**
 	 * PdfObject constructor.
-	 * @param int $id
+	 * @param \YetiPDF\Document $document
+	 * @param bool              $addToDocument
 	 */
-	public function __construct(\YetiPDF\Document $document)
+	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
 	{
-		$this->id = $document->getActualId();
 		$this->document = $document;
+		if ($addToDocument) {
+			$this->document->addObject($this);
+		}
 	}
 
 	/**
@@ -117,7 +120,7 @@ class PdfObject
 	 */
 	public function addChild(\YetiPDF\Objects\PdfObject $child): \YetiPDF\Objects\PdfObject
 	{
-		if (in_array($this->getBasicType(), ['dictionary', 'array'])) {
+		if (in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
 			$child->setParent($this);
 			return $this->children[] = $child;
 		}

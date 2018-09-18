@@ -406,11 +406,16 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 		'FR_POT' => [878.740, 1133.858], // = (  310 x 400  ) mm  = ( 12.20 x 15.75 ) in
 	];
 
-	public function __construct(\YetiPDF\Document $document)
+	/**
+	 * Page constructor.
+	 * @param \YetiPDF\Document $document
+	 * @param bool              $addToDocument
+	 */
+	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
 	{
-		parent::__construct($document);
 		$this->contentStreams = new \YetiPDF\Objects\Basic\ArrayObject($document);
-		$document->addObject($this->contentStreams);
+		$document->getPagesObject()->addChild($this);
+		parent::__construct($document);
 	}
 
 	/**
@@ -453,7 +458,7 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	public function addContentStream(\YetiPDF\Objects\Basic\StreamObject $stream): \YetiPDF\Page
 	{
-		$this->contentStreams->addChild($stream);
+		$this->contentStreams->addItem($stream);
 		return $this;
 	}
 
@@ -463,11 +468,12 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	 */
 	public function renderResources(): string
 	{
-		$rendered = '/Resources <<';
+		$rendered = '  /Resources <<';
+		$rendered .= "\n    /Resources{$this->id} [";
 		foreach ($this->resources as $resource) {
-			$rendered .= "\n/" . $resource->getResourceType() . ' ' . $resource->getReference() . "\n";
+			$rendered .= "\n      " . $resource->getReference();
 		}
-		return $rendered . ">>";
+		return $rendered . "\n    ]\n  >>";
 	}
 
 
@@ -482,15 +488,15 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 		}
 		return implode("\n", [
 			$this->getRawId() . " obj",
-			"<<",
-			"/Type /Page",
-			"/Parent " . $this->parent->getReference(),
-			"/MediaBox [0 0 " . $dimensions[0] . ' ' . $dimensions[1] . ']',
-			"/Rotate 0",
+			'<<',
+			'  /Type /Page',
+			'  /Parent ' . $this->parent->getReference(),
+			'  /MediaBox [0 0 ' . $dimensions[0] . ' ' . $dimensions[1] . ']',
+			'  /Rotate 0',
 			$this->renderResources(),
-			"/Contents " . $this->contentStreams->getReference(),
-			">>",
-			"endobj"
+			'  /Contents ' . $this->contentStreams->render(),
+			'>>',
+			'endobj'
 		]);
 	}
 

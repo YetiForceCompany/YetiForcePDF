@@ -21,18 +21,35 @@ class ArrayObject extends \YetiPDF\Objects\PdfObject
 	 * Basic object type (integer, string, boolean, dictionary etc..)
 	 * @var string
 	 */
-	protected $basicType = 'array';
+	protected $basicType = 'Array';
 	/**
 	 * Object name
 	 * @var string
 	 */
 	protected $name = 'Array';
+	/**
+	 * Collection of items
+	 * @var array
+	 */
+	protected $items = [];
+
+	public function addItem($item): \YetiPDF\Objects\Basic\ArrayObject
+	{
+		$this->items[] = $item;
+		return $this;
+	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
 	{
-		return '';
+		$stringItems = [];
+		foreach ($this->items as $item) {
+			if ($item instanceof \YetiPDF\Objects\PdfObject) {
+				$stringItems[] = $item->getReference();
+			}
+		}
+		return '[ ' . implode(' ', $stringItems) . ' ]';
 	}
 }
