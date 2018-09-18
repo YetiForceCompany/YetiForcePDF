@@ -50,7 +50,7 @@ class TextStream extends \YetiPDF\Objects\Basic\StreamObject
 	 */
 	public function setText(string $text): \YetiPDF\Objects\TextStream
 	{
-		$this->text = $text;
+		$this->text = $this->escape($text);
 		return $this;
 	}
 
@@ -86,6 +86,16 @@ class TextStream extends \YetiPDF\Objects\Basic\StreamObject
 	{
 		$this->y = $y;
 		return $this;
+	}
+
+	/**
+	 * Escape string
+	 * @param string $str
+	 * @return string
+	 */
+	public function escape(string $str): string
+	{
+		return strtr($str, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
 	}
 
 	/**
