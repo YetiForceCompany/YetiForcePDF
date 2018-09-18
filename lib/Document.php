@@ -56,6 +56,10 @@ class Document
 	 * @var \YetiPDF\Objects\PdfObject[]
 	 */
 	protected $objects = [];
+	/**
+	 * @var \YetiPDF\HtmlParser
+	 */
+	protected $htmlParser;
 
 	/**
 	 * Document constructor.
@@ -162,6 +166,18 @@ class Document
 	}
 
 	/**
+	 * Load html string
+	 * @param string $html
+	 * @return \YetiPDF\Document
+	 */
+	public function loadHtml(string $html): \YetiPDF\Document
+	{
+		$this->htmlParser = new HtmlParser($this);
+		$this->htmlParser->loadHtml($html);
+		return $this;
+	}
+
+	/**
 	 * Count objects
 	 * @param string $name - object name
 	 * @return int
@@ -188,6 +204,7 @@ class Document
 	{
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
+		$this->objects = array_merge($this->objects, $this->htmlParser->convertToObjects());
 		foreach ($this->objects as $object) {
 			$this->buffer .= $object->render() . "\n";
 		}
