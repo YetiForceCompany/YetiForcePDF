@@ -26,7 +26,7 @@ class Font extends \YetiPDF\Objects\Resource
 	 * Base font type
 	 * @var string
 	 */
-	protected $baseFont = 'Times-Roman';
+	protected $baseFont = 'Arial';
 	/**
 	 * Font number
 	 * @var string
@@ -69,7 +69,7 @@ class Font extends \YetiPDF\Objects\Resource
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
 			"/Type /Font",
-			"/Subtype /Type1",
+			"/Subtype /TrueType",
 			"/BaseFont /" . $this->baseFont,
 			">>",
 			"endobj"]);
