@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 /**
- * HtmlParser class
+ * Parser class
  *
- * @package   YetiPDF
+ * @package   YetiPDF\Html
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF;
+namespace YetiPDF\Html;
 
 /**
- * Class HtmlParser
+ * Class Parser
  */
-class HtmlParser
+class Parser
 {
 	/**
 	 * @var \YetiPDF\Document
@@ -29,6 +29,11 @@ class HtmlParser
 	 * @var string
 	 */
 	protected $html = '';
+	/**
+	 * Root element style
+	 * @var \YetiPDF\Html\Style
+	 */
+	protected $rootStyle;
 
 	/**
 	 * HtmlParser constructor.
@@ -42,9 +47,9 @@ class HtmlParser
 	/**
 	 * Load html string
 	 * @param string $html
-	 * @return \YetiPDF\HtmlParser
+	 * @return \YetiPDF\Parser
 	 */
-	public function loadHtml(string $html): \YetiPDF\HtmlParser
+	public function loadHtml(string $html): \YetiPDF\Parser
 	{
 		$this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
@@ -62,7 +67,10 @@ class HtmlParser
 		if ($this->html === '') {
 			return $objects;
 		}
-
+		$root = $this->domDocument->documentElement;
+		if ($root->hasAttribute('style')) {
+			$this->rootStyle = new \YetiPDF\Html\Style($root->getAttribute('style'));
+		}
 		return $objects;
 	}
 

@@ -57,7 +57,7 @@ class Document
 	 */
 	protected $objects = [];
 	/**
-	 * @var \YetiPDF\HtmlParser
+	 * @var \YetiPDF\Html\Parser
 	 */
 	protected $htmlParser;
 
@@ -172,7 +172,7 @@ class Document
 	 */
 	public function loadHtml(string $html): \YetiPDF\Document
 	{
-		$this->htmlParser = new HtmlParser($this);
+		$this->htmlParser = new \YetiPDF\Html\Parser($this);
 		$this->htmlParser->loadHtml($html);
 		return $this;
 	}
