@@ -136,11 +136,23 @@ class Document
 		return "%PDF-1.7\n\n";
 	}
 
+	/**
+	 * Get document footer
+	 * @return string
+	 */
 	protected function getDocumentFooter(): string
 	{
 		return '%%EOF';
 	}
 
+	/**
+	 * Add text to current page
+	 * @param string $text
+	 * @param float  $fontSize
+	 * @param float  $x
+	 * @param float  $y
+	 * @return \YetiPDF\Objects\TextStream
+	 */
 	public function addText(string $text, float $fontSize, float $x, float $y): \YetiPDF\Objects\TextStream
 	{
 		$textStream = new \YetiPDF\Objects\TextStream($this->getActualId());
