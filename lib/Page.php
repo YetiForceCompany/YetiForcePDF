@@ -465,12 +465,16 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	public function render(): string
 	{
 		$dimensions = self::$pageFormats[$this->format];
+		if ($this->orientation === 'L') {
+			$dimensions = array_reverse($dimensions);
+		}
 		return implode("\n", [
 			$this->getRawId() . " obj",
 			"<<",
 			"/Type /Page",
 			"/Parent " . $this->parent->getReference(),
 			"/MediaBox [0 0 " . $dimensions[0] . ' ' . $dimensions[1] . ']',
+			"/Rotate 0",
 			$this->renderResources(),
 			"/Contents " . $this->contentStream->getReference(),
 			">>",
