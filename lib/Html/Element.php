@@ -39,7 +39,7 @@ class Element
 	 */
 	protected $parent;
 	/**
-	 * @var \YetiForcePDF\Html\Element
+	 * @var \YetiForcePDF\Html\Element[]
 	 */
 	protected $children = [];
 	/**
@@ -82,7 +82,7 @@ class Element
 	 * Parse element style
 	 * @return \YetiForcePDF\Html\Style
 	 */
-	public function parseStyle(): \YetiForcePDF\Html\Style
+	protected function parseStyle(): \YetiForcePDF\Html\Style
 	{
 		$styleStr = null;
 		$parentStyle = null;
@@ -113,6 +113,15 @@ class Element
 	{
 		$this->children[] = $child;
 		return $this;
+	}
+
+	/**
+	 * Get child elements
+	 * @return \YetiForcePDF\Html\Element[]
+	 */
+	public function getChildren(): array
+	{
+		return $this->children;
 	}
 
 	/**

@@ -28,11 +28,6 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $name = 'Stream';
 	/**
-	 * Elements from which we will create content
-	 * @var \YetiForcePDF\Html\Element[]
-	 */
-	protected $elements = [];
-	/**
 	 * Content of the stream as string instructions
 	 * @var string[]
 	 */
@@ -47,17 +42,6 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	{
 		$this->id = $document->getActualId();
 		parent::__construct($document, $addToDocument);
-	}
-
-	/**
-	 * Add html element
-	 * @param \YetiForcePDF\Html\Element $element
-	 * @return \YetiForcePDF\Objects\Basic\StreamObject
-	 */
-	public function addElement(\YetiForcePDF\Html\Element $element): \YetiForcePDF\Objects\Basic\StreamObject
-	{
-		$this->elements[] = $element;
-		return $this;
 	}
 
 	/**
@@ -76,15 +60,11 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 */
 	public function render(): string
 	{
-		$this->content = [];
-		foreach ($this->elements as $element) {
-			$this->content[] = $element->getInstructions();
-		}
 		$stream = implode("\n", $this->content);
 		return implode("\n", [
 			$this->getRawId() . ' obj',
 			"<<",
-			"  /Length " . strlen($stream),
+			"  /Length " . \strlen($stream),
 			">>",
 			"stream",
 			$stream,
