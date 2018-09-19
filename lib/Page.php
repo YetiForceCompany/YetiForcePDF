@@ -33,9 +33,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $resources = [];
 	/**
 	 * Page content streams
-	 * @var \YetiForcePDF\Objects\Basic\ArrayObject
+	 * @var \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	protected $contentStreams;
+	protected $contentStream;
 	/**
 	 * Portrait page orientation
 	 */
@@ -409,11 +409,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Page constructor.
 	 * @param \YetiForcePDF\Document $document
-	 * @param bool              $addToDocument
+	 * @param bool                   $addToDocument
 	 */
 	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
-		$this->contentStreams = new \YetiForcePDF\Objects\Basic\ArrayObject($document);
+		$this->contentStream = new \YetiForcePDF\Objects\Basic\StreamObject($document);
 		$document->getPagesObject()->addChild($this);
 		parent::__construct($document);
 	}
@@ -452,14 +452,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Add content stream
-	 * @param \YetiForcePDF\Objects\Basic\StreamObject $stream
-	 * @return \YetiForcePDF\Page
+	 * Get page content stream
+	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function addContentStream(\YetiForcePDF\Objects\Basic\StreamObject $stream): \YetiForcePDF\Page
+	public function getContentStream(): \YetiForcePDF\Objects\Basic\StreamObject
 	{
-		$this->contentStreams->addItem($stream);
-		return $this;
+		return $this->contentStream;
 	}
 
 	/**
@@ -494,7 +492,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /MediaBox [0 0 ' . $dimensions[0] . ' ' . $dimensions[1] . ']',
 			'  /Rotate 0',
 			$this->renderResources(),
-			'  /Contents ' . $this->contentStreams->render(),
+			'  /Contents ' . $this->contentStream->getReference(),
 			'>>',
 			'endobj'
 		]);
