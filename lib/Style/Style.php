@@ -43,7 +43,15 @@ class Style extends \YetiForcePDF\Base
 	 * Css rules
 	 * @var array
 	 */
-	protected $rules = [];
+	protected $rules = [
+		'font-family' => 'Helvetica',
+		'font-size' => 12,
+		'font-weight' => 'normal',
+		'margin-left' => 0,
+		'margin-top' => 0,
+		'margin-right' => 0,
+		'margin-bottom' => 0
+	];
 
 	/**
 	 * Initialisation
