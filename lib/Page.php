@@ -407,15 +407,14 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	];
 
 	/**
-	 * Page constructor.
-	 * @param \YetiForcePDF\Document $document
-	 * @param bool                   $addToDocument
+	 * Initialisation
+	 * @return $this|\YetiForcePDF\Objects\PdfObject
 	 */
-	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
+	public function init()
 	{
-		$this->contentStream = new \YetiForcePDF\Objects\Basic\StreamObject($document);
-		$document->getPagesObject()->addChild($this);
-		parent::__construct($document);
+		$this->contentStream = new \YetiForcePDF\Objects\Basic\StreamObject();
+		$this->document->getPagesObject()->addChild($this);
+		return $this;
 	}
 
 	/**

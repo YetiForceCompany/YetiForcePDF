@@ -15,8 +15,13 @@ namespace YetiForcePDF\Html;
 /**
  * Class Element
  */
-class Element
+class Element extends \YetiForcePDF\Base
 {
+	/**
+	 * Unique internal element id
+	 * @var string
+	 */
+	protected $elementId;
 	/**
 	 * DOMElement tagName
 	 * @var string
@@ -31,7 +36,7 @@ class Element
 	 */
 	protected $domElement;
 	/**
-	 * @var \YetiForcePDF\Html\Style
+	 * @var \YetiForcePDF\Style\Style
 	 */
 	protected $style;
 	/**
@@ -49,17 +54,13 @@ class Element
 	protected $instructions = [];
 
 	/**
-	 * Element constructor.
-	 * @param \YetiForcePDF\Document $document
-	 * @param \DOMElement|\DOMText   $element
+	 * Initialisation
+	 * @return $this
 	 */
-	public function __construct(\YetiForcePDF\Document $document, $element, Element $parent = null)
+	public function init()
 	{
-		$this->document = $document;
-		$this->domElement = $element;
-		$this->domElement->normalize();
-		$this->parent = $parent;
-		$this->name = $element->tagName;
+		$this->elementId = uniqid();
+		$this->name = $this->domElement->tagName;
 		$this->style = $this->parseStyle();
 		if ($this->domElement->hasChildNodes()) {
 			foreach ($this->domElement->childNodes as $childNode) {
@@ -67,6 +68,37 @@ class Element
 				$this->addChild($childElement);
 			}
 		}
+		return $this;
+	}
+
+	/**
+	 * Set element
+	 * @param $element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function setElement($element): Element
+	{
+		$this->domElement = $element;
+		$this->domElement->normalize();
+		return $this;
+	}
+
+	/**
+	 * Set parent
+	 * @param \YetiForcePDF\Html\Element $parent
+	 */
+	public function setParent(Element $parent)
+	{
+		$this->parent = $parent;
+	}
+
+	/**
+	 * Get element internal unique id
+	 * @return string
+	 */
+	public function getElementId(): string
+	{
+		return $this->elementId;
 	}
 
 	/**
@@ -80,9 +112,9 @@ class Element
 
 	/**
 	 * Parse element style
-	 * @return \YetiForcePDF\Html\Style
+	 * @return \YetiForcePDF\Style\Style
 	 */
-	protected function parseStyle(): \YetiForcePDF\Html\Style
+	protected function parseStyle(): \YetiForcePDF\Style\Style
 	{
 		$styleStr = null;
 		$parentStyle = null;
@@ -92,14 +124,14 @@ class Element
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		return new \YetiForcePDF\Html\Style($this->document, $styleStr, $parentStyle);
+		return new \YetiForcePDF\Style\Style($this->document, $this, $styleStr, $parentStyle);
 	}
 
 	/**
 	 * Get element style
-	 * @return \YetiForcePDF\Html\Style
+	 * @return \YetiForcePDF\Style\Style
 	 */
-	public function getStyle(): \YetiForcePDF\Html\Style
+	public function getStyle(): \YetiForcePDF\Style\Style
 	{
 		return $this->style;
 	}
@@ -130,6 +162,6 @@ class Element
 	 */
 	public function getInstructions(): string
 	{
-
+		return '';
 	}
 }

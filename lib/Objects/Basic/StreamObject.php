@@ -34,14 +34,14 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	protected $content = [];
 
 	/**
-	 * StreamObject constructor.
-	 * @param \YetiForcePDF\Document $document
-	 * @param bool                   $addToDocument
+	 * Initialisation
+	 * @return $this
 	 */
-	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
+	public function init()
 	{
-		$this->id = $document->getActualId();
-		parent::__construct($document, $addToDocument);
+		parent::init();
+		$this->id = $this->document->getActualId();
+		return $this;
 	}
 
 	/**

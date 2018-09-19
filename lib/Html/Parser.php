@@ -12,15 +12,12 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
+
 /**
  * Class Parser
  */
-class Parser
+class Parser extends \YetiForcePDF\Base
 {
-	/**
-	 * @var \YetiForcePDF\Document
-	 */
-	protected $document;
 	/**
 	 * @var \DOMDocument
 	 */
@@ -33,15 +30,6 @@ class Parser
 	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $rootElement;
-
-	/**
-	 * HtmlParser constructor.
-	 * @param \YetiForcePDF\Document $document
-	 */
-	public function __construct(\YetiForcePDF\Document $document)
-	{
-		$this->document = $document;
-	}
 
 	/**
 	 * Load html string
