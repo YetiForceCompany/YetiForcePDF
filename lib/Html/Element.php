@@ -64,7 +64,7 @@ class Element extends \YetiForcePDF\Base
 		$this->style = $this->parseStyle();
 		if ($this->domElement->hasChildNodes()) {
 			foreach ($this->domElement->childNodes as $childNode) {
-				$childElement = new Element($this->document, $childNode, $this);
+				$childElement = (new Element())->setDocument($this->document)->setElement($childNode)->setParent($this)->init();
 				$this->addChild($childElement);
 			}
 		}
@@ -90,6 +90,7 @@ class Element extends \YetiForcePDF\Base
 	public function setParent(Element $parent)
 	{
 		$this->parent = $parent;
+		return $this;
 	}
 
 	/**
