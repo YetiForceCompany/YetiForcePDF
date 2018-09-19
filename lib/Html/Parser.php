@@ -27,9 +27,9 @@ class Parser extends \YetiForcePDF\Base
 	 */
 	protected $html = '';
 	/**
-	 * @var \YetiForcePDF\Html\Element
+	 * @var \YetiForcePDF\Html\Element[]
 	 */
-	protected $rootElement;
+	protected $elements = [];
 
 	/**
 	 * Load html string
@@ -40,7 +40,7 @@ class Parser extends \YetiForcePDF\Base
 	{
 		$this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
-		$this->domDocument->loadHTML($this->html, LIBXML_HTML_NOIMPLIED);
+		$this->domDocument->loadHTML("<div>$this->html</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 		return $this;
 	}
 
@@ -50,13 +50,14 @@ class Parser extends \YetiForcePDF\Base
 	 * @param array                      $currentResult
 	 * @return \YetiForcePDF\Html\Element[]
 	 */
-	protected function getAllElements(\YetiForcePDF\Html\Element $currentNode, array &$currentResult = []): array
+	protected function getAllElements(array $current = []): array
 	{
-		$currentResult[] = $currentNode;
-		foreach ($currentNode->getChildren() as $child) {
-			$this->getAllElements($child, $currentResult);
+		foreach ($current as $currentNode) {
+			foreach ($this->getAllElements($currentNode->getChildren()) as $child) {
+				$current[] = $child;
+			}
 		}
-		return $currentResult;
+		return $current;
 	}
 
 	/**
@@ -67,13 +68,17 @@ class Parser extends \YetiForcePDF\Base
 		if ($this->html === '') {
 			return null;
 		}
-		$this->rootElement = (new \YetiForcePDF\Html\Element())
-			->setDocument($this->document)
-			->setElement($this->domDocument->documentElement)
-			->init();
-		foreach ($this->getAllElements($this->rootElement) as $element) {
+		$this->elements = [];
+		foreach ($this->domDocument->documentElement->childNodes as $child) {
+			$this->elements[] = (new \YetiForcePDF\Html\Element())
+				->setDocument($this->document)
+				->setElement($child)
+				->init();
+		}
+		foreach ($this->getAllElements($this->elements) as $element) {
 			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
 		}
+
 	}
 
 }

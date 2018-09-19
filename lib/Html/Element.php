@@ -77,7 +77,11 @@ class Element extends \YetiForcePDF\Base
 				if ($childNode instanceof \DOMText) {
 
 				} else {
-					$childElement = (new Element())->setDocument($this->document)->setElement($childNode)->setParent($this)->init();
+					$childElement = (new Element())
+						->setDocument($this->document)
+						->setElement($childNode)
+						->setParent($this)
+						->init();
 					$this->addChild($childElement);
 				}
 			}
