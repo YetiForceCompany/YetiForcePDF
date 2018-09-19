@@ -42,11 +42,16 @@ class Element
 	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $children = [];
+	/**
+	 * PDF graphic / text stream instructions
+	 * @var string[]
+	 */
+	protected $instructions = [];
 
 	/**
 	 * Element constructor.
-	 * @param \YetiForcePDF\Document    $document
-	 * @param \DOMElement|\DOMText $element
+	 * @param \YetiForcePDF\Document $document
+	 * @param \DOMElement|\DOMText   $element
 	 */
 	public function __construct(\YetiForcePDF\Document $document, $element, Element $parent = null)
 	{
@@ -110,22 +115,12 @@ class Element
 		return $this;
 	}
 
-
-	public function parse()
+	/**
+	 * Get element PDF instructions to use in content stream
+	 * @return string
+	 */
+	public function getInstructions(): string
 	{
-		$textStream = new \YetiForcePDF\Objects\TextStream($this->document);
-		$text = '';
-		foreach ($this->children as $child) {
-			$childDomElement = $child->getDomElement();
-			if ($childDomElement instanceof \DOMText) {
-				$text .= $childDomElement->textContent;
-			}
-		}
-		$textStream->setFont($this->style->getFont());
-		$textStream->setText($text);
-		$textStream->setFontSize(12);
-		$textStream->setX(10);
-		$textStream->setY(10);
-		$this->document->getCurrentPage()->addContentStream($textStream);
+
 	}
 }

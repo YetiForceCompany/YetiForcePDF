@@ -41,7 +41,7 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	/**
 	 * StreamObject constructor.
 	 * @param \YetiForcePDF\Document $document
-	 * @param bool              $addToDocument
+	 * @param bool                   $addToDocument
 	 */
 	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
@@ -76,6 +76,20 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 */
 	public function render(): string
 	{
-		return '';
+		$this->content = [];
+		foreach ($this->elements as $element) {
+			$this->content[] = $element->getInstructions();
+		}
+		$stream = implode("\n", $this->content);
+		return implode("\n", [
+			$this->getRawId() . ' obj',
+			"<<",
+			"  /Length " . strlen($stream),
+			">>",
+			"stream",
+			$stream,
+			"endstream",
+			"endobj"
+		]);
 	}
 }
