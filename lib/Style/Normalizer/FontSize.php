@@ -21,8 +21,8 @@ class FontSize extends Normalizer
 	{
 		$matches = [];
 		preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-		$originalSize = $matches[1];
-		$originalUnit = $matches[2];
+		$originalSize = (float)$matches[1][0];
+		$originalUnit = $matches[2][0];
 		$normalized = ['font-size' => $this->document->convertUnits($originalUnit, $originalSize)];
 		return $normalized;
 	}

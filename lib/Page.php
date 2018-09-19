@@ -412,7 +412,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function init()
 	{
-		$this->contentStream = new \YetiForcePDF\Objects\Basic\StreamObject();
+		parent::init();
+		$this->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
+			->setDocument($this->document)
+			->init();
 		$this->document->getPagesObject()->addChild($this);
 		return $this;
 	}

@@ -54,7 +54,7 @@ class PdfObject extends \YetiForcePDF\Base
 
 	/**
 	 * Initialisation
-	 * @return \YetiForcePDF\Objects\PdfObject
+	 * @return $this
 	 */
 	public function init()
 	{
