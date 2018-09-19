@@ -1,5 +1,5 @@
 {
-  "name": "yetiforce/yetipdf",
+  "name": "yetiforce/yetiforcepdf",
   "description": "Library that generate pdf files from html.",
   "type": "library",
   "keywords": [
@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "YetiPDF\\": "lib/"
+      "YetiForcePDF\\": "lib/"
     }
   }
 }

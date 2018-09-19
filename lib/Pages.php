@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Page class
  *
- * @package   YetiPDF\Document
+ * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF;
+namespace YetiForcePDF;
 
 /**
  * Class Pages
  */
-class Pages extends \YetiPDF\Objects\Basic\DictionaryObject
+class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * {@inheritdoc}

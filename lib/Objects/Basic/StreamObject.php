@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * StreamObject class
  *
- * @package   YetiPDF\Objects\Basic
+ * @package   YetiForcePDF\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Objects\Basic;
+namespace YetiForcePDF\Objects\Basic;
 
 /**
  * Class StreamObject
  */
-class StreamObject extends \YetiPDF\Objects\PdfObject
+class StreamObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
 	 * Basic object type (integer, string, boolean, dictionary etc..)
@@ -29,7 +29,7 @@ class StreamObject extends \YetiPDF\Objects\PdfObject
 	protected $name = 'Stream';
 	/**
 	 * Elements from which we will create content
-	 * @var \YetiPDF\Html\Element[]
+	 * @var \YetiForcePDF\Html\Element[]
 	 */
 	protected $elements = [];
 	/**
@@ -40,10 +40,10 @@ class StreamObject extends \YetiPDF\Objects\PdfObject
 
 	/**
 	 * StreamObject constructor.
-	 * @param \YetiPDF\Document $document
+	 * @param \YetiForcePDF\Document $document
 	 * @param bool              $addToDocument
 	 */
-	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
 		$this->id = $document->getActualId();
 		parent::__construct($document, $addToDocument);
@@ -51,10 +51,10 @@ class StreamObject extends \YetiPDF\Objects\PdfObject
 
 	/**
 	 * Add html element
-	 * @param \YetiPDF\Html\Element $element
-	 * @return \YetiPDF\Objects\Basic\StreamObject
+	 * @param \YetiForcePDF\Html\Element $element
+	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function addElement(\YetiPDF\Html\Element $element): \YetiPDF\Objects\Basic\StreamObject
+	public function addElement(\YetiForcePDF\Html\Element $element): \YetiForcePDF\Objects\Basic\StreamObject
 	{
 		$this->elements[] = $element;
 		return $this;
@@ -63,9 +63,9 @@ class StreamObject extends \YetiPDF\Objects\PdfObject
 	/**
 	 * Add raw content instructions as string
 	 * @param string $content
-	 * @return \YetiPDF\Objects\Basic\StreamObject
+	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function addRawContent(string $content): \YetiPDF\Objects\Basic\StreamObject
+	public function addRawContent(string $content): \YetiForcePDF\Objects\Basic\StreamObject
 	{
 		$this->content[] = $content;
 		return $this;

@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Catalog class
  *
- * @package   YetiPDF\Document
+ * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF;
+namespace YetiForcePDF;
 
 /**
  * Class Catalog
  */
-class Catalog extends \YetiPDF\Objects\Basic\DictionaryObject
+class Catalog extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * {@inheritdoc}
@@ -28,7 +28,7 @@ class Catalog extends \YetiPDF\Objects\Basic\DictionaryObject
 	protected $name = 'Catalog';
 	/**
 	 * Children elements
-	 * @var \YetiPDF\Objects\PdfObject[]
+	 * @var \YetiForcePDF\Objects\PdfObject[]
 	 */
 	protected $children = [];
 

@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Parser class
  *
- * @package   YetiPDF\Html
+ * @package   YetiForcePDF\Html
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Html;
+namespace YetiForcePDF\Html;
 
 /**
  * Class Parser
@@ -18,7 +18,7 @@ namespace YetiPDF\Html;
 class Parser
 {
 	/**
-	 * @var \YetiPDF\Document
+	 * @var \YetiForcePDF\Document
 	 */
 	protected $document;
 	/**
@@ -30,15 +30,15 @@ class Parser
 	 */
 	protected $html = '';
 	/**
-	 * @var \YetiPDF\Html\Element
+	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $rootElement;
 
 	/**
 	 * HtmlParser constructor.
-	 * @param \YetiPDF\Document $document
+	 * @param \YetiForcePDF\Document $document
 	 */
-	public function __construct(\YetiPDF\Document $document)
+	public function __construct(\YetiForcePDF\Document $document)
 	{
 		$this->document = $document;
 	}
@@ -46,9 +46,9 @@ class Parser
 	/**
 	 * Load html string
 	 * @param string $html
-	 * @return \YetiPDF\Html\Parser
+	 * @return \YetiForcePDF\Html\Parser
 	 */
-	public function loadHtml(string $html): \YetiPDF\Html\Parser
+	public function loadHtml(string $html): \YetiForcePDF\Html\Parser
 	{
 		$this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
@@ -58,14 +58,14 @@ class Parser
 
 	/**
 	 * Convert loaded html to pdf objects
-	 * @return \YetiPDF\Html\Element|null
+	 * @return \YetiForcePDF\Html\Element|null
 	 */
 	public function parse()
 	{
 		if ($this->html === '') {
 			return null;
 		}
-		$this->rootElement = new \YetiPDF\Html\Element($this->document, $this->domDocument->documentElement);
+		$this->rootElement = new \YetiForcePDF\Html\Element($this->document, $this->domDocument->documentElement);
 		$this->rootElement->parse();
 		return $this->rootElement;
 	}

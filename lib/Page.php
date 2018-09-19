@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Page class
  *
- * @package   YetiPDF\Document
+ * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF;
+namespace YetiForcePDF;
 
 /**
  * Class Page
  */
-class Page extends \YetiPDF\Objects\Basic\DictionaryObject
+class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * {@inheritdoc}
@@ -28,12 +28,12 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	protected $name = 'Page';
 	/**
 	 * Page resources
-	 * @var \YetiPDF\Objects\Resource[]
+	 * @var \YetiForcePDF\Objects\Resource[]
 	 */
 	protected $resources = [];
 	/**
 	 * Page content streams
-	 * @var \YetiPDF\Objects\Basic\ArrayObject
+	 * @var \YetiForcePDF\Objects\Basic\ArrayObject
 	 */
 	protected $contentStreams;
 	/**
@@ -408,12 +408,12 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Page constructor.
-	 * @param \YetiPDF\Document $document
+	 * @param \YetiForcePDF\Document $document
 	 * @param bool              $addToDocument
 	 */
-	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
-		$this->contentStreams = new \YetiPDF\Objects\Basic\ArrayObject($document);
+		$this->contentStreams = new \YetiForcePDF\Objects\Basic\ArrayObject($document);
 		$document->getPagesObject()->addChild($this);
 		parent::__construct($document);
 	}
@@ -421,9 +421,9 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	/**
 	 * Set page format
 	 * @param string $format
-	 * @return \YetiPDF\Page
+	 * @return \YetiForcePDF\Page
 	 */
-	public function setFormat(string $format): \YetiPDF\Page
+	public function setFormat(string $format): \YetiForcePDF\Page
 	{
 		$this->format = $format;
 		return $this;
@@ -432,9 +432,9 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 	/**
 	 * Set page orientation
 	 * @param string $orientation
-	 * @return \YetiPDF\Page
+	 * @return \YetiForcePDF\Page
 	 */
-	public function setOrientation(string $orientation): \YetiPDF\Page
+	public function setOrientation(string $orientation): \YetiForcePDF\Page
 	{
 		$this->orientation = $orientation;
 		return $this;
@@ -442,10 +442,10 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Add page resource
-	 * @param \YetiPDF\Objects\PdfObject $resource
-	 * @return \YetiPDF\Page
+	 * @param \YetiForcePDF\Objects\PdfObject $resource
+	 * @return \YetiForcePDF\Page
 	 */
-	public function addResource(\YetiPDF\Objects\PdfObject $resource): \YetiPDF\Page
+	public function addResource(\YetiForcePDF\Objects\PdfObject $resource): \YetiForcePDF\Page
 	{
 		$this->resources[] = $resource;
 		return $this;
@@ -453,10 +453,10 @@ class Page extends \YetiPDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Add content stream
-	 * @param \YetiPDF\Objects\Basic\StreamObject $stream
-	 * @return \YetiPDF\Page
+	 * @param \YetiForcePDF\Objects\Basic\StreamObject $stream
+	 * @return \YetiForcePDF\Page
 	 */
-	public function addContentStream(\YetiPDF\Objects\Basic\StreamObject $stream): \YetiPDF\Page
+	public function addContentStream(\YetiForcePDF\Objects\Basic\StreamObject $stream): \YetiForcePDF\Page
 	{
 		$this->contentStreams->addItem($stream);
 		return $this;
