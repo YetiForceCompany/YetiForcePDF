@@ -67,7 +67,7 @@ class Parser extends \YetiForcePDF\Base
 		if ($this->html === '') {
 			return null;
 		}
-		$this->rootElement = new \YetiForcePDF\Html\Element($this->document, $this->domDocument->documentElement);
+		$this->rootElement = (new \YetiForcePDF\Html\Element())->setDocument($this->document)->setElement($this->domDocument->documentElement)->init();
 		foreach ($this->getAllElements($this->rootElement) as $element) {
 			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
 		}
