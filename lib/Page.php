@@ -28,7 +28,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $name = 'Page';
 	/**
 	 * Page resources
-	 * @var \YetiForcePDF\Objects\Resource[]
+	 * @var array
 	 */
 	protected $resources = [];
 	/**
@@ -442,12 +442,17 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Add page resource
+	 * @param string                          $groupName
+	 * @param string                          $resourceName
 	 * @param \YetiForcePDF\Objects\PdfObject $resource
 	 * @return \YetiForcePDF\Page
 	 */
-	public function addResource(\YetiForcePDF\Objects\PdfObject $resource): \YetiForcePDF\Page
+	public function addResource(string $groupName, string $resourceName, \YetiForcePDF\Objects\PdfObject $resource): \YetiForcePDF\Page
 	{
-		$this->resources[] = $resource;
+		if (!isset($this->resources[$groupName])) {
+			$this->resources[$groupName] = [];
+		}
+		$this->resources[$groupName][$resourceName] = $resource;
 		return $this;
 	}
 
@@ -466,12 +471,18 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function renderResources(): string
 	{
-		$rendered = '  /Resources <<';
-		$rendered .= "\n    /Resources{$this->id} [";
-		foreach ($this->resources as $resource) {
-			$rendered .= "\n      " . $resource->getReference();
+		$rendered = [
+			'  /Resources <<',
+		];
+		foreach ($this->resources as $groupName => $resourceGroup) {
+			$rendered[] = "    /$groupName <<";
+			foreach ($resourceGroup as $resourceName => $resourceObject) {
+				$rendered[] = "      /$resourceName " . $resourceObject->getReference();
+			}
+			$rendered[] = "    >>";
 		}
-		return $rendered . "\n    ]\n  >>";
+		$rendered[] = '  >>';
+		return implode("\n", $rendered);
 	}
 
 
