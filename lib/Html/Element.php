@@ -125,7 +125,11 @@ class Element extends \YetiForcePDF\Base
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		return new \YetiForcePDF\Style\Style($this->document, $this, $styleStr, $parentStyle);
+		return (new \YetiForcePDF\Style\Style())->setDocument($this->document)
+			->setElement($this)
+			->setContent($styleStr)
+			->setParent($parentStyle)
+			->init();
 	}
 
 	/**
@@ -163,6 +167,7 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function getInstructions(): string
 	{
+		$textContent = $this->getDOMElement()->textContent;
 		return '';
 	}
 }

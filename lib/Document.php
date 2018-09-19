@@ -253,7 +253,9 @@ class Document
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
 		$this->htmlParser->parse();
-		$trailer = new \YetiForcePDF\Objects\Trailer($this);
+		$trailer = (new \YetiForcePDF\Objects\Trailer())
+			->setDocument($this)
+			->init();
 		$trailer->setRootObject($this->catalog);
 		foreach ($this->objects as $object) {
 			if (in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer'])) {
@@ -263,6 +265,17 @@ class Document
 		$this->buffer .= $this->getDocumentFooter();
 		$this->removeObject($trailer);
 		return $this->buffer;
+	}
+
+	/**
+	 * Convert units from unit to pdf document units
+	 * @param string $unit
+	 * @param float  $size
+	 * @return float
+	 */
+	public function convertUnits(string $unit, float $size): float
+	{
+		return $size;
 	}
 
 }

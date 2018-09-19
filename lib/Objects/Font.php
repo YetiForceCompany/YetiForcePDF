@@ -37,6 +37,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var string
 	 */
 	protected $fontNumber = 'F1';
+	/**
+	 * Font size
+	 * @var float
+	 */
+	protected $size = 12;
 
 	/**
 	 * Initialisation
@@ -47,7 +52,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->fontNumber = 'F' . $this->document->getActualFontId();
 		parent::init();
 		foreach ($this->document->getObjects('Page') as $page) {
-			$page->addResource($this);
+			$page->addResource('Fonts', $this->getNumber(), $this);
 		}
 		return $this;
 	}
@@ -60,6 +65,28 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function setNumber(string $number): \YetiForcePDF\Objects\Font
 	{
 		$this->fontNumber = $number;
+		return $this;
+	}
+
+	/**
+	 * Set font name
+	 * @param string $base
+	 * @return $this
+	 */
+	public function setName(string $name)
+	{
+		$this->baseFont = $name;
+		return $this;
+	}
+
+	/**
+	 * Set Font size
+	 * @param float $size
+	 * @return $this
+	 */
+	public function setSize(float $size)
+	{
+		$this->size = $size;
 		return $this;
 	}
 
@@ -77,7 +104,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getReference(): string
 	{
-		return '/' . $this->fontNumber . ' ' . $this->getRawId() . ' R';
+		return $this->getRawId() . ' R';
 	}
 
 	/**
