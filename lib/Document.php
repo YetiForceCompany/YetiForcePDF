@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Document class
  *
- * @package   YetiPDF
+ * @package   YetiForcePDF
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF;
+namespace YetiForcePDF;
 
 /**
  * Class Document
@@ -30,17 +30,17 @@ class Document
 	protected $buffer = '';
 	/**
 	 * Main entry point - root element
-	 * @var \YetiPDF\Catalog $catalog
+	 * @var \YetiForcePDF\Catalog $catalog
 	 */
 	protected $catalog;
 	/**
 	 * Pages dictionary
-	 * @var \YetiPDF\Pages
+	 * @var \YetiForcePDF\Pages
 	 */
 	protected $pagesObject;
 	/**
 	 * Current page object
-	 * @var \YetiPDF\Page
+	 * @var \YetiForcePDF\Page
 	 */
 	protected $currentPageObject;
 	/**
@@ -53,11 +53,11 @@ class Document
 	protected $defaultOrientation;
 	/**
 	 * All objects inside document
-	 * @var \YetiPDF\Objects\PdfObject[]
+	 * @var \YetiForcePDF\Objects\PdfObject[]
 	 */
 	protected $objects = [];
 	/**
-	 * @var \YetiPDF\Html\Parser
+	 * @var \YetiForcePDF\Html\Parser
 	 */
 	protected $htmlParser;
 	/**
@@ -69,10 +69,10 @@ class Document
 	/**
 	 * Document constructor.
 	 */
-	public function __construct(string $defaultFormat = 'A4', string $defautlOrientation = \YetiPDF\Page::ORIENTATION_PORTRAIT)
+	public function __construct(string $defaultFormat = 'A4', string $defautlOrientation = \YetiForcePDF\Page::ORIENTATION_PORTRAIT)
 	{
-		$this->catalog = new \YetiPDF\Catalog($this);
-		$this->pagesObject = $this->catalog->addChild(new \YetiPDF\Pages($this));
+		$this->catalog = new \YetiForcePDF\Catalog($this);
+		$this->pagesObject = $this->catalog->addChild(new \YetiForcePDF\Pages($this));
 		$this->currentPageObject = $this->addPage($defaultFormat, $defautlOrientation);
 		$this->defaultFormat = $defaultFormat;
 		$this->defaultOrientation = $defautlOrientation;
@@ -98,9 +98,9 @@ class Document
 
 	/**
 	 * Get pages object
-	 * @return \YetiPDF\Pages
+	 * @return \YetiForcePDF\Pages
 	 */
-	public function getPagesObject(): \YetiPDF\Pages
+	public function getPagesObject(): \YetiForcePDF\Pages
 	{
 		return $this->pagesObject;
 	}
@@ -109,11 +109,11 @@ class Document
 	 * Add page to the document
 	 * @param string $format      - optional format 'A4' for example
 	 * @param string $orientation - optional orientation 'P' or 'L'
-	 * @return \YetiPDF\Page
+	 * @return \YetiForcePDF\Page
 	 */
-	public function addPage(string $format = '', string $orientation = ''): \YetiPDF\Page
+	public function addPage(string $format = '', string $orientation = ''): \YetiForcePDF\Page
 	{
-		$page = new \YetiPDF\Page($this);
+		$page = new \YetiForcePDF\Page($this);
 		if ($format === '') {
 			$format = $this->defaultFormat;
 		}
@@ -127,9 +127,9 @@ class Document
 
 	/**
 	 * Get current page
-	 * @return \YetiPDF\Page
+	 * @return \YetiForcePDF\Page
 	 */
-	public function getCurrentPage(): \YetiPDF\Page
+	public function getCurrentPage(): \YetiForcePDF\Page
 	{
 		return $this->currentPageObject;
 	}
@@ -154,10 +154,10 @@ class Document
 
 	/**
 	 * Add object to document
-	 * @param \YetiPDF\Objects\Basic\StreamObject $stream
-	 * @return \YetiPDF\Document
+	 * @param \YetiForcePDF\Objects\Basic\StreamObject $stream
+	 * @return \YetiForcePDF\Document
 	 */
-	public function addObject(\YetiPDF\Objects\PdfObject $object): \YetiPDF\Document
+	public function addObject(\YetiForcePDF\Objects\PdfObject $object): \YetiForcePDF\Document
 	{
 		$this->objects[] = $object;
 		return $this;
@@ -165,10 +165,10 @@ class Document
 
 	/**
 	 * Remove object from document
-	 * @param \YetiPDF\Objects\PdfObject $object
-	 * @return \YetiPDF\Document
+	 * @param \YetiForcePDF\Objects\PdfObject $object
+	 * @return \YetiForcePDF\Document
 	 */
-	public function removeObject(\YetiPDF\Objects\PdfObject $object): \YetiPDF\Document
+	public function removeObject(\YetiForcePDF\Objects\PdfObject $object): \YetiForcePDF\Document
 	{
 		$this->objects = array_filter($this->objects, function ($currentObject) use ($object) {
 			return $currentObject !== $object;
@@ -179,11 +179,11 @@ class Document
 	/**
 	 * Load html string
 	 * @param string $html
-	 * @return \YetiPDF\Document
+	 * @return \YetiForcePDF\Document
 	 */
-	public function loadHtml(string $html): \YetiPDF\Document
+	public function loadHtml(string $html): \YetiForcePDF\Document
 	{
-		$this->htmlParser = new \YetiPDF\Html\Parser($this);
+		$this->htmlParser = new \YetiForcePDF\Html\Parser($this);
 		$this->htmlParser->loadHtml($html);
 		return $this;
 	}
@@ -210,7 +210,7 @@ class Document
 	/**
 	 * Get objects
 	 * @param string $name - object name
-	 * @return \YetiPDF\Objects\PdfObject[]
+	 * @return \YetiForcePDF\Objects\PdfObject[]
 	 */
 	public function getObjects(string $name = ''): array
 	{
@@ -231,7 +231,7 @@ class Document
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
 		$this->htmlParser->parse();
-		$trailer = new \YetiPDF\Objects\Trailer($this);
+		$trailer = new \YetiForcePDF\Objects\Trailer($this);
 		$trailer->setRootObject($this->catalog);
 		foreach ($this->objects as $object) {
 			if (in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer'])) {
@@ -239,6 +239,7 @@ class Document
 			}
 		}
 		$this->buffer .= $this->getDocumentFooter();
+		$this->removeObject($trailer);
 		return $this->buffer;
 	}
 

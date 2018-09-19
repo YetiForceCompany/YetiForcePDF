@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Style class
  *
- * @package   YetiPDF\Html
+ * @package   YetiForcePDF\Html
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Html;
+namespace YetiForcePDF\Html;
 
 /**
  * Class Parser
@@ -18,7 +18,7 @@ namespace YetiPDF\Html;
 class Style
 {
 	/**
-	 * @var \YetiPDF\Document
+	 * @var \YetiForcePDF\Document
 	 */
 	protected $document;
 	/**
@@ -28,33 +28,33 @@ class Style
 	protected $content = null;
 	/**
 	 * Parent style if exists
-	 * @var null|\YetiPDF\Html\Style
+	 * @var null|\YetiForcePDF\Html\Style
 	 */
 	protected $parent = null;
 	/**
-	 * @var \YetiPDF\Objects\Font
+	 * @var \YetiForcePDF\Objects\Font
 	 */
 	protected $font;
 
 	/**
 	 * Style constructor.
-	 * @param \YetiPDF\Document        $document
+	 * @param \YetiForcePDF\Document        $document
 	 * @param string|null              $content
-	 * @param \YetiPDF\Html\Style|null $parent
+	 * @param \YetiForcePDF\Html\Style|null $parent
 	 */
-	public function __construct(\YetiPDF\Document $document, string $content = null, Style $parent = null)
+	public function __construct(\YetiForcePDF\Document $document, string $content = null, Style $parent = null)
 	{
 		$this->document = $document;
 		$this->content = $content;
 		$this->parent = $parent;
-		$this->font = new \YetiPDF\Objects\Font($document);
+		$this->font = new \YetiForcePDF\Objects\Font($document);
 	}
 
 	/**
 	 * Get current style font
-	 * @return \YetiPDF\Objects\Font
+	 * @return \YetiForcePDF\Objects\Font
 	 */
-	public function getFont(): \YetiPDF\Objects\Font
+	public function getFont(): \YetiForcePDF\Objects\Font
 	{
 		return $this->font;
 	}

@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Font class
  *
- * @package   YetiPDF\Objects
+ * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Objects;
+namespace YetiForcePDF\Objects;
 
 /**
  * Class Font
  */
-class Font extends \YetiPDF\Objects\Resource
+class Font extends \YetiForcePDF\Objects\Resource
 {
 	/**
 	 * Which type of dictionary (Page, Catalog, Font etc...)
@@ -40,10 +40,10 @@ class Font extends \YetiPDF\Objects\Resource
 
 	/**
 	 * Font constructor.
-	 * @param \YetiPDF\Document $document
+	 * @param \YetiForcePDF\Document $document
 	 * @param bool              $addToDocument
 	 */
-	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
 		$this->fontNumber = 'F' . $document->getActualFontId();
 		parent::__construct($document);
@@ -55,9 +55,9 @@ class Font extends \YetiPDF\Objects\Resource
 	/**
 	 * Set font number
 	 * @param string $number
-	 * @return \YetiPDF\Objects\Font
+	 * @return \YetiForcePDF\Objects\Font
 	 */
-	public function setNumber(string $number): \YetiPDF\Objects\Font
+	public function setNumber(string $number): \YetiForcePDF\Objects\Font
 	{
 		$this->fontNumber = $number;
 		return $this;

@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Element class
  *
- * @package   YetiPDF\Html
+ * @package   YetiForcePDF\Html
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Html;
+namespace YetiForcePDF\Html;
 
 /**
  * Class Element
@@ -23,7 +23,7 @@ class Element
 	 */
 	protected $name;
 	/**
-	 * @var \YetiPDF\Document
+	 * @var \YetiForcePDF\Document
 	 */
 	protected $document;
 	/**
@@ -31,24 +31,29 @@ class Element
 	 */
 	protected $domElement;
 	/**
-	 * @var \YetiPDF\Html\Style
+	 * @var \YetiForcePDF\Html\Style
 	 */
 	protected $style;
 	/**
-	 * @var null|\YetiPDF\Html\Element
+	 * @var null|\YetiForcePDF\Html\Element
 	 */
 	protected $parent;
 	/**
-	 * @var \YetiPDF\Html\Element
+	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $children = [];
+	/**
+	 * PDF graphic / text stream instructions
+	 * @var string[]
+	 */
+	protected $instructions = [];
 
 	/**
 	 * Element constructor.
-	 * @param \YetiPDF\Document    $document
-	 * @param \DOMElement|\DOMText $element
+	 * @param \YetiForcePDF\Document $document
+	 * @param \DOMElement|\DOMText   $element
 	 */
-	public function __construct(\YetiPDF\Document $document, $element, Element $parent = null)
+	public function __construct(\YetiForcePDF\Document $document, $element, Element $parent = null)
 	{
 		$this->document = $document;
 		$this->domElement = $element;
@@ -75,9 +80,9 @@ class Element
 
 	/**
 	 * Parse element style
-	 * @return \YetiPDF\Html\Style
+	 * @return \YetiForcePDF\Html\Style
 	 */
-	public function parseStyle(): \YetiPDF\Html\Style
+	public function parseStyle(): \YetiForcePDF\Html\Style
 	{
 		$styleStr = null;
 		$parentStyle = null;
@@ -87,45 +92,35 @@ class Element
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		return new \YetiPDF\Html\Style($this->document, $styleStr, $parentStyle);
+		return new \YetiForcePDF\Html\Style($this->document, $styleStr, $parentStyle);
 	}
 
 	/**
 	 * Get element style
-	 * @return \YetiPDF\Html\Style
+	 * @return \YetiForcePDF\Html\Style
 	 */
-	public function getStyle(): \YetiPDF\Html\Style
+	public function getStyle(): \YetiForcePDF\Html\Style
 	{
 		return $this->style;
 	}
 
 	/**
 	 * Add child element
-	 * @param \YetiPDF\Html\Element $child
-	 * @return \YetiPDF\Html\Element
+	 * @param \YetiForcePDF\Html\Element $child
+	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function addChild(\YetiPDF\Html\Element $child): \YetiPDF\Html\Element
+	public function addChild(\YetiForcePDF\Html\Element $child): \YetiForcePDF\Html\Element
 	{
 		$this->children[] = $child;
 		return $this;
 	}
 
-
-	public function parse()
+	/**
+	 * Get element PDF instructions to use in content stream
+	 * @return string
+	 */
+	public function getInstructions(): string
 	{
-		$textStream = new \YetiPDF\Objects\TextStream($this->document);
-		$text = '';
-		foreach ($this->children as $child) {
-			$childDomElement = $child->getDomElement();
-			if ($childDomElement instanceof \DOMText) {
-				$text .= $childDomElement->textContent;
-			}
-		}
-		$textStream->setFont($this->style->getFont());
-		$textStream->setText($text);
-		$textStream->setFontSize(12);
-		$textStream->setX(10);
-		$textStream->setY(10);
-		$this->document->getCurrentPage()->addContentStream($textStream);
+
 	}
 }

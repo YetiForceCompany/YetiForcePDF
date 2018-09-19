@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * PdfObject class
  *
- * @package   YetiPDF\Objects
+ * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Objects;
+namespace YetiForcePDF\Objects;
 
 /**
  * Class PdfObject
@@ -33,7 +33,7 @@ class PdfObject
 	 */
 	protected $id = 1;
 	/**
-	 * @var \YetiPDF\Document
+	 * @var \YetiForcePDF\Document
 	 */
 	protected $document;
 	/**
@@ -43,16 +43,16 @@ class PdfObject
 	protected $children = [];
 	/**
 	 * Parent object
-	 * @var \YetiPDF\Objects\PdfObject
+	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $parent;
 
 	/**
 	 * PdfObject constructor.
-	 * @param \YetiPDF\Document $document
+	 * @param \YetiForcePDF\Document $document
 	 * @param bool              $addToDocument
 	 */
-	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
 		$this->document = $document;
 		if ($addToDocument) {
@@ -114,11 +114,11 @@ class PdfObject
 
 	/**
 	 * Add child object
-	 * @param \YetiPDF\Objects\PdfObject $child
-	 * @return \YetiPDF\Objects\PdfObject
+	 * @param \YetiForcePDF\Objects\PdfObject $child
+	 * @return \YetiForcePDF\Objects\PdfObject
 	 * @throws \InvalidArgumentException
 	 */
-	public function addChild(\YetiPDF\Objects\PdfObject $child): \YetiPDF\Objects\PdfObject
+	public function addChild(\YetiForcePDF\Objects\PdfObject $child): \YetiForcePDF\Objects\PdfObject
 	{
 		if (in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
 			$child->setParent($this);
@@ -129,10 +129,10 @@ class PdfObject
 
 	/**
 	 * Set parent object
-	 * @param \YetiPDF\Objects\PdfObject $parent
-	 * @return \YetiPDF\Objects\PdfObject
+	 * @param \YetiForcePDF\Objects\PdfObject $parent
+	 * @return \YetiForcePDF\Objects\PdfObject
 	 */
-	public function setParent(\YetiPDF\Objects\PdfObject $parent): \YetiPDF\Objects\PdfObject
+	public function setParent(\YetiForcePDF\Objects\PdfObject $parent): \YetiForcePDF\Objects\PdfObject
 	{
 		$this->parent = $parent;
 		return $this;

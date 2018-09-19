@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Resource class
  *
- * @package   YetiPDF\Objects
+ * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Objects;
+namespace YetiForcePDF\Objects;
 
 /**
  * Class Resource
  */
-class Resource extends \YetiPDF\Objects\Basic\DictionaryObject
+class Resource extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * Resource type

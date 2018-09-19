@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * DictionaryObject class
  *
- * @package   YetiPDF\Objects\Basic
+ * @package   YetiForcePDF\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Objects\Basic;
+namespace YetiForcePDF\Objects\Basic;
 
 /**
  * Class DictionaryObject
  */
-class DictionaryObject extends \YetiPDF\Objects\PdfObject
+class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
 	 * Basic object type (integer, string, boolean, dictionary etc..)
@@ -35,10 +35,10 @@ class DictionaryObject extends \YetiPDF\Objects\PdfObject
 
 	/**
 	 * DictionaryObject constructor.
-	 * @param \YetiPDF\Document $document
+	 * @param \YetiForcePDF\Document $document
 	 * @param bool              $addToDocument
 	 */
-	public function __construct(\YetiPDF\Document $document, bool $addToDocument = true)
+	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
 	{
 		$this->id = $document->getActualId();
 		parent::__construct($document, $addToDocument);

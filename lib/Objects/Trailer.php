@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Trailer class
  *
- * @package   YetiPDF\Objects
+ * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiPDF\Objects;
+namespace YetiForcePDF\Objects;
 
 /**
  * Class Font
  */
-class Trailer extends \YetiPDF\Objects\PdfObject
+class Trailer extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
 	 * @var string
@@ -28,15 +28,15 @@ class Trailer extends \YetiPDF\Objects\PdfObject
 	protected $name = 'Trailer';
 	/**
 	 * Root element
-	 * @var \YetiPDF\Objects\PdfObject
+	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $root;
 
 	/**
 	 * Set root object
-	 * @param \YetiPDF\Objects\PdfObject $root
+	 * @param \YetiForcePDF\Objects\PdfObject $root
 	 */
-	public function setRootObject(\YetiPDF\Objects\PdfObject $root)
+	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root)
 	{
 		$this->root = $root;
 	}
