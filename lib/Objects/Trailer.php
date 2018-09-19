@@ -39,6 +39,7 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root)
 	{
 		$this->root = $root;
+		return $this;
 	}
 
 	/**

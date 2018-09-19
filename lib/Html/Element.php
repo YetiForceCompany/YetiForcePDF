@@ -64,8 +64,12 @@ class Element extends \YetiForcePDF\Base
 		$this->style = $this->parseStyle();
 		if ($this->domElement->hasChildNodes()) {
 			foreach ($this->domElement->childNodes as $childNode) {
-				$childElement = new Element($this->document, $childNode, $this);
-				$this->addChild($childElement);
+				if ($childNode instanceof \DOMText) {
+
+				} else {
+					$childElement = (new Element())->setDocument($this->document)->setElement($childNode)->setParent($this)->init();
+					$this->addChild($childElement);
+				}
 			}
 		}
 		return $this;
@@ -90,6 +94,7 @@ class Element extends \YetiForcePDF\Base
 	public function setParent(Element $parent)
 	{
 		$this->parent = $parent;
+		return $this;
 	}
 
 	/**
@@ -124,7 +129,12 @@ class Element extends \YetiForcePDF\Base
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		return new \YetiForcePDF\Style\Style($this->document, $this, $styleStr, $parentStyle);
+		return (new \YetiForcePDF\Style\Style())
+			->setDocument($this->document)
+			->setElement($this)
+			->setContent($styleStr)
+			->setParent($parentStyle)
+			->init();
 	}
 
 	/**
@@ -162,6 +172,15 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function getInstructions(): string
 	{
-		return '';
+		$textContent = $this->getDOMElement()->textContent;
+		$font = $this->style->getFont();
+		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
+		return implode("\n", [
+			'BT',
+			$fontStr,
+			'1 0 0 1 10 10 Tm',
+			"($textContent) Tj",
+			'ET'
+		]);
 	}
 }

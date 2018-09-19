@@ -52,6 +52,11 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
+		$this->font = (new \YetiForcePDF\Objects\Font())
+			->setDocument($this->document)
+			->setName($this->rules['font-family'])
+			->setSize($this->rules['font-size'])
+			->init();
 		return $this;
 	}
 
@@ -128,7 +133,7 @@ class Style extends \YetiForcePDF\Base
 				$ruleValue = trim($ruleExploded[1]);
 				$ucRuleName = str_replace('-', '', ucwords($ruleName, '-'));
 				$normalizerName = "YetiForcePDF\\Style\\Normalizer\\$ucRuleName";
-				$normalizer = new $normalizerName();
+				$normalizer = (new $normalizerName())->setDocument($this->document)->init();
 				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
 					$parsed[$name] = $value;
 				}

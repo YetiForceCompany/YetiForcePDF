@@ -37,6 +37,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var string
 	 */
 	protected $fontNumber = 'F1';
+	/**
+	 * Font size
+	 * @var float
+	 */
+	protected $size = 12;
 
 	/**
 	 * Initialisation
@@ -47,7 +52,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->fontNumber = 'F' . $this->document->getActualFontId();
 		parent::init();
 		foreach ($this->document->getObjects('Page') as $page) {
-			$page->addResource($this);
+			$page->addResource('Font', $this->getNumber(), $this);
 		}
 		return $this;
 	}
@@ -64,6 +69,28 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Set font name
+	 * @param string $base
+	 * @return $this
+	 */
+	public function setName(string $name)
+	{
+		$this->baseFont = $name;
+		return $this;
+	}
+
+	/**
+	 * Set Font size
+	 * @param float $size
+	 * @return $this
+	 */
+	public function setSize(float $size)
+	{
+		$this->size = $size;
+		return $this;
+	}
+
+	/**
 	 * Get font number
 	 * @return string
 	 */
@@ -73,11 +100,20 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Get font size
+	 * @return float
+	 */
+	public function getSize(): float
+	{
+		return $this->size;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function getReference(): string
 	{
-		return '/' . $this->fontNumber . ' ' . $this->getRawId() . ' R';
+		return $this->getRawId() . ' R';
 	}
 
 	/**
@@ -88,7 +124,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
 			"  /Type /Font",
-			"  /Subtype /TrueType",
+			"  /Subtype /Type1",
 			"  /BaseFont /" . $this->baseFont,
 			">>",
 			"endobj"]);
