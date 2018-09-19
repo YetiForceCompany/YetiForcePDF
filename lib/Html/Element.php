@@ -52,6 +52,16 @@ class Element extends \YetiForcePDF\Base
 	 * @var string[]
 	 */
 	protected $instructions = [];
+	/**
+	 * Element X position
+	 * @var float
+	 */
+	protected $x = 0.0;
+	/**
+	 * Element Y position
+	 * @var float
+	 */
+	protected $y = 0.0;
 
 	/**
 	 * Initialisation
@@ -67,7 +77,11 @@ class Element extends \YetiForcePDF\Base
 				if ($childNode instanceof \DOMText) {
 
 				} else {
-					$childElement = (new Element())->setDocument($this->document)->setElement($childNode)->setParent($this)->init();
+					$childElement = (new Element())
+						->setDocument($this->document)
+						->setElement($childNode)
+						->setParent($this)
+						->init();
 					$this->addChild($childElement);
 				}
 			}
@@ -167,6 +181,16 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Calculate element position
+	 */
+	public function calculatePosition()
+	{
+		$rules = $this->style->getRules();
+		$this->x = $rules['margin-left'];
+		$this->y = $rules['margin-bottom'];
+	}
+
+	/**
 	 * Get element PDF instructions to use in content stream
 	 * @return string
 	 */
@@ -175,10 +199,11 @@ class Element extends \YetiForcePDF\Base
 		$textContent = $this->getDOMElement()->textContent;
 		$font = $this->style->getFont();
 		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
+		$this->calculatePosition();
 		return implode("\n", [
 			'BT',
 			$fontStr,
-			'1 0 0 1 10 10 Tm',
+			"1 0 0 1 {$this->x} {$this->y} Tm",
 			"($textContent) Tj",
 			'ET'
 		]);
