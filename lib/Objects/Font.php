@@ -39,17 +39,17 @@ class Font extends \YetiForcePDF\Objects\Resource
 	protected $fontNumber = 'F1';
 
 	/**
-	 * Font constructor.
-	 * @param \YetiForcePDF\Document $document
-	 * @param bool              $addToDocument
+	 * Initialisation
+	 * @return $this
 	 */
-	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
+	public function init()
 	{
-		$this->fontNumber = 'F' . $document->getActualFontId();
-		parent::__construct($document);
-		foreach ($document->getObjects('Page') as $page) {
+		$this->fontNumber = 'F' . $this->document->getActualFontId();
+		parent::init();
+		foreach ($this->document->getObjects('Page') as $page) {
 			$page->addResource($this);
 		}
+		return $this;
 	}
 
 	/**

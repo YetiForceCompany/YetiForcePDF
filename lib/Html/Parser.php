@@ -12,15 +12,12 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
+
 /**
  * Class Parser
  */
-class Parser
+class Parser extends \YetiForcePDF\Base
 {
-	/**
-	 * @var \YetiForcePDF\Document
-	 */
-	protected $document;
 	/**
 	 * @var \DOMDocument
 	 */
@@ -33,15 +30,6 @@ class Parser
 	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $rootElement;
-
-	/**
-	 * HtmlParser constructor.
-	 * @param \YetiForcePDF\Document $document
-	 */
-	public function __construct(\YetiForcePDF\Document $document)
-	{
-		$this->document = $document;
-	}
 
 	/**
 	 * Load html string
@@ -57,8 +45,22 @@ class Parser
 	}
 
 	/**
+	 * Get all elements as a flat array
+	 * @param \YetiForcePDF\Html\Element $currentNode
+	 * @param array                      $currentResult
+	 * @return \YetiForcePDF\Html\Element[]
+	 */
+	protected function getAllElements(\YetiForcePDF\Html\Element $currentNode, array &$currentResult = []): array
+	{
+		$currentResult[] = $currentNode;
+		foreach ($currentNode->getChildren() as $child) {
+			$this->getAllElements($child, $currentResult);
+		}
+		return $currentResult;
+	}
+
+	/**
 	 * Convert loaded html to pdf objects
-	 * @return \YetiForcePDF\Html\Element|null
 	 */
 	public function parse()
 	{
@@ -66,8 +68,9 @@ class Parser
 			return null;
 		}
 		$this->rootElement = new \YetiForcePDF\Html\Element($this->document, $this->domDocument->documentElement);
-		$this->rootElement->parse();
-		return $this->rootElement;
+		foreach ($this->getAllElements($this->rootElement) as $element) {
+			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
+		}
 	}
 
 }

@@ -46,11 +46,11 @@ class Document
 	/**
 	 * @var string default page format
 	 */
-	protected $defaultFormat;
+	protected $defaultFormat = 'A4';
 	/**
 	 * @var string default page orientation
 	 */
-	protected $defaultOrientation;
+	protected $defaultOrientation = \YetiForcePDF\Page::ORIENTATION_PORTRAIT;
 	/**
 	 * All objects inside document
 	 * @var \YetiForcePDF\Objects\PdfObject[]
@@ -67,15 +67,37 @@ class Document
 	protected $actualFontId = 0;
 
 	/**
-	 * Document constructor.
+	 * Initialisation
+	 * @return $this
 	 */
-	public function __construct(string $defaultFormat = 'A4', string $defautlOrientation = \YetiForcePDF\Page::ORIENTATION_PORTRAIT)
+	public function init()
 	{
-		$this->catalog = new \YetiForcePDF\Catalog($this);
-		$this->pagesObject = $this->catalog->addChild(new \YetiForcePDF\Pages($this));
-		$this->currentPageObject = $this->addPage($defaultFormat, $defautlOrientation);
+		$this->catalog = (new \YetiForcePDF\Catalog())->setDocument($this)->init();
+		$this->pagesObject = $this->catalog->addChild((new \YetiForcePDF\Pages())->setDocument($this)->init());
+		$this->currentPageObject = $this->addPage($this->defaultFormat, $this->defaultOrientation);
+		return $this;
+	}
+
+	/**
+	 * Set default page format
+	 * @param string $defaultFormat
+	 * @return $this
+	 */
+	public function setDefaultFormat(string $defaultFormat)
+	{
 		$this->defaultFormat = $defaultFormat;
-		$this->defaultOrientation = $defautlOrientation;
+		return $this;
+	}
+
+	/**
+	 * Set default page orientation
+	 * @param string $defaultOrientation
+	 * @return $this
+	 */
+	public function setDefaultOrientation(string $defaultOrientation)
+	{
+		$this->defaultOrientation = $defaultOrientation;
+		return $this;
 	}
 
 	/**
@@ -113,7 +135,7 @@ class Document
 	 */
 	public function addPage(string $format = '', string $orientation = ''): \YetiForcePDF\Page
 	{
-		$page = new \YetiForcePDF\Page($this);
+		$page = (new \YetiForcePDF\Page())->setDocument($this)->init();
 		if ($format === '') {
 			$format = $this->defaultFormat;
 		}
@@ -183,7 +205,7 @@ class Document
 	 */
 	public function loadHtml(string $html): \YetiForcePDF\Document
 	{
-		$this->htmlParser = new \YetiForcePDF\Html\Parser($this);
+		$this->htmlParser = (new \YetiForcePDF\Html\Parser())->setDocument($this)->init();
 		$this->htmlParser->loadHtml($html);
 		return $this;
 	}

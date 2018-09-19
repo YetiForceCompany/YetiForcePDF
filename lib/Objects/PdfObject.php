@@ -15,7 +15,7 @@ namespace YetiForcePDF\Objects;
 /**
  * Class PdfObject
  */
-class PdfObject
+class PdfObject extends \YetiForcePDF\Base
 {
 	/**
 	 * Basic object type (integer, string, boolean, dictionary etc..)
@@ -33,6 +33,11 @@ class PdfObject
 	 */
 	protected $id = 1;
 	/**
+	 * Add object to document objects?
+	 * @var bool
+	 */
+	protected $addToDocument = true;
+	/**
 	 * @var \YetiForcePDF\Document
 	 */
 	protected $document;
@@ -48,16 +53,26 @@ class PdfObject
 	protected $parent;
 
 	/**
-	 * PdfObject constructor.
-	 * @param \YetiForcePDF\Document $document
-	 * @param bool              $addToDocument
+	 * Initialisation
+	 * @return \YetiForcePDF\Objects\PdfObject
 	 */
-	public function __construct(\YetiForcePDF\Document $document, bool $addToDocument = true)
+	public function init()
 	{
-		$this->document = $document;
-		if ($addToDocument) {
+		if ($this->addToDocument) {
 			$this->document->addObject($this);
 		}
+		return $this;
+	}
+
+	/**
+	 * Set addToDocument variable
+	 * @param bool $addToDocument
+	 * @return $this
+	 */
+	public function setAddToDocument(bool $addToDocument = true)
+	{
+		$this->addToDocument = $addToDocument;
+		return $this;
 	}
 
 	/**
