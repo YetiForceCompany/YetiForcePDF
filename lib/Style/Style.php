@@ -36,6 +36,14 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $parent = null;
 	/**
+	 * @var \YetiForcePDF\Style\Style
+	 */
+	protected $previous;
+	/**
+	 * @var \YetiForcePDF\Style\Style
+	 */
+	protected $next;
+	/**
 	 * @var \YetiForcePDF\Objects\Font
 	 */
 	protected $font;
@@ -225,6 +233,37 @@ class Style extends \YetiForcePDF\Base
 	public function getParent()
 	{
 		return $this->parent;
+	}
+
+	/**
+	 * Get previous element style
+	 * @return \YetiForcePDF\Style\Style
+	 */
+	public function getPrevious()
+	{
+		if ($previous = $this->element->getPrevious()) {
+			return $previous->getStyle();
+		}
+	}
+
+	/**
+	 * Get next element style
+	 * @return \YetiForcePDF\Style\Style
+	 */
+	public function getNext()
+	{
+		if ($next = $this->element->getNext()) {
+			return $next->getStyle();
+		}
+	}
+
+	/**
+	 * Get dimensions
+	 * @return \YetiForcePDF\Style\Dimensions\Element
+	 */
+	public function getDimensions()
+	{
+		return $this->dimensions;
 	}
 
 	/**

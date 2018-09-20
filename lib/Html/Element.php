@@ -137,6 +137,15 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get parent element
+	 * @return null|\YetiForcePDF\Html\Element
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
 	 * Set previous sibling element
 	 * @param \YetiForcePDF\Html\Element $previous
 	 * @return $this
@@ -149,9 +158,9 @@ class Element extends \YetiForcePDF\Base
 
 	/**
 	 * Get previous sibling element
-	 * @return \YetiForcePDF\Html\Element
+	 * @return \YetiForcePDF\Html\Element|null
 	 */
-	public function getPrevious(): Element
+	public function getPrevious()
 	{
 		return $this->previous;
 	}
@@ -169,9 +178,9 @@ class Element extends \YetiForcePDF\Base
 
 	/**
 	 * Get next sibling element
-	 * @return \YetiForcePDF\Html\Element
+	 * @return \YetiForcePDF\Html\Element|null
 	 */
-	public function getNext(): Element
+	public function getNext()
 	{
 		return $this->next;
 	}
@@ -286,16 +295,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Calculate element position
-	 */
-	public function calculatePosition()
-	{
-		$coordinates = $this->style->getCoordinates();
-		$this->x = $coordinates->getAbsolutePdfX();
-		$this->y = $coordinates->getAbsolutePdfY();
-	}
-
-	/**
 	 * Get element PDF instructions to use in content stream
 	 * @return string
 	 */
@@ -303,14 +302,16 @@ class Element extends \YetiForcePDF\Base
 	{
 		$font = $this->style->getFont();
 		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
-		$this->calculatePosition();
+		$coordinates = $this->style->getCoordinates();
+		$x = $coordinates->getAbsolutePdfX();
+		$y = $coordinates->getAbsolutePdfY();
 		$element = [];
 		if ($this->isTextNode()) {
 			$textContent = $this->getDOMElement()->textContent;
 			$element = [
 				'BT',
 				$fontStr,
-				"1 0 0 1 {$this->x} {$this->y} Tm",
+				"1 0 0 1 {$x} {$y} Tm",
 				"($textContent) Tj",
 				'ET'
 			];

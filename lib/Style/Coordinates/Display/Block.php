@@ -24,25 +24,37 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 	public function calculate()
 	{
 		$style = $this->style;
-		$rules = $this->style->getRules();
+		$rules = $style->getRules();
 		$htmlX = 0;
 		$htmlY = 0;
-		$htmlX += $rules['margin-left'];
-		$htmlY += $rules['margin-top'];
-		if ($rules['box-sizing'] === 'content-box') {
-			$htmlX += $rules['border-left-width'];
-			$htmlY += $rules['border-top-width'];
-		}
 		if ($parent = $style->getParent()) {
 			$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
 			$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
 			$htmlX += $parent->getRules()['padding-left'];
 			$htmlY += $parent->getRules()['padding-top'];
-			// TODO calculate left sibling elements and add to X basing on display property (block, inline) etc..
+		}
+		if ($previous = $style->getPrevious()) {
+			$htmlY += $previous->getDimensions()->getHeight() + max($rules['margin-top'], $previous->getRules()['margin-bottom']);
+		}
+		$htmlX += $rules['margin-left'];
+		if ($rules['box-sizing'] === 'border-box') {
+			$htmlX += $rules['border-left-width'];
+			$htmlY += $rules['border-top-width'];
 		}
 		$this->absoluteHtmlX = $htmlX;
 		$this->absoluteHtmlY = $htmlY;
 		$this->convertHtmlToPdf();
+	}
+
+	/**
+	 * Initialisation
+	 * @return $this
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->calculate();
+		return $this;
 	}
 
 }

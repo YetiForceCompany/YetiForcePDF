@@ -153,8 +153,10 @@ class Coordinates extends \YetiForcePDF\Base
 	protected function convertHtmlToPdf()
 	{
 		$this->absolutePdfX = $this->absoluteHtmlX;
-		$height = $this->style->getHeight();
-		$this->absolutePdfY = $this->document->getCurrentPage()->getPageDimensions()['y'] - $this->absoluteHtmlY - $height;
+		$height = $this->style->getDimensions()->getHeight();
+		//var_dump($this->style->getElement()->getDOMElement(), $height);
+		$page = $this->document->getCurrentPage();
+		$this->absolutePdfY = $page->getPageDimensions()->getHeight() - $this->absoluteHtmlY - $height;
 	}
 
 

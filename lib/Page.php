@@ -69,6 +69,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @var \YetiForcePDF\Style\Dimensions\Element
 	 */
 	protected $dimensions;
+	/**
+	 * @var \YetiForcePDF\Style\Coordinates\Coordinates
+	 */
+	protected $coordinates;
 
 	public static $pageFormats = [
 		// ISO 216 A Series + 2 SIS 014711 extensions
@@ -462,6 +466,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->dimensions->setWidth($dimensions[0])->setHeight($dimensions[1]);
 		$this->dimensions->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right']);
 		$this->dimensions->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
+		$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
+			->setDocument($this->document)
+			->setAbsoluteHtmlX($this->margins['left'])->setAbsolutePdfX($this->margins['left'])
+			->setAbsoluteHtmlY($this->margins['top'])->setAbsolutePdfY($this->margins['top'])
+			->init();
 		return $this;
 	}
 
@@ -504,6 +513,15 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'vertical' => $top + $bottom
 		];
 		return $this;
+	}
+
+	/**
+	 * Get page coordinates - content area basing on margins
+	 * @return \YetiForcePDF\Style\Coordinates\Coordinates
+	 */
+	public function getCoordinates()
+	{
+		return $this->coordinates;
 	}
 
 	/**

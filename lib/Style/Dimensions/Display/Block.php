@@ -24,7 +24,10 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	 */
 	public function calculateTextDimensions()
 	{
-		// TODO calculate text dimensions after we implement font characters bbox'es
+		// FIXME for now we are using parent dimensions but when we know font height we will calculate it, we should start from bottom to up with dimensions
+		$parentDimensions = $this->style->getParent()->getDimensions();
+		$this->setWidth($parentDimensions->getWidth());
+		$this->setHeight($parentDimensions->getHeight());
 		return $this;
 	}
 
