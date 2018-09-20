@@ -44,6 +44,10 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $coordinates;
 	/**
+	 * @var \YetiForcePDF\Style\Dimensions
+	 */
+	protected $dimensions;
+	/**
 	 * Css properties that are iherited by default
 	 * @var array
 	 */
@@ -114,7 +118,9 @@ class Style extends \YetiForcePDF\Base
 		'border-right-width' => 0,
 		'border-bottom-width' => 0,
 		'box-sizing' => 'border-box',
-		'display' => 'block'
+		'display' => 'block',
+		'width' => 'auto',
+		'height' => 'auto',
 	];
 	/**
 	 * Css rules
@@ -137,7 +143,9 @@ class Style extends \YetiForcePDF\Base
 		'border-right-width' => 0,
 		'border-bottom-width' => 0,
 		'box-sizing' => 'border-box',
-		'display' => 'block'
+		'display' => 'block',
+		'width' => 'auto',
+		'height' => 'auto',
 	];
 
 	/**
@@ -147,6 +155,11 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
+		$this->dimensions = (new \YetiForcePDF\Style\ElementDimensions())
+			->setDocument($this->document)
+			->setElement($this->element)
+			->setStyle($this)
+			->init();
 		$this->coordinates = (new \YetiForcePDF\Style\Coordinates())
 			->setDocument($this->document)
 			->setStyle($this)
@@ -168,6 +181,15 @@ class Style extends \YetiForcePDF\Base
 	{
 		$this->element = $element;
 		return $this;
+	}
+
+	/**
+	 * Get element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function getElement(): \YetiForcePDF\Html\Element
+	{
+		return $this->element;
 	}
 
 	/**

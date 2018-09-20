@@ -148,6 +148,16 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Convert html coordinates to pdf
+	 */
+	protected function convertHtmlToPdf()
+	{
+		$this->absolutePdfX = $this->absoluteHtmlX;
+		$height = $this->style->getHeight();
+		$this->absolutePdfY = $this->document->getCurrentPage()->getPageDimensions()['y'] - $this->absoluteHtmlY - $height;
+	}
+
+	/**
 	 * Calculate coordinates
 	 */
 	public function calculate()
@@ -156,8 +166,6 @@ class Coordinates extends \YetiForcePDF\Base
 		$rules = $this->style->getRules();
 		$htmlX = 0;
 		$htmlY = 0;
-		$pdfX = 0;
-		$pdfY = 0;
 		$htmlX += $rules['margin-left'];
 		$htmlY += $rules['margin-top'];
 		if ($rules['box-sizing'] === 'content-box') {
@@ -173,8 +181,7 @@ class Coordinates extends \YetiForcePDF\Base
 		}
 		$this->absoluteHtmlX = $htmlX;
 		$this->absoluteHtmlY = $htmlY;
-		$this->absolutePdfX = $pdfX;
-		$this->absolutePdfY = $pdfY;
+		$this->convertHtmlToPdf();
 	}
 
 	/**
