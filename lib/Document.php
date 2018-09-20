@@ -256,7 +256,7 @@ class Document
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)
 			->init();
-		$trailer->setRootObject($this->catalog);
+		$trailer->setRootObject($this->catalog)->setSize(count($this->objects) - 1);
 		foreach ($this->objects as $object) {
 			if (in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer'])) {
 				$this->buffer .= $object->render() . "\n";

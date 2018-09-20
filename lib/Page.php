@@ -59,6 +59,16 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @var float
 	 */
 	protected $userUnit = 1.0;
+	/**
+	 * Page margins
+	 * @var array
+	 */
+	protected $margins = [
+		'left' => 0,
+		'top' => 0,
+		'right' => 0,
+		'bottom' => 0
+	];
 
 	public static $pageFormats = [
 		// ISO 216 A Series + 2 SIS 014711 extensions

@@ -31,14 +31,30 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $root;
+	/**
+	 * Number of objects in the document
+	 * @var int
+	 */
+	protected $size = 0;
 
 	/**
 	 * Set root object
 	 * @param \YetiForcePDF\Objects\PdfObject $root
 	 */
-	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root)
+	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root): \YetiForcePDF\Objects\Trailer
 	{
 		$this->root = $root;
+		return $this;
+	}
+
+	/**
+	 * Set document size - number of objects
+	 * @param int $size
+	 * @return \YetiForcePDF\Objects\Trailer
+	 */
+	public function setSize(int $size): \YetiForcePDF\Objects\Trailer
+	{
+		$this->size = $size;
 		return $this;
 	}
 
@@ -47,6 +63,12 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 */
 	public function render(): string
 	{
-		return "trailer\n<< /Root " . $this->root->getReference() . " >>\n";
+		return implode("\n", [
+			'trailer',
+			'<<',
+			'  /Root ' . $this->root->getReference(),
+			'  /Size ' . $this->size,
+			'>>'
+		]);
 	}
 }
