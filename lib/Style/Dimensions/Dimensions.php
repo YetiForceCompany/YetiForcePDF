@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Dimensions class
  *
- * @package   YetiForcePDF\Style
+ * @package   YetiForcePDF\Style\Dimensions
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Style;
+namespace YetiForcePDF\Style\Dimensions;
 
 /**
  * Class Dimensions
@@ -47,9 +47,9 @@ class Dimensions extends \YetiForcePDF\Base
 	/**
 	 * Set width
 	 * @param float $width
-	 * @return \YetiForcePDF\Style\Dimensions
+	 * @return $this
 	 */
-	public function setWidth(float $width): Dimensions
+	public function setWidth(float $width)
 	{
 		$this->width = $width;
 		return $this;
@@ -58,9 +58,9 @@ class Dimensions extends \YetiForcePDF\Base
 	/**
 	 * Set height
 	 * @param float $height
-	 * @return \YetiForcePDF\Style\Dimensions
+	 * @return $this
 	 */
-	public function setHeight(float $height): Dimensions
+	public function setHeight(float $height)
 	{
 		$this->height = $height;
 		return $this;

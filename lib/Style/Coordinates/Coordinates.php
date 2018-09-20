@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Coordinates class
  *
- * @package   YetiForcePDF\Style
+ * @package   YetiForcePDF\Style\Coordinates
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Style;
+namespace YetiForcePDF\Style\Coordinates;
 
 /**
  * Class Coordinates
@@ -157,42 +157,5 @@ class Coordinates extends \YetiForcePDF\Base
 		$this->absolutePdfY = $this->document->getCurrentPage()->getPageDimensions()['y'] - $this->absoluteHtmlY - $height;
 	}
 
-	/**
-	 * Calculate coordinates
-	 */
-	public function calculate()
-	{
-		$style = $this->style;
-		$rules = $this->style->getRules();
-		$htmlX = 0;
-		$htmlY = 0;
-		$htmlX += $rules['margin-left'];
-		$htmlY += $rules['margin-top'];
-		if ($rules['box-sizing'] === 'content-box') {
-			$htmlX += $rules['border-left-width'];
-			$htmlY += $rules['border-top-width'];
-		}
-		if ($parent = $style->getParent()) {
-			$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
-			$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
-			$htmlX += $parent->getRules()['padding-left'];
-			$htmlY += $parent->getRules()['padding-top'];
-			// TODO calculate left sibling elements and add to X basing on display property (block, inline) etc..
-		}
-		$this->absoluteHtmlX = $htmlX;
-		$this->absoluteHtmlY = $htmlY;
-		$this->convertHtmlToPdf();
-	}
-
-	/**
-	 * Initialisation
-	 * @return $this
-	 */
-	public function init()
-	{
-		parent::init();
-		$this->calculate();
-		return $this;
-	}
 
 }

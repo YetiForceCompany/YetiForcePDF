@@ -40,11 +40,11 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $font;
 	/**
-	 * @var \YetiForcePDF\Style\Coordinates
+	 * @var \YetiForcePDF\Style\Coordinates\Coordinates
 	 */
 	protected $coordinates;
 	/**
-	 * @var \YetiForcePDF\Style\Dimensions
+	 * @var \YetiForcePDF\Style\Dimensions\Element
 	 */
 	protected $dimensions;
 	/**
@@ -121,6 +121,7 @@ class Style extends \YetiForcePDF\Base
 		'display' => 'block',
 		'width' => 'auto',
 		'height' => 'auto',
+		'overflow' => 'visible',
 	];
 	/**
 	 * Css rules
@@ -146,6 +147,7 @@ class Style extends \YetiForcePDF\Base
 		'display' => 'block',
 		'width' => 'auto',
 		'height' => 'auto',
+		'overflow' => 'visible',
 	];
 
 	/**
@@ -155,12 +157,14 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
-		$this->dimensions = (new \YetiForcePDF\Style\ElementDimensions())
+		$display = ucfirst($this->rules['display']);
+		$dimensionsClassName = "\\YetiForcePDF\\Style\\Dimensions\\Display\\$display";
+		$this->dimensions = (new $dimensionsClassName())
 			->setDocument($this->document)
-			->setElement($this->element)
 			->setStyle($this)
 			->init();
-		$this->coordinates = (new \YetiForcePDF\Style\Coordinates())
+		$coordinatesClassName = "\\YetiForcePDF\\Style\\Coordinates\\Display\\$display";
+		$this->coordinates = (new $coordinatesClassName())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
@@ -234,9 +238,9 @@ class Style extends \YetiForcePDF\Base
 
 	/**
 	 * Get coordinates
-	 * @return \YetiForcePDF\Style\Coordinates
+	 * @return \YetiForcePDF\Style\Coordinates\Coordinates
 	 */
-	public function getCoordinates(): \YetiForcePDF\Style\Coordinates
+	public function getCoordinates(): \YetiForcePDF\Style\Coordinates\Coordinates
 	{
 		return $this->coordinates;
 	}

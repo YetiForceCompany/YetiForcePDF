@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 /**
- * ElementDimensions class
+ * Element class
  *
- * @package   YetiForcePDF\Style
+ * @package   YetiForcePDF\Style\Dimensions
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Style;
+namespace YetiForcePDF\Style\Dimensions;
 
 /**
- * Class ElementDimensions
+ * Class Element
  */
-class ElementDimensions extends \YetiForcePDF\Style\Dimensions
+class Element extends Dimensions
 {
 
 	/**
@@ -94,35 +94,5 @@ class ElementDimensions extends \YetiForcePDF\Style\Dimensions
 		return $this;
 	}
 
-	/**
-	 * Calculate text dimensions
-	 * @return $this
-	 */
-	public function calculateTextDimensions()
-	{
-		return $this;
-	}
 
-	/**
-	 * Calculate element dimensions
-	 * @return $this
-	 */
-	public function calculateElementDimensions()
-	{
-		return $this;
-	}
-
-	/**
-	 * Calculate dimensions
-	 * @return $this
-	 */
-	public function calculate()
-	{
-		if ($this->style->getElement()->isTextNode()) {
-			$this->calculateTextDimensions();
-		} else {
-			$this->calculateElementDimensions();
-		}
-		return $this;
-	}
 }
