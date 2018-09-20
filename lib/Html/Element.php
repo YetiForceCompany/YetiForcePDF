@@ -58,6 +58,14 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $children = [];
 	/**
+	 * @var \YetiForcePDF\Html\Element
+	 */
+	protected $previous;
+	/**
+	 * @var \YetiForcePDF\Html\Element
+	 */
+	protected $next;
+	/**
 	 * PDF graphic / text stream instructions
 	 * @var string[]
 	 */
@@ -83,14 +91,23 @@ class Element extends \YetiForcePDF\Base
 		$this->name = $this->domElement->tagName;
 		$this->style = $this->parseStyle();
 		if ($this->domElement->hasChildNodes()) {
-			foreach ($this->domElement->childNodes as $childNode) {
-				$childElement = (new Element())
+			$children = [];
+			foreach ($this->domElement->childNodes as $index => $childNode) {
+				$childElement = $children[] = (new Element())
 					->setDocument($this->document)
 					->setElement($childNode)
 					->setParent($this)
-					->setTextNode($childNode instanceof \DOMText)
-					->init();
+					->setTextNode($childNode instanceof \DOMText);
 				$this->addChild($childElement);
+			}
+			foreach ($children as $index => $child) {
+				if ($index > 0) {
+					$child->setPrevious($children[$index - 1]);
+				}
+				if ($index + 1 < count($children) - 1) {
+					$child->setNext($children[$index + 2]);
+				}
+				$child->init();
 			}
 		}
 		return $this;
@@ -117,6 +134,46 @@ class Element extends \YetiForcePDF\Base
 	{
 		$this->parent = $parent;
 		return $this;
+	}
+
+	/**
+	 * Set previous sibling element
+	 * @param \YetiForcePDF\Html\Element $previous
+	 * @return $this
+	 */
+	public function setPrevious(Element $previous)
+	{
+		$this->previous = $previous;
+		return $this;
+	}
+
+	/**
+	 * Get previous sibling element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function getPrevious(): Element
+	{
+		return $this->previous;
+	}
+
+	/**
+	 * Set next sibling element
+	 * @param \YetiForcePDF\Html\Element $next
+	 * @return $this
+	 */
+	public function setNext(Element $next)
+	{
+		$this->next = $next;
+		return $this;
+	}
+
+	/**
+	 * Get next sibling element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function getNext(): Element
+	{
+		return $this->next;
 	}
 
 	/**
