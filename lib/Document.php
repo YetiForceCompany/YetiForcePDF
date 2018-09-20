@@ -52,6 +52,16 @@ class Document
 	 */
 	protected $defaultOrientation = \YetiForcePDF\Page::ORIENTATION_PORTRAIT;
 	/**
+	 * Default page margins
+	 * @var array
+	 */
+	protected $defaultMargins = [
+		'left' => 10,
+		'top' => 10,
+		'right' => 10,
+		'bottom' => 10
+	];
+	/**
 	 * All objects inside document
 	 * @var \YetiForcePDF\Objects\PdfObject[]
 	 */
@@ -101,6 +111,27 @@ class Document
 	}
 
 	/**
+	 * Set default page margins
+	 * @param float $left
+	 * @param float $top
+	 * @param float $right
+	 * @param float $bottom
+	 * @return $this
+	 */
+	public function setDefaultMargins(float $left, float $top, float $right, float $bottom)
+	{
+		$this->defaultMargins = [
+			'left' => $left,
+			'top' => $top,
+			'right' => $right,
+			'bottom' => $bottom,
+			'horizontal' => $left + $right,
+			'vertical' => $top + $bottom
+		];
+		return $this;
+	}
+
+	/**
 	 * Get actual id for newly created object
 	 * @return int
 	 */
@@ -143,6 +174,15 @@ class Document
 	public function getDefaultOrientation()
 	{
 		return $this->defaultOrientation;
+	}
+
+	/**
+	 * Get default margins
+	 * @return array
+	 */
+	public function getDefaultMargins()
+	{
+		return $this->defaultMargins;
 	}
 
 	/**

@@ -63,12 +63,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * Page margins
 	 * @var array
 	 */
-	protected $margins = [
-		'left' => 0,
-		'top' => 0,
-		'right' => 0,
-		'bottom' => 0
-	];
+	protected $margins;
 	/**
 	 * Page dimensions
 	 * @var \YetiForcePDF\Style\Dimensions\Element
@@ -436,6 +431,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
+		if (!$this->margins) {
+			$this->margins = $this->document->getDefaultMargins();
+		}
 		if (!$this->format) {
 			$this->setFormat($this->document->getDefaultFormat());
 		}
@@ -475,6 +473,36 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	public function setOrientation(string $orientation): \YetiForcePDF\Page
 	{
 		$this->orientation = $orientation;
+		return $this;
+	}
+
+	/**
+	 * Get page margins
+	 * @return array
+	 */
+	public function getMargins(): array
+	{
+		return $this->margins;
+	}
+
+	/**
+	 * Set page margins
+	 * @param float $left
+	 * @param float $top
+	 * @param float $right
+	 * @param float $bottom
+	 * @return $this
+	 */
+	public function setMargins(float $left, float $top, float $right, float $bottom)
+	{
+		$this->margins = [
+			'left' => $left,
+			'top' => $top,
+			'right' => $right,
+			'bottom' => $bottom,
+			'horizontal' => $left + $right,
+			'vertical' => $top + $bottom
+		];
 		return $this;
 	}
 
@@ -556,6 +584,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Type /Page',
 			'  /Parent ' . $this->parent->getReference(),
 			'  /MediaBox [0 0 ' . $dimensions->getWidth() . ' ' . $dimensions->getHeight() . ']',
+			'  /BleedBox [' . $this->margins['left'] . ' ' . $this->margins['top'] . ' ' . $dimensions->getInnerWidth() . ' ' . $dimensions->getInnerHeight() . ']',
 			'  /UserUnit ' . $this->userUnit,
 			'  /Rotate 0',
 			$this->renderResources(),
