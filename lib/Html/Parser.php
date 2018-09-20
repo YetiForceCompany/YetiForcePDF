@@ -30,6 +30,11 @@ class Parser extends \YetiForcePDF\Base
 	 * @var \YetiForcePDF\Html\Element[]
 	 */
 	protected $elements = [];
+	/**
+	 * Root element
+	 * @var \YetiForcePDF\Html\Element
+	 */
+	protected $rootElement;
 
 	/**
 	 * Load html string
@@ -40,7 +45,7 @@ class Parser extends \YetiForcePDF\Base
 	{
 		$this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
-		$this->domDocument->loadHTML("<div>$this->html</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+		$this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 		return $this;
 	}
 
@@ -50,14 +55,22 @@ class Parser extends \YetiForcePDF\Base
 	 * @param array                      $currentResult
 	 * @return \YetiForcePDF\Html\Element[]
 	 */
-	protected function getAllElements(array $current = []): array
+	protected function getAllElements(\YetiForcePDF\Html\Element $currentNode, array &$currentResult = []): array
 	{
-		foreach ($current as $currentNode) {
-			foreach ($this->getAllElements($currentNode->getChildren()) as $child) {
-				$current[] = $child;
-			}
+		$currentResult[] = $currentNode;
+		foreach ($currentNode->getChildren() as $child) {
+			$this->getAllElements($child, $currentResult);
 		}
-		return $current;
+		return $currentResult;
+	}
+
+	/**
+	 * Get root element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function getRootElement(): \YetiForcePDF\Html\Element
+	{
+		return $this->rootElement;
 	}
 
 	/**
@@ -69,13 +82,13 @@ class Parser extends \YetiForcePDF\Base
 			return null;
 		}
 		$this->elements = [];
-		foreach ($this->domDocument->documentElement->childNodes as $child) {
-			$this->elements[] = (new \YetiForcePDF\Html\Element())
-				->setDocument($this->document)
-				->setElement($child)
-				->init();
-		}
-		foreach ($this->getAllElements($this->elements) as $element) {
+		$this->rootElement = (new \YetiForcePDF\Html\Element())
+			->setDocument($this->document)
+			->setElement($this->domDocument->documentElement)
+			->setRoot(true);
+		// root element must be defined before initialisation
+		$this->rootElement->init();
+		foreach ($this->getAllElements($this->rootElement) as $element) {
 			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
 		}
 

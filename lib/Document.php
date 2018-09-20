@@ -273,9 +273,29 @@ class Document
 	 * @param float  $size
 	 * @return float
 	 */
-	public function convertUnits(string $unit, float $size): float
+	public function convertUnits(string $unit, float $size, \YetiForcePDF\Html\Element $parentElement = null): float
 	{
-		return $size;
+		if ($parentElement === null) {
+			$parentElement = $this->htmlParser->getRootElement();
+		}
+		switch ($unit) {
+			case 'px':
+			case 'pt':
+				return $size;
+			case 'mm':
+				return $size / (72 / 25.4);
+			case 'cm':
+				return $size / (72 / 2.54);
+			case 'in':
+				return $size / 72;
+			case '%':
+				return $parentSize / 100 * $size;
+			case 'em':
+			case 'rem':
+				return $size * $parentSize;
+
+		}
+
 	}
 
 }

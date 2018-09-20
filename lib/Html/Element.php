@@ -44,6 +44,16 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $parent;
 	/**
+	 * Is this root element?
+	 * @var bool
+	 */
+	protected $root = false;
+	/**
+	 * Is this text node or element ?
+	 * @var bool
+	 */
+	protected $textNode = false;
+	/**
 	 * @var \YetiForcePDF\Html\Element[]
 	 */
 	protected $children = [];
@@ -74,16 +84,13 @@ class Element extends \YetiForcePDF\Base
 		$this->style = $this->parseStyle();
 		if ($this->domElement->hasChildNodes()) {
 			foreach ($this->domElement->childNodes as $childNode) {
-				if ($childNode instanceof \DOMText) {
-
-				} else {
-					$childElement = (new Element())
-						->setDocument($this->document)
-						->setElement($childNode)
-						->setParent($this)
-						->init();
-					$this->addChild($childElement);
-				}
+				$childElement = (new Element())
+					->setDocument($this->document)
+					->setElement($childNode)
+					->setParent($this)
+					->setTextNode($childNode instanceof \DOMText)
+					->init();
+				$this->addChild($childElement);
 			}
 		}
 		return $this;
@@ -102,13 +109,54 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set parent
+	 * Set parent element
 	 * @param \YetiForcePDF\Html\Element $parent
+	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setParent(Element $parent)
+	public function setParent(Element $parent): \YetiForcePDF\Html\Element
 	{
 		$this->parent = $parent;
 		return $this;
+	}
+
+	/**
+	 * Set root - is this root element?
+	 * @param bool $isRoot
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function setRoot(bool $isRoot): \YetiForcePDF\Html\Element
+	{
+		$this->root = $isRoot;
+		return $this;
+	}
+
+	/**
+	 * Set text node status
+	 * @param bool $isTextNode
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function setTextNode(bool $isTextNode = false): \YetiForcePDF\Html\Element
+	{
+		$this->textNode = $isTextNode;
+		return $this;
+	}
+
+	/**
+	 * Is this text node? or element
+	 * @return bool
+	 */
+	public function isTextNode(): bool
+	{
+		return $this->textNode;
+	}
+
+	/**
+	 * Is this root element?
+	 * @return bool
+	 */
+	public function isRoot(): bool
+	{
+		return $this->root;
 	}
 
 	/**
@@ -185,9 +233,9 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function calculatePosition()
 	{
-		$rules = $this->style->getRules();
-		$this->x = $rules['margin-left'];
-		$this->y = $rules['margin-bottom'];
+		$coordinates = $this->style->getCoordinates();
+		$this->x = $coordinates->getAbsolutePdfX();
+		$this->y = $coordinates->getAbsolutePdfY();
 	}
 
 	/**
@@ -196,16 +244,20 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function getInstructions(): string
 	{
-		$textContent = $this->getDOMElement()->textContent;
 		$font = $this->style->getFont();
 		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
 		$this->calculatePosition();
-		return implode("\n", [
-			'BT',
-			$fontStr,
-			"1 0 0 1 {$this->x} {$this->y} Tm",
-			"($textContent) Tj",
-			'ET'
-		]);
+		$element = [];
+		if ($this->isTextNode()) {
+			$textContent = $this->getDOMElement()->textContent;
+			$element = [
+				'BT',
+				$fontStr,
+				"1 0 0 1 {$this->x} {$this->y} Tm",
+				"($textContent) Tj",
+				'ET'
+			];
+		}
+		return implode("\n", $element);
 	}
 }

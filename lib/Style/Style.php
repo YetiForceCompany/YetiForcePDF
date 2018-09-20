@@ -40,6 +40,10 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $font;
 	/**
+	 * @var \YetiForcePDF\Style\Coordinates
+	 */
+	protected $coordinates;
+	/**
 	 * Css properties that are iherited by default
 	 * @var array
 	 */
@@ -93,7 +97,7 @@ class Style extends \YetiForcePDF\Base
 	 * Rules that are mandatory with default values
 	 * @var array
 	 */
-	protected $mandatoryRules = [
+	public static $mandatoryRules = [
 		'font-family' => 'Helvetica',
 		'font-size' => 12,
 		'font-weight' => 'normal',
@@ -101,6 +105,16 @@ class Style extends \YetiForcePDF\Base
 		'margin-top' => 0,
 		'margin-right' => 0,
 		'margin-bottom' => 0,
+		'padding-left' => 0,
+		'padding-top' => 0,
+		'padding-right' => 0,
+		'padding-bottom' => 0,
+		'border-left-width' => 0,
+		'border-top-width' => 0,
+		'border-right-width' => 0,
+		'border-bottom-width' => 0,
+		'box-sizing' => 'border-box',
+		'display' => 'block'
 	];
 	/**
 	 * Css rules
@@ -113,7 +127,17 @@ class Style extends \YetiForcePDF\Base
 		'margin-left' => 0,
 		'margin-top' => 0,
 		'margin-right' => 0,
-		'margin-bottom' => 0
+		'margin-bottom' => 0,
+		'padding-left' => 0,
+		'padding-top' => 0,
+		'padding-right' => 0,
+		'padding-bottom' => 0,
+		'border-left-width' => 0,
+		'border-top-width' => 0,
+		'border-right-width' => 0,
+		'border-bottom-width' => 0,
+		'box-sizing' => 'border-box',
+		'display' => 'block'
 	];
 
 	/**
@@ -123,6 +147,10 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
+		$this->coordinates = (new \YetiForcePDF\Style\Coordinates())
+			->setDocument($this->document)
+			->setStyle($this)
+			->init();
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
 			->setName($this->rules['font-family'])
@@ -165,12 +193,30 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get parent style
+	 * @return null|\YetiForcePDF\Style\Style
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
 	 * Get rules
 	 * @return array|mixed
 	 */
 	public function getRules()
 	{
 		return $this->rules;
+	}
+
+	/**
+	 * Get coordinates
+	 * @return \YetiForcePDF\Style\Coordinates
+	 */
+	public function getCoordinates(): \YetiForcePDF\Style\Coordinates
+	{
+		return $this->coordinates;
 	}
 
 	/**
@@ -186,7 +232,7 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		if ($withMandatoryRules) {
-			foreach ($this->mandatoryRules as $mandatoryName => $mandatoryValue) {
+			foreach (static::$mandatoryRules as $mandatoryName => $mandatoryValue) {
 				if (!isset($inheritedRules[$mandatoryName])) {
 					$inheritedRules[$mandatoryName] = $mandatoryValue;
 				}
@@ -210,7 +256,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected function parse(): array
 	{
-		$parsed = [];
+		$parsed = static::$mandatoryRules;
 		if ($this->parent) {
 			$parsed = $this->parent->getInheritedRules();
 		}
