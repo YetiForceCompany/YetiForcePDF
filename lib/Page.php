@@ -54,6 +54,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @var string $orientation
 	 */
 	protected $orientation = 'P';
+	/**
+	 * User unit - to calculate page dpi
+	 * @var float
+	 */
+	protected $userUnit = 1.0;
 
 	public static $pageFormats = [
 		// ISO 216 A Series + 2 SIS 014711 extensions
@@ -443,6 +448,17 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Set user unit (scale of the DPI $userUnit * 72)
+	 * @param float $userUnit
+	 * @return \YetiForcePDF\Page
+	 */
+	public function setUserUnit(float $userUnit): \YetiForcePDF\Page
+	{
+		$this->userUnit = $userUnit;
+		return $this;
+	}
+
+	/**
 	 * Add page resource
 	 * @param string                          $groupName
 	 * @param string                          $resourceName
@@ -471,7 +487,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * Get current page dimensions
 	 * @return array
 	 */
-	public function getPageDimensions():array
+	public function getPageDimensions(): array
 	{
 		$dimensions = self::$pageFormats[$this->format];
 		if ($this->orientation === 'L') {
@@ -513,6 +529,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Type /Page',
 			'  /Parent ' . $this->parent->getReference(),
 			'  /MediaBox [0 0 ' . $dimensions[0] . ' ' . $dimensions[1] . ']',
+			'  /UserUnit ' . $this->userUnit,
 			'  /Rotate 0',
 			$this->renderResources(),
 			'  /Contents ' . $this->contentStream->getReference(),
