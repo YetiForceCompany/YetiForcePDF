@@ -24,7 +24,60 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	 */
 	public function calculateTextDimensions()
 	{
+		// TODO calculate text dimensions after we implement font characters bbox'es
 		return $this;
+	}
+
+	/**
+	 * Calculate content-box dimensions
+	 */
+	protected function calculateContentBox()
+	{
+		$rules = $this->style->getRules();
+		$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		if ($rules['width'] !== 'auto') {
+			$this->setWidth($rules['width']);
+			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'];
+			$this->setInnerWidth($innerWidth);
+		} else {
+			$this->setWidth($pageDimensions->getInnerWidth());
+			$innerWidth = $pageDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'];
+			$this->setInnerWidth($innerWidth);
+		}
+
+		if ($rules['height'] !== 'auto') {
+			$this->setHeight($rules['height']);
+			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'];
+			$this->setInnerHeight($innerHeight);
+		} else {
+			// TODO get max children height
+		}
+	}
+
+	/**
+	 * Calculate border-box dimensions
+	 */
+	protected function calculateBorderBox()
+	{
+		$rules = $this->style->getRules();
+		$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		if ($rules['width'] !== 'auto') {
+			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
+			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
+			$this->setInnerWidth($innerWidth);
+		} else {
+			$this->setWidth($pageDimensions->getInnerWidth());
+			$innerWidth = $pageDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
+			$this->setInnerWidth($innerWidth);
+		}
+
+		if ($rules['height'] !== 'auto') {
+			$this->setHeight($rules['height'] + $rules['border-top-width'] + $rules['border-bottom-width']);
+			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
+			$this->setInnerWidth($innerHeight);
+		} else {
+			// TODO get max children height
+		}
 	}
 
 	/**
@@ -34,31 +87,11 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	public function calculateElementDimensions()
 	{
 		$rules = $this->style->getRules();
-
 		if ($rules['box-sizing'] === 'content-box') {
-			if ($rules['width'] !== 'auto') {
-				$this->setWidth($rules['width']);
-				$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'];
-				$this->setInnerWidth($innerWidth);
-			}
-			if ($rules['height'] !== 'auto') {
-				$this->setHeight($rules['height']);
-				$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'];
-				$this->setInnerHeight($innerHeight);
-			}
+			$this->calculateContentBox();
 		} elseif ($rules['box-sizing'] === 'border-box') {
-			if ($rules['width'] !== 'auto') {
-				$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
-				$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
-				$this->setInnerWidth($innerWidth);
-			}
-			if ($rules['height'] !== 'auto') {
-				$this->setHeight($rules['height'] + $rules['border-top-width'] + $rules['border-bottom-width']);
-				$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
-				$this->setInnerWidth($innerHeight);
-			}
+			$this->calculateBorderBox();
 		}
-
 		return $this;
 	}
 
