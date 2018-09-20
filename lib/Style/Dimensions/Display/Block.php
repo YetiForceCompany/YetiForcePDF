@@ -75,4 +75,15 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 		}
 		return $this;
 	}
+
+	/**
+	 * Initialisation
+	 * @return $this
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->calculate();
+		return $this;
+	}
 }

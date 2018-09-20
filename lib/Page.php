@@ -48,12 +48,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * Current page format
 	 * @var string $format
 	 */
-	protected $format = 'A4';
+	protected $format;
 	/**
 	 * Current page orientation
 	 * @var string $orientation
 	 */
-	protected $orientation = 'P';
+	protected $orientation;
 	/**
 	 * User unit - to calculate page dpi
 	 * @var float
@@ -69,6 +69,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		'right' => 0,
 		'bottom' => 0
 	];
+	/**
+	 * Page dimensions
+	 * @var \YetiForcePDF\Style\Dimensions\Element
+	 */
+	protected $dimensions;
 
 	public static $pageFormats = [
 		// ISO 216 A Series + 2 SIS 014711 extensions
@@ -431,6 +436,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
+		if (!$this->format) {
+			$this->setFormat($this->document->getDefaultFormat());
+		}
+		if (!$this->orientation) {
+			$this->setOrientation($this->document->getDefaultOrientation());
+		}
 		$this->document->getPagesObject()->addChild($this);
 		return $this;
 	}
@@ -443,6 +454,16 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	public function setFormat(string $format): \YetiForcePDF\Page
 	{
 		$this->format = $format;
+		$dimensions = self::$pageFormats[$this->format];
+		if ($this->orientation === 'L') {
+			$dimensions = array_reverse($dimensions);
+		}
+		$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
+			->setDocument($this->document)
+			->init();
+		$this->dimensions->setWidth($dimensions[0])->setHeight($dimensions[1]);
+		$this->dimensions->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right']);
+		$this->dimensions->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
 		return $this;
 	}
 
@@ -494,16 +515,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get current page dimensions
-	 * @return array
+	 * Get page dimensions
+	 * @return \YetiForcePDF\Style\Dimensions\Element
 	 */
-	public function getPageDimensions(): array
+	public function getPageDimensions(): \YetiForcePDF\Style\Dimensions\Element
 	{
-		$dimensions = self::$pageFormats[$this->format];
-		if ($this->orientation === 'L') {
-			$dimensions = array_reverse($dimensions);
-		}
-		return $dimensions;
+		return $this->dimensions;
 	}
 
 	/**
@@ -538,7 +555,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'<<',
 			'  /Type /Page',
 			'  /Parent ' . $this->parent->getReference(),
-			'  /MediaBox [0 0 ' . $dimensions[0] . ' ' . $dimensions[1] . ']',
+			'  /MediaBox [0 0 ' . $dimensions->getWidth() . ' ' . $dimensions->getHeight() . ']',
 			'  /UserUnit ' . $this->userUnit,
 			'  /Rotate 0',
 			$this->renderResources(),

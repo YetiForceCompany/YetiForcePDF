@@ -128,6 +128,24 @@ class Document
 	}
 
 	/**
+	 * Get default page format
+	 * @return string
+	 */
+	public function getDefaultFormat()
+	{
+		return $this->defaultFormat;
+	}
+
+	/**
+	 * Get default page orientation
+	 * @return string
+	 */
+	public function getDefaultOrientation()
+	{
+		return $this->defaultOrientation;
+	}
+
+	/**
 	 * Add page to the document
 	 * @param string $format      - optional format 'A4' for example
 	 * @param string $orientation - optional orientation 'P' or 'L'

@@ -33,17 +33,6 @@ class Element extends Dimensions
 	protected $innerHeight = 0;
 
 	/**
-	 * Initialisations
-	 * @return $this
-	 */
-	public function init()
-	{
-		parent::init();
-		$this->calculate();
-		return $this;
-	}
-
-	/**
 	 * Set style
 	 * @param \YetiForcePDF\Style\Style $style
 	 * @return $this
