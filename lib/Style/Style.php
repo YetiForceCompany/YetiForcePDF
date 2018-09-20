@@ -40,6 +40,69 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $font;
 	/**
+	 * Css properties that are iherited by default
+	 * @var array
+	 */
+	protected $inherited = [
+		"azimuth",
+		"background-image-resolution",
+		"border-collapse",
+		"border-spacing",
+		"caption-side",
+		"color",
+		"cursor",
+		"direction",
+		"elevation",
+		"empty-cells",
+		"font-family",
+		"font-size",
+		"font-style",
+		"font-variant",
+		"font-weight",
+		"image-resolution",
+		"letter-spacing",
+		"line-height",
+		"list-style-image",
+		"list-style-position",
+		"list-style-type",
+		"list-style",
+		"orphans",
+		"page-break-inside",
+		"pitch-range",
+		"pitch",
+		"quotes",
+		"richness",
+		"speak-header",
+		"speak-numeral",
+		"speak-punctuation",
+		"speak",
+		"speech-rate",
+		"stress",
+		"text-align",
+		"text-indent",
+		"text-transform",
+		"visibility",
+		"voice-family",
+		"volume",
+		"white-space",
+		"word-wrap",
+		"widows",
+		"word-spacing",
+	];
+	/**
+	 * Rules that are mandatory with default values
+	 * @var array
+	 */
+	protected $mandatoryRules = [
+		'font-family' => 'Helvetica',
+		'font-size' => 12,
+		'font-weight' => 'normal',
+		'margin-left' => 0,
+		'margin-top' => 0,
+		'margin-right' => 0,
+		'margin-bottom' => 0,
+	];
+	/**
 	 * Css rules
 	 * @var array
 	 */
@@ -111,6 +174,28 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get rules that are inherited from parent
+	 * @return array
+	 */
+	public function getInheritedRules(bool $withMandatoryRules = true): array
+	{
+		$inheritedRules = [];
+		foreach ($this->rules as $ruleName => $ruleValue) {
+			if (in_array($ruleName, $this->inherited)) {
+				$inheritedRules[$ruleName] = $ruleValue;
+			}
+		}
+		if ($withMandatoryRules) {
+			foreach ($this->mandatoryRules as $mandatoryName => $mandatoryValue) {
+				if (!isset($inheritedRules[$mandatoryName])) {
+					$inheritedRules[$mandatoryName] = $mandatoryValue;
+				}
+			}
+		}
+		return $inheritedRules;
+	}
+
+	/**
 	 * Get current style font
 	 * @return \YetiForcePDF\Objects\Font
 	 */
@@ -127,7 +212,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$parsed = [];
 		if ($this->parent) {
-			$parsed = $this->parent->getRules();
+			$parsed = $this->parent->getInheritedRules();
 		}
 		if ($this->content === null) {
 			return $parsed;

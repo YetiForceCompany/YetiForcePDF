@@ -468,6 +468,19 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Get current page dimensions
+	 * @return array
+	 */
+	public function getPageDimensions():array
+	{
+		$dimensions = self::$pageFormats[$this->format];
+		if ($this->orientation === 'L') {
+			$dimensions = array_reverse($dimensions);
+		}
+		return $dimensions;
+	}
+
+	/**
 	 * Render page resources
 	 * @return string
 	 */
@@ -493,10 +506,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function render(): string
 	{
-		$dimensions = self::$pageFormats[$this->format];
-		if ($this->orientation === 'L') {
-			$dimensions = array_reverse($dimensions);
-		}
+		$dimensions = $this->getPageDimensions();
 		return implode("\n", [
 			$this->getRawId() . " obj",
 			'<<',
