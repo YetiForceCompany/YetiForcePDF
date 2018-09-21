@@ -40,12 +40,12 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * Object name
 	 * @var string
 	 */
-	protected $name = 'Font';
+	protected $resourceName = 'Font';
 	/**
-	 * Base font type
+	 * Base font type aka font family
 	 * @var string
 	 */
-	protected $baseFont = 'Lato';
+	protected $family = 'Lato';
 	/**
 	 * Font number
 	 * @var string
@@ -56,6 +56,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var float
 	 */
 	protected $size = 12;
+	/**
+	 * Font info
+	 * @var array
+	 */
+	protected $fontInfo = [];
 
 	/**
 	 * Initialisation
@@ -63,12 +68,21 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function init()
 	{
-		$this->fontNumber = 'F' . $this->document->getActualFontId();
-		parent::init();
-		foreach ($this->document->getObjects('Page') as $page) {
-			$page->addResource('Font', $this->getNumber(), $this);
+		$this->loadFontsInfo();
+		$alreadyExists = $this->document->getFontInstance($this->family);
+		if (!$alreadyExists) {
+			parent::init();
+			$this->document->setFontInstance($this->family, $this);
+			$this->fontNumber = 'F' . $this->document->getActualFontId();
+			$this->fontInfo = $this->document->getFonts($this->family);
+			foreach ($this->document->getObjects('Page') as $page) {
+				$page->synchronizeFonts();
+			}
+			return $this;
 		}
-		return $this;
+		$this->setAddToDocument(false);
+		parent::init();
+		return $alreadyExists;
 	}
 
 	/**
@@ -87,10 +101,19 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @param string $base
 	 * @return $this
 	 */
-	public function setName(string $name)
+	public function setFamily(string $name)
 	{
-		$this->baseFont = $name;
+		$this->family = $name;
 		return $this;
+	}
+
+	/**
+	 * Get font name
+	 * @return string
+	 */
+	public function getFamily(): string
+	{
+		return $this->family;
 	}
 
 	/**
@@ -105,15 +128,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
-	 * Get font number
-	 * @return string
-	 */
-	public function getNumber(): string
-	{
-		return $this->fontNumber;
-	}
-
-	/**
 	 * Get font size
 	 * @return float
 	 */
@@ -123,6 +137,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Get font number
+	 * @return string
+	 */
+	public function getNumber(): string
+	{
+		return $this->fontNumber;
+	}
+
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function getReference(): string
@@ -130,10 +154,17 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return $this->getRawId() . ' R';
 	}
 
-	protected function loadFont()
+	/**
+	 * Load fonts information if not exists already
+	 */
+	protected function loadFontsInfo()
 	{
-		$fileName = $this->fontDir . $this->fontFiles[$this->name];
-
+		if (empty($this->document->getFonts())) {
+			foreach ($this->fontFiles as $name => $path) {
+				$fontInfo = require($this->fontDir . $path);
+				$this->document->setFontInfo($name, $fontInfo);
+			}
+		}
 	}
 
 	/**
@@ -144,8 +175,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
 			"  /Type /Font",
-			"  /Subtype /Type1",
-			"  /BaseFont /" . $this->baseFont,
+			"  /Subtype /" . $this->fontInfo['type'],
+			"  /BaseFont /" . $this->family,
 			">>",
 			"endobj"]);
 	}

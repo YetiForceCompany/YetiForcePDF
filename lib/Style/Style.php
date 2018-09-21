@@ -110,7 +110,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	public static $mandatoryRules = [
-		'font-family' => 'Helvetica',
+		'font-family' => 'Lato',
 		'font-size' => 12,
 		'font-weight' => 'normal',
 		'margin-left' => 0,
@@ -136,7 +136,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	protected $rules = [
-		'font-family' => 'Helvetica',
+		'font-family' => 'Lato',
 		'font-size' => 12,
 		'font-weight' => 'normal',
 		'margin-left' => 0,
@@ -178,7 +178,7 @@ class Style extends \YetiForcePDF\Base
 			->init();
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
-			->setName($this->rules['font-family'])
+			->setFamily($this->rules['font-family'])
 			->setSize($this->rules['font-size'])
 			->init();
 		return $this;

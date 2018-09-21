@@ -445,6 +445,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$this->setOrientation($this->document->getDefaultOrientation());
 		}
 		$this->document->getPagesObject()->addChild($this);
+		$this->synchronizeFonts();
 		return $this;
 	}
 
@@ -549,6 +550,37 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		}
 		$this->resources[$groupName][$resourceName] = $resource;
 		return $this;
+	}
+
+	/**
+	 * Get resource
+	 * @param string $groupName
+	 * @param string $resourceName
+	 * @return null|\YetiForcePDF\Objects\PdfObject
+	 */
+	public function getResource(string $groupName, string $resourceName)
+	{
+		if (!empty($this->resources[$groupName][$resourceName])) {
+			return $this->resources[$groupName][$resourceName];
+		}
+		return null;
+	}
+
+	/**
+	 * Synchronize fonts with document fonts
+	 */
+	public function synchronizeFonts()
+	{
+		// add all existing fonts
+		foreach ($this->document->getFonts() as $fontInfo) {
+			if (!empty($fontInfo['instance'])) {
+				$fontInstance = $fontInfo['instance'];
+				$fontNumber = $fontInstance->getNumber();
+				if (!$this->getResource('Font', $fontNumber)) {
+					$this->addResource('Font', $fontNumber, $fontInstance);
+				}
+			}
+		}
 	}
 
 	/**

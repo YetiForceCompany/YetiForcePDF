@@ -71,10 +71,16 @@ class Document
 	 */
 	protected $htmlParser;
 	/**
+	 * Fonts
+	 * @var array|null
+	 */
+	protected $fonts = [];
+	/**
 	 * Actual font id
 	 * @var int
 	 */
 	protected $actualFontId = 0;
+
 
 	/**
 	 * Initialisation
@@ -147,6 +153,63 @@ class Document
 	public function getActualFontId(): int
 	{
 		return ++$this->actualFontId;
+	}
+
+	/**
+	 * Get document font data/info
+	 * @param string $family [optional]
+	 * @return array
+	 */
+	public function getFonts(string $family = '')
+	{
+		if ($family) {
+			return $this->fonts[$family];
+		}
+		return $this->fonts;
+	}
+
+	/**
+	 * Set font
+	 * @param string                     $fontName
+	 * @param \YetiForcePDF\Objects\Font $fontInstance
+	 * @return $this
+	 */
+	public function setFontInstance(string $fontName, \YetiForcePDF\Objects\Font $fontInstance)
+	{
+		if (empty($this->fonts[$fontName])) {
+			$this->fonts[$fontName] = [];
+		}
+		$this->fonts[$fontName]['instance'] = $fontInstance;
+		return $this;
+	}
+
+	/**
+	 * Get font instance
+	 * @param $fontName
+	 * @return null|\YetiForcePDF\Objects\Font
+	 */
+	public function getFontInstance(string $fontName)
+	{
+		if (!empty($this->fonts[$fontName]['instance'])) {
+			return $this->fonts[$fontName]['instance'];
+		}
+		return null;
+	}
+
+	/**
+	 * Set font information
+	 * @param string $fontName
+	 * @param array  $info
+	 * @return $this
+	 */
+	public function setFontInfo(string $fontName, array $info)
+	{
+		if (empty($this->fonts[$fontName])) {
+			$this->fonts[$fontName] = $info;
+			return $this;
+		}
+		$this->fonts[$fontName] = array_merge($this->fonts[$fontName], $info);
+		return $this;
 	}
 
 	/**
