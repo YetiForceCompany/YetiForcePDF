@@ -27,6 +27,11 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 		$rules = $style->getRules();
 		$htmlX = 0;
 		$htmlY = 0;
+		if ($this->style->getElement()->isRoot()) {
+			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
+			$htmlX = $pageCoord->getAbsoluteHtmlX();
+			$htmlY = $pageCoord->getAbsoluteHtmlY();
+		}
 		if ($parent = $style->getParent()) {
 			$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
 			$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
