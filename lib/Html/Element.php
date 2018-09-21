@@ -70,16 +70,6 @@ class Element extends \YetiForcePDF\Base
 	 * @var string[]
 	 */
 	protected $instructions = [];
-	/**
-	 * Element X position
-	 * @var float
-	 */
-	protected $x = 0.0;
-	/**
-	 * Element Y position
-	 * @var float
-	 */
-	protected $y = 0.0;
 
 	/**
 	 * Initialisation
