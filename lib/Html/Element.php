@@ -90,7 +90,7 @@ class Element extends \YetiForcePDF\Base
 		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
 		$this->style = $this->parseStyle();
-		if ($this->domElement->hasChildNodes()) {
+		if ($this->domElement->hasChildNodes() && $this->style->getRules()['display'] !== 'none') {
 			$children = [];
 			foreach ($this->domElement->childNodes as $index => $childNode) {
 				$childElement = $children[] = (new Element())
@@ -303,8 +303,10 @@ class Element extends \YetiForcePDF\Base
 		$font = $this->style->getFont();
 		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
 		$coordinates = $this->style->getCoordinates();
-		$x = $coordinates->getAbsolutePdfX();
-		$y = $coordinates->getAbsolutePdfY();
+		$pdfX = $coordinates->getAbsolutePdfX();
+		$pdfY = $coordinates->getAbsolutePdfY();
+		$htmlX = $coordinates->getAbsoluteHtmlX();
+		$htmlY = $coordinates->getAbsoluteHtmlY();
 		$dimensions = $this->style->getDimensions();
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
@@ -313,7 +315,7 @@ class Element extends \YetiForcePDF\Base
 			$element = [
 				'BT',
 				$fontStr,
-				"1 0 0 1 {$x} {$y} Tm",
+				"1 0 0 1 $pdfX $pdfY Tm % html $htmlX $htmlY",
 				"($textContent) Tj",
 				'ET',
 			];
@@ -322,7 +324,7 @@ class Element extends \YetiForcePDF\Base
 				'q',
 				'1 w', //border
 				'0 0 0 RG',
-				"1 0 0 1 {$x} ${y} cm",
+				"1 0 0 1 $pdfX $pdfY cm % html $htmlX $htmlY",
 				"0 0 $width $height re",
 				'S',
 				'Q',
