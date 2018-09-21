@@ -305,15 +305,25 @@ class Element extends \YetiForcePDF\Base
 		$coordinates = $this->style->getCoordinates();
 		$x = $coordinates->getAbsolutePdfX();
 		$y = $coordinates->getAbsolutePdfY();
+		$dimensions = $this->style->getDimensions();
+		$width = $dimensions->getWidth();
+		$height = $dimensions->getHeight();
 		$element = [];
 		if ($this->isTextNode()) {
 			$textContent = $this->getDOMElement()->textContent;
 			$element = [
+				'q',
+				'1 w', //border
+				'0 0 0 RG',
+				"1 0 0 1 {$x} ${y} cm",
+				"0 0 $width $height re",
+				'S',
+				'Q',
 				'BT',
 				$fontStr,
 				"1 0 0 1 {$x} {$y} Tm",
 				"($textContent) Tj",
-				'ET'
+				'ET',
 			];
 		}
 		return implode("\n", $element);
