@@ -32,6 +32,11 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 * @var string[]
 	 */
 	protected $content = [];
+	/**
+	 * Filter used to decode stream
+	 * @var null|string
+	 */
+	protected $filter;
 
 	/**
 	 * Initialisation
@@ -49,9 +54,23 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 * @param string $content
 	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function addRawContent(string $content): \YetiForcePDF\Objects\Basic\StreamObject
+	public function addRawContent(string $content, string $filter = ''): \YetiForcePDF\Objects\Basic\StreamObject
 	{
 		$this->content[] = $content;
+		if ($filter) {
+			$this->filter = $filter;
+		}
+		return $this;
+	}
+
+	/**
+	 * Set filter
+	 * @param string $filter
+	 * @return $this
+	 */
+	public function setFilter(string $filter)
+	{
+		$this->filter = $filter;
 		return $this;
 	}
 
@@ -61,10 +80,12 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	public function render(): string
 	{
 		$stream = trim(implode("\n", $this->content), "\n");
+		$filter = $this->filter ? '  /Filter /' . $this->filter : '';
 		return implode("\n", [
 			$this->getRawId() . ' obj',
 			"<<",
 			"  /Length " . \strlen($stream),
+			$filter,
 			">>",
 			"stream",
 			$stream,

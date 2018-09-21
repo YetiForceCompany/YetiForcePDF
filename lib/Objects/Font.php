@@ -61,6 +61,18 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var array
 	 */
 	protected $fontInfo = [];
+	/**
+	 * @var
+	 */
+	protected $fontDescriptor;
+	/**
+	 * @var \YetiForcePDF\Objects\Basic\StreamObject
+	 */
+	protected $dataStream;
+	/**
+	 * @var \YetiForcePDF\Objects\FontEncoding
+	 */
+	protected $encoding;
 
 	/**
 	 * Initialisation
@@ -75,6 +87,14 @@ class Font extends \YetiForcePDF\Objects\Resource
 			$this->document->setFontInstance($this->family, $this);
 			$this->fontNumber = 'F' . $this->document->getActualFontId();
 			$this->fontInfo = $this->document->getFonts($this->family);
+			$this->loadFontData();
+			$this->fontDescriptor = (new \YetiForcePDF\Objects\FontDescriptor())
+				->setDocument($this->document)
+				->setFont($this)
+				->init();
+			$this->encoding = (new \YetiForcePDF\Objects\FontEncoding())
+				->setDocument($this->document)
+				->init();
 			foreach ($this->document->getObjects('Page') as $page) {
 				$page->synchronizeFonts();
 			}
@@ -117,6 +137,28 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Get full font name
+	 * @return string
+	 */
+	public function getFullName()
+	{
+		return 'GCCBBY+' . $this->family;
+	}
+
+	/**
+	 * Get info
+	 * @param string $name
+	 * @return array
+	 */
+	public function getInfo(string $name = '')
+	{
+		if ($name) {
+			return $this->fontInfo[$name];
+		}
+		return $this->fontInfo;
+	}
+
+	/**
 	 * Set Font size
 	 * @param float $size
 	 * @return $this
@@ -155,6 +197,15 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Get data stream
+	 * @return \YetiForcePDF\Objects\Basic\StreamObject
+	 */
+	public function getDataStream()
+	{
+		return $this->dataStream;
+	}
+
+	/**
 	 * Load fonts information if not exists already
 	 */
 	protected function loadFontsInfo()
@@ -168,6 +219,22 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Load font data
+	 * @return $this
+	 */
+	protected function loadFontData()
+	{
+		$dataFileName = $this->fontDir . $this->fontInfo['file'];
+		$fontData = file_get_contents($dataFileName);
+		$this->fontInfo['fontData'] = $fontData;
+		$this->fontInfo['dataStream'] = $this->dataStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
+			->setDocument($this->document)
+			->init();
+		$this->dataStream->addRawContent($fontData)->setFilter('FlateDecode');
+		return $this;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
@@ -176,7 +243,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 			"<<",
 			"  /Type /Font",
 			"  /Subtype /" . $this->fontInfo['type'],
-			"  /BaseFont /" . $this->family,
+			"  /BaseFont /" . $this->getFullName(),
+			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
+			'  /Widths [' . implode(',', $this->getInfo('cw')) . ']',
+			'  /Encoding ' . $this->encoding->getReference(),
 			">>",
 			"endobj"]);
 	}

@@ -1,7 +1,7 @@
 <?php
 return [
 	'type' => 'TrueTypeUnicode',
-	'name' => 'Lato-Regular',
+	'name' => 'Lato',
 	'up' => -70,
 	'ut' => 60,
 	'dw' => 532,

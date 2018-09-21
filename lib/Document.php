@@ -283,7 +283,7 @@ class Document
 	 */
 	protected function getDocumentHeader(): string
 	{
-		return "%PDF-1.7\n\n";
+		return "%PDF-1.7\n%âăĎÓ\n";
 	}
 
 	/**

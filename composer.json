@@ -16,11 +16,13 @@
     }
   ],
   "require": {
-    "php": ">=7.2"
+    "php": ">=7.2",
+    "phenx/php-font-lib": "^0.5.1"
   },
   "autoload": {
     "psr-4": {
-      "YetiForcePDF\\": "lib/"
+      "YetiForcePDF\\": "lib/",
+      "FontLib\\": "vendor/phenx/php-font-lib/"
     }
   }
 }
