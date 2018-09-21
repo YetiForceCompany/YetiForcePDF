@@ -337,7 +337,7 @@ class Style extends \YetiForcePDF\Base
 				$ruleValue = trim($ruleExploded[1]);
 				$ucRuleName = str_replace('-', '', ucwords($ruleName, '-'));
 				$normalizerName = "YetiForcePDF\\Style\\Normalizer\\$ucRuleName";
-				$normalizer = (new $normalizerName())->setDocument($this->document)->init();
+				$normalizer = (new $normalizerName())->setDocument($this->document)->setElement($this->element)->init();
 				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
 					$parsed[$name] = $value;
 				}
