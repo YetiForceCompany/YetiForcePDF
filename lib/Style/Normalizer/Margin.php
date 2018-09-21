@@ -33,9 +33,9 @@ class Margin extends Normalizer
 		$originalUnit = $units[0];
 		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
 		$normalized['margin-top'] = $computedValue;
-		$normalized['margin-bottom'] = $$computedValue;
-		$normalized['margin-left'] = $$computedValue;
-		$normalized['margin-right'] = $$computedValue;
+		$normalized['margin-bottom'] = $computedValue;
+		$normalized['margin-left'] = $computedValue;
+		$normalized['margin-right'] = $computedValue;
 		return $normalized;
 	}
 

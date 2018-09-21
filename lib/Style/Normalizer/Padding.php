@@ -33,9 +33,9 @@ class Padding extends Normalizer
 		$originalUnit = $units[0];
 		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
 		$normalized['padding-top'] = $computedValue;
-		$normalized['padding-bottom'] = $$computedValue;
-		$normalized['padding-left'] = $$computedValue;
-		$normalized['padding-right'] = $$computedValue;
+		$normalized['padding-bottom'] = $computedValue;
+		$normalized['padding-left'] = $computedValue;
+		$normalized['padding-right'] = $computedValue;
 		return $normalized;
 	}
 
