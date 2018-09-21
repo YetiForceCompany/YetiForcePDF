@@ -60,7 +60,7 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 */
 	public function render(): string
 	{
-		$stream = implode("\n", $this->content);
+		$stream = trim(implode("\n", $this->content), "\n");
 		return implode("\n", [
 			$this->getRawId() . ' obj',
 			"<<",
