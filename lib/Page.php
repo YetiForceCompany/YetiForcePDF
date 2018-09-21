@@ -572,13 +572,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	public function synchronizeFonts()
 	{
 		// add all existing fonts
-		foreach ($this->document->getFonts() as $fontInfo) {
-			if (!empty($fontInfo['instance'])) {
-				$fontInstance = $fontInfo['instance'];
-				$fontNumber = $fontInstance->getNumber();
-				if (!$this->getResource('Font', $fontNumber)) {
-					$this->addResource('Font', $fontNumber, $fontInstance);
-				}
+		foreach ($this->document->getAllFontInstances() as $fontName => $fontInstance) {
+			$fontNumber = $fontInstance->getNumber();
+			if (!$this->getResource('Font', $fontNumber)) {
+				$this->addResource('Font', $fontNumber, $fontInstance);
 			}
 		}
 	}

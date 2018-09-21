@@ -71,10 +71,14 @@ class Document
 	 */
 	protected $htmlParser;
 	/**
-	 * Fonts
-	 * @var array|null
+	 * Fonts data
+	 * @var \FontLib\Font[]
 	 */
-	protected $fonts = [];
+	protected $fontsData = [];
+	/**
+	 * @var \YetiForcePDF\Objects\Font[]
+	 */
+	protected $fontInstances = [];
 	/**
 	 * Actual font id
 	 * @var int
@@ -156,19 +160,6 @@ class Document
 	}
 
 	/**
-	 * Get document font data/info
-	 * @param string $family [optional]
-	 * @return array
-	 */
-	public function getFonts(string $family = '')
-	{
-		if ($family) {
-			return $this->fonts[$family];
-		}
-		return $this->fonts;
-	}
-
-	/**
 	 * Set font
 	 * @param string                     $fontName
 	 * @param \YetiForcePDF\Objects\Font $fontInstance
@@ -176,10 +167,7 @@ class Document
 	 */
 	public function setFontInstance(string $fontName, \YetiForcePDF\Objects\Font $fontInstance)
 	{
-		if (empty($this->fonts[$fontName])) {
-			$this->fonts[$fontName] = [];
-		}
-		$this->fonts[$fontName]['instance'] = $fontInstance;
+		$this->fontInstances[$fontName] = $fontInstance;
 		return $this;
 	}
 
@@ -190,10 +178,19 @@ class Document
 	 */
 	public function getFontInstance(string $fontName)
 	{
-		if (!empty($this->fonts[$fontName]['instance'])) {
-			return $this->fonts[$fontName]['instance'];
+		if (!empty($this->fontInstances[$fontName])) {
+			return $this->fontInstances[$fontName];
 		}
 		return null;
+	}
+
+	/**
+	 * Get all font instances
+	 * @return \YetiForcePDF\Objects\Font[]
+	 */
+	public function getAllFontInstances()
+	{
+		return $this->fontInstances;
 	}
 
 	/**
@@ -202,14 +199,35 @@ class Document
 	 * @param array  $info
 	 * @return $this
 	 */
-	public function setFontInfo(string $fontName, array $info)
+	public function setFontData(string $fontName, \FontLib\Font $font)
 	{
-		if (empty($this->fonts[$fontName])) {
-			$this->fonts[$fontName] = $info;
+		if (empty($this->fontsData[$fontName])) {
+			$this->fontsData[$fontName] = $font;
 			return $this;
 		}
-		$this->fonts[$fontName] = array_merge($this->fonts[$fontName], $info);
 		return $this;
+	}
+
+	/**
+	 * Get font data
+	 * @param string $fontName
+	 * @return \FontLib\Font|null
+	 */
+	public function getFontData(string $fontName)
+	{
+		if (!empty($this->fontsData[$fontName])) {
+			return $this->fontsData[$fontName];
+		}
+		return null;
+	}
+
+	/**
+	 * Get all fonts data
+	 * @return \FontLib\Font[]
+	 */
+	public function getAllFontsData()
+	{
+		return $this->fontsData;
 	}
 
 	/**
@@ -394,11 +412,8 @@ class Document
 	 * @param float  $size
 	 * @return float
 	 */
-	public function convertUnits(string $unit, float $size, \YetiForcePDF\Html\Element $parentElement = null): float
+	public function convertUnits(string $unit, float $size): float
 	{
-		if ($parentElement === null) {
-			$parentElement = $this->htmlParser->getRootElement();
-		}
 		switch ($unit) {
 			case 'px':
 			case 'pt':
@@ -409,11 +424,6 @@ class Document
 				return $size / (72 / 2.54);
 			case 'in':
 				return $size / 72;
-			case '%':
-				return $parentSize / 100 * $size;
-			case 'em':
-			case 'rem':
-				return $size * $parentSize;
 
 		}
 

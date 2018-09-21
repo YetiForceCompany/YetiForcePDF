@@ -19,17 +19,21 @@ class Font extends \YetiForcePDF\Objects\Resource
 {
 	protected $fontDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fonts' . DIRECTORY_SEPARATOR;
 	protected $fontFiles = [
-		'Lato' => 'lato.php',
-		'Lato-Bold' => 'latob.php',
-		'Lato-BoldItalic' => 'latobi.php',
-		'Lato-Italic' => 'latoi.php',
-
-		'PTSerif' => 'pt_serif.php',
-		'PTSerif-Bold' => 'pt_serifb.php',
-		'PTSerif-BoldItalic' => 'pt_serifbi.php',
-		'PTSerif-Italic' => 'pt_serifi.php',
-
-		'PTMono' => 'pt_mono.php',
+		'PTSerif-BoldItalic' => 'PTSerif-BoldItalic.ttf',
+		'Lato-BlackItalic' => 'Lato-BlackItalic.ttf',
+		'Lato-Black' => 'Lato-Black.ttf',
+		'Lato-BoldItalic' => 'Lato-BoldItalic.ttf',
+		'Lato-Bold' => 'Lato-Bold.ttf',
+		'Lato-Italic' => 'Lato-Italic.ttf',
+		'Lato-Regular' => 'Lato-Regular.ttf',
+		'Lato-LightItalic' => 'Lato-LightItalic.ttf',
+		'Lato-Light' => 'Lato-Light.ttf',
+		'Lato-HairlineItalic' => 'Lato-HairlineItalic.ttf',
+		'Lato-Hairline' => 'Lato-Hairline.ttf',
+		'PTSerif-Bold' => 'PTSerif-Bold.ttf',
+		'PTSerif-Italic' => 'PTSerif-Italic.ttf',
+		'PTSerif-Regular' => 'PTSerif-Regular.ttf',
+		'PTMono' => 'PTMono.ttf',
 	];
 	/**
 	 * Which type of dictionary (Page, Catalog, Font etc...)
@@ -45,7 +49,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * Base font type aka font family
 	 * @var string
 	 */
-	protected $family = 'Lato';
+	protected $family = 'Lato-Regular';
 	/**
 	 * Font number
 	 * @var string
@@ -57,10 +61,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	protected $size = 12;
 	/**
-	 * Font info
-	 * @var array
+	 * Font data
+	 * @var \FontLib\Font
 	 */
-	protected $fontInfo = [];
+	protected $fontData;
 	/**
 	 * @var
 	 */
@@ -73,6 +77,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var \YetiForcePDF\Objects\FontEncoding
 	 */
 	protected $encoding;
+	/**
+	 * Info needed to write in pdf
+	 * @var array
+	 */
+	protected $outputInfo = [];
 
 	/**
 	 * Initialisation
@@ -80,14 +89,13 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function init()
 	{
-		$this->loadFontsInfo();
 		$alreadyExists = $this->document->getFontInstance($this->family);
 		if (!$alreadyExists) {
 			parent::init();
 			$this->document->setFontInstance($this->family, $this);
 			$this->fontNumber = 'F' . $this->document->getActualFontId();
-			$this->fontInfo = $this->document->getFonts($this->family);
-			$this->loadFontData();
+			$this->fontData = $this->loadFontData();
+			$this->document->setFontData($this->family, $this->fontData);
 			$this->fontDescriptor = (new \YetiForcePDF\Objects\FontDescriptor())
 				->setDocument($this->document)
 				->setFont($this)
@@ -146,16 +154,12 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
-	 * Get info
-	 * @param string $name
-	 * @return array
+	 * Get font data
+	 * @return \FontLib\Font
 	 */
-	public function getInfo(string $name = '')
+	public function getData()
 	{
-		if ($name) {
-			return $this->fontInfo[$name];
-		}
-		return $this->fontInfo;
+		return $this->fontData;
 	}
 
 	/**
@@ -206,32 +210,34 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
-	 * Load fonts information if not exists already
-	 */
-	protected function loadFontsInfo()
-	{
-		if (empty($this->document->getFonts())) {
-			foreach ($this->fontFiles as $name => $path) {
-				$fontInfo = require($this->fontDir . $path);
-				$this->document->setFontInfo($name, $fontInfo);
-			}
-		}
-	}
-
-	/**
-	 * Load font data
-	 * @return $this
+	 * Load font
+	 * @return \FontLib\TrueType\File|null
+	 * @throws \FontLib\Exception\FontNotFoundException
 	 */
 	protected function loadFontData()
 	{
-		$dataFileName = $this->fontDir . $this->fontInfo['file'];
-		$fontData = file_get_contents($dataFileName);
-		$this->fontInfo['fontData'] = $fontData;
-		$this->fontInfo['dataStream'] = $this->dataStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
-			->setDocument($this->document)
-			->init();
-		$this->dataStream->addRawContent($fontData)->setFilter('FlateDecode');
-		return $this;
+		$font = \FontLib\Font::load($this->fontDir . $this->fontFiles[$this->family]);
+		$head = $font->getData('head');
+		$hhea = $font->getData('hhea');
+		$post = $font->getData('post');
+		$descriptor = $this->outputInfo['descriptor'] = [];
+		$descriptor['Flags'] = $head['flags'];
+		$descriptor['FontBBox'] = '[' . implode(' ', [
+				$font->normalizeFUnit($head['xMin']),
+				$font->normalizeFUnit($head['yMin']),
+				$font->normalizeFUnit($head['xMax']),
+				$font->normalizeFUnit($head['yMax']),
+			]) . ']';
+		$descriptor['Ascent'] = $hhea['ascent'];
+		$descriptor['Descent'] = $hhea['descent'];
+		$descriptor['StemV'] = 80; // adobe doesn't know either why 80
+		$descriptor['ItalicAngle'] = $post['italicAngle'];
+		// at the end get capHeight
+		$os2Table = $font->getTable()['OS/2'];
+		// capHeight offset 66- start of the additional fields +20 offset to capHeight
+		$os2Table->seek($os2Table->offset + 66 + 20);
+		$descriptor['CapHeight'] = $os2Table->readUInt16();
+		return $font;
 	}
 
 	/**
@@ -242,7 +248,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
 			"  /Type /Font",
-			"  /Subtype /" . $this->fontInfo['type'],
+			"  /Subtype /" . $this->fontData['type'],
 			"  /BaseFont /" . $this->getFullName(),
 			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
 			'  /Widths [' . implode(',', $this->getInfo('cw')) . ']',

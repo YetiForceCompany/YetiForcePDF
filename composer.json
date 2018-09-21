@@ -21,8 +21,7 @@
   },
   "autoload": {
     "psr-4": {
-      "YetiForcePDF\\": "lib/",
-      "FontLib\\": "vendor/phenx/php-font-lib/"
+      "YetiForcePDF\\": "lib/"
     }
   }
 }
