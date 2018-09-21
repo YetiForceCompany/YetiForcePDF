@@ -195,11 +195,11 @@ class Document
 
 	/**
 	 * Set font information
-	 * @param string $fontName
-	 * @param array  $info
+	 * @param string                 $fontName
+	 * @param \FontLib\TrueType\File $font
 	 * @return $this
 	 */
-	public function setFontData(string $fontName, \FontLib\Font $font)
+	public function setFontData(string $fontName, \FontLib\TrueType\File $font)
 	{
 		if (empty($this->fontsData[$fontName])) {
 			$this->fontsData[$fontName] = $font;
@@ -223,7 +223,7 @@ class Document
 
 	/**
 	 * Get all fonts data
-	 * @return \FontLib\Font[]
+	 * @return \FontLib\TrueType\File[]
 	 */
 	public function getAllFontsData()
 	{

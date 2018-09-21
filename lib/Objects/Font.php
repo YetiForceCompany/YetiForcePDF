@@ -150,7 +150,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getFullName()
 	{
-		return 'GCCBBY+' . $this->family;
+		return $this->family;
+	}
+
+	/**
+	 * Get output info
+	 * @return array
+	 */
+	public function getOutputInfo()
+	{
+		return $this->outputInfo;
 	}
 
 	/**
@@ -216,27 +225,37 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	protected function loadFontData()
 	{
-		$font = \FontLib\Font::load($this->fontDir . $this->fontFiles[$this->family]);
+		$fileName = $this->fontDir . $this->fontFiles[$this->family];
+		$fileContent = file_get_contents($fileName);
+		$font = \FontLib\Font::load($fileName);
 		$head = $font->getData('head');
 		$hhea = $font->getData('hhea');
 		$post = $font->getData('post');
-		$descriptor = $this->outputInfo['descriptor'] = [];
-		$descriptor['Flags'] = $head['flags'];
-		$descriptor['FontBBox'] = '[' . implode(' ', [
+		$this->outputInfo['descriptor'] = [];
+		$this->outputInfo['descriptor']['Flags'] = $head['flags'];
+		$this->outputInfo['descriptor']['FontBBox'] = '[' . implode(' ', [
 				$font->normalizeFUnit($head['xMin']),
 				$font->normalizeFUnit($head['yMin']),
 				$font->normalizeFUnit($head['xMax']),
 				$font->normalizeFUnit($head['yMax']),
 			]) . ']';
-		$descriptor['Ascent'] = $hhea['ascent'];
-		$descriptor['Descent'] = $hhea['descent'];
-		$descriptor['StemV'] = 80; // adobe doesn't know either why 80
-		$descriptor['ItalicAngle'] = $post['italicAngle'];
+		$this->outputInfo['descriptor']['Ascent'] = $hhea['ascent'];
+		$this->outputInfo['descriptor']['Descent'] = $hhea['descent'];
+		$this->outputInfo['descriptor']['StemV'] = 80; // adobe doesn't know either why 80
+		$this->outputInfo['descriptor']['ItalicAngle'] = $post['italicAngle'];
+		$this->outputInfo['font'] = [];
+		$this->outputInfo['font']['Widths'] = $font->getData('loca');
+		$this->outputInfo['font']['FirstChar'] = 0;
+		$this->outputInfo['font']['LastChar'] = count($this->outputInfo['font']['Widths']);
 		// at the end get capHeight
 		$os2Table = $font->getTable()['OS/2'];
 		// capHeight offset 66- start of the additional fields +20 offset to capHeight
 		$os2Table->seek($os2Table->offset + 66 + 20);
 		$descriptor['CapHeight'] = $os2Table->readUInt16();
+		$this->dataStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
+			->setDocument($this->document)
+			->init()
+			->addRawContent($fileContent);
 		return $font;
 	}
 
@@ -248,10 +267,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
 			"  /Type /Font",
-			"  /Subtype /" . $this->fontData['type'],
+			"  /Subtype /TrueType",
 			"  /BaseFont /" . $this->getFullName(),
 			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
-			'  /Widths [' . implode(',', $this->getInfo('cw')) . ']',
+			'  /Widths [' . implode(' ', $this->outputInfo['font']['Widths']) . ']',
 			'  /Encoding ' . $this->encoding->getReference(),
 			">>",
 			"endobj"]);

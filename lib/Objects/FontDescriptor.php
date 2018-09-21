@@ -38,7 +38,7 @@ class FontDescriptor extends \YetiForcePDF\Objects\Resource
 	 */
 	public function render(): string
 	{
-		$descriptor = $this->font->getInfo('desc');
+		$descriptor = $this->font->getOutputInfo()['descriptor'];
 		return implode("\n", [
 			$this->getRawId() . " obj",
 			'<<',
