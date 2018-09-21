@@ -17,6 +17,20 @@ namespace YetiForcePDF\Objects;
  */
 class Font extends \YetiForcePDF\Objects\Resource
 {
+	protected $fontDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fonts' . DIRECTORY_SEPARATOR;
+	protected $fontFiles = [
+		'Lato' => 'lato.php',
+		'Lato-Bold' => 'latob.php',
+		'Lato-BoldItalic' => 'latobi.php',
+		'Lato-Italic' => 'latoi.php',
+
+		'PTSerif' => 'pt_serif.php',
+		'PTSerif-Bold' => 'pt_serifb.php',
+		'PTSerif-BoldItalic' => 'pt_serifbi.php',
+		'PTSerif-Italic' => 'pt_serifi.php',
+
+		'PTMono' => 'pt_mono.php',
+	];
 	/**
 	 * Which type of dictionary (Page, Catalog, Font etc...)
 	 * @var string
@@ -31,7 +45,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * Base font type
 	 * @var string
 	 */
-	protected $baseFont = 'Arial';
+	protected $baseFont = 'Lato';
 	/**
 	 * Font number
 	 * @var string
@@ -114,6 +128,12 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getReference(): string
 	{
 		return $this->getRawId() . ' R';
+	}
+
+	protected function loadFont()
+	{
+		$fileName = $this->fontDir . $this->fontFiles[$this->name];
+
 	}
 
 	/**
