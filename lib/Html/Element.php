@@ -308,9 +308,16 @@ class Element extends \YetiForcePDF\Base
 		$dimensions = $this->style->getDimensions();
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
-		$element = [];
 		if ($this->isTextNode()) {
 			$textContent = $this->getDOMElement()->textContent;
+			$element = [
+				'BT',
+				$fontStr,
+				"1 0 0 1 {$x} {$y} Tm",
+				"($textContent) Tj",
+				'ET',
+			];
+		} else {
 			$element = [
 				'q',
 				'1 w', //border
@@ -319,11 +326,6 @@ class Element extends \YetiForcePDF\Base
 				"0 0 $width $height re",
 				'S',
 				'Q',
-				'BT',
-				$fontStr,
-				"1 0 0 1 {$x} {$y} Tm",
-				"($textContent) Tj",
-				'ET',
 			];
 		}
 		return implode("\n", $element);
