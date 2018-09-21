@@ -44,4 +44,15 @@ class Inline extends \YetiForcePDF\Style\Coordinates\Coordinates
 		$this->absoluteHtmlY = $htmlY;
 		$this->convertHtmlToPdf();
 	}
+
+	/**
+	 * Initialisation
+	 * @return $this
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->calculate();
+		return $this;
+	}
 }

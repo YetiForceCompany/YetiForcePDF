@@ -343,6 +343,9 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
+		/*if ($this->element->isTextNode()) {
+			$parsed['display'] = 'inline';
+		}*/
 		return $parsed;
 	}
 }
