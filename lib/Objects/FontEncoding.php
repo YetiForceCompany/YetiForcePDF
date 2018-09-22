@@ -26,7 +26,7 @@ class FontEncoding extends \YetiForcePDF\Objects\Resource
 			$this->getRawId() . " obj",
 			'<<',
 			'  /Type Encoding',
-			'  /BaseEncoding /Identity-H',
+			'  /BaseEncoding /WinAnsiEncoding',
 			'>>',
 			'endobj'
 		]);

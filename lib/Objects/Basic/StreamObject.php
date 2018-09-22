@@ -80,16 +80,16 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	public function render(): string
 	{
 		$stream = trim(implode("\n", $this->content), "\n");
-		$sizeBefore = strlen($stream);
-		if($this->filter === 'FlateDecode'){
+		$sizeBefore = mb_strlen($stream, '8bit');
+		if ($this->filter === 'FlateDecode') {
 			$stream = gzcompress($stream);
 		}
 		$filter = $this->filter ? '  /Filter /' . $this->filter : '';
 		return implode("\n", [
 			$this->getRawId() . ' obj',
 			'<<',
-			'  /Length ' . \strlen($stream),
-			'  /Lenght1 '.$sizeBefore,
+			'  /Length ' . mb_strlen($stream, '8bit'),
+			'  /Lenght1 ' . $sizeBefore,
 			$filter,
 			'>>',
 			'stream',

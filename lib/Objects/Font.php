@@ -82,6 +82,12 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var array
 	 */
 	protected $outputInfo = [];
+	/**
+	 * @var float
+	 */
+	protected $unitsPerEm = 1000;
+	protected $widths = [];
+	protected $toUnicode;
 
 	/**
 	 * Initialisation
@@ -100,9 +106,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 				->setDocument($this->document)
 				->setFont($this)
 				->init();
-			$this->encoding = (new \YetiForcePDF\Objects\FontEncoding())
+			/*$this->encoding = (new \YetiForcePDF\Objects\FontEncoding())
 				->setDocument($this->document)
-				->init();
+				->init();*/
 			foreach ($this->document->getObjects('Page') as $page) {
 				$page->synchronizeFonts();
 			}
@@ -150,7 +156,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getFullName()
 	{
-		return $this->family;
+		return $this->fontData->getFontPostscriptName();
 	}
 
 	/**
@@ -218,6 +224,38 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return $this->dataStream;
 	}
 
+	public function normalizeUnit($value, $base = 1000)
+	{
+		return floor($value * ($base / $this->unitsPerEm));
+	}
+
+	protected function setUpUnicode()
+	{
+		$stream = implode("\n", [
+			'/CIDInit /ProcSet findresource begin',
+			'12 dict begin',
+			'begincmap',
+			'/CIDSystemInfo',
+			'<</Registry (Adobe)',
+			'/Ordering (UCS)',
+			'/Supplement 0',
+			'>> def',
+			'/CMapName /Adobe-Identity-UCS def',
+			'/CMapType 2 def',
+			'1 begincodespacerange',
+			'<0000> <FFFF>',
+			'endcodespacerange',
+			'1 beginbfrange',
+			'<0000> <FFFF> <0000>',
+			'endbfrange',
+			'endcmap',
+			'CMapName currentdict /CMap defineresource pop',
+			'end',
+			'end',
+		]);
+		$this->toUnicode->addRawContent($stream);
+	}
+
 	/**
 	 * Load font
 	 * @return \FontLib\TrueType\File|null
@@ -228,34 +266,70 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$fileName = $this->fontDir . $this->fontFiles[$this->family];
 		$fileContent = file_get_contents($fileName);
 		$font = \FontLib\Font::load($fileName);
+		$font->parse();
 		$head = $font->getData('head');
 		$hhea = $font->getData('hhea');
+		$hmtx = $font->getData('hmtx');
 		$post = $font->getData('post');
+		$names = $post['names'];
+		if (isset($head['unitsPerEm'])) {
+			$this->unitsPerEm = $head['unitsPerEm'];
+		}
 		$this->outputInfo['descriptor'] = [];
-		$this->outputInfo['descriptor']['Flags'] = $head['flags'];
 		$this->outputInfo['descriptor']['FontBBox'] = '[' . implode(' ', [
-				$font->normalizeFUnit($head['xMin']),
-				$font->normalizeFUnit($head['yMin']),
-				$font->normalizeFUnit($head['xMax']),
-				$font->normalizeFUnit($head['yMax']),
+				$this->normalizeUnit($head['xMin']),
+				$this->normalizeUnit($head['yMin']),
+				$this->normalizeUnit($head['xMax']),
+				$this->normalizeUnit($head['yMax']),
 			]) . ']';
-		$this->outputInfo['descriptor']['Ascent'] = $hhea['ascent'];
-		$this->outputInfo['descriptor']['Descent'] = $hhea['descent'];
-		$this->outputInfo['descriptor']['StemV'] = 80; // adobe doesn't know either why 80
+		$this->outputInfo['descriptor']['Ascent'] = $this->normalizeUnit($hhea['ascent']);
+		$this->outputInfo['descriptor']['Descent'] = $this->normalizeUnit($hhea['descent']);
+		$this->outputInfo['descriptor']['MissingWidth'] = 500;
+		$this->outputInfo['descriptor']['StemV'] = 80;
+		if ($post['usWeightClass'] > 400) {
+			$this->outputInfo['descriptor']['StemV'] = 120;
+		}
 		$this->outputInfo['descriptor']['ItalicAngle'] = $post['italicAngle'];
+		$flags = 0;
+		if ($this->outputInfo['descriptor']['ItalicAngle'] !== 0) {
+			$flags += 2 ** 6;
+		}
+		if ($post['isFixedPitch'] === true) {
+			$flags += 1;
+		}
+		$flags += 2 ** 5; // assume non-sybolic
+		$this->outputInfo['descriptor']['Flags'] = $flags;
 		$this->outputInfo['font'] = [];
-		$this->outputInfo['font']['Widths'] = $font->getData('loca');
+		$widths = [];
+		$this->widths = [];
+		foreach ($font->getUnicodeCharMap() as $c => $g) {
+			if (!isset($hmtx[$g])) {
+				$hmtx[$g] = $hmtx[0];
+			}
+			$char = (isset($names[$g]) ? $names[$g] : sprintf("uni%04x", $c));
+			$width = $this->normalizeUnit($hmtx[$g][0]);
+			$widths[] = $width;
+			$this->widths[$char] = $width;
+		}
+		//var_dump($this->widths['A']);
+		$this->outputInfo['font']['Widths'] = $widths;
 		$this->outputInfo['font']['FirstChar'] = 0;
-		$this->outputInfo['font']['LastChar'] = count($this->outputInfo['font']['Widths']);
+		$this->outputInfo['font']['LastChar'] = count($widths) - 1;
 		// at the end get capHeight
-		$os2Table = $font->getTable()['OS/2'];
+		/*$os2Table = $font->getTable()['OS/2'];
 		// capHeight offset 66- start of the additional fields +20 offset to capHeight
 		$os2Table->seek($os2Table->offset + 66 + 20);
-		$descriptor['CapHeight'] = $os2Table->readUInt16();
+		$this->outputInfo['descriptor']['CapHeight'] = $this->normalizeUnit($os2Table->readUInt16());
+		*/
 		$this->dataStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
+			->setFilter('FlateDecode')
 			->init()
 			->addRawContent($fileContent);
+		$this->toUnicode = (new \YetiForcePDF\Objects\Basic\StreamObject())
+			->setDocument($this->document)
+			->init();
+		$this->setUpUnicode();
 		return $font;
 	}
 
@@ -270,8 +344,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 			"  /Subtype /TrueType",
 			"  /BaseFont /" . $this->getFullName(),
 			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
-			'  /Widths [' . implode(' ', $this->outputInfo['font']['Widths']) . ']',
-			'  /Encoding ' . $this->encoding->getReference(),
+			'  /FirstChar ' . $this->outputInfo['font']['FirstChar'],
+			'  /LastChar ' . $this->outputInfo['font']['LastChar'],
+			'  /Widths[' . implode(' ', $this->outputInfo['font']['Widths']) . ' ]',
+			'  /ToUnicode ' . $this->toUnicode->getReference(),
 			">>",
 			"endobj"]);
 	}
