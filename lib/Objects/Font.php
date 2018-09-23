@@ -229,7 +229,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		return floor($value * ($base / $this->unitsPerEm));
 	}
 
-	protected function setUpUnicode()
+	protected function setUpUnicode($charMapUnicode)
 	{
 		$stream = implode("\n", [
 			'/CIDInit /ProcSet findresource begin',
@@ -243,10 +243,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 			'/CMapName /Adobe-Identity-UCS def',
 			'/CMapType 2 def',
 			'1 begincodespacerange',
-			'<0000> <FFFF>',
+			'<00> <FF>',
 			'endcodespacerange',
-			'1 beginbfrange',
-			'<0000> <FFFF> <0000>',
+			count($charMapUnicode) . ' beginbfrange',
+			implode("\n", $charMapUnicode),
 			'endbfrange',
 			'endcmap',
 			'CMapName currentdict /CMap defineresource pop',
@@ -297,12 +297,19 @@ class Font extends \YetiForcePDF\Objects\Resource
 		if ($post['isFixedPitch'] === true) {
 			$flags += 1;
 		}
-		$flags += 2 ** 5; // assume non-sybolic
+		$flags += 2 ** 5;
 		$this->outputInfo['descriptor']['Flags'] = $flags;
 		$this->outputInfo['font'] = [];
 		$widths = [];
 		$this->widths = [];
-		foreach ($font->getUnicodeCharMap() as $c => $g) {
+		$charMap = [];
+		foreach ($font->getData("cmap", "subtables") as $subtable) {
+			if ($subtable['platformID'] === 0) {
+				$charMap = $subtable['glyphIndexArray'];
+			}
+		}
+		$charMapUnicode = [];
+		foreach ($charMap as $c => $g) {
 			if (!isset($hmtx[$g])) {
 				$hmtx[$g] = $hmtx[0];
 			}
@@ -310,6 +317,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 			$width = $this->normalizeUnit($hmtx[$g][0]);
 			$widths[] = $width;
 			$this->widths[$char] = $width;
+			$charMapUnicode[] = '<' . str_pad(dechex($c), 2, '0', STR_PAD_LEFT) . '> <' . str_pad(dechex($g), 4, '0', STR_PAD_LEFT) . '>';
 		}
 		//var_dump($this->widths['A']);
 		$this->outputInfo['font']['Widths'] = $widths;
@@ -329,7 +337,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->toUnicode = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
-		$this->setUpUnicode();
+		$this->setUpUnicode($charMapUnicode);
 		return $font;
 	}
 
@@ -346,7 +354,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
 			'  /FirstChar ' . $this->outputInfo['font']['FirstChar'],
 			'  /LastChar ' . $this->outputInfo['font']['LastChar'],
-			'  /Widths[' . implode(' ', $this->outputInfo['font']['Widths']) . ' ]',
+			'  /Widths [' . implode(' ', $this->outputInfo['font']['Widths']) . ' ]',
 			'  /ToUnicode ' . $this->toUnicode->getReference(),
 			">>",
 			"endobj"]);

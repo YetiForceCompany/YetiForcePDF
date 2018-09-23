@@ -48,10 +48,10 @@ class FontDescriptor extends \YetiForcePDF\Objects\Resource
 			'  /Flags ' . $descriptor['Flags'],
 			'  /Ascent ' . $descriptor['Ascent'],
 			'  /Descent ' . $descriptor['Descent'],
-			'  /CapHeight ' . $descriptor['CapHeight'],
+			//'  /CapHeight ' . $descriptor['CapHeight'],
 			'  /ItalicAngle ' . $descriptor['ItalicAngle'],
-			'  /StemV ' . $descriptor['StemV'],
-			'  /MissingWidth ' . $descriptor['MissingWidth'],
+			'  /StemV 35',// . $descriptor['StemV'],
+			//'  /MissingWidth ' . $descriptor['MissingWidth'],
 			'  /FontFile2 ' . $this->font->getDataStream()->getReference(),
 			'>>',
 			'endobj'
