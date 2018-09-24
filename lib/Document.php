@@ -301,7 +301,7 @@ class Document
 	 */
 	protected function getDocumentHeader(): string
 	{
-		return "%PDF-1.7\n%âăĎÓ\n";
+		return "%PDF-1.4\n%âăĎÓ\n";
 	}
 
 	/**
@@ -397,7 +397,7 @@ class Document
 			->init();
 		$trailer->setRootObject($this->catalog)->setSize(count($this->objects) - 1);
 		foreach ($this->objects as $object) {
-			if (in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer'])) {
+			if (in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer', 'Array'])) {
 				$this->buffer .= $object->render() . "\n";
 			}
 		}

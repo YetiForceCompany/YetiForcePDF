@@ -96,6 +96,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	protected $charMap = [];
 	protected $fontType0;
 	protected $fontCid;
+	protected $procSet;
 
 	/**
 	 * Initialisation
@@ -234,7 +235,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 
 	public function normalizeUnit($value, $base = 1000)
 	{
-		return floor($value * ($base / $this->unitsPerEm));
+		return round($value * ($base / $this->unitsPerEm));
 	}
 
 	protected function setUpUnicode($charMapUnicode)
@@ -370,11 +371,18 @@ class Font extends \YetiForcePDF\Objects\Resource
 			->init();
 		$this->setUpUnicode($charMapUnicode);
 		$this->fontType0->setDictionaryType('Font')
-			->addValue('SubType', '/Type0')
+			->addValue('Subtype', '/Type0')
 			->addValue('BaseFont', '/' . $font->getFontPostscriptName())
 			->addValue('Encoding', '/Identity-H')
 			->addValue('DescendantFonts', '[' . $this->getReference() . ']')
 			->addValue('ToUnicode', $this->toUnicode->getReference());
+		$this->procSet = (new \YetiForcePDF\Objects\Basic\ArrayObject())
+			->setDocument($this->document)
+			->addItem('/PDF')
+			->addItem('/Text')
+			->init();
+		$this->document->getCurrentPage()->addResource('ProcSet', '', $this->procSet);
+		$this->document->getPagesObject()->addProcSet($this->procSet);
 		return $font;
 	}
 

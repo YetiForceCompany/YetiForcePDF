@@ -28,6 +28,23 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $name = 'Pages';
 
 	/**
+	 * Proc Set
+	 * @var \YetiForcePDF\Objects\Basic\ArrayObject
+	 */
+	protected $procSet;
+
+	/**
+	 * Add proc set
+	 * @param \YetiForcePDF\Objects\Basic\ArrayObject $procSet
+	 * @return $this
+	 */
+	public function addProcSet(\YetiForcePDF\Objects\Basic\ArrayObject $procSet)
+	{
+		$this->procSet = $procSet;
+		return $this;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
@@ -36,14 +53,13 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		foreach ($this->children as $child) {
 			$kids[] = $child->getReference();
 		}
-		return implode("\n", [
-			$this->getRawId() . ' obj',
-			'<<',
-			'  /Type /Pages',
-			'  /Count ' . count($kids),
-			'  /Kids [' . implode("\n    ", $kids) . ']',
-			'>>',
-			'endobj'
-		]);
+		$this->clearValues()
+			->addValue('Type', '/Pages')
+			->addValue('Count', (string)count($kids))
+			->addValue('Kids', '[' . implode("\n    ", $kids) . ']');
+		if ($this->procSet) {
+			$this->addValue('ProcSet', $this->procSet->getReference());
+		}
+		return parent::render();
 	}
 }

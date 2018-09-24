@@ -61,6 +61,16 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
+	 * Clear all values
+	 * @return $this
+	 */
+	public function clearValues()
+	{
+		$this->values = [];
+		return $this;
+	}
+
+	/**
 	 * Get dictionary type (Page, Catalog, Font etc...)
 	 * @return string
 	 */

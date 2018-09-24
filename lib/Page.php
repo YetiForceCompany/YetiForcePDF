@@ -73,6 +73,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @var \YetiForcePDF\Style\Coordinates\Coordinates
 	 */
 	protected $coordinates;
+	/**
+	 * Don't group this 'group' names
+	 * @var string[]
+	 */
+	protected $doNotGroup = [];
 
 	public static $pageFormats = [
 		// ISO 216 A Series + 2 SIS 014711 extensions
@@ -549,8 +554,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$this->resources[$groupName] = [];
 		}
 		$this->resources[$groupName][$resourceName] = $resource;
+		if (!$resourceName) {
+			$this->doNotGroup[] = $groupName;
+		}
 		return $this;
 	}
+
 
 	/**
 	 * Get resource
@@ -608,11 +617,19 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Resources <<',
 		];
 		foreach ($this->resources as $groupName => $resourceGroup) {
-			$rendered[] = "    /$groupName <<";
-			foreach ($resourceGroup as $resourceName => $resourceObject) {
-				$rendered[] = "      /$resourceName " . $resourceObject->getReference();
+			if (!in_array($groupName, $this->doNotGroup)) {
+				$rendered[] = "    /$groupName <<";
+				foreach ($resourceGroup as $resourceName => $resourceObject) {
+					$rendered[] = "      /$resourceName " . $resourceObject->getReference();
+				}
+				$rendered[] = '    >>';
+			} else {
+				$str = "    /$groupName ";
+				foreach ($resourceGroup as $resourceName => $resourceObject) {
+					$str .= $resourceObject->getReference();
+				}
+				$rendered[] = $str;
 			}
-			$rendered[] = "    >>";
 		}
 		$rendered[] = '  >>';
 		return implode("\n", $rendered);

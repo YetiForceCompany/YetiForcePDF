@@ -33,6 +33,17 @@ class ArrayObject extends \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $items = [];
 
+	/**
+	 * Initialisation
+	 * @return $this
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->id = $this->document->getActualId();
+		return $this;
+	}
+
 	public function addItem($item): \YetiForcePDF\Objects\Basic\ArrayObject
 	{
 		$this->items[] = $item;
@@ -48,8 +59,14 @@ class ArrayObject extends \YetiForcePDF\Objects\PdfObject
 		foreach ($this->items as $item) {
 			if ($item instanceof \YetiForcePDF\Objects\PdfObject) {
 				$stringItems[] = $item->getReference();
+			} else {
+				$stringItems[] = (string)$item;
 			}
 		}
-		return '[ ' . implode(' ', $stringItems) . ' ]';
+		return implode("\n", [
+			$this->getRawId() . ' obj',
+			'[ ' . implode(' ', $stringItems) . ' ]',
+			'endobj'
+		]);
 	}
 }
