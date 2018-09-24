@@ -18,6 +18,12 @@ namespace YetiForcePDF\Objects;
 class FontEncoding extends \YetiForcePDF\Objects\Resource
 {
 	/**
+	 * Encoding
+	 * @var string
+	 */
+	protected $encoding = 'WinAnsiEncoding';
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
@@ -26,7 +32,7 @@ class FontEncoding extends \YetiForcePDF\Objects\Resource
 			$this->getRawId() . " obj",
 			'<<',
 			'  /Type Encoding',
-			'  /BaseEncoding /WinAnsiEncoding',
+			'  /BaseEncoding /' . $this->encoding,
 			'>>',
 			'endobj'
 		]);

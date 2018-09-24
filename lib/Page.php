@@ -575,7 +575,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		foreach ($this->document->getAllFontInstances() as $fontName => $fontInstance) {
 			$fontNumber = $fontInstance->getNumber();
 			if (!$this->getResource('Font', $fontNumber)) {
-				$this->addResource('Font', $fontNumber, $fontInstance);
+				$this->addResource('Font', $fontNumber, $fontInstance->getType0Font());
 			}
 		}
 	}

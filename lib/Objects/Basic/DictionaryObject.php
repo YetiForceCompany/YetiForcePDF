@@ -32,6 +32,10 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	 * @var string
 	 */
 	protected $dictionaryType = '';
+	/**
+	 * @var array
+	 */
+	protected $values = [];
 
 	/**
 	 * Initialisation
@@ -45,6 +49,18 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
+	 * Add value
+	 * @param string $name
+	 * @param string $value
+	 * @return $this
+	 */
+	public function addValue(string $name, string $value)
+	{
+		$this->values[] = ['/' . $name, $value];
+		return $this;
+	}
+
+	/**
 	 * Get dictionary type (Page, Catalog, Font etc...)
 	 * @return string
 	 */
@@ -54,10 +70,30 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
+	 * Set dictionary type
+	 * @param string $type
+	 * @return $this
+	 */
+	public function setDictionaryType(string $type)
+	{
+		$this->addValue('Type', '/' . $type);
+		$this->dictionaryType = $type;
+		return $this;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
 	{
-		return "<<\n\t/Type /{$this->dictionaryType}\n>>\n";
+		$values = [
+			$this->getRawId() . ' obj',
+			'<<'
+		];
+		foreach ($this->values as $value) {
+			$values[] = implode(' ', $value);
+		}
+		$values[] = '>>';
+		return implode("\n", $values);
 	}
 }

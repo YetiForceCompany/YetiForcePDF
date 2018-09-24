@@ -87,7 +87,15 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	protected $unitsPerEm = 1000;
 	protected $widths = [];
-	protected $toUnicode;
+	protected $toUnicodeStream;
+	protected $descendantFonts;
+	protected $cidFont;
+	protected $cidDictionary;
+	protected $cidToGid;
+	protected $cidSystemInfo;
+	protected $charMap = [];
+	protected $fontType0;
+	protected $fontCid;
 
 	/**
 	 * Initialisation
@@ -243,10 +251,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 			'/CMapName /Adobe-Identity-UCS def',
 			'/CMapType 2 def',
 			'1 begincodespacerange',
-			'<00> <FF>',
+			'<0000> <FFFF>',
 			'endcodespacerange',
-			count($charMapUnicode) . ' beginbfrange',
-			implode("\n", $charMapUnicode),
+			'1 beginbfrange',
+			'<0000> <FFFF> <0000>',
 			'endbfrange',
 			'endcmap',
 			'CMapName currentdict /CMap defineresource pop',
@@ -255,6 +263,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 		]);
 		$this->toUnicode->addRawContent($stream);
 	}
+
+	/**
+	 * Get Type0 font - main one
+	 * @return Font
+	 */
+	public function getType0Font()
+	{
+		return $this->fontType0;
+	}
+
 
 	/**
 	 * Load font
@@ -302,23 +320,27 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->outputInfo['font'] = [];
 		$widths = [];
 		$this->widths = [];
-		$charMap = [];
+		$this->charMap = [];
 		foreach ($font->getData("cmap", "subtables") as $subtable) {
 			if ($subtable['platformID'] === 0) {
-				$charMap = $subtable['glyphIndexArray'];
+				$this->charMap = $subtable['glyphIndexArray'];
+				unset($this->charMap[0xFFFF]);
 			}
 		}
 		$charMapUnicode = [];
-		foreach ($charMap as $c => $g) {
-			if (!isset($hmtx[$g])) {
-				$hmtx[$g] = $hmtx[0];
+		$cidToGid = str_pad('', 256 * 256 * 2, "\x00");
+		foreach ($this->charMap as $c => $glyph) {
+			// Set values in CID to GID map
+			if ($c >= 0 && $c < 0xFFFF && $glyph) {
+				$cidToGid[$c * 2] = chr($glyph >> 8);
+				$cidToGid[$c * 2 + 1] = chr($glyph & 0xFF);
 			}
-			$char = (isset($names[$g]) ? $names[$g] : sprintf("uni%04x", $c));
-			$width = $this->normalizeUnit($hmtx[$g][0]);
-			$widths[] = $width;
-			$this->widths[$char] = $width;
-			$charMapUnicode[] = '<' . str_pad(dechex($c), 2, '0', STR_PAD_LEFT) . '> <' . str_pad(dechex($g), 4, '0', STR_PAD_LEFT) . '>';
+			$widths[] = $c . ' [' . $font->normalizeFUnit(isset($hmtx[$glyph]) ? $hmtx[$glyph][0] : $hmtx[0][0]) . ']';
 		}
+		$this->cidToGid = (new \YetiForcePDF\Objects\Basic\StreamObject())
+			->setDocument($this->document)
+			->init();
+		$this->cidToGid->addRawContent($cidToGid)->setFilter('FlateDecode');
 		//var_dump($this->widths['A']);
 		$this->outputInfo['font']['Widths'] = $widths;
 		$this->outputInfo['font']['FirstChar'] = 0;
@@ -329,6 +351,15 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$os2Table->seek($os2Table->offset + 66 + 20);
 		$this->outputInfo['descriptor']['CapHeight'] = $this->normalizeUnit($os2Table->readUInt16());
 		*/
+		$this->fontType0 = (new \YetiForcePDF\Objects\Basic\DictionaryObject())
+			->setDocument($this->document)
+			->init();
+		$this->cidSystemInfo = (new \YetiForcePDF\Objects\Basic\DictionaryObject())
+			->setDocument($this->document)
+			->init();
+		$this->cidSystemInfo->addValue('Registry', '(Adobe)')
+			->addValue('Ordering', '(UCS)')
+			->addValue('Supplement', '0');
 		$this->dataStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->setFilter('FlateDecode')
@@ -338,24 +369,33 @@ class Font extends \YetiForcePDF\Objects\Resource
 			->setDocument($this->document)
 			->init();
 		$this->setUpUnicode($charMapUnicode);
+		$this->fontType0->setDictionaryType('Font')
+			->addValue('SubType', '/Type0')
+			->addValue('BaseFont', '/' . $font->getFontPostscriptName())
+			->addValue('Encoding', '/Identity-H')
+			->addValue('DescendantFonts', '[' . $this->getReference() . ']')
+			->addValue('ToUnicode', $this->toUnicode->getReference());
 		return $font;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function render(): string
+	public
+	function render(): string
 	{
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
 			"  /Type /Font",
-			"  /Subtype /TrueType",
+			"  /Subtype /CIDFontType2",
 			"  /BaseFont /" . $this->getFullName(),
 			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
-			'  /FirstChar ' . $this->outputInfo['font']['FirstChar'],
-			'  /LastChar ' . $this->outputInfo['font']['LastChar'],
-			'  /Widths [' . implode(' ', $this->outputInfo['font']['Widths']) . ' ]',
-			'  /ToUnicode ' . $this->toUnicode->getReference(),
+			//'  /FirstChar ' . $this->outputInfo['font']['FirstChar'],
+			//'  /LastChar ' . $this->outputInfo['font']['LastChar'],
+			'  /DW 500',
+			'  /W [' . implode(' ', $this->outputInfo['font']['Widths']) . ' ]',
+			'  /CIDSystemInfo ' . $this->cidSystemInfo->getReference(),
+			'  /CIDToGIDMap ' . $this->cidToGid->getReference(),
 			">>",
 			"endobj"]);
 	}
