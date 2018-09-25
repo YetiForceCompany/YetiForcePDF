@@ -254,16 +254,26 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var int[]
 	 */
 	protected $widths = [];
-	protected $toUnicodeStream;
-	protected $descendantFonts;
-	protected $cidFont;
-	protected $cidDictionary;
+	/**
+	 * Cid to Gid characters map
+	 * @var \YetiForcePDF\Objects\Basic\StreamObject
+	 */
 	protected $cidToGid;
+	/**
+	 * Cid system info
+	 * @var \YetiForcePDF\Objects\Basic\DictionaryObject
+	 */
 	protected $cidSystemInfo;
+	/**
+	 * Character map (unicode)
+	 * @var array
+	 */
 	protected $charMap = [];
+	/**
+	 * Main font that is used - first font - this file is just descendant font
+	 * @var \YetiForcePDF\Objects\Basic\DictionaryObject
+	 */
 	protected $fontType0;
-	protected $fontCid;
-	protected $procSet;
 
 	/**
 	 * Initialisation
@@ -529,13 +539,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 			->addValue('Encoding', '/Identity-H')
 			->addValue('DescendantFonts', '[' . $this->getReference() . ']')
 			->addValue('ToUnicode', $this->toUnicode->getReference());
-		$this->procSet = (new \YetiForcePDF\Objects\Basic\ArrayObject())
-			->setDocument($this->document)
-			->addItem('/PDF')
-			->addItem('/Text')
-			->init();
-		$this->document->getCurrentPage()->addResource('ProcSet', '', $this->procSet);
-		$this->document->getPagesObject()->addProcSet($this->procSet);
 		$font->close();
 		return $font;
 	}
