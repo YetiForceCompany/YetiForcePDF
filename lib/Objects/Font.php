@@ -270,6 +270,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	protected $charMap = [];
 	/**
+	 * Unicode char map stream
+	 * @var \YetiForcePDF\Objects\Basic\StreamObject
+	 */
+	protected $toUnicode;
+	/**
 	 * Main font that is used - first font - this file is just descendant font
 	 * @var \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
@@ -384,6 +389,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Get text width
+	 * @param string $text
+	 * @return float
+	 */
+	public function getTextWidth(string $text): float
+	{
+
+	}
+
+	/**
 	 * Get font number
 	 * @return string
 	 */
@@ -450,7 +465,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 	{
 		return $this->fontType0;
 	}
-
 
 	/**
 	 * Load font
@@ -546,8 +560,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * {@inheritdoc}
 	 */
-	public
-	function render(): string
+	public function render(): string
 	{
 		return implode("\n", [$this->getRawId() . " obj",
 			"<<",
