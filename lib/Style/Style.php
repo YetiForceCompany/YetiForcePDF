@@ -110,7 +110,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	public static $mandatoryRules = [
-		'font-family' => 'Lato-Regular',
+		'font-family' => 'NotoSans-Regular',
 		'font-size' => 12,
 		'font-weight' => 'normal',
 		'margin-left' => 0,
@@ -136,7 +136,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	protected $rules = [
-		'font-family' => 'Lato-Regular',
+		'font-family' => 'NotoSans-Regular',
 		'font-size' => 12,
 		'font-weight' => 'normal',
 		'margin-left' => 0,
