@@ -212,7 +212,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * Base font type aka font family
 	 * @var string
 	 */
-	protected $family = 'NotoSans-Regular';
+	protected $family = 'NotoSerif-Regular';
 	/**
 	 * Font number
 	 * @var string
@@ -241,10 +241,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var \YetiForcePDF\Objects\Basic\StreamObject
 	 */
 	protected $dataStream;
-	/**
-	 * @var \YetiForcePDF\Objects\FontEncoding
-	 */
-	protected $encoding;
 	/**
 	 * Info needed to write in pdf
 	 * @var array
@@ -312,9 +308,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 				->setDocument($this->document)
 				->setFont($this)
 				->init();
-			/*$this->encoding = (new \YetiForcePDF\Objects\FontEncoding())
-				->setDocument($this->document)
-				->init();*/
 			foreach ($this->document->getObjects('Page') as $page) {
 				$page->synchronizeFonts();
 			}
