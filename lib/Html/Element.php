@@ -442,14 +442,25 @@ class Element extends \YetiForcePDF\Base
 		$dimensions = $this->style->getDimensions();
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
+		$textWidth = $this->style->getFont()->getTextWidth($this->getDOMElement()->textContent);
+		$textHeight = $this->style->getFont()->getTextHeight();
+		$baseLine = $this->style->getFont()->getDescender();
+		$baseLineY = $pdfY + $baseLine;
 		if ($this->isTextNode()) {
 			$textContent = '(' . $this->filterText($this->getDOMElement()->textContent) . ')';
 			$element = [
-				"BT $pdfX $pdfY Td $fontStr [$textContent] TJ ET",
-				//$fontStr,
-				//"1 0 0 1 $pdfX $pdfY Tm",
-				//"$textContent Tj",
-				//'ET',
+				'BT',
+				$fontStr,
+				"1 0 0 1 $pdfX $pdfY Tm",
+				"$textContent Tj",
+				'ET',
+				'q',
+				'1 w',
+				'1 0 0 RG',
+				"1 0 0 1 $pdfX $baseLineY cm",
+				"0 0 $textWidth $textHeight re",
+				'S',
+				'Q'
 			];
 		} else {
 			$element = [

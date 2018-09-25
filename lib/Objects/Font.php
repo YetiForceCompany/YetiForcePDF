@@ -224,6 +224,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	protected $size = 12;
 	/**
+	 * Font height
+	 * @var float
+	 */
+	protected $height = 0;
+	/**
 	 * Font data
 	 * @var \FontLib\Font
 	 */
@@ -279,6 +284,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	protected $fontType0;
+	/**
+	 * From baseline to top of the font
+	 * @var float
+	 */
+	protected $ascender = 0;
+	/**
+	 * From baseline to bottom (with jyg chars that are bellow baseline)
+	 * @var float
+	 */
+	protected $descender = 0;
 
 	/**
 	 * Initialisation
@@ -395,7 +410,46 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getTextWidth(string $text): float
 	{
+		$width = 0;
+		for ($i = 0, $len = mb_strlen($text); $i < $len; $i++) {
+			$char = mb_substr($text, $i, 1);
+			$width += (float)$this->widths[mb_ord($char)];
+		}
+		return ($this->size * $width) / 1000;
+	}
 
+	/**
+	 * Get text height
+	 * @param string|null $text
+	 * @return float
+	 */
+	public function getTextHeight(string $text = null): float
+	{
+		$height = $this->size * $this->height / $this->unitsPerEm;
+		if ($text === null) {
+			return $height;
+		} else {
+			// TODO: break text inside element and summarize line height
+			return $height;
+		}
+	}
+
+	/**
+	 * Get ascender (from baseline to top of the bounding box)
+	 * @return float
+	 */
+	public function getAscender(): float
+	{
+		return $this->size * $this->ascender / $this->unitsPerEm;
+	}
+
+	/**
+	 * Get descender (from baseline to bottom of the bounding box)
+	 * @return float
+	 */
+	public function getDescender(): float
+	{
+		return $this->size * $this->descender / $this->unitsPerEm;
 	}
 
 	/**
@@ -481,6 +535,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$hhea = $font->getData('hhea');
 		$hmtx = $font->getData('hmtx');
 		$post = $font->getData('post');
+		$os2 = $font->getData('OS/2');
+		//var_dump($os2);
 		if (isset($head['unitsPerEm'])) {
 			$this->unitsPerEm = $head['unitsPerEm'];
 		}
@@ -491,8 +547,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 				$this->normalizeUnit($head['xMax']),
 				$this->normalizeUnit($head['yMax']),
 			]) . ']';
-		$this->outputInfo['descriptor']['Ascent'] = $this->normalizeUnit($hhea['ascent']);
-		$this->outputInfo['descriptor']['Descent'] = $this->normalizeUnit($hhea['descent']);
+		$this->outputInfo['descriptor']['Ascent'] = $this->normalizeUnit($os2['typoAscender']);
+		$this->outputInfo['descriptor']['Descent'] = $this->normalizeUnit($os2['typoDescender']);
+		$this->ascender = $this->outputInfo['descriptor']['Ascent'];
+		$this->descender = $this->outputInfo['descriptor']['Descent'];
 		$this->outputInfo['descriptor']['MissingWidth'] = 500;
 		$this->outputInfo['descriptor']['StemV'] = 80;
 		if ($post['usWeightClass'] > 400) {
@@ -520,7 +578,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 				$cidToGid[$c * 2] = chr($glyph >> 8);
 				$cidToGid[$c * 2 + 1] = chr($glyph & 0xFF);
 			}
-			$widths[] = $c . ' [' . $this->normalizeUnit(isset($hmtx[$glyph]) ? $hmtx[$glyph][0] : $hmtx[0][0]) . ']';
+			$width = $this->normalizeUnit(isset($hmtx[$glyph]) ? $hmtx[$glyph][0] : $hmtx[0][0]);
+			$widths[] = $c . ' [' . $width . ']';
+			$this->widths[$c] = $width;
 		}
 		$this->cidToGid = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
@@ -529,6 +589,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->outputInfo['font']['Widths'] = $widths;
 		$this->outputInfo['font']['FirstChar'] = 0;
 		$this->outputInfo['font']['LastChar'] = count($widths) - 1;
+		$this->height = (float)$os2['typoAscender'] - (float)$os2['typoDescender'];
+		if (isset($os2['typoLineGap'])) {
+			$this->height += (float)$os2['lineGap'];
+		}
 		$this->fontType0 = (new \YetiForcePDF\Objects\Basic\DictionaryObject())
 			->setDocument($this->document)
 			->init();
@@ -568,8 +632,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 			"  /Subtype /CIDFontType2",
 			"  /BaseFont /" . $this->getFullName(),
 			"  /FontDescriptor " . $this->fontDescriptor->getReference(),
-			//'  /FirstChar ' . $this->outputInfo['font']['FirstChar'],
-			//'  /LastChar ' . $this->outputInfo['font']['LastChar'],
 			'  /DW 500',
 			'  /W [' . implode(' ', $this->outputInfo['font']['Widths']) . ' ]',
 			'  /CIDSystemInfo ' . $this->cidSystemInfo->getReference(),
