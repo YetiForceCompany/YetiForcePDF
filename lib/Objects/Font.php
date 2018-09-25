@@ -529,7 +529,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$hmtx = $font->getData('hmtx');
 		$post = $font->getData('post');
 		$os2 = $font->getData('OS/2');
-		//var_dump($os2);
 		if (isset($head['unitsPerEm'])) {
 			$this->unitsPerEm = $head['unitsPerEm'];
 		}
@@ -540,8 +539,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 				$this->normalizeUnit($head['xMax']),
 				$this->normalizeUnit($head['yMax']),
 			]) . ']';
-		$this->outputInfo['descriptor']['Ascent'] = $this->normalizeUnit($os2['typoAscender']);
-		$this->outputInfo['descriptor']['Descent'] = $this->normalizeUnit($os2['typoDescender']);
+		$this->outputInfo['descriptor']['Ascent'] = $hhea['ascent'];
+		$this->outputInfo['descriptor']['Descent'] = $hhea['descent'];
 		$this->ascender = $this->outputInfo['descriptor']['Ascent'];
 		$this->descender = $this->outputInfo['descriptor']['Descent'];
 		$this->outputInfo['descriptor']['MissingWidth'] = 500;
