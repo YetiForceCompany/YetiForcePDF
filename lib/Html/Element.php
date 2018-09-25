@@ -360,69 +360,15 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * convert UTF-8 to UTF-16 with an additional byte order marker
-	 * at the front if required.
-	 *
-	 * based on the excellent TCPDF code by Nicola Asuni and the
-	 * RFC for UTF-8 at http://www.faqs.org/rfcs/rfc3629.html
-	 *
-	 * @access private
-	 * @author Orion Richardson
-	 * @since  January 5, 2008
-	 *
-	 * @param string  $text UTF-8 string to process
-	 * @param boolean $bom  whether to add the byte order marker
-	 *
-	 * @return string UTF-16 result string
-	 */
-	function utf8toUtf16BE(&$text, $bom = false)
-	{
-		$out = $bom ? "\xFE\xFF" : '';
-
-		$unicode = $this->utf8toCodePointsArray($text);
-		foreach ($unicode as $c) {
-			if ($c === 0xFFFD) {
-				$out .= "\xFF\xFD"; // replacement character
-			} elseif ($c < 0x10000) {
-				$out .= chr($c >> 0x08) . chr($c & 0xFF);
-			} else {
-				$c -= 0x10000;
-				$w1 = 0xD800 | ($c >> 0x10);
-				$w2 = 0xDC00 | ($c & 0x3FF);
-				$out .= chr($w1 >> 0x08) . chr($w1 & 0xFF) . chr($w2 >> 0x08) . chr($w2 & 0xFF);
-			}
-		}
-
-		return $out;
-	}
-
-	/**
-	 * filter the text, this is applied to all text just before being inserted into the pdf document
+	 * Filter text
+	 * Filter the text, this is applied to all text just before being inserted into the pdf document
 	 * it escapes the various things that need to be escaped, and so on
 	 *
-	 * @access private
-	 *
-	 * @param      $text
-	 * @param bool $bom
-	 * @param bool $convert_encoding
 	 * @return string
 	 */
-	function filterText($text, $bom = false, $convert_encoding = false)
+	protected function filterText($text)
 	{
-		/**if ($convert_encoding) {
-		 * $cf = $this->currentFont;
-		 * if (isset($this->fonts[$cf]) && $this->fonts[$cf]['isUnicode']) {
-		 * $text = $this->utf8toUtf16BE($text, $bom);
-		 * } else {
-		 * //$text = html_entity_decode($text, ENT_QUOTES);
-		 * $text = mb_convert_encoding($text, self::$targetEncoding, 'UTF-8');
-		 * }
-		 * } else if ($bom) {
-		 */
 		$text = mb_convert_encoding($text, 'UTF-16');
-		//}
-
-		// the chr(13) substitution fixes a bug seen in TCPDF (bug #1421290)
 		return strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
 	}
 

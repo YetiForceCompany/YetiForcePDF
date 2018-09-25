@@ -19,7 +19,7 @@ class FontFamily extends Normalizer
 {
 	public function normalize(string $ruleValue): array
 	{
-		$normalized = ['font-family' => $ruleValue];
+		$normalized = ['font-family' => str_replace(['\'', '"'], '', $ruleValue)];
 		return $normalized;
 	}
 }
