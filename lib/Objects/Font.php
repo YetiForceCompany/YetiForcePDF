@@ -583,7 +583,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->outputInfo['font']['LastChar'] = count($widths) - 1;
 		$this->height = (float)$os2['typoAscender'] - (float)$os2['typoDescender'];
 		if (isset($os2['typoLineGap'])) {
-			$this->height += (float)$os2['lineGap'];
+			$this->height += (float)$os2['typoLineGap'];
 		}
 		$this->fontType0 = (new \YetiForcePDF\Objects\Basic\DictionaryObject())
 			->setDocument($this->document)

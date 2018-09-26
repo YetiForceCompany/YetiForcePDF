@@ -70,6 +70,11 @@ class Element extends \YetiForcePDF\Base
 	 * @var string[]
 	 */
 	protected $instructions = [];
+	/**
+	 * Just for debugging purposes
+	 * @var bool
+	 */
+	protected $drawTextOutline = false;
 
 	/**
 	 * Initialisation
@@ -428,24 +433,29 @@ class Element extends \YetiForcePDF\Base
 		$textWidth = $this->style->getFont()->getTextWidth($this->getDOMElement()->textContent);
 		$textHeight = $this->style->getFont()->getTextHeight();
 		$baseLine = $this->style->getFont()->getDescender();
-		$baseLineY = $pdfY + $baseLine;
-
+		$baseLineY = $pdfY - $baseLine;
 		if ($this->isTextNode()) {
 			$textContent = '(' . $this->filterText($this->getDOMElement()->textContent) . ')';
 			$element = [
+				'q',
+				"1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
 				'BT',
 				$fontStr,
-				"1 0 0 1 $pdfX $pdfY Tm % html x:$htmlX y:$htmlY",
 				"$textContent Tj",
 				'ET',
-				'q',
-				'1 w',
-				'1 0 0 RG',
-				"1 0 0 1 $pdfX $baseLineY cm",
-				"0 0 $textWidth $textHeight re",
-				'S',
 				'Q'
 			];
+			if ($this->drawTextOutline) {
+				$element = array_merge($element, [
+					'q',
+					'1 w',
+					'1 0 0 RG',
+					"1 0 0 1 $pdfX $pdfY cm",
+					"0 0 $textWidth $textHeight re",
+					'S',
+					'Q'
+				]);
+			}
 		} else {
 			$element = [];
 			$element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);

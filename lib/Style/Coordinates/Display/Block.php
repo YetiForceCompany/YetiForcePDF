@@ -25,26 +25,31 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 	{
 		$style = $this->style;
 		$rules = $style->getRules();
+		$element = $this->style->getElement();
 		$htmlX = 0;
 		$htmlY = 0;
-		if ($this->style->getElement()->isRoot()) {
+		if ($element->isRoot()) {
 			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
 			$htmlX = $pageCoord->getAbsoluteHtmlX();
 			$htmlY = $pageCoord->getAbsoluteHtmlY();
-		}
-		if ($parent = $style->getParent()) {
-			$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
-			$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
-			$htmlX += $parent->getRules()['padding-left'];
-			$htmlY += $parent->getRules()['padding-top'];
-		}
-		if ($previous = $style->getPrevious()) {
-			$htmlY += $previous->getDimensions()->getHeight() + max($rules['margin-top'], $previous->getRules()['margin-bottom']);
-		}
-		$htmlX += $rules['margin-left'];
-		if ($rules['box-sizing'] === 'border-box') {
-			$htmlX += $rules['border-left-width'];
-			$htmlY += $rules['border-top-width'];
+		} else {
+			if ($parent = $style->getParent()) {
+				$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
+				$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
+				$htmlX += $parent->getRules('padding-left');
+				$htmlY += $parent->getRules('padding-top');
+			}
+			if (!$element->isTextNode()) {
+				if ($previous = $style->getPrevious()) {
+					// calculate position basing on previous element - not parent anymore (previous is placed in parent too)
+					$htmlY = $previous->getCoordinates()->getAbsoluteHtmlY() + $previous->getDimensions()->getHeight() + max($rules['margin-top'], $previous->getRules('margin-bottom'));
+				}
+				$htmlX += $rules['margin-left'];
+				if ($rules['box-sizing'] === 'border-box') {
+					$htmlX += $rules['border-left-width'];
+					$htmlY += $rules['border-top-width'];
+				}
+			}
 		}
 		$this->absoluteHtmlX = $htmlX;
 		$this->absoluteHtmlY = $htmlY;

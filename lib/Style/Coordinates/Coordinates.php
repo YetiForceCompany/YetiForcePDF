@@ -154,7 +154,6 @@ class Coordinates extends \YetiForcePDF\Base
 	{
 		$this->absolutePdfX = $this->absoluteHtmlX;
 		$height = $this->style->getDimensions()->getHeight();
-		//var_dump($this->style->getElement()->getDOMElement(), $height);
 		$page = $this->document->getCurrentPage();
 		$this->absolutePdfY = $page->getPageDimensions()->getHeight() - $this->absoluteHtmlY - $height;
 	}

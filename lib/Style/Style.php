@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style;
 
 /**
- * Class Parser
+ * Class Style
  */
 class Style extends \YetiForcePDF\Base
 {
@@ -125,6 +125,14 @@ class Style extends \YetiForcePDF\Base
 		'border-top-width' => 0,
 		'border-right-width' => 0,
 		'border-bottom-width' => 0,
+		'border-left-color' => [0, 0, 0, 0],
+		'border-top-color' => [0, 0, 0, 0],
+		'border-right-color' => [0, 0, 0, 0],
+		'border-bottom-color' => [0, 0, 0, 0],
+		'border-left-style' => 'none',
+		'border-top-style' => 'none',
+		'border-right-style' => 'none',
+		'border-bottom-style' => 'none',
 		'box-sizing' => 'border-box',
 		'display' => 'block',
 		'width' => 'auto',
@@ -151,6 +159,14 @@ class Style extends \YetiForcePDF\Base
 		'border-top-width' => 0,
 		'border-right-width' => 0,
 		'border-bottom-width' => 0,
+		'border-left-color' => [0, 0, 0, 0],
+		'border-top-color' => [0, 0, 0, 0],
+		'border-right-color' => [0, 0, 0, 0],
+		'border-bottom-color' => [0, 0, 0, 0],
+		'border-left-style' => 'none',
+		'border-top-style' => 'none',
+		'border-right-style' => 'none',
+		'border-bottom-style' => 'none',
 		'box-sizing' => 'border-box',
 		'display' => 'block',
 		'width' => 'auto',
@@ -165,21 +181,40 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
+		$this->font = (new \YetiForcePDF\Objects\Font())
+			->setDocument($this->document)
+			->setFamily($this->rules['font-family'])
+			->setSize($this->rules['font-size'])
+			->init();
+		return $this;
+	}
+
+	/**
+	 * Initialise dimensions
+	 * @return $this
+	 */
+	public function initDimensions()
+	{
 		$display = ucfirst($this->rules['display']);
 		$dimensionsClassName = "\\YetiForcePDF\\Style\\Dimensions\\Display\\$display";
 		$this->dimensions = (new $dimensionsClassName())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
+		return $this;
+	}
+
+	/**
+	 * Initialise coordinates
+	 * @return $this
+	 */
+	public function initCoordinates()
+	{
+		$display = ucfirst($this->rules['display']);
 		$coordinatesClassName = "\\YetiForcePDF\\Style\\Coordinates\\Display\\$display";
 		$this->coordinates = (new $coordinatesClassName())
 			->setDocument($this->document)
 			->setStyle($this)
-			->init();
-		$this->font = (new \YetiForcePDF\Objects\Font())
-			->setDocument($this->document)
-			->setFamily($this->rules['font-family'])
-			->setSize($this->rules['font-size'])
 			->init();
 		return $this;
 	}
@@ -267,11 +302,15 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get rules
+	 * Get rules (or concrete rule if specified)
+	 * @param string|null $ruleName
 	 * @return array|mixed
 	 */
-	public function getRules()
+	public function getRules(string $ruleName = null)
 	{
+		if ($ruleName) {
+			return $this->rules[$ruleName];
+		}
 		return $this->rules;
 	}
 
@@ -315,6 +354,7 @@ class Style extends \YetiForcePDF\Base
 		return $this->font;
 	}
 
+
 	/**
 	 * Parse css style
 	 * @return array
@@ -335,8 +375,7 @@ class Style extends \YetiForcePDF\Base
 				$ruleExploded = explode(':', $rule);
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
-				$ucRuleName = str_replace('-', '', ucwords($ruleName, '-'));
-				$normalizerName = "YetiForcePDF\\Style\\Normalizer\\$ucRuleName";
+				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())->setDocument($this->document)->setElement($this->element)->init();
 				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
 					$parsed[$name] = $value;

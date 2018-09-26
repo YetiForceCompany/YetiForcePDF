@@ -24,10 +24,14 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	 */
 	public function calculateTextDimensions()
 	{
-		// FIXME for now we are using parent dimensions but when we know font height we will calculate it, we should start from bottom to up with dimensions
-		$parentDimensions = $this->style->getParent()->getDimensions();
-		$this->setWidth($parentDimensions->getWidth());
-		$this->setHeight($parentDimensions->getHeight());
+		$text = $this->style->getElement()->getDOMElement()->textContent;
+		$font = $this->style->getFont();
+		$width = $font->getTextWidth($text);
+		$height = $font->getTextHeight($text);
+		$this->setWidth($width);
+		$this->setHeight($height);
+		$this->setInnerWidth($width);
+		$this->setInnerHeight($height);
 		return $this;
 	}
 
@@ -37,14 +41,15 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	protected function calculateContentBox()
 	{
 		$rules = $this->style->getRules();
-		$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		$element = $this->style->getElement();
+		$parentDimensions = $this->document->getCurrentPage()->getPageDimensions();
 		if ($rules['width'] !== 'auto') {
 			$this->setWidth($rules['width']);
 			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'];
 			$this->setInnerWidth($innerWidth);
 		} else {
-			$this->setWidth($pageDimensions->getInnerWidth());
-			$innerWidth = $pageDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'];
+			$this->setWidth($parentDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right']);
+			$innerWidth = $parentDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'] - $rules['margin-left'] - $rules['margin-right'];
 			$this->setInnerWidth($innerWidth);
 		}
 
@@ -53,7 +58,14 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'];
 			$this->setInnerHeight($innerHeight);
 		} else {
-			// TODO get max children height
+			$height = 0;
+			foreach ($element->getChildren() as $child) {
+				$childDimensions = $child->getStyle()->getDimensions();
+				$height = max($childDimensions->getHeight(), $height);
+			}
+			$this->setInnerHeight($height);
+			$height += $rules['padding-bottom'] + $rules['padding-top'];
+			$this->setHeight($height);
 		}
 	}
 
@@ -63,14 +75,19 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	protected function calculateBorderBox()
 	{
 		$rules = $this->style->getRules();
+		$element = $this->style->getElement();
+		if ($element->isRoot()) {
+			return $this;
+		}
 		$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		// TODO set up parent dimensions - not page - because we could be inside other element
 		if ($rules['width'] !== 'auto') {
 			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
 			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
 			$this->setInnerWidth($innerWidth);
 		} else {
-			$this->setWidth($pageDimensions->getInnerWidth());
-			$innerWidth = $pageDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
+			$this->setWidth($pageDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right']);
+			$innerWidth = $pageDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'] - $rules['margin-left'] - $rules['margin-right'];
 			$this->setInnerWidth($innerWidth);
 		}
 
@@ -79,7 +96,15 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
 			$this->setInnerWidth($innerHeight);
 		} else {
-			// TODO get max children height
+			$height = 0;
+			foreach ($element->getChildren() as $index => $child) {
+				$childDimensions = $child->getStyle()->getDimensions();
+				$height = max($childDimensions->getHeight(), $height);
+				//var_dump($index . ' : ' . $childDimensions->getHeight() . ' : ' . $height . ' : ' . $child->getDOMElement()->textContent);
+			}
+			$this->setInnerHeight($height);
+			$height += $rules['padding-bottom'] + $rules['padding-top'];
+			$this->setHeight($height);
 		}
 	}
 

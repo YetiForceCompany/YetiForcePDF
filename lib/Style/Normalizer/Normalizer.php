@@ -35,6 +35,18 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get normalizer class name
+	 * @param string $ruleName
+	 * @return string
+	 */
+	public static function getNormalizerClassName(string $ruleName)
+	{
+		$ucRuleName = str_replace('-', '', ucwords($ruleName, '-'));
+		return "YetiForcePDF\\Style\\Normalizer\\$ucRuleName";
+
+	}
+
+	/**
 	 * Normalize css rule
 	 * @param mixed $ruleValue
 	 * @return array

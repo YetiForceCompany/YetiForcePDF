@@ -56,10 +56,10 @@ class Document
 	 * @var array
 	 */
 	protected $defaultMargins = [
-		'left' => 10,
-		'top' => 10,
-		'right' => 10,
-		'bottom' => 10
+		'left' => 40,
+		'top' => 40,
+		'right' => 40,
+		'bottom' => 40
 	];
 	/**
 	 * All objects inside document
@@ -301,7 +301,7 @@ class Document
 	 */
 	protected function getDocumentHeader(): string
 	{
-		return "%PDF-1.4\n%âăĎÓ\n";
+		return "%PDF-1.7\n%âăĎÓ\n";
 	}
 
 	/**
