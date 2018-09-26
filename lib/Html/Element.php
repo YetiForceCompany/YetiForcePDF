@@ -104,6 +104,43 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Initialise dimensions
+	 * @return $this
+	 */
+	public function initDimensions()
+	{
+		foreach ($this->getChildren() as $child) {
+			$child->initDimensions();
+		}
+		$this->style->initDimensions();
+		return $this;
+	}
+
+	/**
+	 * Initialise coordinates
+	 * @return $this
+	 */
+	public function initCoordinates()
+	{
+		$this->style->initCoordinates();
+		foreach ($this->getChildren() as $child) {
+			$child->initCoordinates();
+		}
+		return $this;
+	}
+
+	public function recalculateDimensions()
+	{
+		$this->style->recalculateDimensions();
+		return $this;
+	}
+
+	public function recalculateCoordinates()
+	{
+		return $this;
+	}
+
+	/**
 	 * Set element
 	 * @param $element
 	 * @return \YetiForcePDF\Html\Element
@@ -293,8 +330,83 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected function filterText($text)
 	{
+		$text = trim(str_replace(["\n", "\r"], '', mb_convert_encoding($text, 'UTF-8')));
+		$text = preg_replace('/\s+/', ' ', $text);
 		$text = mb_convert_encoding($text, 'UTF-16');
 		return strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
+	}
+
+	/**
+	 * Add border instructions
+	 * @param array $element
+	 * @param float $pdfX
+	 * @param float $pdfY
+	 * @param float $width
+	 * @param float $height
+	 * @return array
+	 */
+	protected function addBorderInstructions(array $element, float $pdfX, float $pdfY, float $width, float $height)
+	{
+		$x1 = 0;
+		$x2 = $width;
+		$y1 = $height;
+		$y2 = 0;
+		$rules = $this->style->getRules();
+		$element[] = '% start border';
+		if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-top-width']} w",
+				"{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} RG",
+				"$x1 $y1 m",
+				"$x2 $y1 l",
+				'S',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-right-width']} w",
+				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} RG",
+				"$x2 $y1 m",
+				"$x2 $y2 l",
+				'S',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-bottom-width']} w",
+				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} RG",
+				"$x1 $y2 m",
+				"$x2 $y2 l",
+				'S',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-left-width']} w",
+				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} RG",
+				"$x1 $y1 m",
+				"$x1 $y2 l",
+				'S',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		$element[] = '% end border';
+		return $element;
 	}
 
 	/**
@@ -317,12 +429,13 @@ class Element extends \YetiForcePDF\Base
 		$textHeight = $this->style->getFont()->getTextHeight();
 		$baseLine = $this->style->getFont()->getDescender();
 		$baseLineY = $pdfY + $baseLine;
+
 		if ($this->isTextNode()) {
 			$textContent = '(' . $this->filterText($this->getDOMElement()->textContent) . ')';
 			$element = [
 				'BT',
 				$fontStr,
-				"1 0 0 1 $pdfX $pdfY Tm",
+				"1 0 0 1 $pdfX $pdfY Tm % html x:$htmlX y:$htmlY",
 				"$textContent Tj",
 				'ET',
 				'q',
@@ -334,15 +447,8 @@ class Element extends \YetiForcePDF\Base
 				'Q'
 			];
 		} else {
-			$element = [
-				'q',
-				'1 w', //border
-				'0 0 0 RG',
-				"1 0 0 1 $pdfX $pdfY cm",
-				"0 0 $width $height re",
-				'S',
-				'Q',
-			];
+			$element = [];
+			$element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
 		}
 		return implode("\n", $element);
 	}
