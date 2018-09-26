@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class FontWeight extends Normalizer
 {
-	public function normalize(string $ruleValue): array
+	public function normalize($ruleValue): array
 	{
 		return ['font-weight' => strtolower($ruleValue)];
 	}

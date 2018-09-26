@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class FontFamily extends Normalizer
 {
-	public function normalize(string $ruleValue): array
+	public function normalize($ruleValue): array
 	{
 		$normalized = ['font-family' => str_replace(['\'', '"'], '', $ruleValue)];
 		return $normalized;

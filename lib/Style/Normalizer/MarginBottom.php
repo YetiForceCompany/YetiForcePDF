@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class MarginBottom extends Normalizer
 {
-	public function normalize(string $ruleValue): array
+	public function normalize($ruleValue): array
 	{
 		$matches = [];
 		preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);

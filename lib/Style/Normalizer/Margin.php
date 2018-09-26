@@ -123,19 +123,28 @@ class Margin extends Normalizer
 		return $normalized;
 	}
 
-	public function normalize(string $ruleValue): array
+	public function normalize($ruleValue): array
 	{
-		$matches = [];
-		preg_match_all('/([0-9]+[a-z]+)/', $ruleValue, $matches);
-		switch (count($matches[1])) {
-			case 1:
-				return $this->oneValue($ruleValue);
-			case 2:
-				return $this->twoValues($ruleValue);
-			case 3:
-				return $this->threeValues($ruleValue);
-			case 4:
-				return $this->fourValues($ruleValue);
+		if (is_string($ruleValue)) {
+			$matches = [];
+			preg_match_all('/([0-9]+[a-z]+)/', $ruleValue, $matches);
+			switch (count($matches[1])) {
+				case 1:
+					return $this->oneValue($ruleValue);
+				case 2:
+					return $this->twoValues($ruleValue);
+				case 3:
+					return $this->threeValues($ruleValue);
+				case 4:
+					return $this->fourValues($ruleValue);
+			}
 		}
+		// if ruleValue is not a string - it was parsed already
+		return [
+			'margin-top' => $ruleValue,
+			'margin-right' => $ruleValue,
+			'margin-bottom' => $ruleValue,
+			'margin-left' => $ruleValue,
+		];
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * MarginTop class
+ * BorderWidth class
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,22 +13,28 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class MarginTop
+ * Class BorderWidth
  */
-class MarginTop extends Normalizer
+class BorderWidth extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
 		if (is_string($ruleValue)) {
 			$matches = [];
-			preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1][0];
-			$originalUnit = $matches[2][0];
+			preg_match('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
+			$originalSize = (float)$matches[1];
+			$originalUnit = $matches[2];
 			$size = $this->document->convertUnits($originalUnit, $originalSize);
 		} else {
+			// if it is number it was calculated already
 			$size = $ruleValue;
 		}
-		$normalized = ['margin-top' => $size];
+		$normalized = [
+			'border-top-width' => $size,
+			'border-right-width' => $size,
+			'border-bottom-width' => $size,
+			'border-left-width' => $size,
+		];
 		return $normalized;
 	}
 }

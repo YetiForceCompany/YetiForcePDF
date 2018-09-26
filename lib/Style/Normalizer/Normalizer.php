@@ -36,10 +36,10 @@ class Normalizer extends \YetiForcePDF\Base
 
 	/**
 	 * Normalize css rule
-	 * @param string $ruleValue
+	 * @param mixed $ruleValue
 	 * @return array
 	 */
-	public function normalize(string $ruleValue)
+	public function normalize($ruleValue)
 	{
 		return [];
 	}
