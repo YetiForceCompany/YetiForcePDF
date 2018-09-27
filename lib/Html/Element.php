@@ -109,43 +109,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Initialise dimensions
-	 * @return $this
-	 */
-	public function initDimensions()
-	{
-		foreach ($this->getChildren() as $child) {
-			$child->initDimensions();
-		}
-		$this->style->initDimensions();
-		return $this;
-	}
-
-	/**
-	 * Initialise coordinates
-	 * @return $this
-	 */
-	public function initCoordinates()
-	{
-		$this->style->initCoordinates();
-		foreach ($this->getChildren() as $child) {
-			$child->initCoordinates();
-		}
-		return $this;
-	}
-
-	public function recalculateDimensions()
-	{
-		$this->style->recalculateDimensions();
-		return $this;
-	}
-
-	public function recalculateCoordinates()
-	{
-		return $this;
-	}
-
-	/**
 	 * Set element
 	 * @param $element
 	 * @return \YetiForcePDF\Html\Element
@@ -153,7 +116,7 @@ class Element extends \YetiForcePDF\Base
 	public function setElement($element): Element
 	{
 		$this->domElement = $element;
-		$this->domElement->normalize();
+		//$this->domElement->normalize();
 		return $this;
 	}
 
@@ -335,7 +298,7 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected function filterText($text)
 	{
-		$text = trim(str_replace(["\n", "\r"], '', mb_convert_encoding($text, 'UTF-8')));
+		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
 		$text = preg_replace('/\s+/', ' ', $text);
 		$text = mb_convert_encoding($text, 'UTF-16');
 		return strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);

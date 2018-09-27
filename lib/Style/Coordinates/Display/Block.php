@@ -20,6 +20,7 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 
 	/**
 	 * Calculate coordinates
+	 * @return $this
 	 */
 	public function calculate()
 	{

@@ -37,6 +37,7 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 
 	/**
 	 * Calculate content-box dimensions
+	 * @return $this;
 	 */
 	protected function calculateContentBox()
 	{
@@ -67,10 +68,12 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$height += $rules['padding-bottom'] + $rules['padding-top'];
 			$this->setHeight($height);
 		}
+		return $this;
 	}
 
 	/**
 	 * Calculate border-box dimensions
+	 * @return $this
 	 */
 	protected function calculateBorderBox()
 	{
@@ -97,15 +100,29 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$this->setInnerWidth($innerHeight);
 		} else {
 			$height = 0;
+			$maxInlineHeight = 0;
 			foreach ($element->getChildren() as $index => $child) {
+				$childStyle = $child->getStyle();
+				$childDisplay = $childStyle->getRules('display');
+				$childPreviousStyle = $childStyle->getPrevious();
+				if ($childPreviousStyle) {
+					$childPreviousDisplay = $childPreviousStyle->getRules('display');
+				} else {
+					$childPreviousDisplay = 'block';
+				}
 				$childDimensions = $child->getStyle()->getDimensions();
-				$height = max($childDimensions->getHeight(), $height);
+				if ($childDisplay === 'block' || $childPreviousDisplay === 'block') {
+					$height += $childDimensions->getHeight();
+				} else {
+					$maxInlineHeight = max($childDimensions->getHeight(), $maxInlineHeight);
+				}
 				//var_dump($index . ' : ' . $childDimensions->getHeight() . ' : ' . $height . ' : ' . $child->getDOMElement()->textContent);
 			}
 			$this->setInnerHeight($height);
 			$height += $rules['padding-bottom'] + $rules['padding-top'];
 			$this->setHeight($height);
 		}
+		return $this;
 	}
 
 	/**

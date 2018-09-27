@@ -195,6 +195,9 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function initDimensions()
 	{
+		foreach ($this->getChildren() as $child) {
+			$child->initDimensions();
+		}
 		$display = ucfirst($this->rules['display']);
 		$dimensionsClassName = "\\YetiForcePDF\\Style\\Dimensions\\Display\\$display";
 		$this->dimensions = (new $dimensionsClassName())
@@ -216,6 +219,35 @@ class Style extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
+		foreach ($this->getChildren() as $child) {
+			$child->initCoordinates();
+		}
+		return $this;
+	}
+
+	/**
+	 * Calculate all dimensions (self and children)
+	 * @return $this
+	 */
+	public function calculateDimensions()
+	{
+		$this->getDimensions()->calculate();
+		foreach ($this->getChildren() as $child) {
+			$child->getDimensions()->calculate();
+		}
+		return $this;
+	}
+
+	/**
+	 * Calculate all coordinates (self and children)
+	 * @return $this
+	 */
+	public function calculateCoordinates()
+	{
+		$this->getCoordinates()->calculate();
+		foreach ($this->getChildren() as $child) {
+			$child->getCoordinates()->calculate();
+		}
 		return $this;
 	}
 
@@ -268,6 +300,19 @@ class Style extends \YetiForcePDF\Base
 	public function getParent()
 	{
 		return $this->parent;
+	}
+
+	/**
+	 * Get children styles
+	 * @return \YetiForcePDF\Style\Style[]
+	 */
+	public function getChildren()
+	{
+		$childrenStyles = [];
+		foreach ($this->element->getChildren() as $child) {
+			$childrenStyles[] = $child->getStyle();
+		}
+		return $childrenStyles;
 	}
 
 	/**

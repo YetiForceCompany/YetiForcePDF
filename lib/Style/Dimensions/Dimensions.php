@@ -65,4 +65,13 @@ class Dimensions extends \YetiForcePDF\Base
 		$this->height = $height;
 		return $this;
 	}
+
+	/**
+	 * Calculate dimensions
+	 * @return $this
+	 */
+	public function calculate()
+	{
+		return $this;
+	}
 }

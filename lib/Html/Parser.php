@@ -101,7 +101,10 @@ class Parser extends \YetiForcePDF\Base
 			->setElement($this->domDocument->documentElement)
 			->setRoot(true);
 		// root element must be defined before initialisation
-		$this->rootElement->init()->initDimensions()->initCoordinates();
+		$this->rootElement->init();
+		$style = $this->rootElement->getStyle()->initDimensions()->initCoordinates();
+		//$style->calculateDimensions();
+		//$style->calculateCoordinates();
 		foreach ($this->getAllElements($this->rootElement) as $element) {
 			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
 		}

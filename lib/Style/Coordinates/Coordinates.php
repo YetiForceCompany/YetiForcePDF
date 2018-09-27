@@ -42,6 +42,22 @@ class Coordinates extends \YetiForcePDF\Base
 	 * @var float
 	 */
 	protected $absoluteHtmlY = 0;
+	/**
+	 * @var \YetiForcePDF\Style\Coordinates\Offset
+	 */
+	protected $offset;
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->offset = (new \YetiForcePDF\Style\Coordinates\Offset())
+			->setDocument($this->document)
+			->init();
+		return $this;
+	}
 
 	/**
 	 * Set style
@@ -148,6 +164,15 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get offset from the parent element
+	 * @return \YetiForcePDF\Style\Coordinates\Offset
+	 */
+	public function getOffset()
+	{
+		return $this->offset;
+	}
+
+	/**
 	 * Convert html coordinates to pdf
 	 */
 	protected function convertHtmlToPdf()
@@ -158,5 +183,12 @@ class Coordinates extends \YetiForcePDF\Base
 		$this->absolutePdfY = $page->getPageDimensions()->getHeight() - $this->absoluteHtmlY - $height;
 	}
 
-
+	/**
+	 * Calculate coordinates
+	 * @return $this
+	 */
+	public function calculate()
+	{
+		return $this;
+	}
 }
