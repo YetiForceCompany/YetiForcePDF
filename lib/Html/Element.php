@@ -315,60 +315,84 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected function addBorderInstructions(array $element, float $pdfX, float $pdfY, float $width, float $height)
 	{
+		$rules = $this->style->getRules();
 		$x1 = 0;
 		$x2 = $width;
 		$y1 = $height;
 		$y2 = 0;
-		$rules = $this->style->getRules();
 		$element[] = '% start border';
 		if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x2, $y1]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x1 + $rules['border-left-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x1, $y1])
+			]);
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-top-width']} w",
-				"{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} RG",
-				"$x1 $y1 m",
-				"$x2 $y1 l",
-				'S',
+				"0 w",
+				"{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
+				"$x1 $y1 m", // move to start point
+				$path,
+				'F',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
 		}
 		if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x2, $y2]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x2, $y1]),
+			]);
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-right-width']} w",
-				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} RG",
+				"0 w",
+				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
 				"$x2 $y1 m",
-				"$x2 $y2 l",
-				'S',
+				$path,
+				'F',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
 		}
 		if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x2, $y2]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x1 + $rules['border-left-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x1, $y2]),
+			]);
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-bottom-width']} w",
-				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} RG",
+				"0 w",
+				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
 				"$x1 $y2 m",
-				"$x2 $y2 l",
-				'S',
+				$path,
+				'F',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
 		}
 		if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x1 + $rules['border-left-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x1 + $rules['border-left-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x1, $y2]),
+				implode(' ', [$x1, $y1]),
+			]);
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-left-width']} w",
-				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} RG",
+				"0 w",
+				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
 				"$x1 $y1 m",
-				"$x1 $y2 l",
-				'S',
+				$path,
+				'F',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
