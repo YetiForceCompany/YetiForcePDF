@@ -187,7 +187,9 @@ class Offset extends \YetiForcePDF\Base
 				if ($previousDisplay === 'block') {
 					$this->top += $previous->getDimensions()->getHeight();
 					$margin['top'] = max($margin['top'], $previous->getRules('margin-bottom'));
+					$margin['top'] += $previous->getRules('margin-top');
 				}
+				$firstPrevious = $previous;
 				// previous of the previous - cumulative
 				while ($previous = $previous->getPrevious()) {
 					$previousDisplay = $previous->getRules('display');

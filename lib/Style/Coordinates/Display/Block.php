@@ -85,9 +85,7 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 				$parentCoordinates = $parent->getCoordinates();
 				$htmlY += $parentCoordinates->getAbsoluteHtmlY();
 			}
-			//if (!$element->isTextNode()) {
 			$htmlY += $offset->getTop();
-			//}
 		}
 		//var_dump(($element->isTextNode() ? '[text]' : '[html]') . ' ' . $element->getDOMElement()->textContent . ' y:' . $htmlY . ' offset top:' . $offset->getTop());
 		$this->absoluteHtmlY = $htmlY;
