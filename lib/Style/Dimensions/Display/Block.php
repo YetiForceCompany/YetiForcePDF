@@ -59,8 +59,6 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 		$rules = $this->style->getRules();
 		$element = $this->style->getElement();
 		$parentDimensions = $this->document->getCurrentPage()->getPageDimensions();
-		$parentBorderWidth = 0;
-		$parentPaddingWidth = 0;
 		$parent = $this->style->getParent();
 		if ($parent) {
 			if ($parent->getDimensions() !== null) {
@@ -68,8 +66,6 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			} else {
 				//var_dump($element->getText() . ' doesnt have parent dimensions parent:' . $parent->getElement()->getText());
 			}
-			$parentBorderWidth = $parent->getRules('border-left-width') + $parent->getRules('border-right-width');
-			$parentPaddingWidth = $parent->getRules('padding-left') + $parent->getRules('padding-right');
 			//var_dump($element->getText() . ': parent (' . $parent->getElement()->getText() . ($parent->getElement()->isTextNode() ? ' [text] ' : ' [html] ') . ') inner width:' . $parentDimensions->getInnerWidth() . ' pborder:' . $parentBorderWidth . ' ppadding:' . $parentPaddingWidth);
 		}
 		if ($rules['width'] !== 'auto') {
@@ -81,7 +77,7 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$marginWidth = $rules['margin-left'] + $rules['margin-right'];
 			$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
 			$this->setWidth($parentDimensions->getInnerWidth() - $marginWidth);
-			$innerWidth = $this->getWidth() - $paddingWidth - $borderWidth - $marginWidth;
+			$innerWidth = $this->getWidth() - $paddingWidth - $borderWidth;
 			$this->setInnerWidth($innerWidth);
 		}
 		$this->widthCalculated = true;
@@ -105,16 +101,24 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
 			$height = 0;
 			$maxInlineHeight = 0;
-			foreach ($this->style->getChildren() as $index => $childStyle) {
-				$childDisplay = $childStyle->getRules('display');
+			$previousChildrenStyle = null;
+			$children = $this->style->getChildren();
+			foreach ($children as $index => $childStyle) {
+				$childRules = $childStyle->getRules();
 				$childDimensions = $childStyle->getDimensions();
-				if ($childDisplay === 'block') {
+				if ($childRules['display'] === 'block') {
 					$height += $childDimensions->getHeight();
-					// TODO add margins between inner elements
+					$marginTop = $childRules['margin-top'];
+					if ($previousChildrenStyle) {
+						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
+					}
+					$height += $marginTop;
 				} else {
 					$maxInlineHeight = max($childDimensions->getHeight(), $maxInlineHeight);
 				}
+				$previousChildrenStyle = $childStyle;
 			}
+			$height += $previousChildrenStyle->getRules('margin-bottom');
 			$this->setInnerHeight($height + $borderHeight);
 			$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
 			$this->setHeight($height + $borderHeight);
