@@ -31,19 +31,6 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $element;
 	/**
-	 * Parent style if exists
-	 * @var null|\YetiForcePDF\Style\Style
-	 */
-	protected $parent = null;
-	/**
-	 * @var \YetiForcePDF\Style\Style
-	 */
-	protected $previous;
-	/**
-	 * @var \YetiForcePDF\Style\Style
-	 */
-	protected $next;
-	/**
 	 * @var \YetiForcePDF\Objects\Font
 	 */
 	protected $font;
@@ -181,6 +168,8 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
+		/*echo $this->element->getText() . " style parsed\n";
+		var_dump($this->rules);*/
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
 			->setFamily($this->rules['font-family'])
@@ -195,15 +184,15 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function initDimensions()
 	{
-		foreach ($this->getChildren() as $child) {
-			$child->initDimensions();
-		}
 		$display = ucfirst($this->rules['display']);
 		$dimensionsClassName = "\\YetiForcePDF\\Style\\Dimensions\\Display\\$display";
 		$this->dimensions = (new $dimensionsClassName())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
+		foreach ($this->getChildren() as $child) {
+			$child->initDimensions();
+		}
 		return $this;
 	}
 
@@ -232,11 +221,13 @@ class Style extends \YetiForcePDF\Base
 	public function calculateDimensions()
 	{
 		if (!$this->getDimensions()->isWidthCalculated()) {
+			// widths are calculated from top to bottom
 			$this->getDimensions()->calculate();
 			foreach ($this->getChildren() as $child) {
 				$child->calculateDimensions();
 			}
 		} else {
+			// heights are calculated from bottom to top
 			foreach ($this->getChildren() as $child) {
 				$child->calculateDimensions();
 			}
@@ -290,23 +281,14 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set parent
-	 * @param \YetiForcePDF\Style\Style $parent
-	 * @return \YetiForcePDF\Style\Style
-	 */
-	public function setParent(Style $parent = null): Style
-	{
-		$this->parent = $parent;
-		return $this;
-	}
-
-	/**
 	 * Get parent style
 	 * @return null|\YetiForcePDF\Style\Style
 	 */
 	public function getParent()
 	{
-		return $this->parent;
+		if ($parent = $this->element->getParent()) {
+			return $parent->getStyle();
+		}
 	}
 
 	/**
@@ -379,19 +361,12 @@ class Style extends \YetiForcePDF\Base
 	 * Get rules that are inherited from parent
 	 * @return array
 	 */
-	public function getInheritedRules(bool $withMandatoryRules = true): array
+	public function getInheritedRules(): array
 	{
 		$inheritedRules = [];
 		foreach ($this->rules as $ruleName => $ruleValue) {
 			if (in_array($ruleName, $this->inherited)) {
 				$inheritedRules[$ruleName] = $ruleValue;
-			}
-		}
-		if ($withMandatoryRules) {
-			foreach (static::$mandatoryRules as $mandatoryName => $mandatoryValue) {
-				if (!isset($inheritedRules[$mandatoryName])) {
-					$inheritedRules[$mandatoryName] = $mandatoryValue;
-				}
 			}
 		}
 		return $inheritedRules;
@@ -413,11 +388,15 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected function parse(): array
 	{
-		$parsed = static::$mandatoryRules;
-		if ($this->parent) {
-			$parsed = $this->parent->getInheritedRules();
+		$parsed = [];
+		foreach (static::$mandatoryRules as $mandatoryName => $mandatoryValue) {
+			$parsed[$mandatoryName] = $mandatoryValue;
 		}
-		if ($this->content === null) {
+		if ($parent = $this->getParent()) {
+			$parsed = array_merge($parsed, $parent->getInheritedRules());
+		}
+		if (!$this->content) {
+			//var_dump('no css' . ($this->element->isTextNode() ? ' [text] ' : ' [html] ') . $this->element->getText());
 			return $parsed;
 		}
 		$rules = explode(';', $this->content);

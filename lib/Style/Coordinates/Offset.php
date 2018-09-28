@@ -159,7 +159,7 @@ class Offset extends \YetiForcePDF\Base
 			}
 			$this->left += $margin['left'];
 		}
-		var_dump($element->getDOMElement()->textContent . ' left:' . $this->left);
+		//var_dump($element->getDOMElement()->textContent . ' left:' . $this->left);
 		$this->leftCalculated = true;
 		return $this;
 	}
@@ -206,7 +206,7 @@ class Offset extends \YetiForcePDF\Base
 			}
 			$this->top += $margin['top'];
 		}
-		var_dump($element->getDOMElement()->textContent . ' top:' . $this->top);
+		//var_dump($element->getDOMElement()->textContent . ' top:' . $this->top);
 		return $this;
 	}
 

@@ -82,10 +82,11 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function init()
 	{
+		parent::init();
 		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
 		$this->style = $this->parseStyle();
-		if ($this->domElement->hasChildNodes() && $this->style->getRules()['display'] !== 'none') {
+		if ($this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
 			$children = [];
 			foreach ($this->domElement->childNodes as $index => $childNode) {
 				$childElement = $children[] = (new Element())
@@ -245,10 +246,6 @@ class Element extends \YetiForcePDF\Base
 	protected function parseStyle(): \YetiForcePDF\Style\Style
 	{
 		$styleStr = null;
-		$parentStyle = null;
-		if ($this->parent !== null) {
-			$parentStyle = $this->parent->getStyle();
-		}
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
@@ -256,7 +253,6 @@ class Element extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setElement($this)
 			->setContent($styleStr)
-			->setParent($parentStyle)
 			->init();
 	}
 

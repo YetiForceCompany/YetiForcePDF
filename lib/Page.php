@@ -466,16 +466,24 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if ($this->orientation === 'L') {
 			$dimensions = array_reverse($dimensions);
 		}
-		$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
-			->setDocument($this->document)
-			->init();
-		$this->dimensions->setWidth($dimensions[0])->setHeight($dimensions[1]);
-		$this->dimensions->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right']);
-		$this->dimensions->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
-		$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
-			->setDocument($this->document)
-			->setAbsoluteHtmlX($this->margins['left'])->setAbsolutePdfX($this->margins['left'])
-			->setAbsoluteHtmlY($this->margins['top'])->setAbsolutePdfY($this->margins['top'])
+		if (!$this->dimensions) {
+			$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
+				->setDocument($this->document)
+				->init();
+		}
+		$this->dimensions->setWidth($dimensions[0])
+			->setHeight($dimensions[1])
+			->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
+			->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
+		if (!$this->coordinates) {
+			$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
+				->setDocument($this->document)
+				->init();
+		}
+		$this->coordinates->setAbsoluteHtmlX($this->margins['left'])
+			->setAbsolutePdfX($this->margins['left'])
+			->setAbsoluteHtmlY($this->margins['top'])
+			->setAbsolutePdfY($this->margins['top'])
 			->init();
 		return $this;
 	}

@@ -47,7 +47,7 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 			$htmlX += $offset->getLeft();
 			//}
 		}
-		var_dump($element->getDOMElement()->textContent . ' x:' . $htmlX . ' offset left:' . $offset->getLeft());
+		//var_dump($element->getDOMElement()->textContent . ' x:' . $htmlX . ' offset left:' . $offset->getLeft());
 		$this->absoluteHtmlX = $htmlX;
 		$this->convertHtmlToPdf();
 		$this->xCalculated = true;
@@ -77,7 +77,7 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 			$htmlY += $offset->getTop();
 			//}
 		}
-		var_dump(($element->isTextNode() ? '[text]' : '[html]') . ' ' . $element->getDOMElement()->textContent . ' y:' . $htmlY . ' offset top:' . $offset->getTop());
+		//var_dump(($element->isTextNode() ? '[text]' : '[html]') . ' ' . $element->getDOMElement()->textContent . ' y:' . $htmlY . ' offset top:' . $offset->getTop());
 		$this->absoluteHtmlY = $htmlY;
 		$this->convertHtmlToPdf();
 		return $this;
@@ -106,7 +106,7 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 	public function init()
 	{
 		parent::init();
-		$this->calculate();
+		//$this->calculate();
 		return $this;
 	}
 

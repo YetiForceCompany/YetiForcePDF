@@ -275,13 +275,13 @@ class Document
 	public function addPage(string $format = '', string $orientation = ''): \YetiForcePDF\Page
 	{
 		$page = (new \YetiForcePDF\Page())->setDocument($this)->init();
-		if ($format === '') {
+		if (!$format) {
 			$format = $this->defaultFormat;
 		}
-		if ($orientation === '') {
+		if (!$orientation) {
 			$orientation = $this->defaultOrientation;
 		}
-		$page->setFormat($format)->setOrientation($orientation);
+		$page->setOrientation($orientation)->setFormat($format);
 		$this->currentPageObject = $page;
 		return $page;
 	}

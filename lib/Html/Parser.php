@@ -105,7 +105,8 @@ class Parser extends \YetiForcePDF\Base
 		$style = $this->rootElement->getStyle()->initDimensions()->initCoordinates();
 		$style->calculateDimensions();
 		$style->calculateCoordinates();
-		//$style->calculateCoordinates();
+		$style->calculateDimensions();
+		$style->calculateCoordinates();
 		foreach ($this->getAllElements($this->rootElement) as $element) {
 			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
 		}

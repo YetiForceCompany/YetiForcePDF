@@ -53,15 +53,6 @@ class Element extends Dimensions
 	}
 
 	/**
-	 * Get innerHeight
-	 * @return float
-	 */
-	public function getInnerHeight(): float
-	{
-		return $this->innerHeight;
-	}
-
-	/**
 	 * Set innerWidth
 	 * @param float $innerWidth
 	 * @return $this
@@ -70,6 +61,15 @@ class Element extends Dimensions
 	{
 		$this->innerWidth = $innerWidth;
 		return $this;
+	}
+
+	/**
+	 * Get innerHeight
+	 * @return float
+	 */
+	public function getInnerHeight(): float
+	{
+		return $this->innerHeight;
 	}
 
 	/**
