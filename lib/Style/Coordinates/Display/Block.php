@@ -31,6 +31,7 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 	public function calculateX()
 	{
 		$style = $this->style;
+		$rules = $style->getRules();
 		$element = $this->style->getElement();
 		$offset = $this->getOffset();
 		$htmlX = 0;
@@ -39,13 +40,24 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 			$htmlX = $pageCoord->getAbsoluteHtmlX();
 		} else {
 			if ($parent = $style->getParent()) {
-				$parentRules = $parent->getRules();
 				$parentCoordinates = $parent->getCoordinates();
 				$htmlX += $parentCoordinates->getAbsoluteHtmlX();
 			}
-			//if (!$element->isTextNode()) {
 			$htmlX += $offset->getLeft();
-			//}
+			if ($element->isTextNode()) {
+				if ($rules['text-align'] !== 'left') {
+					if ($rules['text-align'] === 'center') {
+						$width = $style->getParent()->getDimensions()->getInnerWidth();
+						$textWidth = $style->getFont()->getTextWidth($element->getText());
+						$htmlX += ($width / 2) - ($textWidth / 2);
+					}
+					if ($rules['text-align'] === 'right') {
+						$width = $style->getParent()->getDimensions()->getInnerWidth();
+						$textWidth = $style->getFont()->getTextWidth($element->getText());
+						$htmlX += $width - $textWidth;
+					}
+				}
+			}
 		}
 		//var_dump($element->getDOMElement()->textContent . ' x:' . $htmlX . ' offset left:' . $offset->getLeft());
 		$this->absoluteHtmlX = $htmlX;
