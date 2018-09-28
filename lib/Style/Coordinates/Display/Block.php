@@ -19,42 +19,84 @@ class Block extends \YetiForcePDF\Style\Coordinates\Coordinates
 {
 
 	/**
-	 * Calculate coordinates
+	 * Do we have X calculated already?
+	 * @var bool
+	 */
+	protected $xCalculated = false;
+
+	/**
+	 * Calculate X coordinates
+	 * @return $this
+	 */
+	public function calculateX()
+	{
+		$style = $this->style;
+		$element = $this->style->getElement();
+		$offset = $this->getOffset();
+		$htmlX = 0;
+		if ($element->isRoot()) {
+			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
+			$htmlX = $pageCoord->getAbsoluteHtmlX();
+		} else {
+			if ($parent = $style->getParent()) {
+				$parentRules = $parent->getRules();
+				$parentCoordinates = $parent->getCoordinates();
+				$htmlX += $parentCoordinates->getAbsoluteHtmlX();
+			}
+			//if (!$element->isTextNode()) {
+			$htmlX += $offset->getLeft();
+			//}
+		}
+		var_dump($element->getDOMElement()->textContent . ' x:' . $htmlX . ' offset left:' . $offset->getLeft());
+		$this->absoluteHtmlX = $htmlX;
+		$this->convertHtmlToPdf();
+		$this->xCalculated = true;
+		return $this;
+	}
+
+	/**
+	 * Calculate Y coordinates
+	 * @return $this
+	 */
+	public function calculateY()
+	{
+		$style = $this->style;
+		$element = $this->style->getElement();
+		$offset = $this->getOffset();
+		$htmlY = 0;
+		if ($element->isRoot()) {
+			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
+			$htmlY = $pageCoord->getAbsoluteHtmlY();
+		} else {
+			if ($parent = $style->getParent()) {
+				$parentRules = $parent->getRules();
+				$parentCoordinates = $parent->getCoordinates();
+				$htmlY += $parentCoordinates->getAbsoluteHtmlY();
+			}
+			//if (!$element->isTextNode()) {
+			$htmlY += $offset->getTop();
+			//}
+		}
+		var_dump(($element->isTextNode() ? '[text]' : '[html]') . ' ' . $element->getDOMElement()->textContent . ' y:' . $htmlY . ' offset top:' . $offset->getTop());
+		$this->absoluteHtmlY = $htmlY;
+		$this->convertHtmlToPdf();
+		return $this;
+	}
+
+	/**
+	 * Calculate
 	 * @return $this
 	 */
 	public function calculate()
 	{
-		$style = $this->style;
-		$rules = $style->getRules();
-		$element = $this->style->getElement();
-		$htmlX = 0;
-		$htmlY = 0;
-		if ($element->isRoot()) {
-			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
-			$htmlX = $pageCoord->getAbsoluteHtmlX();
-			$htmlY = $pageCoord->getAbsoluteHtmlY();
+		if ($this->xCalculated) {
+			$this->getOffset()->calculateTop();
+			$this->calculateY();
 		} else {
-			if ($parent = $style->getParent()) {
-				$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
-				$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
-				$htmlX += $parent->getRules('padding-left');
-				$htmlY += $parent->getRules('padding-top');
-			}
-			if (!$element->isTextNode()) {
-				if ($previous = $style->getPrevious()) {
-					// calculate position basing on previous element - not parent anymore (previous is placed in parent too)
-					$htmlY = $previous->getCoordinates()->getAbsoluteHtmlY() + $previous->getDimensions()->getHeight() + max($rules['margin-top'], $previous->getRules('margin-bottom'));
-				}
-				$htmlX += $rules['margin-left'];
-				if ($rules['box-sizing'] === 'border-box') {
-					$htmlX += $rules['border-left-width'];
-					$htmlY += $rules['border-top-width'];
-				}
-			}
+			$this->getOffset()->calculateLeft();
+			$this->calculateX();
 		}
-		$this->absoluteHtmlX = $htmlX;
-		$this->absoluteHtmlY = $htmlY;
-		$this->convertHtmlToPdf();
+		return $this;
 	}
 
 	/**

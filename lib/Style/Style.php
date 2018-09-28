@@ -231,9 +231,16 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function calculateDimensions()
 	{
-		$this->getDimensions()->calculate();
-		foreach ($this->getChildren() as $child) {
-			$child->getDimensions()->calculate();
+		if (!$this->getDimensions()->isWidthCalculated()) {
+			$this->getDimensions()->calculate();
+			foreach ($this->getChildren() as $child) {
+				$child->calculateDimensions();
+			}
+		} else {
+			foreach ($this->getChildren() as $child) {
+				$child->calculateDimensions();
+			}
+			$this->getDimensions()->calculate();
 		}
 		return $this;
 	}
@@ -246,7 +253,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$this->getCoordinates()->calculate();
 		foreach ($this->getChildren() as $child) {
-			$child->getCoordinates()->calculate();
+			$child->calculateCoordinates();
 		}
 		return $this;
 	}

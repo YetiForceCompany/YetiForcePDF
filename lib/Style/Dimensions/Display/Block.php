@@ -19,6 +19,21 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 {
 
 	/**
+	 * Do we calculate width already?
+	 * @var bool
+	 */
+	protected $widthCalculated = false;
+
+	/**
+	 * Is  width already calculated ?
+	 * @return bool
+	 */
+	public function isWidthCalculated()
+	{
+		return $this->widthCalculated;
+	}
+
+	/**
 	 * Calculate text dimensions
 	 * @return $this
 	 */
@@ -36,38 +51,35 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	}
 
 	/**
-	 * Calculate content-box dimensions
-	 * @return $this;
+	 * Calculate border-box dimensions
+	 * @return $this
 	 */
-	protected function calculateContentBox()
+	protected function calculateWidth()
 	{
 		$rules = $this->style->getRules();
 		$element = $this->style->getElement();
+		if ($element->isRoot()) {
+			return $this;
+		}
 		$parentDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		$parent = $this->style->getParent();
+		if ($parent && $parent->getDimensions()) {
+			$parentDimensions = $parent->getDimensions();
+		}
 		if ($rules['width'] !== 'auto') {
-			$this->setWidth($rules['width']);
-			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'];
+			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
+			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
 			$this->setInnerWidth($innerWidth);
 		} else {
-			$this->setWidth($parentDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right']);
-			$innerWidth = $parentDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'] - $rules['margin-left'] - $rules['margin-right'];
+			$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
+			$marginWidth = $rules['margin-left'] + $rules['margin-right'];
+			$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
+			$parentBorderWidth = $parent->getRules('border-left-width') + $parent->getRules('border-right-width');
+			$this->setWidth($parentDimensions->getInnerWidth() - $parentBorderWidth - $marginWidth);
+			$innerWidth = $parentDimensions->getInnerWidth() - $paddingWidth - $borderWidth - $marginWidth;
 			$this->setInnerWidth($innerWidth);
 		}
-
-		if ($rules['height'] !== 'auto') {
-			$this->setHeight($rules['height']);
-			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'];
-			$this->setInnerHeight($innerHeight);
-		} else {
-			$height = 0;
-			foreach ($element->getChildren() as $child) {
-				$childDimensions = $child->getStyle()->getDimensions();
-				$height = max($childDimensions->getHeight(), $height);
-			}
-			$this->setInnerHeight($height);
-			$height += $rules['padding-bottom'] + $rules['padding-top'];
-			$this->setHeight($height);
-		}
+		$this->widthCalculated = true;
 		return $this;
 	}
 
@@ -75,23 +87,12 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 	 * Calculate border-box dimensions
 	 * @return $this
 	 */
-	protected function calculateBorderBox()
+	protected function calculateHeight()
 	{
 		$rules = $this->style->getRules();
 		$element = $this->style->getElement();
 		if ($element->isRoot()) {
 			return $this;
-		}
-		$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
-		// TODO set up parent dimensions - not page - because we could be inside other element
-		if ($rules['width'] !== 'auto') {
-			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
-			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
-			$this->setInnerWidth($innerWidth);
-		} else {
-			$this->setWidth($pageDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right']);
-			$innerWidth = $pageDimensions->getInnerWidth() - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'] - $rules['margin-left'] - $rules['margin-right'];
-			$this->setInnerWidth($innerWidth);
 		}
 
 		if ($rules['height'] !== 'auto') {
@@ -99,43 +100,22 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
 			$this->setInnerWidth($innerHeight);
 		} else {
+			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
 			$height = 0;
 			$maxInlineHeight = 0;
-			foreach ($element->getChildren() as $index => $child) {
-				$childStyle = $child->getStyle();
+			foreach ($this->style->getChildren() as $index => $childStyle) {
 				$childDisplay = $childStyle->getRules('display');
-				$childPreviousStyle = $childStyle->getPrevious();
-				if ($childPreviousStyle) {
-					$childPreviousDisplay = $childPreviousStyle->getRules('display');
-				} else {
-					$childPreviousDisplay = 'block';
-				}
-				$childDimensions = $child->getStyle()->getDimensions();
-				if ($childDisplay === 'block' || $childPreviousDisplay === 'block') {
+				$childDimensions = $childStyle->getDimensions();
+				if ($childDisplay === 'block') {
 					$height += $childDimensions->getHeight();
+					// TODO add margins between inner elements
 				} else {
 					$maxInlineHeight = max($childDimensions->getHeight(), $maxInlineHeight);
 				}
-				//var_dump($index . ' : ' . $childDimensions->getHeight() . ' : ' . $height . ' : ' . $child->getDOMElement()->textContent);
 			}
-			$this->setInnerHeight($height);
-			$height += $rules['padding-bottom'] + $rules['padding-top'];
-			$this->setHeight($height);
-		}
-		return $this;
-	}
-
-	/**
-	 * Calculate element dimensions
-	 * @return $this
-	 */
-	public function calculateElementDimensions()
-	{
-		$rules = $this->style->getRules();
-		if ($rules['box-sizing'] === 'content-box') {
-			$this->calculateContentBox();
-		} elseif ($rules['box-sizing'] === 'border-box') {
-			$this->calculateBorderBox();
+			$this->setInnerHeight($height + $borderHeight);
+			$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
+			$this->setHeight($height + $borderHeight);
 		}
 		return $this;
 	}
@@ -149,7 +129,11 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 		if ($this->style->getElement()->isTextNode()) {
 			$this->calculateTextDimensions();
 		} else {
-			$this->calculateElementDimensions();
+			if ($this->widthCalculated) {
+				$this->calculateHeight();
+			} else {
+				$this->calculateWidth();
+			}
 		}
 		return $this;
 	}

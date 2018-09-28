@@ -33,6 +33,12 @@ class Offset extends \YetiForcePDF\Base
 	protected $left = 0;
 
 	/**
+	 * Do we have left offset calculated already?
+	 * @var bool
+	 */
+	protected $leftCalculated = false;
+
+	/**
 	 * Get offset top
 	 * @return float
 	 */
@@ -119,30 +125,97 @@ class Offset extends \YetiForcePDF\Base
 	 * @param string $phase
 	 * @return $this
 	 */
-	public function calculate(string $phase = 'inline')
+	public function calculateLeft(string $phase = 'inline')
 	{
 		$element = $this->style->getElement();
 		$rules = $this->style->getRules();
 		if ($element->isRoot()) {
 			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
 			$this->left = $pageCoord->getAbsoluteHtmlX();
+		} else {
+			if ($parent = $this->style->getParent()) {
+				$this->left += $parent->getRules('padding-left') + $parent->getRules('border-left-width');
+			}
+			$margin = ['top' => $rules['margin-top'], 'left' => $rules['margin-left']];
+			if ($previous = $this->style->getPrevious()) {
+				$previousDisplay = $previous->getRules('display');
+				if ($previousDisplay !== 'block') {
+					$this->left += $previous->getDimensions()->getWidth();
+					$margin['left'] = max($margin['left'], $previous->getRules('margin-right'));
+				}
+				// previous of the previous - cumulative
+				while ($previous = $previous->getPrevious()) {
+					$previousDisplay = $previous->getRules('display');
+					if ($previousDisplay !== 'block') {
+						$this->left += $previous->getDimensions()->getWidth();
+						if (isset($previousPrevious)) {
+							$margin['left'] += max($previousPrevious->getRules('margin-right'), $previous->getRules('margin-left'));
+						} else {
+							$margin['left'] += $previous->getRules('margin-left');
+						}
+					}
+					$previousPrevious = $previous;
+				}
+			}
+			$this->left += $margin['left'];
+		}
+		var_dump($element->getDOMElement()->textContent . ' left:' . $this->left);
+		$this->leftCalculated = true;
+		return $this;
+	}
+
+	/**
+	 * Calculate element offsets
+	 * @param string $phase
+	 * @return $this
+	 */
+	public function calculateTop(string $phase = 'inline')
+	{
+		$element = $this->style->getElement();
+		$rules = $this->style->getRules();
+		if ($element->isRoot()) {
+			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
 			$this->top = $pageCoord->getAbsoluteHtmlY();
 		} else {
 			if ($parent = $this->style->getParent()) {
-				$this->left += $parent->getRules('padding-left');
-				$this->top += $parent->getRules('padding-top');
+				$this->top += $parent->getRules('padding-top') + $parent->getRules('border-top-width');
+				//var_dump('parent: ' . $parent->getRules('padding-top'));
 			}
+			$margin = ['top' => $rules['margin-top'], 'left' => $rules['margin-left']];
 			if ($previous = $this->style->getPrevious()) {
 				$previousDisplay = $previous->getRules('display');
-
+				if ($previousDisplay === 'block') {
+					$this->top += $previous->getDimensions()->getHeight();
+					$margin['top'] = max($margin['top'], $previous->getRules('margin-bottom'));
+				}
+				// previous of the previous - cumulative
+				while ($previous = $previous->getPrevious()) {
+					$previousDisplay = $previous->getRules('display');
+					if ($previousDisplay === 'block') {
+						$this->top += $previous->getDimensions()->getHeight();
+						if (isset($previousPrevious)) {
+							$margin['top'] += max($previousPrevious->getRules('margin-bottom'), $previous->getRules('margin-bottom'));
+						} else {
+							$margin['top'] += $previous->getRules('margin-bottom');
+						}
+					}
+					$previousPrevious = $previous;
+					//var_dump('previous:' . " [$previousDisplay] " . $previous->getElement()->getDOMElement()->textContent . ' h:' . $previous->getDimensions()->getHeight() . ' t:' . $previous->getCoordinates()->getOffset()->getTop() . ' l:' . $previous->getCoordinates()->getOffset()->getLeft());
+					//var_dump('current:' . " [{$rules['display']}] " . $element->getDOMElement()->textContent . ' h:' . $this->style->getDimensions()->getHeight() . ' t:' . ($this->top + $margin['top'] + $rules['border-top-width']) . ' l:' . ($this->left + $margin['left'] + $rules['border-left-width']));
+				}
 			}
-			$this->left += $rules['margin-left'];
-			if ($rules['box-sizing'] === 'border-box') {
-				$this->left += $rules['border-left-width'];
-				$this->top += $rules['border-top-width'];
-			}
-
+			$this->top += $margin['top'];
 		}
+		var_dump($element->getDOMElement()->textContent . ' top:' . $this->top);
 		return $this;
+	}
+
+	public function calculate()
+	{
+		if ($this->leftCalculated) {
+			$this->calculateTop();
+		} else {
+			$this->calculateLeft();
+		}
 	}
 }

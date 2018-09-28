@@ -581,7 +581,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->outputInfo['font']['Widths'] = $widths;
 		$this->outputInfo['font']['FirstChar'] = 0;
 		$this->outputInfo['font']['LastChar'] = count($widths) - 1;
-		$this->height = (float)$os2['typoAscender'] - (float)$os2['typoDescender'];
+		$this->height = (float)$hhea['ascent'] - (float)$hhea['descent'];
 		if (isset($os2['typoLineGap'])) {
 			$this->height += (float)$os2['typoLineGap'];
 		}

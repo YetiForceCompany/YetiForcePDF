@@ -54,8 +54,12 @@ class Coordinates extends \YetiForcePDF\Base
 	{
 		parent::init();
 		$this->offset = (new \YetiForcePDF\Style\Coordinates\Offset())
-			->setDocument($this->document)
-			->init();
+			->setDocument($this->document);
+		if (isset($this->style)) {
+			// page coordinates doesn't have style
+			$this->offset->setStyle($this->style);
+		}
+		$this->offset->init();
 		return $this;
 	}
 
@@ -181,6 +185,7 @@ class Coordinates extends \YetiForcePDF\Base
 		$height = $this->style->getDimensions()->getHeight();
 		$page = $this->document->getCurrentPage();
 		$this->absolutePdfY = $page->getPageDimensions()->getHeight() - $this->absoluteHtmlY - $height;
+		var_dump('converted y ' . $this->absoluteHtmlY . ' to ' . $this->absolutePdfY);
 	}
 
 	/**
