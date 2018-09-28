@@ -345,11 +345,10 @@ class Element extends \YetiForcePDF\Base
 			]);
 			$borderTop = [
 				'q',
-				"1 0 0 1 $pdfX $pdfY cm",
-				"0 w",
 				"{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
+				"1 0 0 1 $pdfX $pdfY cm",
 				"$x1 $y1 m", // move to start point
-				$path,
+				$path . ' l h',
 				'F',
 				'Q'
 			];
@@ -365,10 +364,9 @@ class Element extends \YetiForcePDF\Base
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"0 w",
 				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
 				"$x2 $y1 m",
-				$path,
+				$path . ' l h',
 				'F',
 				'Q'
 			];
@@ -384,10 +382,9 @@ class Element extends \YetiForcePDF\Base
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"0 w",
 				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
 				"$x1 $y2 m",
-				$path,
+				$path . ' l h',
 				'F',
 				'Q'
 			];
@@ -403,10 +400,9 @@ class Element extends \YetiForcePDF\Base
 			$borderTop = [
 				'q',
 				"1 0 0 1 $pdfX $pdfY cm",
-				"0 w",
 				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
 				"$x1 $y1 m",
-				$path,
+				$path . ' l h',
 				'F',
 				'Q'
 			];
