@@ -290,6 +290,25 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get text content
+	 * @param bool $currentNodeOnly - do not retrieve children text nodes concatenated
+	 * @return string
+	 */
+	public function getText(bool $currentNodeOnly = true)
+	{
+		if (!$currentNodeOnly) {
+			return $this->domElement->textContent;
+		}
+		$childrenText = '';
+		foreach ($this->getChildren() as $child) {
+			if (!$child->isTextNode()) {
+				$childrenText .= $child->getText(false);
+			}
+		}
+		return mb_substr($this->domElement->textContent, 0, mb_strlen($this->domElement->textContent) - mb_strlen($childrenText));
+	}
+
+	/**
 	 * Filter text
 	 * Filter the text, this is applied to all text just before being inserted into the pdf document
 	 * it escapes the various things that need to be escaped, and so on
