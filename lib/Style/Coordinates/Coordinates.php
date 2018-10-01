@@ -179,13 +179,21 @@ class Coordinates extends \YetiForcePDF\Base
 	/**
 	 * Convert html coordinates to pdf
 	 */
-	protected function convertHtmlToPdf()
+	protected function convertHtmlToPdfX()
 	{
 		$this->absolutePdfX = $this->absoluteHtmlX;
+
+		//var_dump('converted y ' . $this->absoluteHtmlY . ' to ' . $this->absolutePdfY);
+	}
+
+	/**
+	 * Convert html to pdf y
+	 */
+	protected function convertHtmlToPdfY()
+	{
 		$height = $this->style->getDimensions()->getHeight();
 		$page = $this->document->getCurrentPage();
 		$this->absolutePdfY = $page->getPageDimensions()->getHeight() - $this->absoluteHtmlY - $height;
-		//var_dump('converted y ' . $this->absoluteHtmlY . ' to ' . $this->absolutePdfY);
 	}
 
 	/**

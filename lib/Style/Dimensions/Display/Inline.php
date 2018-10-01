@@ -19,45 +19,15 @@ class Inline extends \YetiForcePDF\Style\Dimensions\Element
 {
 
 	/**
-	 * Do we calculate width already?
-	 * @var bool
-	 */
-	protected $widthCalculated = false;
-
-	/**
-	 * Is  width already calculated ?
-	 * @return bool
-	 */
-	public function isWidthCalculated()
-	{
-		return $this->widthCalculated;
-	}
-
-	/**
-	 * Calculate text dimensions
-	 * @return $this
-	 */
-	public function calculateTextDimensions()
-	{
-		$text = $this->style->getElement()->getDOMElement()->textContent;
-		$font = $this->style->getFont();
-		$width = $font->getTextWidth($text);
-		$height = $font->getTextHeight($text);
-		$this->setWidth($width);
-		$this->setHeight($height);
-		$this->setInnerWidth($width);
-		$this->setInnerHeight($height);
-		return $this;
-	}
-
-	/**
 	 * Calculate border-box dimensions
 	 * @return $this
 	 */
-	protected function calculateWidth()
+	public function calculateWidth(array $withRules = null)
 	{
 		$rules = $this->style->getRules();
-		$parentDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		if ($this->style->getElement()->isTextNode()) {
+			return $this->calculateTextWidth();
+		}
 		$parent = $this->style->getParent();
 		if ($parent) {
 			if ($parent->getDimensions() !== null) {
@@ -82,7 +52,11 @@ class Inline extends \YetiForcePDF\Style\Dimensions\Element
 			$innerWidth = $this->getWidth() - $borderWidth;
 			$this->setInnerWidth($innerWidth);
 		}
-		$this->widthCalculated = true;
+		if ($withRules !== null) {
+			foreach ($this->style->getChildren($withRules) as $child) {
+				$child->getDimensions()->calculateWidth($withRules);
+			}
+		}
 		//var_dump('w' . $this->getWidth() . ' ' . $element->getText());
 		return $this;
 	}
@@ -91,10 +65,17 @@ class Inline extends \YetiForcePDF\Style\Dimensions\Element
 	 * Calculate border-box dimensions
 	 * @return $this
 	 */
-	protected function calculateHeight()
+	public function calculateHeight(array $withRules = null)
 	{
 		$rules = $this->style->getRules();
-		$element = $this->style->getElement();
+		if ($this->style->getElement()->isTextNode()) {
+			return $this->calculateTextHeight();
+		}
+		if ($withRules !== null) {
+			foreach ($this->style->getChildren($withRules) as $child) {
+				$child->getDimensions()->calculateHeight($withRules);
+			}
+		}
 		if ($rules['height'] !== 'auto') {
 			$this->setHeight($rules['height'] + $rules['border-top-width'] + $rules['border-bottom-width']);
 			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
@@ -129,27 +110,11 @@ class Inline extends \YetiForcePDF\Style\Dimensions\Element
 				$previousChildrenStyle = $childStyle;
 			}
 			$height += $currentInlineHeight + $inlineHeight;
-			$height += $previousChildrenStyle->getRules('margin-bottom');
+			if ($previousChildrenStyle) {
+				$height += $previousChildrenStyle->getRules('margin-bottom');
+			}
 			$this->setInnerHeight($height + $borderHeight);
 			$this->setHeight($height + $borderHeight);
-		}
-		return $this;
-	}
-
-	/**
-	 * Calculate dimensions
-	 * @return $this
-	 */
-	public function calculate()
-	{
-		if ($this->style->getElement()->isTextNode()) {
-			$this->calculateTextDimensions();
-		} else {
-			if ($this->widthCalculated) {
-				$this->calculateHeight();
-			} else {
-				$this->calculateWidth();
-			}
 		}
 		return $this;
 	}

@@ -43,10 +43,6 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $dimensions;
 	/**
-	 * @var bool
-	 */
-	protected $filledHorizontally = false;
-	/**
 	 * Css properties that are iherited by default
 	 * @var array
 	 */
@@ -183,28 +179,6 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * IsFilledHorizontally
-	 * Is current space filled horizontaly?
-	 * Add next element to the left or to bottom?
-	 * @return bool
-	 */
-	public function isFilledHorizontally()
-	{
-		return $this->filledHorizontally;
-	}
-
-	/**
-	 * Set filled horizontally
-	 * @param bool $filled
-	 * @return $this
-	 */
-	public function setFilledHorizontally(bool $filled)
-	{
-		$this->filledHorizontally = $filled;
-		return $this;
-	}
-
-	/**
 	 * Initialise dimensions
 	 * @return $this
 	 */
@@ -240,55 +214,36 @@ class Style extends \YetiForcePDF\Base
 		return $this;
 	}
 
-	/**
-	 * Calculate width
-	 */
-	public function calculateWidth()
+	public function calculate()
 	{
-		// widths are calculated from top to bottom fo block elements and from bottom to top in inline/inline block
-		if ($this->rules['display'] !== 'block') {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateWidth();
-			}
+		foreach ($this->getChildren(['display' => 'inline']) as $child) {
+			$child->getDimensions()->calculateWidth(['display' => 'inline']);
 		}
-		$this->getDimensions()->calculate();
-		if ($this->rules['display'] === 'block') {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateWidth();
-			}
+		// all inline children have width calculated so we can calculate current element width
+		// because display block doesn't need children - only parent
+		$this->getDimensions()->calculateWidth();
+		// we have calculated current width so children elements of type block could calculate widths from now on
+		foreach ($this->getChildren(['display' => 'block']) as $child) {
+			$child->getDimensions()->calculateWidth(['display' => 'block']);
 		}
-	}
-
-	/**
-	 * Calculate height
-	 */
-	public function calculateHeight()
-	{
-		// heights are calculated from bottom to top and from top to bottom in inline/inline block elements
-		if ($this->rules['display'] === 'block') {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateHeight();
-			}
-		}
-		$this->getDimensions()->calculate();
-		if ($this->rules['display'] !== 'block') {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateHeight();
-			}
-		}
-	}
-
-	/**
-	 * Calculate all coordinates (self and children)
-	 * @return $this
-	 */
-	public function calculateCoordinates()
-	{
-		$this->getCoordinates()->calculate();
+		$this->getOffset()->calculateLeft();
 		foreach ($this->getChildren() as $child) {
-			$child->calculateCoordinates();
+			$child->getOffset()->calculateLeft([]);
 		}
-		return $this;
+
+		// we have calculated all elements widths, now calculate height
+		// first calculate children height
+		$this->getDimensions()->calculateHeight([]);
+
+		$this->getOffset()->calculateTop();
+		foreach ($this->getChildren() as $child) {
+			$child->getOffset()->calculateTop([]);
+		}
+		// we have all elements heights
+		$this->getCoordinates()->calculateX()->calculateY();
+		foreach ($this->getChildren() as $child) {
+			$child->getCoordinates()->calculateX([])->calculateY([]);
+		}
 	}
 
 	/**
@@ -335,13 +290,24 @@ class Style extends \YetiForcePDF\Base
 
 	/**
 	 * Get children styles
+	 * @param array $rules - filter styles with specified rules
 	 * @return \YetiForcePDF\Style\Style[]
 	 */
-	public function getChildren()
+	public function getChildren(array $rules = [])
 	{
 		$childrenStyles = [];
 		foreach ($this->element->getChildren() as $child) {
-			$childrenStyles[] = $child->getStyle();
+			$style = $child->getStyle();
+			$rulesCompatible = true;
+			foreach ($rules as $name => $value) {
+				if ($style->getRules($name) !== $value) {
+					$rulesCompatible = false;
+					break;
+				}
+			}
+			if ($rulesCompatible) {
+				$childrenStyles[] = $style;
+			}
 		}
 		return $childrenStyles;
 	}

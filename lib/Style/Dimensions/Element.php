@@ -83,5 +83,31 @@ class Element extends Dimensions
 		return $this;
 	}
 
+	/**
+	 * Calculate text dimensions
+	 * @return $this
+	 */
+	public function calculateTextWidth()
+	{
+		$text = $this->style->getElement()->getDOMElement()->textContent;
+		$font = $this->style->getFont();
+		$width = $font->getTextWidth($text);
+		$this->setWidth($width);
+		$this->setInnerWidth($width);
+		return $this;
+	}
 
+	/**
+	 * Calculate text dimensions
+	 * @return $this
+	 */
+	public function calculateTextHeight()
+	{
+		$text = $this->style->getElement()->getDOMElement()->textContent;
+		$font = $this->style->getFont();
+		$height = $font->getTextHeight($text);
+		$this->setHeight($height);
+		$this->setInnerHeight($height);
+		return $this;
+	}
 }
