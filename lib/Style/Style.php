@@ -43,6 +43,10 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $dimensions;
 	/**
+	 * @var bool
+	 */
+	protected $filledHorizontally = false;
+	/**
 	 * Css properties that are iherited by default
 	 * @var array
 	 */
@@ -179,6 +183,28 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * IsFilledHorizontally
+	 * Is current space filled horizontaly?
+	 * Add next element to the left or to bottom?
+	 * @return bool
+	 */
+	public function isFilledHorizontally()
+	{
+		return $this->filledHorizontally;
+	}
+
+	/**
+	 * Set filled horizontally
+	 * @param bool $filled
+	 * @return $this
+	 */
+	public function setFilledHorizontally(bool $filled)
+	{
+		$this->filledHorizontally = $filled;
+		return $this;
+	}
+
+	/**
 	 * Initialise dimensions
 	 * @return $this
 	 */
@@ -215,25 +241,41 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Calculate all dimensions (self and children)
-	 * @return $this
+	 * Calculate width
 	 */
-	public function calculateDimensions()
+	public function calculateWidth()
 	{
-		if (!$this->getDimensions()->isWidthCalculated()) {
-			// widths are calculated from top to bottom
-			$this->getDimensions()->calculate();
+		// widths are calculated from top to bottom fo block elements and from bottom to top in inline/inline block
+		if ($this->rules['display'] !== 'block') {
 			foreach ($this->getChildren() as $child) {
-				$child->calculateDimensions();
+				$child->calculateWidth();
 			}
-		} else {
-			// heights are calculated from bottom to top
-			foreach ($this->getChildren() as $child) {
-				$child->calculateDimensions();
-			}
-			$this->getDimensions()->calculate();
 		}
-		return $this;
+		$this->getDimensions()->calculate();
+		if ($this->rules['display'] === 'block') {
+			foreach ($this->getChildren() as $child) {
+				$child->calculateWidth();
+			}
+		}
+	}
+
+	/**
+	 * Calculate height
+	 */
+	public function calculateHeight()
+	{
+		// heights are calculated from bottom to top and from top to bottom in inline/inline block elements
+		if ($this->rules['display'] === 'block') {
+			foreach ($this->getChildren() as $child) {
+				$child->calculateHeight();
+			}
+		}
+		$this->getDimensions()->calculate();
+		if ($this->rules['display'] !== 'block') {
+			foreach ($this->getChildren() as $child) {
+				$child->calculateHeight();
+			}
+		}
 	}
 
 	/**
@@ -358,6 +400,15 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Shorthand for offset
+	 * @return \YetiForcePDF\Style\Coordinates\Offset
+	 */
+	public function getOffset(): \YetiForcePDF\Style\Coordinates\Offset
+	{
+		return $this->getCoordinates()->getOffset();
+	}
+
+	/**
 	 * Get rules that are inherited from parent
 	 * @return array
 	 */
@@ -395,6 +446,9 @@ class Style extends \YetiForcePDF\Base
 		if ($parent = $this->getParent()) {
 			$parsed = array_merge($parsed, $parent->getInheritedRules());
 		}
+		if ($this->element->isTextNode()) {
+			$parsed['display'] = 'inline';
+		}
 		if (!$this->content) {
 			//var_dump('no css' . ($this->element->isTextNode() ? ' [text] ' : ' [html] ') . $this->element->getText());
 			return $parsed;
@@ -413,9 +467,6 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
-		/*if ($this->element->isTextNode()) {
-			$parsed['display'] = 'inline';
-		}*/
 		return $parsed;
 	}
 }

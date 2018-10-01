@@ -139,20 +139,17 @@ class Offset extends \YetiForcePDF\Base
 			$margin = ['top' => $rules['margin-top'], 'left' => $rules['margin-left']];
 			if ($previous = $this->style->getPrevious()) {
 				$previousDisplay = $previous->getRules('display');
-				if ($previousDisplay !== 'block') {
+				if ($previousDisplay !== 'block' && $rules['display'] !== 'block') {
 					$this->left += $previous->getDimensions()->getWidth();
 					$margin['left'] = max($margin['left'], $previous->getRules('margin-right'));
 				}
+				$previousPrevious = $previous;
 				// previous of the previous - cumulative
 				while ($previous = $previous->getPrevious()) {
 					$previousDisplay = $previous->getRules('display');
-					if ($previousDisplay !== 'block') {
+					if ($previousDisplay !== 'block' && $rules['display'] !== 'block') {
 						$this->left += $previous->getDimensions()->getWidth();
-						if (isset($previousPrevious)) {
-							$margin['left'] += max($previousPrevious->getRules('margin-right'), $previous->getRules('margin-left'));
-						} else {
-							$margin['left'] += $previous->getRules('margin-left');
-						}
+						$margin['left'] += max($previousPrevious->getRules('margin-right'), $previous->getRules('margin-left'));
 					}
 					$previousPrevious = $previous;
 				}
@@ -184,12 +181,11 @@ class Offset extends \YetiForcePDF\Base
 			$margin = ['top' => $rules['margin-top'], 'left' => $rules['margin-left']];
 			if ($previous = $this->style->getPrevious()) {
 				$previousDisplay = $previous->getRules('display');
-				if ($previousDisplay === 'block') {
+				if ($previousDisplay === 'block' || $rules['display'] === 'block') {
 					$this->top += $previous->getDimensions()->getHeight();
 					$margin['top'] = max($margin['top'], $previous->getRules('margin-bottom'));
 					$margin['top'] += $previous->getRules('margin-top');
 				}
-				$firstPrevious = $previous;
 				// previous of the previous - cumulative
 				while ($previous = $previous->getPrevious()) {
 					$previousDisplay = $previous->getRules('display');

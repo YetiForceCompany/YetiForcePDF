@@ -100,7 +100,8 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 		} else {
 			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
 			$height = 0;
-			$maxInlineHeight = 0;
+			$currentInlineHeight = 0;
+			$inlineHeight = 0;
 			$previousChildrenStyle = null;
 			$children = $this->style->getChildren();
 			foreach ($children as $index => $childStyle) {
@@ -112,12 +113,20 @@ class Block extends \YetiForcePDF\Style\Dimensions\Element
 					if ($previousChildrenStyle) {
 						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
 					}
+					$inlineHeight += $currentInlineHeight;
+					$currentInlineHeight = 0;
 					$height += $marginTop;
 				} else {
-					$maxInlineHeight = max($childDimensions->getHeight(), $maxInlineHeight);
+					$marginTop = $childRules['margin-top'];
+					if ($previousChildrenStyle) {
+						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
+					}
+					$currentInlineHeight = max($childDimensions->getHeight(), $currentInlineHeight);
+					$height += $marginTop;
 				}
 				$previousChildrenStyle = $childStyle;
 			}
+			$height += $currentInlineHeight + $inlineHeight;
 			$height += $previousChildrenStyle->getRules('margin-bottom');
 			$this->setInnerHeight($height + $borderHeight);
 			$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];

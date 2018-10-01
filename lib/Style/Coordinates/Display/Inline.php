@@ -19,30 +19,94 @@ class Inline extends \YetiForcePDF\Style\Coordinates\Coordinates
 {
 
 	/**
-	 * Calculate coordinates
+	 * Do we have X calculated already?
+	 * @var bool
+	 */
+	protected $xCalculated = false;
+
+	/**
+	 * Calculate X coordinates
+	 * @return $this
+	 */
+	public function calculateX()
+	{
+		$style = $this->style;
+		$rules = $style->getRules();
+		$element = $this->style->getElement();
+		$offset = $this->getOffset();
+		$htmlX = 0;
+		if ($element->isRoot()) {
+			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
+			$htmlX = $pageCoord->getAbsoluteHtmlX();
+		} else {
+			if ($parent = $style->getParent()) {
+				$parentCoordinates = $parent->getCoordinates();
+				$htmlX += $parentCoordinates->getAbsoluteHtmlX();
+			}
+			$htmlX += $offset->getLeft();
+			if ($element->isTextNode()) {
+				if ($rules['text-align'] !== 'left') {
+					if ($rules['text-align'] === 'center') {
+						$width = $style->getParent()->getDimensions()->getInnerWidth();
+						$textWidth = $style->getFont()->getTextWidth($element->getText());
+						$htmlX += ($width / 2) - ($textWidth / 2);
+					}
+					if ($rules['text-align'] === 'right') {
+						$width = $style->getParent()->getDimensions()->getInnerWidth();
+						$textWidth = $style->getFont()->getTextWidth($element->getText());
+						$htmlX += $width - $textWidth;
+					}
+				}
+			}
+		}
+		//var_dump($element->getDOMElement()->textContent . ' x:' . $htmlX . ' offset left:' . $offset->getLeft());
+		$this->absoluteHtmlX = $htmlX;
+		$this->convertHtmlToPdf();
+		$this->xCalculated = true;
+		return $this;
+	}
+
+	/**
+	 * Calculate Y coordinates
+	 * @return $this
+	 */
+	public function calculateY()
+	{
+		$style = $this->style;
+		$element = $this->style->getElement();
+		$offset = $this->getOffset();
+		$htmlY = 0;
+		if ($element->isRoot()) {
+			$pageCoord = $this->document->getCurrentPage()->getCoordinates();
+			$htmlY = $pageCoord->getAbsoluteHtmlY();
+		} else {
+			if ($parent = $style->getParent()) {
+				$parentRules = $parent->getRules();
+				$parentCoordinates = $parent->getCoordinates();
+				$htmlY += $parentCoordinates->getAbsoluteHtmlY();
+			}
+			$htmlY += $offset->getTop();
+		}
+		//var_dump(($element->isTextNode() ? '[text]' : '[html]') . ' ' . $element->getDOMElement()->textContent . ' y:' . $htmlY . ' offset top:' . $offset->getTop());
+		$this->absoluteHtmlY = $htmlY;
+		$this->convertHtmlToPdf();
+		return $this;
+	}
+
+	/**
+	 * Calculate
+	 * @return $this
 	 */
 	public function calculate()
 	{
-		$style = $this->style;
-		$rules = $this->style->getRules();
-		$htmlX = 0;
-		$htmlY = 0;
-		$htmlX += $rules['margin-left'];
-		$htmlY += $rules['margin-top'];
-		if ($rules['box-sizing'] === 'content-box') {
-			$htmlX += $rules['border-left-width'];
-			$htmlY += $rules['border-top-width'];
+		if ($this->xCalculated) {
+			$this->getOffset()->calculateTop();
+			$this->calculateY();
+		} else {
+			$this->getOffset()->calculateLeft();
+			$this->calculateX();
 		}
-		if ($parent = $style->getParent()) {
-			$htmlX += $parent->getCoordinates()->getAbsoluteHtmlX();
-			$htmlY += $parent->getCoordinates()->getAbsoluteHtmlY();
-			$htmlX += $parent->getRules()['padding-left'];
-			$htmlY += $parent->getRules()['padding-top'];
-			// TODO calculate left sibling elements and add to X basing on display property (block, inline) etc..
-		}
-		$this->absoluteHtmlX = $htmlX;
-		$this->absoluteHtmlY = $htmlY;
-		$this->convertHtmlToPdf();
+		return $this;
 	}
 
 	/**
@@ -52,7 +116,8 @@ class Inline extends \YetiForcePDF\Style\Coordinates\Coordinates
 	public function init()
 	{
 		parent::init();
-		$this->calculate();
+		//$this->calculate();
 		return $this;
 	}
+
 }
