@@ -136,7 +136,10 @@ class Offset extends \YetiForcePDF\Base
 				$left = $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth();
 				$width = $this->style->getDimensions()->getWidth();
 				$horizontalSpacing = max($margin['left'], $previous->getRules('margin-right')) + $rules['margin-right'];
-				$willFit = $left + $width + $horizontalSpacing < $parent->getDimensions()->getInnerWidth();
+				$willFit = ($left + $width + $horizontalSpacing - $parentLeft) <= $parent->getDimensions()->getInnerWidth();
+				if ($rules['display'] === 'inline') {
+					var_dump('will fit:' . ($left + $width + $horizontalSpacing - $parentLeft) . ' <= ' . $parent->getDimensions()->getInnerWidth() . ' ' . $this->style->getElement()->getText() . ' w ' . $parent->getElement()->getText());
+				}
 				if ($previousDisplay !== 'block' && $rules['display'] !== 'block' && $willFit) {
 					if (!$element->areRowColSet()) {
 						$element->setColumn($previous->getElement()->getColumn() + 1);

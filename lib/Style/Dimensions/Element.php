@@ -140,23 +140,33 @@ class Element extends Dimensions
 			$this->setInnerWidth($innerWidth);
 		} else {
 			$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
+			$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
 			if ($rules['display'] === 'block') {
 				$marginWidth = $rules['margin-left'] + $rules['margin-right'];
-				$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
 				$this->setWidth($parentDimensions->getInnerWidth() - $marginWidth);
 				$innerWidth = $this->getWidth() - $paddingWidth - $borderWidth;
 				$this->setInnerWidth($innerWidth);
 			} else {
 				$width = 0;
 				foreach ($this->style->getChildren() as $child) {
-					if ($child->getRules('display') === 'inline') {
+					$childRules = $child->getRules();
+					if ($child->getRules('display') !== 'block') {
 						$width += $child->getDimensions()->getWidth();
+						if (isset($previousChild)) {
+							$width += max($childRules['margin-left'], $previousChild->getRules('margin-right'));
+						}
+						//var_dump($childRules['display'] . ' w' . $width . ' ' . $child->getElement()->getText() . ($child->getElement()->isTextNode() ? ' text' : ' html'));
 					} else {
 						$width = $child->getDimensions()->getWidth();
 						break;
 					}
+					$previousChild = $child;
 				}
-				$this->setWidth($width + $borderWidth);
+				$width += $childRules['margin-right'];
+				if ($rules['display'] === 'inline') {
+					$paddingWidth = 0;
+				}
+				$this->setWidth($width + $borderWidth + $paddingWidth);
 				$this->setInnerWidth($width);
 			}
 		}
@@ -181,7 +191,6 @@ class Element extends Dimensions
 		} else {
 			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
 			$height = 0;
-			$currentHeight = 0;
 			$currentInlineHeight = 0;
 			$inlineHeight = 0;
 			$previousChildrenStyle = null;

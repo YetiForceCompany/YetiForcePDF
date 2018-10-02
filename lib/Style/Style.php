@@ -215,16 +215,16 @@ class Style extends \YetiForcePDF\Base
 
 	protected function calculateWidths()
 	{
+		if ($this->rules['display'] === 'inline') {
+			foreach ($this->getChildren() as $child) {
+				$child->calculateWidths();
+			}
+		}
+		$this->getDimensions()->calculateWidth();
 		if ($this->rules['display'] === 'block') {
-			$this->getDimensions()->calculateWidth();
 			foreach ($this->getChildren() as $child) {
 				$child->calculateWidths();
 			}
-		} else {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateWidths();
-			}
-			$this->getDimensions()->calculateWidth();
 		}
 	}
 
