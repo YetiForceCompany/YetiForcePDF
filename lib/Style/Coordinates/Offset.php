@@ -144,7 +144,7 @@ class Offset extends \YetiForcePDF\Base
 					}
 					$this->left = $left;
 					$margin['left'] = max($margin['left'], $previous->getRules('margin-right'));
-					$this->top = $previous->getOffset()->getTop();
+					$this->top = $previous->getOffset()->getTop() - $previous->getRules('margin-top');
 					//var_dump($previous->getOffset()->getLeft() . '+' . $previous->getDimensions()->getWidth() . $previous->getElement()->getText());
 				} else {
 					if (!$element->areRowColSet()) {
