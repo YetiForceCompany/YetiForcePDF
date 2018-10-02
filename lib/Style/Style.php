@@ -185,8 +185,7 @@ class Style extends \YetiForcePDF\Base
 	public function initDimensions()
 	{
 		$display = ucfirst($this->rules['display']);
-		$dimensionsClassName = "\\YetiForcePDF\\Style\\Dimensions\\Display\\$display";
-		$this->dimensions = (new $dimensionsClassName())
+		$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
@@ -203,8 +202,8 @@ class Style extends \YetiForcePDF\Base
 	public function initCoordinates()
 	{
 		$display = ucfirst($this->rules['display']);
-		$coordinatesClassName = "\\YetiForcePDF\\Style\\Coordinates\\Display\\$display";
-		$this->coordinates = (new $coordinatesClassName())
+		//$coordinatesClassName = "\\YetiForcePDF\\Style\\Coordinates\\Display\\$display";
+		$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
@@ -214,36 +213,52 @@ class Style extends \YetiForcePDF\Base
 		return $this;
 	}
 
+	protected function calculateWidths()
+	{
+		if ($this->rules['display'] === 'block') {
+			$this->getDimensions()->calculateWidth();
+			foreach ($this->getChildren() as $child) {
+				$child->calculateWidths();
+			}
+		} else {
+			foreach ($this->getChildren() as $child) {
+				$child->calculateWidths();
+			}
+			$this->getDimensions()->calculateWidth();
+		}
+	}
+
+
+	protected function calculateOffsets()
+	{
+		$this->getOffset()->calculate();
+		foreach ($this->getChildren() as $child) {
+			$child->calculateOffsets();
+		}
+	}
+
+	protected function calculateHeights()
+	{
+		foreach ($this->getChildren() as $child) {
+			$child->calculateHeights();
+		}
+		$this->getDimensions()->calculateHeight();
+	}
+
+	protected function calculateCoordinates()
+	{
+		$this->getCoordinates()->calculate();
+		foreach ($this->getChildren() as $child) {
+			$child->calculateCoordinates();
+		}
+	}
+
 	public function calculate()
 	{
-		foreach ($this->getChildren(['display' => 'inline']) as $child) {
-			$child->getDimensions()->calculateWidth(['display' => 'inline']);
-		}
-		// all inline children have width calculated so we can calculate current element width
-		// because display block doesn't need children - only parent
-		$this->getDimensions()->calculateWidth();
-		// we have calculated current width so children elements of type block could calculate widths from now on
-		foreach ($this->getChildren(['display' => 'block']) as $child) {
-			$child->getDimensions()->calculateWidth(['display' => 'block']);
-		}
-		$this->getOffset()->calculateLeft();
-		foreach ($this->getChildren() as $child) {
-			$child->getOffset()->calculateLeft([]);
-		}
-
-		// we have calculated all elements widths, now calculate height
-		// first calculate children height
-		$this->getDimensions()->calculateHeight([]);
-
-		$this->getOffset()->calculateTop();
-		foreach ($this->getChildren() as $child) {
-			$child->getOffset()->calculateTop([]);
-		}
-		// we have all elements heights
-		$this->getCoordinates()->calculateX()->calculateY();
-		foreach ($this->getChildren() as $child) {
-			$child->getCoordinates()->calculateX([])->calculateY([]);
-		}
+		$this->calculateWidths();
+		$this->calculateHeights();
+		$this->calculateOffsets();
+		$this->calculateCoordinates();
 	}
 
 	/**

@@ -202,6 +202,36 @@ class Coordinates extends \YetiForcePDF\Base
 	 */
 	public function calculate()
 	{
+		$style = $this->style;
+		$element = $this->style->getElement();
+		$offset = $this->getOffset();
+		$rules = $this->style->getRules();
+		if ($element->isRoot()) {
+			$htmlX = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlX();
+			$htmlY = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlY();
+		} else {
+			$htmlX = $style->getParent()->getCoordinates()->getAbsoluteHtmlX() + $offset->getLeft();
+			$htmlY = $style->getParent()->getCoordinates()->getAbsoluteHtmlY() + $offset->getTop();
+			if ($element->isTextNode()) {
+				if ($rules['text-align'] !== 'left') {
+					if ($rules['text-align'] === 'center') {
+						$width = $style->getParent()->getDimensions()->getInnerWidth();
+						$textWidth = $style->getFont()->getTextWidth($element->getText());
+						$htmlX += ($width / 2) - ($textWidth / 2);
+					}
+					if ($rules['text-align'] === 'right') {
+						$width = $style->getParent()->getDimensions()->getInnerWidth();
+						$textWidth = $style->getFont()->getTextWidth($element->getText());
+						$htmlX += $width - $textWidth;
+					}
+				}
+			}
+		}
+		//var_dump($element->getDOMElement()->textContent . ' x:' . $htmlX . ' offset left:' . $offset->getLeft());
+		$this->absoluteHtmlX = $htmlX;
+		$this->absoluteHtmlY = $htmlY;
+		$this->convertHtmlToPdfX();
+		$this->convertHtmlToPdfY();
 		return $this;
 	}
 }

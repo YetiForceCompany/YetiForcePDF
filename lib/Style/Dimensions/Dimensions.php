@@ -66,12 +66,4 @@ class Dimensions extends \YetiForcePDF\Base
 		return $this;
 	}
 
-	/**
-	 * Calculate dimensions
-	 * @return $this
-	 */
-	public function calculate()
-	{
-		return $this;
-	}
 }

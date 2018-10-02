@@ -94,6 +94,7 @@ class Element extends Dimensions
 		$width = $font->getTextWidth($text);
 		$this->setWidth($width);
 		$this->setInnerWidth($width);
+		//var_dump('w' . $this->getWidth() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
 		return $this;
 	}
 
@@ -108,6 +109,113 @@ class Element extends Dimensions
 		$height = $font->getTextHeight($text);
 		$this->setHeight($height);
 		$this->setInnerHeight($height);
+		//var_dump('h' . $this->getHeight() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
+		return $this;
+	}
+
+
+	/**
+	 * Calculate border-box dimensions
+	 * @return $this
+	 */
+	public function calculateWidth()
+	{
+		if ($this->style->getElement()->isTextNode()) {
+			return $this->calculateTextWidth();
+		}
+		$rules = $this->style->getRules();
+		$parentDimensions = $this->document->getCurrentPage()->getPageDimensions();
+		$parent = $this->style->getParent();
+		if ($parent) {
+			if ($parent->getDimensions() !== null) {
+				$parentDimensions = $parent->getDimensions();
+			} else {
+				//var_dump($element->getText() . ' doesnt have parent dimensions parent:' . $parent->getElement()->getText());
+			}
+			//var_dump($element->getText() . ': parent (' . $parent->getElement()->getText() . ($parent->getElement()->isTextNode() ? ' [text] ' : ' [html] ') . ') inner width:' . $parentDimensions->getInnerWidth() . ' pborder:' . $parentBorderWidth . ' ppadding:' . $parentPaddingWidth);
+		}
+		if ($rules['width'] !== 'auto') {
+			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
+			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
+			$this->setInnerWidth($innerWidth);
+		} else {
+			$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
+			if ($rules['display'] === 'block') {
+				$marginWidth = $rules['margin-left'] + $rules['margin-right'];
+				$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
+				$this->setWidth($parentDimensions->getInnerWidth() - $marginWidth);
+				$innerWidth = $this->getWidth() - $paddingWidth - $borderWidth;
+				$this->setInnerWidth($innerWidth);
+			} else {
+				$width = 0;
+				foreach ($this->style->getChildren() as $child) {
+					if ($child->getRules('display') === 'inline') {
+						$width += $child->getDimensions()->getWidth();
+					} else {
+						$width = $child->getDimensions()->getWidth();
+						break;
+					}
+				}
+				$this->setWidth($width + $borderWidth);
+				$this->setInnerWidth($width);
+			}
+		}
+		//var_dump('w' . $this->getWidth() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
+		return $this;
+	}
+
+	/**
+	 * Calculate border-box dimensions
+	 * @return $this
+	 */
+	public function calculateHeight()
+	{
+		$rules = $this->style->getRules();
+		if ($this->style->getElement()->isTextNode()) {
+			return $this->calculateTextHeight();
+		}
+		if ($rules['height'] !== 'auto') {
+			$this->setHeight($rules['height'] + $rules['border-top-width'] + $rules['border-bottom-width']);
+			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
+			$this->setInnerWidth($innerHeight);
+		} else {
+			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
+			$height = 0;
+			$currentInlineHeight = 0;
+			$inlineHeight = 0;
+			$previousChildrenStyle = null;
+			$children = $this->style->getChildren();
+			foreach ($children as $index => $childStyle) {
+				$childRules = $childStyle->getRules();
+				$childDimensions = $childStyle->getDimensions();
+				if ($childRules['display'] === 'block') {
+					$height += $childDimensions->getHeight();
+					$marginTop = $childRules['margin-top'];
+					if ($previousChildrenStyle) {
+						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
+					}
+					$inlineHeight += $currentInlineHeight;
+					$currentInlineHeight = 0;
+					$height += $marginTop;
+				} else {
+					$marginTop = $childRules['margin-top'];
+					if ($previousChildrenStyle) {
+						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
+					}
+					$currentInlineHeight = max($childDimensions->getHeight(), $currentInlineHeight);
+					$height += $marginTop;
+				}
+				$previousChildrenStyle = $childStyle;
+			}
+			$height += $currentInlineHeight + $inlineHeight;
+			if ($previousChildrenStyle) {
+				$height += $previousChildrenStyle->getRules('margin-bottom');
+			}
+			$this->setInnerHeight($height + $borderHeight);
+			$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
+			$this->setHeight($height + $borderHeight);
+		}
+		//var_dump('h' . $this->getHeight() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
 		return $this;
 	}
 }
