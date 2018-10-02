@@ -66,6 +66,22 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $next;
 	/**
+	 * Element row - needed to calculate parent height
+	 * If element was moved to the next line it will have row>0
+	 * @var int
+	 */
+	protected $row = 0;
+	/**
+	 * Element column = element position in row
+	 * @var int
+	 */
+	protected $column = 0;
+	/**
+	 * Do we calculated element row/column already?
+	 * @var bool
+	 */
+	protected $colRowAreSet = false;
+	/**
 	 * PDF graphic / text stream instructions
 	 * @var string[]
 	 */
@@ -237,6 +253,83 @@ class Element extends \YetiForcePDF\Base
 	public function getDOMElement()
 	{
 		return $this->domElement;
+	}
+
+	/**
+	 * Set element row
+	 * @param int $row
+	 * @return $this
+	 */
+	public function setRow(int $row)
+	{
+		$this->row = $row;
+		return $this;
+	}
+
+	/**
+	 * Increment row number
+	 * @return $this
+	 */
+	public function incrementRow()
+	{
+		$this->row += 1;
+		return $this;
+	}
+
+	/**
+	 * Get element row
+	 * @return int
+	 */
+	public function getRow()
+	{
+		return $this->row;
+	}
+
+	/**
+	 * Set element column
+	 * @param int $column
+	 * @return $this
+	 */
+	public function setColumn(int $column)
+	{
+		$this->column = $column;
+		return $this;
+	}
+
+	/**
+	 * Increment column number
+	 * @return $this
+	 */
+	public function incrementColumn()
+	{
+		$this->column += 1;
+		return $this;
+	}
+
+	/**
+	 * Get element column
+	 * @return int
+	 */
+	public function getColumn()
+	{
+		return $this->column;
+	}
+
+	/**
+	 * Are column/row already set?
+	 * @return bool
+	 */
+	public function areRowColSet()
+	{
+		return $this->colRowAreSet;
+	}
+
+	/**
+	 * Column / Row was defined already
+	 */
+	public function finishRowCol()
+	{
+		$this->colRowAreSet = true;
 	}
 
 	/**

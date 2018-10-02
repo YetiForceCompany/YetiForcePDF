@@ -185,22 +185,25 @@ class Element extends Dimensions
 			$inlineHeight = 0;
 			$previousChildrenStyle = null;
 			$children = $this->style->getChildren();
+			$currentRow = 0;
 			foreach ($children as $index => $childStyle) {
 				$childRules = $childStyle->getRules();
 				$childDimensions = $childStyle->getDimensions();
-				if ($childRules['display'] === 'block') {
+				$childElement = $childStyle->getElement();
+				if ($childElement->getRow() > $currentRow) {
 					$height += $childDimensions->getHeight();
 					$marginTop = $childRules['margin-top'];
 					if ($previousChildrenStyle) {
-						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
+						$marginTop = max($marginTop, $previousChildrenStyle->getRules('margin-bottom'));
 					}
 					$inlineHeight += $currentInlineHeight;
 					$currentInlineHeight = 0;
 					$height += $marginTop;
+					$currentRow++;
 				} else {
 					$marginTop = $childRules['margin-top'];
 					if ($previousChildrenStyle) {
-						$marginTop = max($marginTop, $previousChildrenStyle->getRules['margin-bottom']);
+						$marginTop = max($marginTop, $previousChildrenStyle->getRules('margin-bottom'));
 					}
 					$currentInlineHeight = max($childDimensions->getHeight(), $currentInlineHeight);
 					$height += $marginTop;

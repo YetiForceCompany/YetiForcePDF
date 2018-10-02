@@ -256,6 +256,7 @@ class Style extends \YetiForcePDF\Base
 	public function calculate()
 	{
 		$this->calculateWidths();
+		$this->calculateOffsets();
 		$this->calculateHeights();
 		$this->calculateOffsets();
 		$this->calculateCoordinates();
