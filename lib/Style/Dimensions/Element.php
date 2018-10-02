@@ -181,6 +181,7 @@ class Element extends Dimensions
 		} else {
 			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
 			$height = 0;
+			$currentHeight = 0;
 			$currentInlineHeight = 0;
 			$inlineHeight = 0;
 			$previousChildrenStyle = null;
@@ -191,16 +192,22 @@ class Element extends Dimensions
 				$childDimensions = $childStyle->getDimensions();
 				$childElement = $childStyle->getElement();
 				if ($childElement->getRow() > $currentRow) {
-					$height += $childDimensions->getHeight();
+					//var_dump('next row ' . $currentRow . ' on ' . $childElement->getText() . ($childElement->isTextNode() ? ' text' : ' html'));
+					// we have new row (new line) so add height of the previous element if it was block (current inline height===0)
+					if ($currentInlineHeight === 0 && $previousChildrenStyle) {
+						$height += $previousChildrenStyle->getDimensions()->getHeight();
+					}
+					// save current inline height and reset it
+					$inlineHeight += $currentInlineHeight;
+					$currentInlineHeight = 0;
 					$marginTop = $childRules['margin-top'];
 					if ($previousChildrenStyle) {
 						$marginTop = max($marginTop, $previousChildrenStyle->getRules('margin-bottom'));
 					}
-					$inlineHeight += $currentInlineHeight;
-					$currentInlineHeight = 0;
 					$height += $marginTop;
 					$currentRow++;
 				} else {
+					//var_dump('next column ' . $currentRow . ' on ' . $childElement->getText() . ($childElement->isTextNode() ? ' text' : ' html'));
 					$marginTop = $childRules['margin-top'];
 					if ($previousChildrenStyle) {
 						$marginTop = max($marginTop, $previousChildrenStyle->getRules('margin-bottom'));
@@ -210,12 +217,17 @@ class Element extends Dimensions
 				}
 				$previousChildrenStyle = $childStyle;
 			}
+			if ($currentInlineHeight === 0) {
+				$height += $previousChildrenStyle->getDimensions()->getHeight();
+			}
 			$height += $currentInlineHeight + $inlineHeight;
 			if ($previousChildrenStyle) {
 				$height += $previousChildrenStyle->getRules('margin-bottom');
 			}
 			$this->setInnerHeight($height + $borderHeight);
-			$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
+			if ($rules['display'] !== 'inline') {
+				$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
+			}
 			$this->setHeight($height + $borderHeight);
 		}
 		//var_dump('h' . $this->getHeight() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));

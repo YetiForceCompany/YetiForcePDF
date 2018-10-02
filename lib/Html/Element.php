@@ -267,16 +267,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Increment row number
-	 * @return $this
-	 */
-	public function incrementRow()
-	{
-		$this->row += 1;
-		return $this;
-	}
-
-	/**
 	 * Get element row
 	 * @return int
 	 */
@@ -293,16 +283,6 @@ class Element extends \YetiForcePDF\Base
 	public function setColumn(int $column)
 	{
 		$this->column = $column;
-		return $this;
-	}
-
-	/**
-	 * Increment column number
-	 * @return $this
-	 */
-	public function incrementColumn()
-	{
-		$this->column += 1;
 		return $this;
 	}
 
@@ -326,10 +306,12 @@ class Element extends \YetiForcePDF\Base
 
 	/**
 	 * Column / Row was defined already
+	 * @return $this
 	 */
 	public function finishRowCol()
 	{
 		$this->colRowAreSet = true;
+		return $this;
 	}
 
 	/**

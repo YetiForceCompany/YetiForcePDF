@@ -137,7 +137,6 @@ class Offset extends \YetiForcePDF\Base
 				$width = $this->style->getDimensions()->getWidth();
 				$horizontalSpacing = max($margin['left'], $previous->getRules('margin-right')) + $rules['margin-right'];
 				$willFit = $left + $width + $horizontalSpacing < $parent->getDimensions()->getInnerWidth();
-				$willFit = $willFit && !$element->isTextNode();
 				if ($previousDisplay !== 'block' && $rules['display'] !== 'block' && $willFit) {
 					if (!$element->areRowColSet()) {
 						$element->setColumn($previous->getElement()->getColumn() + 1);
@@ -148,7 +147,7 @@ class Offset extends \YetiForcePDF\Base
 					$this->top = $previous->getOffset()->getTop();
 					//var_dump($previous->getOffset()->getLeft() . '+' . $previous->getDimensions()->getWidth() . $previous->getElement()->getText());
 				} else {
-					if (!$element->areRowColSet() && ($rules['display'] === 'block' || !$willFit)) {
+					if (!$element->areRowColSet()) {
 						$element->setColumn(0);
 						$element->setRow($previous->getElement()->getRow() + 1);
 					}
@@ -157,8 +156,8 @@ class Offset extends \YetiForcePDF\Base
 					$this->left = $parentLeft;
 					$margin['left'] = $rules['margin-left'];
 				}
-				$element->finishRowCol();
 			}
+			$element->finishRowCol();
 			$this->left += $margin['left'];
 			$this->top += $margin['top'];
 		}
