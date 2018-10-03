@@ -105,7 +105,7 @@ class Element extends \YetiForcePDF\Base
 		if ($this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
 			$children = [];
 			foreach ($this->domElement->childNodes as $index => $childNode) {
-				$childElement = $children[] = (new Element())
+				$childElement = $children[] = $this->elementForNode($childNode)
 					->setDocument($this->document)
 					->setElement($childNode)
 					->setParent($this)
@@ -123,6 +123,21 @@ class Element extends \YetiForcePDF\Base
 			}
 		}
 		return $this;
+	}
+
+	/**
+	 * Get or create element for DOMNode
+	 * @param \DOMNode $domNode
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function elementForNode(\DOMNode $domNode)
+	{
+		foreach ($this->document->getRootElement()->getAllChildren() as $child) {
+			if ($child->getDOMElement() === $domNode) {
+				return $child;
+			}
+		}
+		return new Element();
 	}
 
 	/**
@@ -299,6 +314,20 @@ class Element extends \YetiForcePDF\Base
 	public function getChildren(): array
 	{
 		return $this->children;
+	}
+
+	/**
+	 * Get all children (recursive)
+	 * @param Element[] $current
+	 * @return Element[]
+	 */
+	public function getAllChildren(array $current = [])
+	{
+		foreach ($this->getChildren() as $child) {
+			$current[] = $child;
+			$child->getAllChildren($current);
+		}
+		return $current;
 	}
 
 	/**
