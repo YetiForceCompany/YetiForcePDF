@@ -142,7 +142,7 @@ class Element extends \YetiForcePDF\Base
 	 * @param \YetiForcePDF\Html\Element $parent
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setParent(Element $parent): \YetiForcePDF\Html\Element
+	public function setParent(Element $parent): Element
 	{
 		$this->parent = $parent;
 		return $this;
@@ -202,7 +202,7 @@ class Element extends \YetiForcePDF\Base
 	 * @param bool $isRoot
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setRoot(bool $isRoot): \YetiForcePDF\Html\Element
+	public function setRoot(bool $isRoot): Element
 	{
 		$this->root = $isRoot;
 		return $this;
@@ -213,7 +213,7 @@ class Element extends \YetiForcePDF\Base
 	 * @param bool $isTextNode
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setTextNode(bool $isTextNode = false): \YetiForcePDF\Html\Element
+	public function setTextNode(bool $isTextNode = false): Element
 	{
 		$this->textNode = $isTextNode;
 		return $this;
@@ -253,65 +253,6 @@ class Element extends \YetiForcePDF\Base
 	public function getDOMElement()
 	{
 		return $this->domElement;
-	}
-
-	/**
-	 * Set element row
-	 * @param int $row
-	 * @return $this
-	 */
-	public function setRow(int $row)
-	{
-		$this->row = $row;
-		return $this;
-	}
-
-	/**
-	 * Get element row
-	 * @return int
-	 */
-	public function getRow()
-	{
-		return $this->row;
-	}
-
-	/**
-	 * Set element column
-	 * @param int $column
-	 * @return $this
-	 */
-	public function setColumn(int $column)
-	{
-		$this->column = $column;
-		return $this;
-	}
-
-	/**
-	 * Get element column
-	 * @return int
-	 */
-	public function getColumn()
-	{
-		return $this->column;
-	}
-
-	/**
-	 * Are column/row already set?
-	 * @return bool
-	 */
-	public function areRowColSet()
-	{
-		return $this->colRowAreSet;
-	}
-
-	/**
-	 * Column / Row was defined already
-	 * @return $this
-	 */
-	public function finishRowCol()
-	{
-		$this->colRowAreSet = true;
-		return $this;
 	}
 
 	/**
@@ -358,6 +299,39 @@ class Element extends \YetiForcePDF\Base
 	public function getChildren(): array
 	{
 		return $this->children;
+	}
+
+	/**
+	 * Get dom document
+	 * @return \DOMDocument
+	 */
+	public function getDomDocument()
+	{
+		return $this->getDOMElement()->ownerDocument;
+	}
+
+	/**
+	 * Wrap elements
+	 * @param Element[] $elements
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function wrapElements(array $elements)
+	{
+		$previous = $elements[0]->getPrevious();
+		$next = $elements[count($elements) - 1]->getNext();
+		$domDocument = $this->getDomDocument();
+		$domElement = $domDocument->createElement('div');
+		foreach ($elements as $element) {
+			$domElement->appendChild($this->getDOMElement()->removeChild($element));
+		}
+		$wrapper = (new Element())
+			->setDocument($this->document)
+			->setParent($this)
+			->setPrevious($previous)
+			->setNext($next)
+			->setElement($domElement)
+			->init();
+		return $wrapper;
 	}
 
 	/**
