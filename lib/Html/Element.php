@@ -105,7 +105,9 @@ class Element extends \YetiForcePDF\Base
 		parent::init();
 		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
-		$this->style = $this->parseStyle();
+		if ($this->style === null) {
+			$this->style = $this->parseStyle();
+		}
 		if ($this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
 			$children = [];
 			foreach ($this->domElement->childNodes as $index => $childNode) {
@@ -291,6 +293,38 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Create line element with childrens
+	 * @param Element[] $children
+	 * @return Element|false
+	 */
+	public function createLine(array $children)
+	{
+		if (empty($children)) {
+			return false;
+		}
+		return $this->wrapElements($children)->setLine(true);
+	}
+
+	/**
+	 * Get lines (or line) of elements
+	 * @param int|null $lineIndex
+	 * @return Element[]|Element
+	 */
+	public function getLines(int $lineIndex = null)
+	{
+		$lines = [];
+		foreach ($this->getChildren() as $child) {
+			if ($child->isLine()) {
+				$lines[] = $child;
+			}
+		}
+		if ($lineIndex !== null) {
+			return $lines[$lineIndex];
+		}
+		return $lines;
+	}
+
+	/**
 	 * Get element internal unique id
 	 * @return string
 	 */
@@ -386,20 +420,27 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function wrapElements(array $elements)
 	{
+		if (empty($elements)) {
+			return false;
+		}
 		$previous = $elements[0]->getPrevious();
 		$next = $elements[count($elements) - 1]->getNext();
 		$domDocument = $this->getDomDocument();
 		$domElement = $domDocument->createElement('div');
 		foreach ($elements as $element) {
-			$domElement->appendChild($this->getDOMElement()->removeChild($element));
+			$domElement->appendChild($this->getDOMElement()->removeChild($element->getDOMElement()));
 		}
 		$wrapper = (new Element())
 			->setDocument($this->document)
 			->setParent($this)
-			->setPrevious($previous)
-			->setNext($next)
-			->setElement($domElement)
-			->init();
+			->setElement($domElement);
+		if ($previous) {
+			$wrapper->setPrevious($previous);
+		}
+		if ($next) {
+			$wrapper->setNext($next);
+		}
+		$wrapper->init();
 		return $wrapper;
 	}
 
