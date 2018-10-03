@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
+use YetiForcePDF\Html\Element;
+
 /**
  * Class Page
  */
@@ -73,6 +75,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @var \YetiForcePDF\Style\Coordinates\Coordinates
 	 */
 	protected $coordinates;
+	/**
+	 * @var \YetiForcePDF\Html\Element
+	 */
+	protected $rootElement;
 	/**
 	 * Don't group this 'group' names
 	 * @var string[]
@@ -547,6 +553,26 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$this->userUnit = $userUnit;
 		return $this;
+	}
+
+	/**
+	 * Set root element
+	 * @param \YetiForcePDF\Html\Element $rootElement
+	 * @return $this
+	 */
+	public function setRootElement(Element $rootElement)
+	{
+		$this->rootElement = $rootElement;
+		return $this;
+	}
+
+	/**
+	 * Get root element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function getRootElement()
+	{
+		return $this->rootElement;
 	}
 
 	/**
