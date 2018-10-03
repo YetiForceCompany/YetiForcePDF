@@ -253,10 +253,20 @@ class Style extends \YetiForcePDF\Base
 		}
 	}
 
+	/**
+	 * Arrange elements (wrap move etc)
+	 */
+	public function layout()
+	{
+		foreach ($this->getChildren() as $child) {
+
+		}
+	}
+
 	public function calculate()
 	{
 		$this->calculateWidths();
-		$this->calculateOffsets();
+		$this->layout();
 		$this->calculateHeights();
 		$this->calculateOffsets();
 		$this->calculateCoordinates();
