@@ -94,7 +94,6 @@ class Element extends Dimensions
 		$width = $font->getTextWidth($text);
 		$this->setWidth($width);
 		$this->setInnerWidth($width);
-		//var_dump('w' . $this->getWidth() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
 		return $this;
 	}
 
@@ -109,10 +108,8 @@ class Element extends Dimensions
 		$height = $font->getTextHeight($text);
 		$this->setHeight($height);
 		$this->setInnerHeight($height);
-		//var_dump('h' . $this->getHeight() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
 		return $this;
 	}
-
 
 	/**
 	 * Calculate border-box dimensions
