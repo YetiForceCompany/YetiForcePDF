@@ -84,6 +84,21 @@ class Element extends Dimensions
 	}
 
 	/**
+	 * Get available space inside container
+	 * @return float
+	 */
+	public function getAvailableSpace()
+	{
+		if ($this->style->getElement()->isRoot()) {
+			return $this->document->getCurrentPage()->getPageDimensions()->getInnerWidth();
+		}
+		$style = $this->style;
+		$paddingWidth = $style->getRules('padding-left') + $style->getRules('padding-right');
+		$borderWidth = $style->getRules('border-left-width') + $style->getRules('border-right-width');
+		return $style->getParent()->getDimensions()->getAvailableSpace() - $paddingWidth - $borderWidth;
+	}
+
+	/**
 	 * Calculate text dimensions
 	 * @return $this
 	 */

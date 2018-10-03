@@ -190,27 +190,28 @@ class Style extends \YetiForcePDF\Base
 			->init();
 		$this->layout = (new Layout())
 			->setDocument($this->document)
+			->setStyle($this)
 			->init();
 		return $this;
 	}
 
 	/**
-	 * Calculate element width (and children)
+	 * Calculate element width (and children - recursive)
 	 * @return $this
 	 */
 	public function calculateWidths()
 	{
-		if ($this->rules['display'] === 'inline') {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateWidths();
-			}
+		foreach ($this->getChildren() as $child) {
+			$child->calculateWidths();
 		}
-		$this->getDimensions()->calculateWidth();
-		if ($this->rules['display'] === 'block') {
-			foreach ($this->getChildren() as $child) {
-				$child->calculateWidths();
-			}
+		$maxWidth = 0;
+		foreach ($this->layout->getLines() as $line) {
+			$maxWidth = max($maxWidth, $line->getInnerWidth());
 		}
+		$this->getDimensions()->setWidth($maxWidth);
+		$padding = $this->rules['padding-left'] + $this->rules['padding-right'];
+		$border = $this->rules['border-left-width'] + $this->rules['border-right-width'];
+		$this->getDimensions()->setInnerWidth($maxWidth - $padding - $border);
 		return $this;
 	}
 
@@ -223,19 +224,21 @@ class Style extends \YetiForcePDF\Base
 		$currentChildren = [];
 		$currentWidth = 0;
 		foreach ($this->getChildren() as $child) {
-			$availableSpace = $this->getDimensions()->getInnerWidth();
-			$currentWidth += $child->getDimensions()->getWidth() + $child->getRules('margin-left') + $child->getRules('margin-right');
-			$willFit = $currentWidth <= $availableSpace;
-			if ($child->getRules('display') === 'block' || !$willFit) {
+			$availableSpace = $this->getDimensions()->getAvailableSpace();
+			$childWidth = $child->getDimensions()->getWidth() + $child->getRules('margin-left') + $child->getRules('margin-right');
+			$break = $currentWidth + $childWidth > $availableSpace;
+			if ($child->getRules('display') === 'block' || $break) {
 				$this->layout->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
 				$currentChildren = [$child];
 				$currentWidth = 0;
 			} else {
 				// we can add one more element to current line
 				$currentChildren[] = $child->getElement();
+				$currentWidth += $childWidth;
 			}
+			$child->reflow();
 		}
-		// finish lines
+		// finish lines because there is no more children
 		$this->layout->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
 		return $this;
 	}
@@ -253,7 +256,9 @@ class Style extends \YetiForcePDF\Base
 		foreach ($this->getChildren() as $child) {
 			$child->calculateHeights();
 		}
-		$this->getDimensions()->calculateHeight();
+		foreach ($this->layout->getLines() as $line) {
+
+		}
 	}
 
 	protected function calculateCoordinates()
@@ -269,8 +274,8 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function calculate()
 	{
-		$this->calculateWidths();
 		$this->reflow();
+		$this->calculateWidths();
 		$this->calculateHeights();
 		$this->calculateOffsets();
 		$this->calculateCoordinates();

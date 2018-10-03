@@ -127,58 +127,10 @@ class Offset extends \YetiForcePDF\Base
 			$this->top = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlY();
 		} else {
 			$parent = $this->style->getParent();
-			$parentLeft = $parent->getRules('padding-left') + $parent->getRules('border-left-width');
-			$this->left = $parentLeft;
-			$this->top = $parent->getRules('padding-top') + $parent->getRules('border-top-width');
-			$margin = ['top' => $rules['margin-top'], 'left' => $rules['margin-left']];
-			if ($previous = $this->style->getPrevious()) {
-				$previousDisplay = $previous->getRules('display');
-				$left = $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth();
-				$width = $this->style->getDimensions()->getWidth();
-				$horizontalSpacing = max($margin['left'], $previous->getRules('margin-right')) + $rules['margin-right'];
-				$willFit = ($left + $width + $horizontalSpacing - $parentLeft) <= $parent->getDimensions()->getInnerWidth();
-				if ($previousDisplay !== 'block' && $rules['display'] !== 'block' && $willFit) {
-					if (!$element->areRowColSet()) {
-						$element->setColumn($previous->getElement()->getColumn() + 1);
-						$element->setRow($previous->getElement()->getRow());
-					}
-					$this->left = $left;
-					$margin['left'] = max($margin['left'], $previous->getRules('margin-right'));
-					if ($rules['display'] !== 'inline') {
-						$this->top = $previous->getOffset()->getTop() - $previous->getRules('margin-top');
-					} else {
-						$this->top = $this->style->getRowOffsetTop($previous->getElement()->getRow());
-					}
-					//var_dump($previous->getOffset()->getLeft() . '+' . $previous->getDimensions()->getWidth() . $previous->getElement()->getText());
-				} else {
-					if (!$element->areRowColSet()) {
-						$element->setColumn(0);
-						$element->setRow($previous->getElement()->getRow() + 1);
-					}
-					// get previous row styles and compute row height
-					$previousRow = $previous->getElement()->getRow();
-					$rowFirstOffsetTop = $this->style->getRowOffsetTop($previousRow);
-					$maxElementHeight = 0;
-					$maxMarginBottom = 0;
-					foreach ($parent->getChildrenFromRow($previousRow) as $child) {
-						$maxMarginBottom = max($maxMarginBottom, $child->getRules('margin-bottom'));
-						$maxElementHeight = max($maxElementHeight, $child->getDimensions()->getHeight());
-					}
-					$this->top = $rowFirstOffsetTop + $maxElementHeight + $maxMarginBottom;
-					if ($rules['display'] === 'block') {
-						$margin['top'] = max($margin['top'], $maxMarginBottom);
-					}
-					$this->left = $parentLeft;
-					$margin['left'] = $rules['margin-left'];
-				}
-			}
-			$element->finishRowCol();
-			$this->left += $margin['left'];
-			if ($rules['display'] !== 'inline') {
-				$this->top += $margin['top'];
+			foreach($parent->getLines() as $line){
+
 			}
 		}
-		//var_dump($element->getDOMElement()->textContent . ' left:' . $this->left);
 		return $this;
 	}
 }

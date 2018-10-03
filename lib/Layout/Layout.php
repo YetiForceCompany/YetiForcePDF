@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Style\Style;
+
 /**
  * Class Layout
  */
@@ -21,6 +23,11 @@ class Layout extends \YetiForcePDF\Base
 	 * @var Line[]
 	 */
 	protected $lines = [];
+
+	/**
+	 * @var Style
+	 */
+	protected $style;
 
 	/**
 	 * Get lines
@@ -40,5 +47,22 @@ class Layout extends \YetiForcePDF\Base
 	{
 		$this->lines[] = $line;
 		return $this;
+	}
+
+	/**
+	 * Set style
+	 * @param \YetiForcePDF\Style\Style $style
+	 * @return $this
+	 */
+	public function setStyle(Style $style)
+	{
+		$this->style = $style;
+		return $this;
+	}
+
+
+	public function getHeight()
+	{
+
 	}
 }

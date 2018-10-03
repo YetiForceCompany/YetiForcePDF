@@ -46,6 +46,33 @@ class Line extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Is this line has just one element with display:block ?
+	 * @return bool
+	 */
+	public function isOneBlock()
+	{
+		return count($this->styles) === 1 && $this->styles[0]->getRules('display') === 'block';
+	}
+
+	/**
+	 * Get inner width
+	 * @return float
+	 */
+	public function getInnerWidth()
+	{
+		if ($this->isOneBlock()) {
+			return $this->styles[0]->getDimensions()->getAvailableSpace();
+		}
+		$width = 0;
+		foreach ($this->styles as $style) {
+			if ($style->getRules('display') !== 'block') {
+				$width += $style->getDimensions()->getWidth() + $style->getRules('margin-left') + $style->getRules('margin-right');
+			}
+		}
+		return $width;
+	}
+
+	/**
 	 * Get elements
 	 * @return Element[]
 	 */
