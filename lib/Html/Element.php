@@ -319,7 +319,9 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function addChild(\YetiForcePDF\Html\Element $child): \YetiForcePDF\Html\Element
 	{
-		$this->children[] = $child;
+		if (!in_array($child, $this->children)) {
+			$this->children[] = $child;
+		}
 		return $this;
 	}
 
