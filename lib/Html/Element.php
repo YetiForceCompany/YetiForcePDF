@@ -54,6 +54,10 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $textNode = false;
 	/**
+	 * @var bool Is this element just line? (wrapper for other elements)
+	 */
+	protected $line = false;
+	/**
 	 * @var \YetiForcePDF\Html\Element[]
 	 */
 	protected $children = [];
@@ -266,6 +270,24 @@ class Element extends \YetiForcePDF\Base
 	public function isRoot(): bool
 	{
 		return $this->root;
+	}
+
+	/**
+	 * Is element just a line? (wrapper for other elements in layout)
+	 * @return bool
+	 */
+	public function isLine()
+	{
+		return $this->line;
+	}
+
+	/**
+	 * Set this element as line (wrapper for other elements in layout)
+	 * @param bool $line
+	 */
+	public function setLine(bool $line)
+	{
+		$this->line = $line;
 	}
 
 	/**
