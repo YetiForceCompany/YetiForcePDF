@@ -105,11 +105,13 @@ class Element extends \YetiForcePDF\Base
 		}
 		if ($this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
 			$children = [];
+			// basing on dom children elements automatically setup nested instances of Element (pdf)
 			foreach ($this->domElement->childNodes as $index => $childNode) {
+				// if element already exists for this domNode use it (in case current element is moved and initialised again)
 				$childElement = $children[] = $this->elementForNode($childNode)
 					->setDocument($this->document)
 					->setElement($childNode)
-					->setParent($this)
+					->setParent($this)// setParent will remove this element from previous parent if exists
 					->setTextNode($childNode instanceof \DOMText);
 				$this->addChild($childElement);
 			}
@@ -149,7 +151,6 @@ class Element extends \YetiForcePDF\Base
 	public function setElement($element): Element
 	{
 		$this->domElement = $element;
-		//$this->domElement->normalize();
 		return $this;
 	}
 
@@ -288,7 +289,7 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Create line element with childrens
+	 * Create line element with children
 	 * @param Element[] $children
 	 * @return Element|false
 	 */
@@ -430,7 +431,7 @@ class Element extends \YetiForcePDF\Base
 		$domDocument = $this->getDomDocument();
 		$domElement = $domDocument->createElement('div');
 		if ($next) {
-			$this->getDOMElement()->insertBefore($next->getDOMElement());
+			$this->getDOMElement()->insertBefore($domElement, $next->getDOMElement());
 		} else {
 			$this->getDOMElement()->appendChild($domElement);
 		}
@@ -443,16 +444,11 @@ class Element extends \YetiForcePDF\Base
 			->setElement($domElement);
 		if ($previous) {
 			$wrapper->setPrevious($previous);
-		} else {
-			$wrapper->setPrevious();
 		}
 		if ($next) {
 			$wrapper->setNext($next);
-		} else {
-			$wrapper->setNext();
 		}
 		$wrapper->init();
-
 		$wrapper->getStyle()->initDimensions()->initCoordinates()->calculateWidths();
 		return $wrapper;
 	}
