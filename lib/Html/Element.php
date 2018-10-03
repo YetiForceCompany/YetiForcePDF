@@ -81,11 +81,6 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $column = 0;
 	/**
-	 * Do we calculated element row/column already?
-	 * @var bool
-	 */
-	protected $colRowAreSet = false;
-	/**
 	 * PDF graphic / text stream instructions
 	 * @var string[]
 	 */
