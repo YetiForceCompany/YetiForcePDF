@@ -172,6 +172,9 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function setParent(Element $parent): Element
 	{
+		if ($this->getParent() !== null) {
+			$this->getParent()->removeChild($this);
+		}
 		$this->parent = $parent;
 		return $this;
 	}
