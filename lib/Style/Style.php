@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
-use YetiForcePDF\Html\Element;
+use YetiForcePDF\Layout\Layout;
+use YetiForcePDF\Layout\Line;
 
 /**
  * Class Style
@@ -45,9 +46,9 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $dimensions;
 	/**
-	 * @var array element wrapped in "lines" like in browsers
+	 * @var Layout
 	 */
-	protected $lines = [];
+	protected $layout;
 	/**
 	 * Css properties that are iherited by default
 	 * @var array
@@ -174,49 +175,18 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
-		if ($this->font === null) {
-			$this->font = (new \YetiForcePDF\Objects\Font());
-		}
-		$this->font->setDocument($this->document)
+		$this->font = (new \YetiForcePDF\Objects\Font())
+			->setDocument($this->document)
 			->setFamily($this->rules['font-family'])
 			->setSize($this->rules['font-size'])
 			->init();
-		return $this;
-	}
-
-	/**
-	 * Initialise dimensions
-	 * @return $this
-	 */
-	public function initDimensions()
-	{
-		if ($this->dimensions === null) {
-			$this->dimensions = new \YetiForcePDF\Style\Dimensions\Element();
-		}
-		$this->dimensions->setDocument($this->document)
+		$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
+			->setDocument($this->document)
 			->setStyle($this)
 			->init();
-		foreach ($this->getChildren() as $child) {
-			$child->initDimensions();
-		}
-		return $this;
-	}
-
-	/**
-	 * Initialise coordinates
-	 * @return $this
-	 */
-	public function initCoordinates()
-	{
-		if ($this->coordinates === null) {
-			$this->coordinates = new \YetiForcePDF\Style\Coordinates\Coordinates();
-		}
-		$this->coordinates->setDocument($this->document)
+		$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
 			->setStyle($this)
 			->init();
-		foreach ($this->getChildren() as $child) {
-			$child->initCoordinates();
-		}
 		return $this;
 	}
 
@@ -241,29 +211,10 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get lines (or line) of elements
-	 * @param int|null $lineIndex
-	 * @return array|mixed
+	 * Arrange elements inside lines
+	 * @return $this
 	 */
-	protected function getLines(int $lineIndex = null)
-	{
-		return $this->getElement()->getLines($lineIndex);
-	}
-
-	/**
-	 * Create line
-	 * @param Element[] $children
-	 * @return Element|false
-	 */
-	public function createLine(array $children)
-	{
-		return $this->getElement()->createLine($children);
-	}
-
-	/**
-	 * Arrange elements (wrap move etc)
-	 */
-	public function layout()
+	public function reflow()
 	{
 		$currentChildren = [];
 		$currentWidth = 0;
@@ -272,21 +223,17 @@ class Style extends \YetiForcePDF\Base
 			$currentWidth += $child->getDimensions()->getWidth() + $child->getRules('margin-left') + $child->getRules('margin-right');
 			$willFit = $currentWidth <= $availableSpace;
 			if ($child->getRules('display') === 'block' || !$willFit) {
-				// wrap current collected elements as line
-				$this->createLine($currentChildren);
-				// and add new line with block element
-				$this->createLine([$child->getElement()]);
-				// start collecting again
-				$currentChildren = [];
+				$this->layout->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
+				$currentChildren = [$child];
 				$currentWidth = 0;
 			} else {
 				// we can add one more element to current line
 				$currentChildren[] = $child->getElement();
 			}
-			if (!$child->getElement()->isTextNode()) {
-				$child->layout();
-			}
 		}
+		// finish lines
+		$this->layout->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
+		return $this;
 	}
 
 	protected function calculateOffsets()
@@ -319,7 +266,7 @@ class Style extends \YetiForcePDF\Base
 	public function calculate()
 	{
 		$this->calculateWidths();
-		$this->layout();
+		$this->reflow();
 		$this->calculateHeights();
 		$this->calculateOffsets();
 		$this->calculateCoordinates();
