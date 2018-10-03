@@ -185,7 +185,11 @@ class Style extends \YetiForcePDF\Base
 			->setStyle($this)
 			->init();
 		$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
+			->setDocument($this->document)
 			->setStyle($this)
+			->init();
+		$this->layout = (new Layout())
+			->setDocument($this->document)
 			->init();
 		return $this;
 	}
