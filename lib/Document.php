@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
+use YetiForcePDF\Html\Element;
+
 /**
  * Class Document
  */
@@ -84,6 +86,11 @@ class Document
 	 * @var int
 	 */
 	protected $actualFontId = 0;
+
+	/**
+	 * @var Element
+	 */
+	protected $rootElement;
 
 
 	/**
@@ -293,6 +300,26 @@ class Document
 	public function getCurrentPage(): \YetiForcePDF\Page
 	{
 		return $this->currentPageObject;
+	}
+
+	/**
+	 * Set root element
+	 * @param \YetiForcePDF\Html\Element $rootElement
+	 * @return $this
+	 */
+	public function setRootElement(Element $rootElement)
+	{
+		$this->rootElement = $rootElement;
+		return $this;
+	}
+
+	/**
+	 * Get root element
+	 * @return \YetiForcePDF\Html\Element
+	 */
+	public function getRootElement()
+	{
+		return $this->rootElement;
 	}
 
 	/**
