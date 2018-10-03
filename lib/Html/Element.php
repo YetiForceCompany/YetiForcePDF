@@ -153,6 +153,19 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Remove child
+	 * @param \YetiForcePDF\Html\Element $child
+	 * @return $this
+	 */
+	public function removeChild(Element $child)
+	{
+		$this->children = array_filter($this->children, function ($current) use ($child) {
+			return $current !== $child;
+		});
+		return $this;
+	}
+
+	/**
 	 * Set parent element
 	 * @param \YetiForcePDF\Html\Element $parent
 	 * @return \YetiForcePDF\Html\Element
