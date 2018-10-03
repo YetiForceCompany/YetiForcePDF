@@ -329,6 +329,46 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get styles for elements in specified row (after offset calculation / positioning)
+	 * @param int $row - from 0
+	 * @return \YetiForcePDF\Style\[]
+	 */
+	public function getChildrenFromRow(int $row)
+	{
+		$children = [];
+		foreach ($this->getChildren() as $child) {
+			if ($child->getElement()->getRow() === $row) {
+				$children[] = $child;
+			}
+		}
+		return $children;
+	}
+
+	/**
+	 * Get smallest offset top from all children in specified row
+	 * @param int $row
+	 * @return float
+	 */
+	public function getRowOffsetTop(int $row)
+	{
+		$offsetTop = 65535; // high enough number
+		foreach ($this->getChildrenFromRow($row) as $child) {
+			if ($child->getOffset()->getTop() !== null) {
+				$offsetTop = min($offsetTop, $child->getOffset()->getTop());
+			}
+		}
+		if ($offsetTop === 65535) {
+			// if all children from row doesn't have an offset top specified - get it from parent element
+			$parent = $this->getParent();
+			if ($parent->getRules('display') !== 'inline') {
+				return $parent->getOffset()->getTop() + $parent->getRules('padding-top') + $parent->getRules('border-top-width');
+			}
+			return $parent->getOffset()->getTop() + $parent->getRules('border-top-width');
+		}
+		return $offsetTop;
+	}
+
+	/**
 	 * Get previous element style
 	 * @return \YetiForcePDF\Style\Style
 	 */

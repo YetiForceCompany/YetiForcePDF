@@ -25,7 +25,7 @@ class Offset extends \YetiForcePDF\Base
 	 * Offset top
 	 * @var float
 	 */
-	protected $top = 0;
+	protected $top;
 	/**
 	 * Offset left
 	 * @var int
@@ -144,22 +144,39 @@ class Offset extends \YetiForcePDF\Base
 					}
 					$this->left = $left;
 					$margin['left'] = max($margin['left'], $previous->getRules('margin-right'));
-					$this->top = $previous->getOffset()->getTop() - $previous->getRules('margin-top');
+					if ($rules['display'] !== 'inline') {
+						$this->top = $previous->getOffset()->getTop() - $previous->getRules('margin-top');
+					} else {
+						$this->top = $this->style->getRowOffsetTop($previous->getElement()->getRow());
+					}
 					//var_dump($previous->getOffset()->getLeft() . '+' . $previous->getDimensions()->getWidth() . $previous->getElement()->getText());
 				} else {
 					if (!$element->areRowColSet()) {
 						$element->setColumn(0);
 						$element->setRow($previous->getElement()->getRow() + 1);
 					}
-					$this->top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
-					$margin['top'] = max($margin['top'], $previous->getRules('margin-bottom'));
+					// get previous row styles and compute row height
+					$previousRow = $previous->getElement()->getRow();
+					$rowFirstOffsetTop = $this->style->getRowOffsetTop($previousRow);
+					$maxElementHeight = 0;
+					$maxMarginBottom = 0;
+					foreach ($parent->getChildrenFromRow($previousRow) as $child) {
+						$maxMarginBottom = max($maxMarginBottom, $child->getRules('margin-bottom'));
+						$maxElementHeight = max($maxElementHeight, $child->getDimensions()->getHeight());
+					}
+					$this->top = $rowFirstOffsetTop + $maxElementHeight + $maxMarginBottom;
+					if ($rules['display'] === 'block') {
+						$margin['top'] = max($margin['top'], $maxMarginBottom);
+					}
 					$this->left = $parentLeft;
 					$margin['left'] = $rules['margin-left'];
 				}
 			}
 			$element->finishRowCol();
 			$this->left += $margin['left'];
-			$this->top += $margin['top'];
+			if ($rules['display'] !== 'inline') {
+				$this->top += $margin['top'];
+			}
 		}
 		//var_dump($element->getDOMElement()->textContent . ' left:' . $this->left);
 		return $this;
