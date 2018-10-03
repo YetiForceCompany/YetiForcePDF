@@ -176,7 +176,7 @@ class Element extends \YetiForcePDF\Base
 	 * @param \YetiForcePDF\Html\Element $parent
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setParent(Element $parent): Element
+	public function setParent(Element $parent = null)
 	{
 		if ($this->getParent() !== null) {
 			$this->getParent()->removeChild($this);
@@ -199,7 +199,7 @@ class Element extends \YetiForcePDF\Base
 	 * @param \YetiForcePDF\Html\Element $previous
 	 * @return $this
 	 */
-	public function setPrevious(Element $previous)
+	public function setPrevious(Element $previous = null)
 	{
 		$this->previous = $previous;
 		return $this;
@@ -219,7 +219,7 @@ class Element extends \YetiForcePDF\Base
 	 * @param \YetiForcePDF\Html\Element $next
 	 * @return $this
 	 */
-	public function setNext(Element $next)
+	public function setNext(Element $next = null)
 	{
 		$this->next = $next;
 		return $this;
@@ -417,16 +417,28 @@ class Element extends \YetiForcePDF\Base
 	 * Wrap elements
 	 * @param Element[] $elements
 	 * @return \YetiForcePDF\Html\Element
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	public function wrapElements(array $elements)
 	{
 		if (empty($elements)) {
 			return false;
 		}
+		foreach ($elements as $element) {
+			if (!in_array($element, $this->children)) {
+				throw new \InvalidArgumentException('Only children elements could be wrapped.');
+			}
+		}
 		$previous = $elements[0]->getPrevious();
 		$next = $elements[count($elements) - 1]->getNext();
 		$domDocument = $this->getDomDocument();
 		$domElement = $domDocument->createElement('div');
+		if ($next) {
+			$this->getDOMElement()->insertBefore($next->getDOMElement());
+		} else {
+			$this->getDOMElement()->appendChild($domElement);
+		}
 		foreach ($elements as $element) {
 			$domElement->appendChild($this->getDOMElement()->removeChild($element->getDOMElement()));
 		}
@@ -436,11 +448,17 @@ class Element extends \YetiForcePDF\Base
 			->setElement($domElement);
 		if ($previous) {
 			$wrapper->setPrevious($previous);
+		} else {
+			$wrapper->setPrevious();
 		}
 		if ($next) {
 			$wrapper->setNext($next);
+		} else {
+			$wrapper->setNext();
 		}
 		$wrapper->init();
+
+		$wrapper->getStyle()->initDimensions()->initCoordinates()->calculateWidths();
 		return $wrapper;
 	}
 

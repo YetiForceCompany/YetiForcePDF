@@ -186,51 +186,14 @@ class Element extends Dimensions
 			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
 			$this->setInnerWidth($innerHeight);
 		} else {
-			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
 			$height = 0;
-			$currentInlineHeight = 0;
-			$inlineHeight = 0;
-			$previousChildrenStyle = null;
-			$children = $this->style->getChildren();
-			$currentRow = 0;
-			foreach ($children as $index => $childStyle) {
+			foreach ($this->style->getChildren() as $index => $childStyle) {
 				$childRules = $childStyle->getRules();
 				$childDimensions = $childStyle->getDimensions();
-				$childElement = $childStyle->getElement();
-				if ($childElement->getRow() > $currentRow) {
-					//var_dump('next row ' . $currentRow . ' on ' . $childElement->getText() . ($childElement->isTextNode() ? ' text' : ' html'));
-					// we have new row (new line) so add height of the previous element if it was block (current inline height===0)
-					if ($currentInlineHeight === 0 && $previousChildrenStyle) {
-						$height += $previousChildrenStyle->getDimensions()->getHeight();
-					}
-					// save current inline height and reset it
-					$inlineHeight += $currentInlineHeight;
-					$currentInlineHeight = 0;
-					$marginTop = $childRules['margin-top'];
-					if ($previousChildrenStyle) {
-						$marginTop = max($marginTop, $previousChildrenStyle->getRules('margin-bottom'));
-					}
-					$height += $marginTop;
-					$currentRow++;
-				} else {
-					//var_dump('next column ' . $currentRow . ' on ' . $childElement->getText() . ($childElement->isTextNode() ? ' text' : ' html'));
-					$marginTop = $childRules['margin-top'];
-					if ($previousChildrenStyle) {
-						$marginTop = max($marginTop, $previousChildrenStyle->getRules('margin-bottom'));
-					}
-					$currentInlineHeight = max($childDimensions->getHeight(), $currentInlineHeight);
-					$height += $marginTop;
-				}
-				$previousChildrenStyle = $childStyle;
+				$height += $childStyle->getDimensions()->getHeight();
 			}
-			if ($currentInlineHeight === 0) {
-				$height += $previousChildrenStyle->getDimensions()->getHeight();
-			}
-			$height += $currentInlineHeight + $inlineHeight;
-			if ($previousChildrenStyle) {
-				$height += $previousChildrenStyle->getRules('margin-bottom');
-			}
-			$this->setInnerHeight($height + $borderHeight);
+			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
+			$this->setInnerHeight($height);
 			if ($rules['display'] !== 'inline') {
 				$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
 			}

@@ -174,10 +174,10 @@ class Style extends \YetiForcePDF\Base
 	public function init(): Style
 	{
 		$this->rules = $this->parse();
-		/*echo $this->element->getText() . " style parsed\n";
-		var_dump($this->rules);*/
-		$this->font = (new \YetiForcePDF\Objects\Font())
-			->setDocument($this->document)
+		if ($this->font === null) {
+			$this->font = (new \YetiForcePDF\Objects\Font());
+		}
+		$this->font->setDocument($this->document)
 			->setFamily($this->rules['font-family'])
 			->setSize($this->rules['font-size'])
 			->init();
@@ -224,7 +224,7 @@ class Style extends \YetiForcePDF\Base
 	 * Calculate element width (and children)
 	 * @return $this
 	 */
-	protected function calculateWidths()
+	public function calculateWidths()
 	{
 		if ($this->rules['display'] === 'inline') {
 			foreach ($this->getChildren() as $child) {
@@ -282,6 +282,9 @@ class Style extends \YetiForcePDF\Base
 			} else {
 				// we can add one more element to current line
 				$currentChildren[] = $child->getElement();
+			}
+			if (!$child->getElement()->isTextNode()) {
+				$child->layout();
 			}
 		}
 	}
@@ -354,6 +357,31 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Set margins
+	 * @param float|null $top
+	 * @param float|null $right
+	 * @param float|null $bottom
+	 * @param float|null $left
+	 * @return $this
+	 */
+	public function setMargins(float $top = null, float $right = null, float $bottom = null, float $left = null)
+	{
+		if ($top !== null) {
+			$this->rules['margin-top'] = $top;
+		}
+		if ($right !== null) {
+			$this->rules['margin-right'] = $right;
+		}
+		if ($bottom !== null) {
+			$this->rules['margin-bottom'] = $bottom;
+		}
+		if ($left !== null) {
+			$this->rules['margin-left'] = $left;
+		}
+		return $this;
+	}
+
+	/**
 	 * Get parent style
 	 * @return null|\YetiForcePDF\Style\Style
 	 */
@@ -402,30 +430,6 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		return $children;
-	}
-
-	/**
-	 * Get smallest offset top from all children in specified row
-	 * @param int $row
-	 * @return float
-	 */
-	public function getRowOffsetTop(int $row)
-	{
-		$offsetTop = 65535; // high enough number
-		foreach ($this->getChildrenFromRow($row) as $child) {
-			if ($child->getOffset()->getTop() !== null) {
-				$offsetTop = min($offsetTop, $child->getOffset()->getTop());
-			}
-		}
-		if ($offsetTop === 65535) {
-			// if all children from row doesn't have an offset top specified - get it from parent element
-			$parent = $this->getParent();
-			if ($parent->getRules('display') !== 'inline') {
-				return $parent->getOffset()->getTop() + $parent->getRules('padding-top') + $parent->getRules('border-top-width');
-			}
-			return $parent->getOffset()->getTop() + $parent->getRules('border-top-width');
-		}
-		return $offsetTop;
 	}
 
 	/**
