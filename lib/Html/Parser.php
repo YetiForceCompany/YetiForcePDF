@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
-use \YetiForcePDF\Render\Box;
+use \YetiForcePDF\Render\BlockBox;
 
 /**
  * Class Parser
@@ -37,7 +37,7 @@ class Parser extends \YetiForcePDF\Base
 	 */
 	protected $rootElement;
 	/**
-	 * @var Box
+	 * @var BlockBox
 	 */
 	protected $box;
 
@@ -108,7 +108,7 @@ class Parser extends \YetiForcePDF\Base
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
 		$this->rootElement->init();
-		$this->box = (new Box())
+		$this->box = (new BlockBox())
 			->setDocument($this->document)
 			->setElement($this->rootElement)
 			->init();

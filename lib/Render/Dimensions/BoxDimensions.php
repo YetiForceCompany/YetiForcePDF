@@ -95,6 +95,26 @@ class BoxDimensions extends Dimensions
 	}
 
 	/**
+	 * Get width with margins
+	 * @return float
+	 */
+	public function getOuterWidth()
+	{
+		$rules = $this->getBox()->getStyle()->getRules();
+		return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
+	}
+
+	/**
+	 * Get height with margins
+	 * @return float
+	 */
+	public function getOuterHeight()
+	{
+		$rules = $this->getBox()->getStyle()->getRules();
+		return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
+	}
+
+	/**
 	 * Get available space inside container
 	 * @return float
 	 */
