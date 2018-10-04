@@ -26,15 +26,6 @@ class BoxDimensions extends Dimensions
 	protected $box;
 
 	/**
-	 * @var float
-	 */
-	protected $innerWidth = 0;
-	/**
-	 * @var float
-	 */
-	protected $innerHeight = 0;
-
-	/**
 	 * Set box
 	 * @param \YetiForcePDF\Render\Box $box
 	 * @return $this
@@ -60,18 +51,11 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getInnerWidth(): float
 	{
-		return $this->innerWidth;
-	}
+		$rules = $this->getBox()->getStyle()->getRules();
+		$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
+		$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
+		return $this->getWidth() - $borderWidth - $paddingWidth;
 
-	/**
-	 * Set innerWidth
-	 * @param float $innerWidth
-	 * @return $this
-	 */
-	public function setInnerWidth(float $innerWidth)
-	{
-		$this->innerWidth = $innerWidth;
-		return $this;
 	}
 
 	/**
@@ -80,19 +64,12 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getInnerHeight(): float
 	{
-		return $this->innerHeight;
+		$rules = $this->getBox()->getStyle()->getRules();
+		$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
+		$paddingHeight = $rules['padding-top'] + $rules['padding-bottom'];
+		return $this->getHeight() - $borderHeight - $paddingHeight;
 	}
 
-	/**
-	 * Set innerHeight
-	 * @param float $height
-	 * @return $this
-	 */
-	public function setInnerHeight(float $innerHeight)
-	{
-		$this->innerHeight = $innerHeight;
-		return $this;
-	}
 
 	/**
 	 * Get width with margins
@@ -149,6 +126,27 @@ class BoxDimensions extends Dimensions
 	{
 		$font = $this->box->getStyle()->getFont();
 		return $font->getTextHeight($text);
+	}
+
+	public function calculateWidth()
+	{
+
+	}
+
+	public function calculateHeight()
+	{
+
+	}
+
+	/**
+	 * Calculate block box dimensions
+	 * @return $this
+	 */
+	public function calculate()
+	{
+		$this->calculateWidth();
+		$this->calculateHeight();
+		return $this;
 	}
 
 }

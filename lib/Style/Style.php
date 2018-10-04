@@ -232,7 +232,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function getParent()
 	{
-		if ($parent = $this->element->getParent()) {
+		if ($this->element && $parent = $this->element->getParent()) {
 			return $parent->getStyle();
 		}
 	}
@@ -343,8 +343,10 @@ class Style extends \YetiForcePDF\Base
 		if ($parent = $this->getParent()) {
 			$parsed = array_merge($parsed, $parent->getInheritedRules());
 		}
-		if ($this->element->isTextNode()) {
-			$parsed['display'] = 'inline';
+		if ($this->element) {
+			if ($this->element->isTextNode()) {
+				$parsed['display'] = 'inline';
+			}
 		}
 		if (!$this->content) {
 			//var_dump('no css' . ($this->element->isTextNode() ? ' [text] ' : ' [html] ') . $this->element->getText());
@@ -358,7 +360,7 @@ class Style extends \YetiForcePDF\Base
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
-				$normalizer = (new $normalizerName())->setDocument($this->document)->setElement($this->element)->init();
+				$normalizer = (new $normalizerName())->setDocument($this->document)->init();
 				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
 					$parsed[$name] = $value;
 				}

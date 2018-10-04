@@ -42,7 +42,7 @@ class Border extends Normalizer
 		$normalizedAgain = [];
 		foreach ($normalized as $normalizedName => $normalizedValue) {
 			$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($normalizedName);
-			$normalizer = (new $normalizerName())->setDocument($this->document)->setElement($this->element)->init();
+			$normalizer = (new $normalizerName())->setDocument($this->document)->init();
 			foreach ($normalizer->normalize($normalizedValue) as $name => $value) {
 				$normalizedAgain[$name] = $value;
 			}

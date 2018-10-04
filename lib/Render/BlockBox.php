@@ -33,6 +33,24 @@ class BlockBox extends Box
 	 */
 	protected $style;
 
+	/**
+	 * Append child box
+	 * @param Box $box
+	 * @return $this
+	 */
+	public function appendChild(Box $box)
+	{
+		$box->setParent($this);
+		$childrenCount = count($this->children);
+		if ($childrenCount > 0) {
+			$previous = $this->children[$childrenCount - 1];
+			$box->setPrevious($previous);
+			$previous->setNext($box);
+		}
+		$this->children[] = $box;
+		return $this;
+	}
+
 
 	/**
 	 * {@inheritdoc}
@@ -117,6 +135,19 @@ class BlockBox extends Box
 	 */
 	public function reflow()
 	{
+		$dimensions = $this->getDimensions();
+		// first of all calculate width of the current box
+		if ($parent = $this->getParent()) {
+			if ($parent instanceof BlockBox) {
+				// in block box we take full available space
+				$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
+			}
+			// if we are inside line box we must reflow all childrens to get cumulated children width
+		} else {
+			// get page dimensions
+			$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
+			$dimensions->setWidth($pageDimensions->getWidth());
+		}
 		$lineBox = null;
 		foreach ($this->getElement()->getChildren() as $childElement) {
 			// make render box from the dom element
@@ -130,19 +161,23 @@ class BlockBox extends Box
 					$this->closeLine($lineBox, false);
 				}
 				$this->appendChild($box);
+				$box->reflow();
 				continue;
 			}
 			$lineBox = $this->getNewLineBox();
 			if ($lineBox->willFit($box)) {
 				$lineBox->appendChild($box);
+				$box->reflow();
 			} else {
 				$lineBox = $this->closeLine($lineBox);
+				$lineBox->appendChild($box);
+				$box->reflow();
 			}
 		}
 		if ($lineBox !== null) {
 			$this->closeLine($lineBox, false);
 		}
-
+		$this->getDimensions()->calculate();
 		return $this;
 	}
 

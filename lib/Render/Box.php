@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types=0);
 /**
  * Box class
  *
@@ -131,24 +131,6 @@ class Box extends \YetiForcePDF\Base
 	public function getPrevious()
 	{
 		return $this->previous;
-	}
-
-	/**
-	 * Append child box
-	 * @param Box $box
-	 * @return $this
-	 */
-	public function appendChild(Box $box)
-	{
-		$box->setParent($this);
-		$childrenCount = count($this->children);
-		if ($childrenCount > 0) {
-			$previous = $this->children[$childrenCount - 1];
-			$box->setPrevious($previous);
-			$previous->setNext($box);
-		}
-		$this->children[] = $box;
-		return $this;
 	}
 
 	/**

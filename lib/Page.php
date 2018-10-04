@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 use YetiForcePDF\Html\Element;
-use YetiForcePDF\Render\Dimensions\BoxDimensions;
+use YetiForcePDF\Render\Dimensions\Dimensions;
 use YetiForcePDF\Render\Coordinates\Coordinates;
 
 /**
@@ -470,13 +470,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if ($this->orientation === 'L') {
 			$dimensions = array_reverse($dimensions);
 		}
-		$this->dimensions = (new BoxDimensions())
+		$this->dimensions = (new Dimensions())
 			->setDocument($this->document)
 			->init();
-		$this->dimensions->setWidth($dimensions[0])
-			->setHeight($dimensions[1])
-			->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
-			->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
+		$this->dimensions->setWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
+			->setHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
 		$this->coordinates = (new Coordinates())
 			->setDocument($this->document)
 			->init();
@@ -604,9 +602,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Get page dimensions
-	 * @return \YetiForcePDF\Render\Dimensions\BoxDimensions
+	 * @return \YetiForcePDF\Render\Dimensions\Dimensions
 	 */
-	public function getPageDimensions(): \YetiForcePDF\Render\Dimensions\BoxDimensions
+	public function getPageDimensions(): \YetiForcePDF\Render\Dimensions\Dimensions
 	{
 		return $this->dimensions;
 	}
@@ -652,7 +650,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Type /Page',
 			'  /Parent ' . $this->parent->getReference(),
 			'  /MediaBox [0 0 ' . $dimensions->getWidth() . ' ' . $dimensions->getHeight() . ']',
-			'  /BleedBox [' . $this->margins['left'] . ' ' . $this->margins['top'] . ' ' . $dimensions->getInnerWidth() . ' ' . $dimensions->getInnerHeight() . ']',
+			'  /BleedBox [' . $this->margins['left'] . ' ' . $this->margins['top'] . ' ' . $dimensions->getWidth() . ' ' . $dimensions->getHeight() . ']',
 			'  /UserUnit ' . $this->userUnit,
 			'  /Rotate 0',
 			$this->renderResources(),

@@ -20,7 +20,7 @@ class Display extends Normalizer
 	public function normalize($ruleValue): array
 	{
 		$normalized = ['display' => $ruleValue];
-		if ($this->element->isTextNode()) {
+		if ($this->element && $this->element->isTextNode()) {
 			$normalized = ['display' => 'inline'];
 		}
 		return $normalized;
