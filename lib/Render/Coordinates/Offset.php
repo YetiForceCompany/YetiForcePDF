@@ -12,15 +12,17 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Render\Coordinates;
 
+use YetiForcePDF\Render\Box;
+
 /**
  * Class Offset
  */
 class Offset extends \YetiForcePDF\Base
 {
 	/**
-	 * @var \YetiForcePDF\Style\Style
+	 * @var Box
 	 */
-	protected $style;
+	protected $box;
 	/**
 	 * Offset top
 	 * @var float
@@ -53,17 +55,6 @@ class Offset extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Add offset top
-	 * @param float $add
-	 * @return $this
-	 */
-	public function addTop(float $add)
-	{
-		$this->top += $add;
-		return $this;
-	}
-
-	/**
 	 * Get offset left
 	 * @return float
 	 */
@@ -84,34 +75,23 @@ class Offset extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Add offset left
-	 * @param float $add
+	 * Set box
+	 * @param \YetiForcePDF\Render\Box $box
 	 * @return $this
 	 */
-	public function addLeft(float $add)
+	public function setBox(Box $box)
 	{
-		$this->left += $add;
+		$this->box = $box;
 		return $this;
 	}
 
 	/**
-	 * Set style
-	 * @param \YetiForcePDF\Style\Style $style
-	 * @return $this
+	 * Get box
+	 * @return \YetiForcePDF\Render\Box
 	 */
-	public function setStyle(\YetiForcePDF\Style\Style $style)
+	public function getBox()
 	{
-		$this->style = $style;
-		return $this;
-	}
-
-	/**
-	 * Get style
-	 * @return \YetiForcePDF\Style\Style
-	 */
-	public function getStyle()
-	{
-		return $this->style;
+		return $this->box;
 	}
 
 }

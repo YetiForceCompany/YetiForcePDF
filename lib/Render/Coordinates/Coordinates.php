@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Render\Coordinates;
 
+use YetiForcePDF\Render\Box;
+
 /**
  * Class Coordinates
  */
@@ -19,90 +21,38 @@ class Coordinates extends \YetiForcePDF\Base
 {
 
 	/**
-	 * @var \YetiForcePDF\Style\Style
+	 * @var Box
 	 */
-	protected $style;
-	/**
-	 * Absolute X position inside pdf coordinate system
-	 * @var float
-	 */
-	protected $absolutePdfX = 0;
-	/**
-	 * Absolute Y position inside pdf coordinate system
-	 * @var float
-	 */
-	protected $absolutePdfY = 0;
+	protected $box;
 	/**
 	 * Absolute X position inside html coordinate system
 	 * @var float
 	 */
-	protected $absoluteHtmlX = 0;
+	protected $htmlX = 0;
 	/**
 	 * Absolute Y position inside html coordinate system
 	 * @var float
 	 */
-	protected $absoluteHtmlY = 0;
-	/**
-	 * @var \YetiForcePDF\Render\Coordinates\Offset
-	 */
-	protected $offset;
+	protected $htmlY = 0;
 
 	/**
-	 * {@inheritdoc}
+	 * Set box
+	 * @param \YetiForcePDF\Render\Box $box
+	 * @return $this
 	 */
-	public function init()
+	public function setBox(Box $box)
 	{
-		parent::init();
-		$this->offset = (new \YetiForcePDF\Render\Coordinates\Offset())
-			->setDocument($this->document);
-		if (isset($this->style)) {
-			// page coordinates doesn't have style
-			$this->offset->setStyle($this->style);
-		}
-		$this->offset->init();
+		$this->box = $box;
 		return $this;
 	}
 
 	/**
-	 * Set style
-	 * @param \YetiForcePDF\Style\Style $style
-	 * @return \YetiForcePDF\Render\Coordinates
+	 * Get box
+	 * @return \YetiForcePDF\Render\Box
 	 */
-	public function setStyle(\YetiForcePDF\Style\Style $style): Coordinates
+	public function getBox()
 	{
-		$this->style = $style;
-		return $this;
-	}
-
-	/**
-	 * Get style
-	 * @return \YetiForcePDF\Style\Style
-	 */
-	public function getStyle(): \YetiForcePDF\Style\Style
-	{
-		return $this->style;
-	}
-
-	/**
-	 * Set absolute pdf coordinates x position
-	 * @param float $x
-	 * @return \YetiForcePDF\Render\Coordinates
-	 */
-	public function setAbsolutePdfX(float $x): Coordinates
-	{
-		$this->absolutePdfX = $x;
-		return $this;
-	}
-
-	/**
-	 * Set absolute pdf coordinates y position
-	 * @param float $y
-	 * @return \YetiForcePDF\Render\Coordinates
-	 */
-	public function setAbsolutePdfY(float $y): Coordinates
-	{
-		$this->absolutePdfY = $y;
-		return $this;
+		return $this->box;
 	}
 
 	/**
@@ -110,9 +60,9 @@ class Coordinates extends \YetiForcePDF\Base
 	 * @param float $x
 	 * @return \YetiForcePDF\Render\Coordinates
 	 */
-	public function setAbsoluteHtmlX(float $x): Coordinates
+	public function setX(float $x): Coordinates
 	{
-		$this->absoluteHtmlX = $x;
+		$this->htmlX = $x;
 		return $this;
 	}
 
@@ -121,90 +71,29 @@ class Coordinates extends \YetiForcePDF\Base
 	 * @param float $y
 	 * @return \YetiForcePDF\Render\Coordinates
 	 */
-	public function setAbsoluteHtmlY(float $y): Coordinates
+	public function setY(float $y): Coordinates
 	{
-		$this->absoluteHtmlY = $y;
+		$this->htmlY = $y;
 		return $this;
 	}
 
-	/**
-	 *GSet absolute pdf coordinates x position
-	 * @param float $x
-	 * @return \YetiForcePDF\Render\Coordinates
-	 */
-	public function getAbsolutePdfX(): float
-	{
-		return $this->absolutePdfX;
-	}
 
 	/**
-	 * Get absolute pdf coordinates y position
-	 * @param float $y
-	 * @return \YetiForcePDF\Render\Coordinates
+	 * Get pdf X coodrinates
 	 */
-	public function getAbsolutePdfY(): float
+	protected function getPdfX()
 	{
-		return $this->absolutePdfY;
-	}
-
-	/**
-	 * Get absolute html coordinates x position
-	 * @param float $x
-	 * @return \YetiForcePDF\Render\Coordinates
-	 */
-	public function getAbsoluteHtmlX(): float
-	{
-		return $this->absoluteHtmlX;
-	}
-
-	/**
-	 * Get absolute html coordinates y position
-	 * @param float $y
-	 * @return \YetiForcePDF\Render\Coordinates
-	 */
-	public function getAbsoluteHtmlY(): float
-	{
-		return $this->absoluteHtmlY;
-	}
-
-	/**
-	 * Get offset from the parent element
-	 * @return \YetiForcePDF\Render\Coordinates\Offset
-	 */
-	public function getOffset()
-	{
-		return $this->offset;
-	}
-
-	/**
-	 * Convert html coordinates to pdf
-	 */
-	protected function convertHtmlToPdfX()
-	{
-		$this->absolutePdfX = $this->absoluteHtmlX;
-
-		//var_dump('converted y ' . $this->absoluteHtmlY . ' to ' . $this->absolutePdfY);
+		return $this->htmlX;
 	}
 
 	/**
 	 * Convert html to pdf y
 	 */
-	protected function convertHtmlToPdfY()
+	protected function getPdfY()
 	{
-		$height = $this->style->getDimensions()->getHeight();
+		$height = $this->box->getDimensions()->getHeight();
 		$page = $this->document->getCurrentPage();
-		$this->absolutePdfY = $page->getPageDimensions()->getHeight() - $this->absoluteHtmlY - $height;
-	}
-
-	/**
-	 * Convert html coordinates to pdf coordinate system
-	 * @return $this
-	 */
-	public function convertHtmlToPdf()
-	{
-		$this->convertHtmlToPdfX();
-		$this->convertHtmlToPdfY();
-		return $this;
+		return $page->getPageDimensions()->getHeight() - $this->htmlY - $height;
 	}
 
 }

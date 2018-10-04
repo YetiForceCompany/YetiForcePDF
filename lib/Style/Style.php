@@ -37,7 +37,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $font;
 	/**
-	 * Css properties that are iherited by default
+	 * Css properties that are inherited by default
 	 * @var array
 	 */
 	protected $inherited = [
@@ -166,14 +166,6 @@ class Style extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setFamily($this->rules['font-family'])
 			->setSize($this->rules['font-size'])
-			->init();
-		$this->dimensions = (new \YetiForcePDF\Render\Dimensions\Element())
-			->setDocument($this->document)
-			->setStyle($this)
-			->init();
-		$this->coordinates = (new \YetiForcePDF\Render\Coordinates\Coordinates())
-			->setDocument($this->document)
-			->setStyle($this)
 			->init();
 		return $this;
 	}

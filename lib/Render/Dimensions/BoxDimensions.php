@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * Element class
+ * BoxDimensions class
  *
  * @package   YetiForcePDF\Render\Dimensions
  *
@@ -12,16 +12,18 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Render\Dimensions;
 
+use YetiForcePDF\Render\Box;
+
 /**
- * Class Element
+ * Class BoxDimensions
  */
-class Element extends Dimensions
+class BoxDimensions extends Dimensions
 {
 
 	/**
-	 * @var \YetiForcePDF\Style\Style
+	 * @var Box
 	 */
-	protected $style;
+	protected $box;
 
 	/**
 	 * @var float
@@ -33,14 +35,23 @@ class Element extends Dimensions
 	protected $innerHeight = 0;
 
 	/**
-	 * Set style
-	 * @param \YetiForcePDF\Style\Style $style
+	 * Set box
+	 * @param \YetiForcePDF\Render\Box $box
 	 * @return $this
 	 */
-	public function setStyle(\YetiForcePDF\Style\Style $style)
+	public function setBox(Box $box)
 	{
-		$this->style = $style;
+		$this->box = $box;
 		return $this;
+	}
+
+	/**
+	 * Get box
+	 * @return \YetiForcePDF\Render\Box
+	 */
+	public function getBox()
+	{
+		return $this->box;
 	}
 
 	/**
@@ -89,34 +100,34 @@ class Element extends Dimensions
 	 */
 	public function getAvailableSpace()
 	{
-		if ($this->style->getElement()->isRoot()) {
+		if ($this->box->getElement()->isRoot()) {
 			return $this->document->getCurrentPage()->getPageDimensions()->getInnerWidth();
 		}
-		$style = $this->style;
+		$style = $this->box->getStyle();
 		$paddingWidth = $style->getRules('padding-left') + $style->getRules('padding-right');
 		$borderWidth = $style->getRules('border-left-width') + $style->getRules('border-right-width');
-		return $style->getParent()->getDimensions()->getAvailableSpace() - $paddingWidth - $borderWidth;
+		return $this->box->getParent()->getDimensions()->getAvailableSpace() - $paddingWidth - $borderWidth;
 	}
 
 	/**
-	 * Calculate text dimensions
+	 * Get text width
+	 * @param string $text
 	 * @return float
 	 */
-	public function getTextWidth()
+	public function getTextWidth($text)
 	{
-		$text = $this->style->getElement()->getDOMElement()->textContent;
-		$font = $this->style->getFont();
+		$font = $this->box->getStyle()->getFont();
 		return $font->getTextWidth($text);
 	}
 
 	/**
-	 * Calculate text dimensions
+	 * Get text height
+	 * @param string $text
 	 * @return float
 	 */
-	public function getTextHeight()
+	public function getTextHeight($text)
 	{
-		$text = $this->style->getElement()->getDOMElement()->textContent;
-		$font = $this->style->getFont();
+		$font = $this->box->getStyle()->getFont();
 		return $font->getTextHeight($text);
 	}
 

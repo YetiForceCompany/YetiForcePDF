@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * LineBox class
+ * BoxDimensions class
  *
  * @package   YetiForcePDF\Render
  *
@@ -14,10 +14,14 @@ namespace YetiForcePDF\Render;
 
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
+use \YetiForcePDF\Render\Coordinates\Coordinates;
+use \YetiForcePDF\Render\Coordinates\Offset;
+use \YetiForcePDF\Render\Dimensions\Dimensions;
+use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 
 
 /**
- * Class LineBox
+ * Class BoxDimensions
  */
 class Box extends \YetiForcePDF\Base
 {
@@ -25,7 +29,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * @var Box[]
 	 */
-	protected $boxes = [];
+	protected $children = [];
 	/**
 	 * @var Element
 	 */
@@ -34,65 +38,52 @@ class Box extends \YetiForcePDF\Base
 	 * @var Style
 	 */
 	protected $style;
-	/**
-	 * @var float
-	 */
-	protected $childrenWidth = 0;
-	/**
-	 * @var float
-	 */
-	protected $childrenHeight = 0;
 	/*
-	 * @var
+	 * @var Dimensions
 	 */
 	protected $dimensions;
+	/**
+	 * @var Coordinates
+	 */
 	protected $coordinates;
-
+	/**
+	 * @var Offset
+	 */
+	protected $offset;
 
 	/**
-	 * Set children width
-	 * @param float $width
-	 * @return $this
+	 * {@inheritdoc}
 	 */
-	public function setChildrenWidth(float $width)
+	public function init()
 	{
-		$this->childrenWidth = $width;
+		parent::init();
+		$this->dimensions = (new BoxDimensions())
+			->setDocument($this->document)
+			->setBox($this)
+			->init();
+		$this->coordinates = (new Coordinates())
+			->setDocument($this->document)
+			->setBox($this)
+			->init();
+		$this->offset = (new Offset())
+			->setDocument($this->document)
+			->setBox($this)
+			->init();
 		return $this;
 	}
-
-	/**
-	 * Set children height
-	 * @param float $height
-	 * @return $this
-	 */
-	public function setChildrenHeight(float $height)
-	{
-		$this->childrenHeight = $height;
-		return $this;
-	}
-
-	/**
-	 * Get height
-	 * @return float
-	 */
-	public function getHeight()
-	{
-		return $this->childrenHeight;
-	}
-
 
 	/**
 	 * Get style
-	 * @return \YetiForcePDF\Style\Style
+	 * @return Style
 	 */
-	public function getStyle()
+	public function getStyle(): Style
 	{
 		return $this->style;
 	}
 
 	/**
 	 * Set style
-	 * @param \YetiForcePDF\Style\Style $style
+	 * @param Style $style
 	 * @return $this
 	 */
 	public function setStyle(Style $style)
@@ -124,19 +115,42 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Append box
-	 * @param \YetiForcePDF\Render\Box $box
+	 * Append child box
+	 * @param Box $box
 	 * @return $this
 	 */
-	public function appendBox(Box $box)
+	public function appendChild(Box $box)
 	{
-		$this->boxes[] = $box;
+		$this->children[] = $box;
 		return $this;
 	}
 
 	/**
+	 * Get children
+	 * @return Box[]
+	 */
+	public function getChildren(): array
+	{
+		return $this->children;
+	}
+
+	/**
+	 * Get all children
+	 * @param array $allChildren
+	 * @return Box[]
+	 */
+	public function getAllChildren($allChildren = [])
+	{
+		$allChildren[] = $this;
+		foreach ($this->getChildren() as $child) {
+			$child->getAllChildren($allChildren);
+		}
+		return $allChildren;
+	}
+
+	/**
 	 * Get dimensions
-	 * @return \YetiForcePDF\Render\Dimensions\Element
+	 * @return Dimensions
 	 */
 	public function getDimensions()
 	{
@@ -145,20 +159,177 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get coordinates
-	 * @return \YetiForcePDF\Render\Coordinates\Coordinates
+	 * @return Coordinates
 	 */
-	public function getCoordinates(): \YetiForcePDF\Render\Coordinates\Coordinates
+	public function getCoordinates()
 	{
 		return $this->coordinates;
 	}
 
 	/**
 	 * Shorthand for offset
-	 * @return \YetiForcePDF\Render\Coordinates\Offset
+	 * @return Offset
 	 */
-	public function getOffset(): \YetiForcePDF\Render\Coordinates\Offset
+	public function getOffset(): Offset
 	{
-		return $this->getCoordinates()->getOffset();
+		return $this->offset;
+	}
+
+	/**
+	 * Filter text
+	 * Filter the text, this is applied to all text just before being inserted into the pdf document
+	 * it escapes the various things that need to be escaped, and so on
+	 *
+	 * @return string
+	 */
+	protected function filterText($text)
+	{
+		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
+		$text = preg_replace('/\s+/', ' ', $text);
+		$text = mb_convert_encoding($text, 'UTF-16');
+		return strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
+	}
+
+	/**
+	 * Add border instructions
+	 * @param array $element
+	 * @param float $pdfX
+	 * @param float $pdfY
+	 * @param float $width
+	 * @param float $height
+	 * @return array
+	 */
+	protected function addBorderInstructions(array $element, float $pdfX, float $pdfY, float $width, float $height)
+	{
+		$rules = $this->style->getRules();
+		$x1 = 0;
+		$x2 = $width;
+		$y1 = $height;
+		$y2 = 0;
+		$element[] = '% start border';
+		if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x2, $y1]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x1 + $rules['border-left-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x1, $y1])
+			]);
+			$borderTop = [
+				'q',
+				"{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
+				"1 0 0 1 $pdfX $pdfY cm",
+				"$x1 $y1 m", // move to start point
+				$path . ' l h',
+				'F',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x2, $y2]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x2, $y1]),
+			]);
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
+				"$x2 $y1 m",
+				$path . ' l h',
+				'F',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x2, $y2]),
+				implode(' ', [$x2 - $rules['border-right-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x1 + $rules['border-left-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x1, $y2]),
+			]);
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
+				"$x1 $y2 m",
+				$path . ' l h',
+				'F',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
+			$path = implode(" l\n", [
+				implode(' ', [$x1 + $rules['border-left-width'], $y1 - $rules['border-top-width']]),
+				implode(' ', [$x1 + $rules['border-left-width'], $y2 + $rules['border-bottom-width']]),
+				implode(' ', [$x1, $y2]),
+				implode(' ', [$x1, $y1]),
+			]);
+			$borderTop = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
+				"$x1 $y1 m",
+				$path . ' l h',
+				'F',
+				'Q'
+			];
+			$element = array_merge($element, $borderTop);
+		}
+		$element[] = '% end border';
+		return $element;
+	}
+
+	/**
+	 * Get element PDF instructions to use in content stream
+	 * @return string
+	 */
+	public function getInstructions(): string
+	{
+		$font = $this->style->getFont();
+		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
+		$coordinates = $this->style->getCoordinates();
+		$pdfX = $coordinates->getAbsolutePdfX();
+		$pdfY = $coordinates->getAbsolutePdfY();
+		$htmlX = $coordinates->getAbsoluteHtmlX();
+		$htmlY = $coordinates->getAbsoluteHtmlY();
+		$dimensions = $this->style->getDimensions();
+		$width = $dimensions->getWidth();
+		$height = $dimensions->getHeight();
+		$textWidth = $this->style->getFont()->getTextWidth($this->getDOMElement()->textContent);
+		$textHeight = $this->style->getFont()->getTextHeight();
+		$baseLine = $this->style->getFont()->getDescender();
+		$baseLineY = $pdfY - $baseLine;
+		if ($this->isTextNode()) {
+			$textContent = '(' . $this->filterText($this->getDOMElement()->textContent) . ')';
+			$element = [
+				'q',
+				"1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
+				'BT',
+				$fontStr,
+				"$textContent Tj",
+				'ET',
+				'Q'
+			];
+			if ($this->drawTextOutline) {
+				$element = array_merge($element, [
+					'q',
+					'1 w',
+					'1 0 0 RG',
+					"1 0 0 1 $pdfX $pdfY cm",
+					"0 0 $textWidth $textHeight re",
+					'S',
+					'Q'
+				]);
+			}
+		} else {
+			$element = [];
+			$element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
+		}
+		return implode("\n", $element);
 	}
 
 }

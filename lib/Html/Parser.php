@@ -108,14 +108,14 @@ class Parser extends \YetiForcePDF\Base
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
 		$this->rootElement->init();
-		$this->Render = (new Render())
+		$this->box = (new Box())
 			->setDocument($this->document)
 			->setElement($this->rootElement)
 			->init();
-		foreach ($this->getAllElements($this->rootElement) as $element) {
-			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
+		$this->box->reflow();
+		foreach ($this->box->getAllChildren() as $box) {
+			$this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
 		}
-
 	}
 
 }

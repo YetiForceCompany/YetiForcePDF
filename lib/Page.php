@@ -68,7 +68,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $margins;
 	/**
 	 * Page dimensions
-	 * @var \YetiForcePDF\Render\Dimensions\Element
+	 * @var \YetiForcePDF\Render\Dimensions\BoxDimensions
 	 */
 	protected $dimensions;
 	/**
@@ -469,7 +469,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$dimensions = array_reverse($dimensions);
 		}
 		if (!$this->dimensions) {
-			$this->dimensions = (new \YetiForcePDF\Render\Dimensions\Element())
+			$this->dimensions = (new \YetiForcePDF\Render\Dimensions\BoxDimensions())
 				->setDocument($this->document)
 				->init();
 		}
@@ -610,9 +610,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Get page dimensions
-	 * @return \YetiForcePDF\Render\Dimensions\Element
+	 * @return \YetiForcePDF\Render\Dimensions\BoxDimensions
 	 */
-	public function getPageDimensions(): \YetiForcePDF\Render\Dimensions\Element
+	public function getPageDimensions(): \YetiForcePDF\Render\Dimensions\BoxDimensions
 	{
 		return $this->dimensions;
 	}
