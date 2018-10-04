@@ -42,14 +42,6 @@ class Box extends \YetiForcePDF\Base
 	 * @var Box
 	 */
 	protected $previous;
-	/**
-	 * @var Element
-	 */
-	protected $element;
-	/**
-	 * @var Style
-	 */
-	protected $style;
 	/*
 	 * @var Dimensions
 	 */
@@ -81,48 +73,6 @@ class Box extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setBox($this)
 			->init();
-		return $this;
-	}
-
-	/**
-	 * Get style
-	 * @return Style
-	 */
-	public function getStyle(): Style
-	{
-		return $this->style;
-	}
-
-	/**
-	 * Set style
-	 * @param Style $style
-	 * @return $this
-	 */
-	public function setStyle(Style $style)
-	{
-		$this->style = $style;
-		$this->element = $style->getElement();
-		return $this;
-	}
-
-	/**
-	 * Get element
-	 * @return Element
-	 */
-	public function getElement()
-	{
-		return $this->element;
-	}
-
-	/**
-	 * Set element
-	 * @param Element $element
-	 * @return $this
-	 */
-	public function setElement(Element $element)
-	{
-		$this->element = $element;
-		$this->style = $element->getStyle();
 		return $this;
 	}
 
@@ -193,7 +143,27 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function appendChild(Box $box)
 	{
+		$box->setParent($this);
+		$childrenCount = count($this->children);
+		if ($childrenCount > 0) {
+			$previous = $this->children[$childrenCount - 1];
+			$box->setPrevious($previous);
+			$previous->setNext($box);
+		}
 		$this->children[] = $box;
+		return $this;
+	}
+
+	/**
+	 * Append children boxes
+	 * @param Box $box
+	 * @return $this
+	 */
+	public function appendChildren(array $boxes)
+	{
+		foreach ($boxes as $box) {
+			$this->appendChild($box);
+		}
 		return $this;
 	}
 
@@ -245,16 +215,6 @@ class Box extends \YetiForcePDF\Base
 	public function getOffset(): Offset
 	{
 		return $this->offset;
-	}
-
-	/**
-	 * Reflow elements and create render tree basing on dom tree
-	 * @return $this
-	 */
-	public function reflow()
-	{
-
-		return $this;
 	}
 
 	/**

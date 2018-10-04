@@ -21,4 +21,16 @@ use \YetiForcePDF\Html\Element;
 class LineBox extends Box
 {
 
+	/**
+	 * Reflow elements and create render tree basing on dom tree
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		foreach ($this->getChildren() as $childBox) {
+			$childBox->reflow();
+		}
+
+		return $this;
+	}
 }
