@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * Line class
+ * LineBox class
  *
  * @package   YetiForcePDF\Layout
  *
@@ -16,10 +16,11 @@ use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 
 /**
- * Class Line
+ * Class LineBox
  */
-class Line extends \YetiForcePDF\Base
+class Box extends \YetiForcePDF\Base
 {
+
 	/**
 	 * @var Style[]
 	 */
@@ -131,4 +132,5 @@ class Line extends \YetiForcePDF\Base
 		}
 		return $this;
 	}
+
 }

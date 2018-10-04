@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style;
 
 use YetiForcePDF\Layout\Layout;
-use YetiForcePDF\Layout\Line;
+use YetiForcePDF\Layout\LineBox;
 
 /**
  * Class Style

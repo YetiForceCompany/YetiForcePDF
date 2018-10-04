@@ -20,7 +20,7 @@ use \YetiForcePDF\Style\Style;
 class Layout extends \YetiForcePDF\Base
 {
 	/**
-	 * @var Line[]
+	 * @var LineBox[]
 	 */
 	protected $lines = [];
 
@@ -31,7 +31,7 @@ class Layout extends \YetiForcePDF\Base
 
 	/**
 	 * Get lines
-	 * @return \YetiForcePDF\Layout\Line[]
+	 * @return \YetiForcePDF\Layout\LineBox[]
 	 */
 	public function getLines()
 	{
@@ -40,10 +40,10 @@ class Layout extends \YetiForcePDF\Base
 
 	/**
 	 * Append line
-	 * @param \YetiForcePDF\Layout\Line $line
+	 * @param \YetiForcePDF\Layout\LineBox $line
 	 * @return $this
 	 */
-	public function appendLine(Line $line)
+	public function appendBox(Box $line)
 	{
 		$this->lines[] = $line;
 		return $this;
@@ -137,7 +137,7 @@ class Layout extends \YetiForcePDF\Base
 			if ($childRules['display'] === 'block') {
 				// close line and add block box after if needed
 				if (!empty($lineChildren)) {
-					$line = (new Line())->setDocument($this->document)
+					$line = (new LineBox())->setDocument($this->document)
 						->setStyles($lineChildren)
 						->setChildrenWidth($lineChildrenWidth)
 						->setChildrenHeight($lineChildrenHeight)
@@ -151,6 +151,7 @@ class Layout extends \YetiForcePDF\Base
 					$lineChildrenHeight = 0;
 					$currentLeft = $lineLeft;
 				}
+				$this->appendBlock($child);
 				$child->getLayout()->reflow();
 				continue;
 			}
