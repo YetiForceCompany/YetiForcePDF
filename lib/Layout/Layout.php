@@ -93,11 +93,17 @@ class Layout extends \YetiForcePDF\Base
 			if ($element->isTextNode()) {
 				$width = $style->getDimensions()->getTextWidth();
 				$height = $style->getDimensions()->getTextHeight();
-			} else {
+			} elseif ($rules['display'] === 'block') {
 				$width = $parentDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right'];
+			} else {
+				$width = 0; // will be calculated later
 			}
-			$parentLayout = $parent->getLayout();
-
+			$parentLayout = $style->getParent()->getLayout();
+			foreach ($parentLayout->getBoxes() as $box) {
+				$boxHeight = $box->getHeight();
+				$top += $boxHeight;
+				$offsetTop += $boxHeight;
+			}
 		} else {
 			// absolute coordinates and offsets from page margins
 			$offsetLeft = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlX();
@@ -138,6 +144,9 @@ class Layout extends \YetiForcePDF\Base
 		$height = 0;
 		foreach ($this->style->getChildren() as $child) {
 			$childRules = $child->getRules();
+			$childDimensions = $child->getDimensions();
+			$childOffset = $child->getOffset();
+			$childCoordinates = $child->getCoordinates();
 			if ($childRules['display'] === 'block') {
 				// close line and add block box after if needed
 				if (!empty($lineChildren)) {
@@ -146,33 +155,40 @@ class Layout extends \YetiForcePDF\Base
 						->setChildrenWidth($lineChildrenWidth)
 						->setChildrenHeight($lineChildrenHeight)
 						->setLeftPosition($boxLeft)
-						->setTopPosition($boxTop)
+						->setTopPosition($boxTop + $offsetTop)
 						->init();
 					$this->appendBox($line);
-					$boxTop += $lineChildrenHeight;
+					$height += $lineChildrenHeight;
+					$offsetTop += $lineChildrenHeight;
 					$lineChildren = [];
 					$lineChildrenWidth = 0;
 					$lineChildrenHeight = 0;
-					$currentLeft = $boxLeft;
 				}
 				$child->getLayout()->reflow();
 				$childHeight = $child->getLayout()->getHeight();
-				$height += $childHeight;
 				$blockBox = (new BlockBox())->setDocument($this->document)->setStyles([$child])
 					->setChildrenWidth($dimensions->getInnerWidth())
 					->setChildrenHeight($childHeight)
 					->setLeftPosition($boxLeft)
-					->setTopPosition($boxTop)
+					->setTopPosition($boxTop + $offsetTop)
 					->init();
 				$this->appendBox($blockBox);
-				$boxTop += $childHeight;
+				$height += $childHeight;
+				$offsetTop += $childHeight;
 				continue;
 			}
 			// calculate child position and dimension
-			$childDimensions = $child->getDimensions();
-			$childCoordinates = $child->getCoordinates();
-			$childOffset = $child->getOffset();
 			$child->getLayout()->reflow();
+			// offset left are set at 0,0 after reflow so correct it
+			$childOffset->setLeft($lineChildrenWidth + $childRules['margin-left']);
+			$childOffset->setTop($offsetTop + $childRules['margin-top']);
+			$childCoordinates->setAbsoluteHtmlX($boxLeft + $childOffset->getLeft());
+			$childCoordinates->setAbsoluteHtmlY($boxTop + $childOffset->getTop());
+			$childCoordinates->convertHtmlToPdf();
+			$childMarginWidth = $childRules['margin-left'] + $childRules['margin-right'];
+			$childMarginHeight = $childRules['margin-top'] + $childRules['margin-bottom'];
+			$lineChildrenHeight = max($lineChildrenHeight, $child->getDimensions()->getHeight() + $childMarginHeight);
+			$lineChildrenWidth += $child->getDimensions()->getWidth() + $childMarginWidth;
 			$lineChildren[] = $child;
 		}
 		// add collected boxes inside line
