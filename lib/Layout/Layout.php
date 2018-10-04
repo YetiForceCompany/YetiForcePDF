@@ -61,7 +61,8 @@ class Layout extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get inner width
+	 * Get inner width - maximal width of line or 0 if there are no children (empty layout)
+	 * Layout is for elements with children
 	 * @return int
 	 */
 	public function getInnerWidth()
@@ -74,30 +75,100 @@ class Layout extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get inner width
+	 * @return int
+	 */
+	public function getInnerHeight()
+	{
+		$height = 0;
+		foreach ($this->getLines() as $line) {
+			$height += $line->getInnerHeight();
+		}
+		return $height;
+	}
+
+	/**
 	 * Arrange elements inside lines
 	 * @return $this
 	 */
 	public function reflow()
 	{
-		$currentChildren = [];
-		$currentWidth = 0;
-		foreach ($this->style->getChildren() as $child) {
-			$availableSpace = $this->style->getDimensions()->getAvailableSpace();
-			$childWidth = $child->getDimensions()->getWidth() + $child->getRules('margin-left') + $child->getRules('margin-right');
-			$break = $currentWidth + $childWidth > $availableSpace;
-			if ($child->getRules('display') === 'block' || $break) {
-				$this->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
-				$currentChildren = [$child];
-				$currentWidth = 0;
-			} else {
-				// we can add one more element to current line
-				$currentChildren[] = $child;
-				$currentWidth += $childWidth;
-			}
-			$child->getLayout()->reflow();
+		$rules = $this->style->getRules();
+		if ($parent = $this->style->getParent()) {
+			$parentCoordinates = $parent->getCoordinates();
+			$parentDimensions = $parent->getDimensions();
+			$parentRules = $parent->getRules();
+			$offsetLeft = $parentRules['border-left-width'] + $parentRules['padding-left'];
+			$offsetTop = $parentRules['border-top-width'] + $parentRules['padding-top'];
+			$left = $parentCoordinates->getAbsoluteHtmlX() + $offsetLeft + $rules['margin-left'];
+			$top = $parentCoordinates->getAbsoluteHtmlY() + $offsetTop + $rules['margin-top'];
+			$width = $parentDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right'];
+		} else {
+			// absolute coordinates and offsets from page margins
+			$offsetLeft = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlX();
+			$offsetTop = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlY();
+			$left = $offsetLeft;
+			$top = $offsetTop;
+			$width = $this->document->getCurrentPage()->getPageDimensions()->getInnerWidth();
 		}
-		// finish lines because there is no more children
-		$this->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
+		$offset = $this->style->getOffset();
+		$offset->setLeft($offsetLeft);
+		$offset->setTop($offsetTop);
+		$coordinates = $this->style->getCoordinates();
+		$coordinates->setAbsoluteHtmlX($left);
+		$coordinates->setAbsoluteHtmlY($top);
+		$coordinates->convertHtmlToPdf();
+		$dimensions = $this->style->getDimensions();
+		$dimensions->setWidth($width);
+		$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
+		$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
+		$dimensions->setInnerWidth($dimensions->getWidth() - $paddingWidth - $borderWidth);
+		// initial positioning and dimensions are set for block box because first element is always block box
+		// now iterate through children and convert it to line boxes or another block box
+		$lineChildren = [];
+		$lineChildrenWidth = 0;
+		$lineChildrenHeight = 0;
+		$lineLeft = $left + $rules['border-left-width'] + $rules['padding-left'];
+		$lineTop = $top + $rules['border-top-width'] + $rules['padding-top'];
+		$currentLeft = $lineLeft;
+		$height = 0;
+		foreach ($this->style->getChildren() as $child) {
+			$childRules = $child->getRules();
+			if ($childRules['display'] === 'block') {
+				// close line and add block box after if needed
+				if (!empty($lineChildren)) {
+					$line = (new Line())->setDocument($this->document)
+						->setStyles($lineChildren)
+						->setChildrenWidth($lineChildrenWidth)
+						->setChildrenHeight($lineChildrenHeight)
+						->setLeftPosition($lineLeft)
+						->setTopPosition($lineTop)
+						->init();
+					$this->appendLine($line);
+					$lineTop += $lineChildrenHeight;
+					$lineChildren = [];
+					$lineChildrenWidth = 0;
+					$lineChildrenHeight = 0;
+					$currentLeft = $lineLeft;
+				}
+				$child->getLayout()->reflow();
+				continue;
+			}
+			// calculate child position and dimension
+			$childDimensions = $child->getDimensions();
+			$childCoordinates = $child->getCoordinates();
+			$childOffset = $child->getOffset();
+
+		}
+		$paddingHeight = $rules['padding-top'] + $rules['padding-bottom'];
+		$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
+		if ($rules['height'] !== 'auto') {
+			$dimensions->setInnerHeight($rules['height']);
+			$dimensions->setHeight($rules['height'] + $paddingHeight + $borderHeight);
+		} else {
+			$dimensions->setInnerHeight($height);
+			$dimensions->setHeight($height + $paddingHeight + $borderHeight);
+		}
 		return $this;
 	}
 }

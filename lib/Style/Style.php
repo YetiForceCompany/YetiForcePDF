@@ -205,63 +205,12 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Calculate element width (and children - recursive)
-	 * @return $this
+	 * Is this style a layout style?
+	 * @return bool
 	 */
-	public function calculateWidths()
+	public function isLayout()
 	{
-		foreach ($this->getChildren() as $child) {
-			$child->calculateWidths();
-		}
-		$maxWidth = $this->getLayout()->getInnerWidth();
-		$padding = $this->rules['padding-left'] + $this->rules['padding-right'];
-		$border = $this->rules['border-left-width'] + $this->rules['border-right-width'];
-		$this->getDimensions()->setWidth($maxWidth + $padding + $border);
-		$this->getDimensions()->setInnerWidth($maxWidth);
-		return $this;
-	}
-
-	protected function calculateOffsets()
-	{
-		$this->getOffset()->calculate();
-		foreach ($this->getChildren() as $child) {
-			$child->calculateOffsets();
-		}
-	}
-
-	protected function calculateHeights()
-	{
-		foreach ($this->getChildren() as $child) {
-			$child->calculateHeights();
-		}
-		$height = 0;
-		foreach ($this->layout->getLines() as $line) {
-			$height += $line->getInnerHeight();
-			if (isset($previous) && $previous->isOneBlock() && $line->isOneBlock()) {
-
-			}
-			$previous = $line;
-		}
-	}
-
-	protected function calculateCoordinates()
-	{
-		$this->getCoordinates()->calculate();
-		foreach ($this->getChildren() as $child) {
-			$child->calculateCoordinates();
-		}
-	}
-
-	/**
-	 * Calculate layout / dimensions / positions
-	 */
-	public function calculate()
-	{
-		$this->getLayout()->reflow();
-		$this->calculateWidths();
-		$this->calculateHeights();
-		$this->calculateOffsets();
-		$this->calculateCoordinates();
+		return $this->hasChildren();
 	}
 
 	/**
@@ -356,19 +305,12 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get styles for elements in specified row (after offset calculation / positioning)
-	 * @param int $row - from 0
-	 * @return \YetiForcePDF\Style\[]
+	 * Do we have children?
+	 * @return bool
 	 */
-	public function getChildrenFromRow(int $row)
+	public function hasChildren()
 	{
-		$children = [];
-		foreach ($this->getChildren() as $child) {
-			if ($child->getElement()->getRow() === $row) {
-				$children[] = $child;
-			}
-		}
-		return $children;
+		return $this->getElement()->hasChildren();
 	}
 
 	/**

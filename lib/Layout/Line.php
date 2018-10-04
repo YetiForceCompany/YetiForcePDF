@@ -24,6 +24,66 @@ class Line extends \YetiForcePDF\Base
 	 * @var Style[]
 	 */
 	protected $styles = [];
+	/**
+	 * @var float
+	 */
+	protected $childrenWidth = 0;
+	/**
+	 * @var float
+	 */
+	protected $childrenHeight = 0;
+	/**
+	 * @var float
+	 */
+	protected $left = 0;
+	/**
+	 * @var float
+	 */
+	protected $top = 0;
+
+	/**
+	 * Set children width
+	 * @param float $width
+	 * @return $this
+	 */
+	public function setChildrenWidth(float $width)
+	{
+		$this->childrenWidth = $width;
+		return $this;
+	}
+
+	/**
+	 * Set children height
+	 * @param float $height
+	 * @return $this
+	 */
+	public function setChildrenHeight(float $height)
+	{
+		$this->childrenHeight = $height;
+		return $this;
+	}
+
+	/**
+	 * Set left position
+	 * @param float $left
+	 * @return $this
+	 */
+	public function setLeftPosition(float $left)
+	{
+		$this->left = $left;
+		return $this;
+	}
+
+	/**
+	 * Set top position
+	 * @param float $top
+	 * @return $this
+	 */
+	public function setTopPosition(float $top)
+	{
+		$this->top = $top;
+		return $this;
+	}
 
 	/**
 	 * Set styles
@@ -43,44 +103,6 @@ class Line extends \YetiForcePDF\Base
 	public function getStyles()
 	{
 		return $this->styles;
-	}
-
-	/**
-	 * Is this line has just one element with display:block ?
-	 * @return bool
-	 */
-	public function isOneBlock()
-	{
-		return count($this->styles) === 1 && $this->styles[0]->getRules('display') === 'block';
-	}
-
-	/**
-	 * Get inner width (children sum width with margins)
-	 * @return float
-	 */
-	public function getInnerWidth()
-	{
-		if ($this->isOneBlock()) {
-			return $this->styles[0]->getDimensions()->getAvailableSpace();
-		}
-		$width = 0;
-		foreach ($this->styles as $style) {
-			$style->getDimensions()->calculateWidth();
-			$width += $style->getDimensions()->getWidth() + $style->getRules('margin-left') + $style->getRules('margin-right');
-		}
-		return $width;
-	}
-
-	public function getInnerHeight()
-	{
-		if ($this->isOneBlock()) {
-			return $this->styles[0]->getDimensions()->getHeight();
-		}
-		$height = 0;
-		foreach ($this->styles as $style) {
-			$height += $style->getDimensions()->getHeight();
-		}
-		return $height;
 	}
 
 	/**

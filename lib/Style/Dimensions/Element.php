@@ -102,7 +102,7 @@ class Element extends Dimensions
 	 * Calculate text dimensions
 	 * @return $this
 	 */
-	public function calculateTextWidth()
+	public function getTextWidth()
 	{
 		$text = $this->style->getElement()->getDOMElement()->textContent;
 		$font = $this->style->getFont();
@@ -116,7 +116,7 @@ class Element extends Dimensions
 	 * Calculate text dimensions
 	 * @return $this
 	 */
-	public function calculateTextHeight()
+	public function getTextHeight()
 	{
 		$text = $this->style->getElement()->getDOMElement()->textContent;
 		$font = $this->style->getFont();
@@ -126,75 +126,4 @@ class Element extends Dimensions
 		return $this;
 	}
 
-	/**
-	 * Calculate border-box dimensions
-	 * @return $this
-	 */
-	public function calculateWidth()
-	{
-		if ($this->style->getElement()->isTextNode()) {
-			return $this->calculateTextWidth();
-		}
-		$rules = $this->style->getRules();
-		$parentDimensions = $this->document->getCurrentPage()->getPageDimensions();
-		$parent = $this->style->getParent();
-		if ($parent) {
-			if ($parent->getDimensions() !== null) {
-				$parentDimensions = $parent->getDimensions();
-			}
-		}
-		if ($rules['width'] !== 'auto') {
-			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
-			$innerWidth = $rules['width'] - $rules['padding-left'] - $rules['padding-right'] - $rules['border-left-width'] - $rules['border-right-width'];
-			$this->setInnerWidth($innerWidth);
-		} else {
-			$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
-			$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
-			$marginWidth = $rules['margin-left'] + $rules['margin-right'];
-			if ($rules['display'] === 'block') {
-				$this->setWidth($parentDimensions->getAvailableSpace() - $marginWidth);
-				$this->setInnerWidth($this->getWidth() - $paddingWidth - $borderWidth);
-			} else {
-				$width = 0;
-				foreach ($this->style->getChildren() as $child) {
-					$width = max($width, $child->getLayout()->getInnerWidth());
-				}
-				$this->setWidth($width + $borderWidth + $paddingWidth);
-				$this->setInnerWidth($width);
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Calculate border-box dimensions
-	 * @return $this
-	 */
-	public function calculateHeight()
-	{
-		$rules = $this->style->getRules();
-		if ($this->style->getElement()->isTextNode()) {
-			return $this->calculateTextHeight();
-		}
-		if ($rules['height'] !== 'auto') {
-			$this->setHeight($rules['height'] + $rules['border-top-width'] + $rules['border-bottom-width']);
-			$innerHeight = $rules['height'] - $rules['padding-top'] - $rules['padding-bottom'] - $rules['border-top-width'] - $rules['border-bottom-width'];
-			$this->setInnerWidth($innerHeight);
-		} else {
-			$height = 0;
-			foreach ($this->style->getChildren() as $index => $childStyle) {
-				$childRules = $childStyle->getRules();
-				$childDimensions = $childStyle->getDimensions();
-				$height += $childStyle->getDimensions()->getHeight();
-			}
-			$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
-			$this->setInnerHeight($height);
-			if ($rules['display'] !== 'inline') {
-				$height += (float)$rules['padding-bottom'] + (float)$rules['padding-top'];
-			}
-			$this->setHeight($height + $borderHeight);
-		}
-		//var_dump('h' . $this->getHeight() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
-		return $this;
-	}
 }

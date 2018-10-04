@@ -54,10 +54,6 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $textNode = false;
 	/**
-	 * @var bool Is this element just line? (wrapper for other elements)
-	 */
-	protected $line = false;
-	/**
 	 * @var \YetiForcePDF\Html\Element[]
 	 */
 	protected $children = [];
@@ -69,12 +65,6 @@ class Element extends \YetiForcePDF\Base
 	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $next;
-	/**
-	 * Element row - needed to calculate parent height
-	 * If element was moved to the next line it will have row>0
-	 * @var int
-	 */
-	protected $row = 0;
 	/**
 	 * Element column = element position in row
 	 * @var int
@@ -100,15 +90,13 @@ class Element extends \YetiForcePDF\Base
 		parent::init();
 		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
-		if ($this->style === null) {
-			$this->style = $this->parseStyle();
-		}
+		$this->style = $this->parseStyle();
 		if ($this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
 			$children = [];
 			// basing on dom children elements automatically setup nested instances of Element (pdf)
 			foreach ($this->domElement->childNodes as $index => $childNode) {
 				// if element already exists for this domNode use it (in case current element is moved and initialised again)
-				$childElement = $children[] = $this->elementForNode($childNode)
+				$childElement = $children[] = (new Element())
 					->setDocument($this->document)
 					->setElement($childNode)
 					->setParent($this)// setParent will remove this element from previous parent if exists
@@ -126,21 +114,6 @@ class Element extends \YetiForcePDF\Base
 			}
 		}
 		return $this;
-	}
-
-	/**
-	 * Get or create element for DOMNode
-	 * @param \DOMNode $domNode
-	 * @return \YetiForcePDF\Html\Element
-	 */
-	public function elementForNode(\DOMNode $domNode)
-	{
-		foreach ($this->document->getRootElement()->getAllChildren() as $child) {
-			if ($child->getDOMElement() === $domNode) {
-				return $child;
-			}
-		}
-		return new Element();
 	}
 
 	/**
@@ -271,56 +244,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Is element just a line? (wrapper for other elements in layout)
-	 * @return bool
-	 */
-	public function isLine()
-	{
-		return $this->line;
-	}
-
-	/**
-	 * Set this element as line (wrapper for other elements in layout)
-	 * @param bool $line
-	 */
-	public function setLine(bool $line)
-	{
-		$this->line = $line;
-	}
-
-	/**
-	 * Create line element with children
-	 * @param Element[] $children
-	 * @return Element|false
-	 */
-	public function createLine(array $children)
-	{
-		if (empty($children)) {
-			return false;
-		}
-		return $this->wrapElements($children)->setLine(true);
-	}
-
-	/**
-	 * Get lines (or line) of elements
-	 * @param int|null $lineIndex
-	 * @return Element[]|Element
-	 */
-	public function getLines(int $lineIndex = null)
-	{
-		$lines = [];
-		foreach ($this->getChildren() as $child) {
-			if ($child->isLine()) {
-				$lines[] = $child;
-			}
-		}
-		if ($lineIndex !== null) {
-			return $lines[$lineIndex];
-		}
-		return $lines;
-	}
-
-	/**
 	 * Get element internal unique id
 	 * @return string
 	 */
@@ -371,9 +294,7 @@ class Element extends \YetiForcePDF\Base
 	 */
 	public function addChild(\YetiForcePDF\Html\Element $child): \YetiForcePDF\Html\Element
 	{
-		if (!in_array($child, $this->children)) {
-			$this->children[] = $child;
-		}
+		$this->children[] = $child;
 		return $this;
 	}
 
@@ -384,6 +305,15 @@ class Element extends \YetiForcePDF\Base
 	public function getChildren(): array
 	{
 		return $this->children;
+	}
+
+	/**
+	 * Do element have children?
+	 * @return bool
+	 */
+	public function hasChildren()
+	{
+		return count($this->children) > 0;
 	}
 
 	/**
@@ -407,50 +337,6 @@ class Element extends \YetiForcePDF\Base
 	public function getDomDocument()
 	{
 		return $this->getDOMElement()->ownerDocument;
-	}
-
-	/**
-	 * Wrap elements
-	 * @param Element[] $elements
-	 * @return \YetiForcePDF\Html\Element
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	public function wrapElements(array $elements)
-	{
-		if (empty($elements)) {
-			return false;
-		}
-		foreach ($elements as $element) {
-			if (!in_array($element, $this->children)) {
-				throw new \InvalidArgumentException('Only children elements could be wrapped.');
-			}
-		}
-		$previous = $elements[0]->getPrevious();
-		$next = $elements[count($elements) - 1]->getNext();
-		$domDocument = $this->getDomDocument();
-		$domElement = $domDocument->createElement('div');
-		if ($next) {
-			$this->getDOMElement()->insertBefore($domElement, $next->getDOMElement());
-		} else {
-			$this->getDOMElement()->appendChild($domElement);
-		}
-		foreach ($elements as $element) {
-			$domElement->appendChild($this->getDOMElement()->removeChild($element->getDOMElement()));
-		}
-		$wrapper = (new Element())
-			->setDocument($this->document)
-			->setParent($this)
-			->setElement($domElement);
-		if ($previous) {
-			$wrapper->setPrevious($previous);
-		}
-		if ($next) {
-			$wrapper->setNext($next);
-		}
-		$wrapper->init();
-		$wrapper->getStyle()->initDimensions()->initCoordinates()->calculateWidths();
-		return $wrapper;
 	}
 
 	/**

@@ -114,22 +114,4 @@ class Offset extends \YetiForcePDF\Base
 		return $this->style;
 	}
 
-	/**
-	 * Calculate element offsets
-	 * @return $this
-	 */
-	public function calculate()
-	{
-		$element = $this->style->getElement();
-		$rules = $this->style->getRules();
-		if ($element->isRoot()) {
-			$this->left = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlX();
-			$this->top = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlY();
-		} else {
-			foreach($this->style->getLayout()->getLines() as $line){
-
-			}
-		}
-		return $this;
-	}
 }
