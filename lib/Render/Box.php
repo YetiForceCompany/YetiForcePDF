@@ -176,6 +176,15 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Reflow elements and create render tree
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		return $this;
+	}
+
+	/**
 	 * Filter text
 	 * Filter the text, this is applied to all text just before being inserted into the pdf document
 	 * it escapes the various things that need to be escaped, and so on
@@ -289,22 +298,24 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function getInstructions(): string
 	{
-		$font = $this->style->getFont();
+		$style = $this->getStyle();
+		$font = $style->getFont();
 		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
-		$coordinates = $this->style->getCoordinates();
-		$pdfX = $coordinates->getAbsolutePdfX();
-		$pdfY = $coordinates->getAbsolutePdfY();
-		$htmlX = $coordinates->getAbsoluteHtmlX();
-		$htmlY = $coordinates->getAbsoluteHtmlY();
-		$dimensions = $this->style->getDimensions();
+		$coordinates = $this->getCoordinates();
+		$pdfX = $coordinates->getPdfX();
+		$pdfY = $coordinates->getPdfY();
+		$htmlX = $coordinates->getX();
+		$htmlY = $coordinates->getY();
+		$dimensions = $this->getDimensions();
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
-		$textWidth = $this->style->getFont()->getTextWidth($this->getDOMElement()->textContent);
-		$textHeight = $this->style->getFont()->getTextHeight();
-		$baseLine = $this->style->getFont()->getDescender();
+		$element = $this->getElement();
+		$textWidth = $style->getFont()->getTextWidth($element->getDOMElement()->textContent);
+		$textHeight = $style->getFont()->getTextHeight();
+		$baseLine = $style->getFont()->getDescender();
 		$baseLineY = $pdfY - $baseLine;
-		if ($this->isTextNode()) {
-			$textContent = '(' . $this->filterText($this->getDOMElement()->textContent) . ')';
+		if ($this->getElement()->isTextNode()) {
+			$textContent = '(' . $this->filterText($element->getDOMElement()->textContent) . ')';
 			$element = [
 				'q',
 				"1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",

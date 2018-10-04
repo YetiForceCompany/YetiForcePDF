@@ -67,6 +67,24 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get html X
+	 * @return float
+	 */
+	public function getX()
+	{
+		return $this->htmlX;
+	}
+
+	/**
+	 * Get html Y
+	 * @return float
+	 */
+	public function getY()
+	{
+		return $this->htmlY;
+	}
+
+	/**
 	 * Set absolute html coordinates y position
 	 * @param float $y
 	 * @return \YetiForcePDF\Render\Coordinates
@@ -81,7 +99,7 @@ class Coordinates extends \YetiForcePDF\Base
 	/**
 	 * Get pdf X coodrinates
 	 */
-	protected function getPdfX()
+	public function getPdfX()
 	{
 		return $this->htmlX;
 	}
@@ -89,7 +107,7 @@ class Coordinates extends \YetiForcePDF\Base
 	/**
 	 * Convert html to pdf y
 	 */
-	protected function getPdfY()
+	public function getPdfY()
 	{
 		$height = $this->box->getDimensions()->getHeight();
 		$page = $this->document->getCurrentPage();

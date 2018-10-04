@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 use YetiForcePDF\Html\Element;
+use YetiForcePDF\Render\Dimensions\BoxDimensions;
+use YetiForcePDF\Render\Coordinates\Coordinates;
 
 /**
  * Class Page
@@ -468,25 +470,17 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if ($this->orientation === 'L') {
 			$dimensions = array_reverse($dimensions);
 		}
-		if (!$this->dimensions) {
-			$this->dimensions = (new \YetiForcePDF\Render\Dimensions\BoxDimensions())
-				->setDocument($this->document)
-				->init();
-		}
+		$this->dimensions = (new BoxDimensions())
+			->setDocument($this->document)
+			->init();
 		$this->dimensions->setWidth($dimensions[0])
 			->setHeight($dimensions[1])
 			->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
 			->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
-		if (!$this->coordinates) {
-			$this->coordinates = (new \YetiForcePDF\Render\Coordinates\Coordinates())
-				->setDocument($this->document)
-				->init();
-		}
-		$this->coordinates->setAbsoluteHtmlX($this->margins['left'])
-			->setAbsolutePdfX($this->margins['left'])
-			->setAbsoluteHtmlY($this->margins['top'])
-			->setAbsolutePdfY($this->margins['top'])
+		$this->coordinates = (new Coordinates())
+			->setDocument($this->document)
 			->init();
+		$this->coordinates->setX($this->margins['left'])->setY($this->margins['top'])->init();
 		return $this;
 	}
 
