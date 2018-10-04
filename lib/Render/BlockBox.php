@@ -34,25 +34,6 @@ class BlockBox extends Box
 	protected $style;
 
 	/**
-	 * Append child box
-	 * @param Box $box
-	 * @return $this
-	 */
-	public function appendChild(Box $box)
-	{
-		$box->setParent($this);
-		$childrenCount = count($this->children);
-		if ($childrenCount > 0) {
-			$previous = $this->children[$childrenCount - 1];
-			$box->setPrevious($previous);
-			$previous->setNext($box);
-		}
-		$this->children[] = $box;
-		return $this;
-	}
-
-
-	/**
 	 * {@inheritdoc}
 	 */
 	public function init()
@@ -70,6 +51,24 @@ class BlockBox extends Box
 			->setDocument($this->document)
 			->setBox($this)
 			->init();
+		return $this;
+	}
+
+	/**
+	 * Append child box
+	 * @param Box $box
+	 * @return $this
+	 */
+	public function appendChild(Box $box)
+	{
+		$box->setParent($this);
+		$childrenCount = count($this->children);
+		if ($childrenCount > 0) {
+			$previous = $this->children[$childrenCount - 1];
+			$box->setPrevious($previous);
+			$previous->setNext($box);
+		}
+		$this->children[] = $box;
 		return $this;
 	}
 
