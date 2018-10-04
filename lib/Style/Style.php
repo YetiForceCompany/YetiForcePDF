@@ -196,6 +196,15 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get layout
+	 * @return \YetiForcePDF\Layout\Layout
+	 */
+	public function getLayout()
+	{
+		return $this->layout;
+	}
+
+	/**
 	 * Calculate element width (and children - recursive)
 	 * @return $this
 	 */
@@ -215,34 +224,6 @@ class Style extends \YetiForcePDF\Base
 		return $this;
 	}
 
-	/**
-	 * Arrange elements inside lines
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$currentChildren = [];
-		$currentWidth = 0;
-		foreach ($this->getChildren() as $child) {
-			$availableSpace = $this->getDimensions()->getAvailableSpace();
-			$childWidth = $child->getDimensions()->getWidth() + $child->getRules('margin-left') + $child->getRules('margin-right');
-			$break = $currentWidth + $childWidth > $availableSpace;
-			if ($child->getRules('display') === 'block' || $break) {
-				$this->layout->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
-				$currentChildren = [$child];
-				$currentWidth = 0;
-			} else {
-				// we can add one more element to current line
-				$currentChildren[] = $child->getElement();
-				$currentWidth += $childWidth;
-			}
-			$child->reflow();
-		}
-		// finish lines because there is no more children
-		$this->layout->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
-		return $this;
-	}
-
 	protected function calculateOffsets()
 	{
 		$this->getOffset()->calculate();
@@ -256,8 +237,13 @@ class Style extends \YetiForcePDF\Base
 		foreach ($this->getChildren() as $child) {
 			$child->calculateHeights();
 		}
+		$height = 0;
 		foreach ($this->layout->getLines() as $line) {
+			$height += $line->getInnerHeight();
+			if (isset($previous) && $previous->isOneBlock() && $line->isOneBlock()) {
 
+			}
+			$previous = $line;
 		}
 	}
 
@@ -274,7 +260,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function calculate()
 	{
-		$this->reflow();
+		$this->getLayout()->reflow();
 		$this->calculateWidths();
 		$this->calculateHeights();
 		$this->calculateOffsets();

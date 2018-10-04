@@ -60,9 +60,44 @@ class Layout extends \YetiForcePDF\Base
 		return $this;
 	}
 
-
-	public function getHeight()
+	/**
+	 * Get inner width
+	 * @return int
+	 */
+	public function getInnerWidth()
 	{
+		$width = 0;
+		foreach ($this->getLines() as $line) {
+			$width = max($width, $line->getInnerWidth());
+		}
+		return $width;
+	}
 
+	/**
+	 * Arrange elements inside lines
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		$currentChildren = [];
+		$currentWidth = 0;
+		foreach ($this->style->getChildren() as $child) {
+			$availableSpace = $this->style->getDimensions()->getAvailableSpace();
+			$childWidth = $child->getDimensions()->getWidth() + $child->getRules('margin-left') + $child->getRules('margin-right');
+			$break = $currentWidth + $childWidth > $availableSpace;
+			if ($child->getRules('display') === 'block' || $break) {
+				$this->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
+				$currentChildren = [$child];
+				$currentWidth = 0;
+			} else {
+				// we can add one more element to current line
+				$currentChildren[] = $child;
+				$currentWidth += $childWidth;
+			}
+			$child->getLayout()->reflow();
+		}
+		// finish lines because there is no more children
+		$this->appendLine((new Line())->setDocument($this->document)->setStyles($currentChildren)->init());
+		return $this;
 	}
 }

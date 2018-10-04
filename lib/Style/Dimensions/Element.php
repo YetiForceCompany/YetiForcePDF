@@ -141,10 +141,7 @@ class Element extends Dimensions
 		if ($parent) {
 			if ($parent->getDimensions() !== null) {
 				$parentDimensions = $parent->getDimensions();
-			} else {
-				//var_dump($element->getText() . ' doesnt have parent dimensions parent:' . $parent->getElement()->getText());
 			}
-			//var_dump($element->getText() . ': parent (' . $parent->getElement()->getText() . ($parent->getElement()->isTextNode() ? ' [text] ' : ' [html] ') . ') inner width:' . $parentDimensions->getInnerWidth() . ' pborder:' . $parentBorderWidth . ' ppadding:' . $parentPaddingWidth);
 		}
 		if ($rules['width'] !== 'auto') {
 			$this->setWidth($rules['width'] + $rules['border-left-width'] + $rules['border-right-width']);
@@ -153,36 +150,19 @@ class Element extends Dimensions
 		} else {
 			$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
 			$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
+			$marginWidth = $rules['margin-left'] + $rules['margin-right'];
 			if ($rules['display'] === 'block') {
-				$marginWidth = $rules['margin-left'] + $rules['margin-right'];
-				$this->setWidth($parentDimensions->getInnerWidth() - $marginWidth);
-				$innerWidth = $this->getWidth() - $paddingWidth - $borderWidth;
-				$this->setInnerWidth($innerWidth);
+				$this->setWidth($parentDimensions->getAvailableSpace() - $marginWidth);
+				$this->setInnerWidth($this->getWidth() - $paddingWidth - $borderWidth);
 			} else {
 				$width = 0;
 				foreach ($this->style->getChildren() as $child) {
-					$childRules = $child->getRules();
-					if ($child->getRules('display') !== 'block') {
-						$width += $child->getDimensions()->getWidth();
-						if (isset($previousChild)) {
-							$width += max($childRules['margin-left'], $previousChild->getRules('margin-right'));
-						}
-						//var_dump($childRules['display'] . ' w' . $width . ' ' . $child->getElement()->getText() . ($child->getElement()->isTextNode() ? ' text' : ' html'));
-					} else {
-						$width = $child->getDimensions()->getWidth();
-						break;
-					}
-					$previousChild = $child;
-				}
-				$width += $childRules['margin-right'];
-				if ($rules['display'] === 'inline') {
-					$paddingWidth = 0;
+					$width = max($width, $child->getLayout()->getInnerWidth());
 				}
 				$this->setWidth($width + $borderWidth + $paddingWidth);
 				$this->setInnerWidth($width);
 			}
 		}
-		//var_dump('w' . $this->getWidth() . ' ' . $this->style->getElement()->getText() . ' ' . $this->style->getRules('display') . ' ' . ($this->style->getElement()->isTextNode() ? 'text' : 'html'));
 		return $this;
 	}
 

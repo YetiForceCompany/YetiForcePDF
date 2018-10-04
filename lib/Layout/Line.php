@@ -55,7 +55,7 @@ class Line extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get inner width
+	 * Get inner width (children sum width with margins)
 	 * @return float
 	 */
 	public function getInnerWidth()
@@ -65,11 +65,22 @@ class Line extends \YetiForcePDF\Base
 		}
 		$width = 0;
 		foreach ($this->styles as $style) {
-			if ($style->getRules('display') !== 'block') {
-				$width += $style->getDimensions()->getWidth() + $style->getRules('margin-left') + $style->getRules('margin-right');
-			}
+			$style->getDimensions()->calculateWidth();
+			$width += $style->getDimensions()->getWidth() + $style->getRules('margin-left') + $style->getRules('margin-right');
 		}
 		return $width;
+	}
+
+	public function getInnerHeight()
+	{
+		if ($this->isOneBlock()) {
+			return $this->styles[0]->getDimensions()->getHeight();
+		}
+		$height = 0;
+		foreach ($this->styles as $style) {
+			$height += $style->getDimensions()->getHeight();
+		}
+		return $height;
 	}
 
 	/**

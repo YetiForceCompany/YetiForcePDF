@@ -126,8 +126,7 @@ class Offset extends \YetiForcePDF\Base
 			$this->left = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlX();
 			$this->top = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlY();
 		} else {
-			$parent = $this->style->getParent();
-			foreach($parent->getLines() as $line){
+			foreach($this->style->getLayout()->getLines() as $line){
 
 			}
 		}
