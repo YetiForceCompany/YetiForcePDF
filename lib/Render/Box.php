@@ -27,9 +27,21 @@ class Box extends \YetiForcePDF\Base
 {
 
 	/**
+	 * @var Box
+	 */
+	protected $parent;
+	/**
 	 * @var Box[]
 	 */
 	protected $children = [];
+	/**
+	 * @var Box
+	 */
+	protected $next;
+	/**
+	 * @var Box
+	 */
+	protected $previous;
 	/**
 	 * @var Element
 	 */
@@ -115,6 +127,66 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Set parent
+	 * @param \YetiForcePDF\Render\Box $parent
+	 * @return $this
+	 */
+	public function setParent(Box $parent)
+	{
+		$this->parent = $parent;
+		return $this;
+	}
+
+	/**
+	 * Get parent
+	 * @return \YetiForcePDF\Render\Box
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * Set next
+	 * @param \YetiForcePDF\Render\Box $next
+	 * @return $this
+	 */
+	public function setNext(Box $next)
+	{
+		$this->next = $next;
+		return $this;
+	}
+
+	/**
+	 * Get next
+	 * @return \YetiForcePDF\Render\Box
+	 */
+	public function getNext()
+	{
+		return $this->next;
+	}
+
+	/**
+	 * Set previous
+	 * @param \YetiForcePDF\Render\Box $previous
+	 * @return $this
+	 */
+	public function setPrevious(Box $previous)
+	{
+		$this->previous = $previous;
+		return $this;
+	}
+
+	/**
+	 * Get previous
+	 * @return \YetiForcePDF\Render\Box
+	 */
+	public function getPrevious()
+	{
+		return $this->previous;
+	}
+
+	/**
 	 * Append child box
 	 * @param Box $box
 	 * @return $this
@@ -176,11 +248,12 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Reflow elements and create render tree
+	 * Reflow elements and create render tree basing on dom tree
 	 * @return $this
 	 */
 	public function reflow()
 	{
+
 		return $this;
 	}
 
