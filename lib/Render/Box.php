@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * BoxDimensions class
+ * Box class
  *
  * @package   YetiForcePDF\Render
  *
@@ -21,7 +21,7 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 
 
 /**
- * Class BoxDimensions
+ * Class Box
  */
 class Box extends \YetiForcePDF\Base
 {
