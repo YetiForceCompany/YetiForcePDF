@@ -213,14 +213,11 @@ class Style extends \YetiForcePDF\Base
 		foreach ($this->getChildren() as $child) {
 			$child->calculateWidths();
 		}
-		$maxWidth = 0;
-		foreach ($this->layout->getLines() as $line) {
-			$maxWidth = max($maxWidth, $line->getInnerWidth());
-		}
-		$this->getDimensions()->setWidth($maxWidth);
+		$maxWidth = $this->getLayout()->getInnerWidth();
 		$padding = $this->rules['padding-left'] + $this->rules['padding-right'];
 		$border = $this->rules['border-left-width'] + $this->rules['border-right-width'];
-		$this->getDimensions()->setInnerWidth($maxWidth - $padding - $border);
+		$this->getDimensions()->setWidth($maxWidth + $padding + $border);
+		$this->getDimensions()->setInnerWidth($maxWidth);
 		return $this;
 	}
 
