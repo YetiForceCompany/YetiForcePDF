@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
+use \YetiForcePDF\Render\Box;
 
 /**
  * Class Parser
@@ -35,6 +36,10 @@ class Parser extends \YetiForcePDF\Base
 	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $rootElement;
+	/**
+	 * @var Box
+	 */
+	protected $box;
 
 	/**
 	 * Cleanup html
@@ -103,7 +108,10 @@ class Parser extends \YetiForcePDF\Base
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
 		$this->rootElement->init();
-		$this->rootElement->getStyle()->getLayout()->reflow();
+		$this->Render = (new Render())
+			->setDocument($this->document)
+			->setElement($this->rootElement)
+			->init();
 		foreach ($this->getAllElements($this->rootElement) as $element) {
 			$this->document->getCurrentPage()->getContentStream()->addRawContent($element->getInstructions());
 		}

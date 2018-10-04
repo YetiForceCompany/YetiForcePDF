@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Offset class
  *
- * @package   YetiForcePDF\Style\Coordinates
+ * @package   YetiForcePDF\Render\Coordinates
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Style\Coordinates;
+namespace YetiForcePDF\Render\Coordinates;
 
 /**
  * Class Offset

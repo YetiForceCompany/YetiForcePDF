@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
-use YetiForcePDF\Layout\Layout;
-use YetiForcePDF\Layout\LineBox;
+use YetiForcePDF\Render\Box;
 
 /**
  * Class Style
@@ -37,18 +36,6 @@ class Style extends \YetiForcePDF\Base
 	 * @var \YetiForcePDF\Objects\Font
 	 */
 	protected $font;
-	/**
-	 * @var \YetiForcePDF\Style\Coordinates\Coordinates
-	 */
-	protected $coordinates;
-	/**
-	 * @var \YetiForcePDF\Style\Dimensions\Element
-	 */
-	protected $dimensions;
-	/**
-	 * @var Layout
-	 */
-	protected $layout;
 	/**
 	 * Css properties that are iherited by default
 	 * @var array
@@ -180,37 +167,15 @@ class Style extends \YetiForcePDF\Base
 			->setFamily($this->rules['font-family'])
 			->setSize($this->rules['font-size'])
 			->init();
-		$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
+		$this->dimensions = (new \YetiForcePDF\Render\Dimensions\Element())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
-		$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
-			->setDocument($this->document)
-			->setStyle($this)
-			->init();
-		$this->layout = (new Layout())
+		$this->coordinates = (new \YetiForcePDF\Render\Coordinates\Coordinates())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
 		return $this;
-	}
-
-	/**
-	 * Get layout
-	 * @return \YetiForcePDF\Layout\Layout
-	 */
-	public function getLayout()
-	{
-		return $this->layout;
-	}
-
-	/**
-	 * Is this style a layout style?
-	 * @return bool
-	 */
-	public function isLayout()
-	{
-		return $this->hasChildren();
 	}
 
 	/**
@@ -336,15 +301,6 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get dimensions
-	 * @return \YetiForcePDF\Style\Dimensions\Element
-	 */
-	public function getDimensions()
-	{
-		return $this->dimensions;
-	}
-
-	/**
 	 * Get rules (or concrete rule if specified)
 	 * @param string|null $ruleName
 	 * @return array|mixed
@@ -355,24 +311,6 @@ class Style extends \YetiForcePDF\Base
 			return $this->rules[$ruleName];
 		}
 		return $this->rules;
-	}
-
-	/**
-	 * Get coordinates
-	 * @return \YetiForcePDF\Style\Coordinates\Coordinates
-	 */
-	public function getCoordinates(): \YetiForcePDF\Style\Coordinates\Coordinates
-	{
-		return $this->coordinates;
-	}
-
-	/**
-	 * Shorthand for offset
-	 * @return \YetiForcePDF\Style\Coordinates\Offset
-	 */
-	public function getOffset(): \YetiForcePDF\Style\Coordinates\Offset
-	{
-		return $this->getCoordinates()->getOffset();
 	}
 
 	/**

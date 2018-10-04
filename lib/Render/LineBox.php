@@ -1,24 +1,24 @@
 <?php
 declare(strict_types=1);
 /**
- * BlockBox class
+ * LineBox class
  *
- * @package   YetiForcePDF\Layout
+ * @package   YetiForcePDF\Render
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Layout;
+namespace YetiForcePDF\Render;
 
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 
 /**
- * Class BlockBox
+ * Class LineBox
  */
-class BlockBox extends Box
+class LineBox extends Box
 {
 
 }

@@ -68,11 +68,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $margins;
 	/**
 	 * Page dimensions
-	 * @var \YetiForcePDF\Style\Dimensions\Element
+	 * @var \YetiForcePDF\Render\Dimensions\Element
 	 */
 	protected $dimensions;
 	/**
-	 * @var \YetiForcePDF\Style\Coordinates\Coordinates
+	 * @var \YetiForcePDF\Render\Coordinates\Coordinates
 	 */
 	protected $coordinates;
 	/**
@@ -469,7 +469,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$dimensions = array_reverse($dimensions);
 		}
 		if (!$this->dimensions) {
-			$this->dimensions = (new \YetiForcePDF\Style\Dimensions\Element())
+			$this->dimensions = (new \YetiForcePDF\Render\Dimensions\Element())
 				->setDocument($this->document)
 				->init();
 		}
@@ -478,7 +478,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			->setInnerWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
 			->setInnerHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
 		if (!$this->coordinates) {
-			$this->coordinates = (new \YetiForcePDF\Style\Coordinates\Coordinates())
+			$this->coordinates = (new \YetiForcePDF\Render\Coordinates\Coordinates())
 				->setDocument($this->document)
 				->init();
 		}
@@ -533,7 +533,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Get page coordinates - content area basing on margins
-	 * @return \YetiForcePDF\Style\Coordinates\Coordinates
+	 * @return \YetiForcePDF\Render\Coordinates\Coordinates
 	 */
 	public function getCoordinates()
 	{
@@ -610,9 +610,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Get page dimensions
-	 * @return \YetiForcePDF\Style\Dimensions\Element
+	 * @return \YetiForcePDF\Render\Dimensions\Element
 	 */
-	public function getPageDimensions(): \YetiForcePDF\Style\Dimensions\Element
+	public function getPageDimensions(): \YetiForcePDF\Render\Dimensions\Element
 	{
 		return $this->dimensions;
 	}
