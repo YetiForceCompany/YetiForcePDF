@@ -20,9 +20,9 @@ use \YetiForcePDF\Style\Style;
 class Layout extends \YetiForcePDF\Base
 {
 	/**
-	 * @var LineBox[]
+	 * @var Box[]
 	 */
-	protected $lines = [];
+	protected $boxes = [];
 
 	/**
 	 * @var Style
@@ -31,21 +31,21 @@ class Layout extends \YetiForcePDF\Base
 
 	/**
 	 * Get lines
-	 * @return \YetiForcePDF\Layout\LineBox[]
+	 * @return \YetiForcePDF\Layout\Box[]
 	 */
-	public function getLines()
+	public function getBoxes()
 	{
-		return $this->lines;
+		return $this->boxes;
 	}
 
 	/**
 	 * Append line
-	 * @param \YetiForcePDF\Layout\LineBox $line
+	 * @param \YetiForcePDF\Layout\Box $box
 	 * @return $this
 	 */
-	public function appendBox(Box $line)
+	public function appendBox(Box $box)
 	{
-		$this->lines[] = $line;
+		$this->boxes[] = $box;
 		return $this;
 	}
 
@@ -61,40 +61,28 @@ class Layout extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get inner width - maximal width of line or 0 if there are no children (empty layout)
-	 * Layout is for elements with children
-	 * @return int
+	 * Get height
+	 * @return float
 	 */
-	public function getInnerWidth()
-	{
-		$width = 0;
-		foreach ($this->getLines() as $line) {
-			$width = max($width, $line->getInnerWidth());
-		}
-		return $width;
-	}
-
-	/**
-	 * Get inner width
-	 * @return int
-	 */
-	public function getInnerHeight()
+	public function getHeight()
 	{
 		$height = 0;
-		foreach ($this->getLines() as $line) {
-			$height += $line->getInnerHeight();
+		foreach ($this->getBoxes() as $box) {
+			$height += $box->getHeight();
 		}
 		return $height;
 	}
 
 	/**
-	 * Arrange elements inside lines
+	 * Arrange elements inside boxes
 	 * @return $this
 	 */
 	public function reflow()
 	{
-		$rules = $this->style->getRules();
-		if ($parent = $this->style->getParent()) {
+		$element = $this->style->getElement();
+		$style = $this->style;
+		$rules = $style->getRules();
+		if ($parent = $style->getParent()) {
 			$parentCoordinates = $parent->getCoordinates();
 			$parentDimensions = $parent->getDimensions();
 			$parentRules = $parent->getRules();
@@ -102,7 +90,14 @@ class Layout extends \YetiForcePDF\Base
 			$offsetTop = $parentRules['border-top-width'] + $parentRules['padding-top'];
 			$left = $parentCoordinates->getAbsoluteHtmlX() + $offsetLeft + $rules['margin-left'];
 			$top = $parentCoordinates->getAbsoluteHtmlY() + $offsetTop + $rules['margin-top'];
-			$width = $parentDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right'];
+			if ($element->isTextNode()) {
+				$width = $style->getDimensions()->getTextWidth();
+				$height = $style->getDimensions()->getTextHeight();
+			} else {
+				$width = $parentDimensions->getInnerWidth() - $rules['margin-left'] - $rules['margin-right'];
+			}
+			$parentLayout = $parent->getLayout();
+
 		} else {
 			// absolute coordinates and offsets from page margins
 			$offsetLeft = $this->document->getCurrentPage()->getCoordinates()->getAbsoluteHtmlX();
@@ -111,6 +106,10 @@ class Layout extends \YetiForcePDF\Base
 			$top = $offsetTop;
 			$width = $this->document->getCurrentPage()->getPageDimensions()->getInnerWidth();
 		}
+
+		$boxLeft = $left + $rules['border-left-width'] + $rules['padding-left'];
+		$boxTop = $top + $rules['border-top-width'] + $rules['padding-top'];
+
 		$offset = $this->style->getOffset();
 		$offset->setLeft($offsetLeft);
 		$offset->setTop($offsetTop);
@@ -120,6 +119,13 @@ class Layout extends \YetiForcePDF\Base
 		$coordinates->convertHtmlToPdf();
 		$dimensions = $this->style->getDimensions();
 		$dimensions->setWidth($width);
+		if ($element->isTextNode()) {
+			$dimensions->setInnerWidth($width);
+			$dimensions->setHeight($height);
+			$dimensions->setInnerHeight($height);
+			return $this;
+			// no more calculations are needed - text node doesn't have children
+		}
 		$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
 		$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
 		$dimensions->setInnerWidth($dimensions->getWidth() - $paddingWidth - $borderWidth);
@@ -128,9 +134,7 @@ class Layout extends \YetiForcePDF\Base
 		$lineChildren = [];
 		$lineChildrenWidth = 0;
 		$lineChildrenHeight = 0;
-		$lineLeft = $left + $rules['border-left-width'] + $rules['padding-left'];
-		$lineTop = $top + $rules['border-top-width'] + $rules['padding-top'];
-		$currentLeft = $lineLeft;
+		$currentLeft = $boxLeft;
 		$height = 0;
 		foreach ($this->style->getChildren() as $child) {
 			$childRules = $child->getRules();
@@ -141,29 +145,50 @@ class Layout extends \YetiForcePDF\Base
 						->setStyles($lineChildren)
 						->setChildrenWidth($lineChildrenWidth)
 						->setChildrenHeight($lineChildrenHeight)
-						->setLeftPosition($lineLeft)
-						->setTopPosition($lineTop)
+						->setLeftPosition($boxLeft)
+						->setTopPosition($boxTop)
 						->init();
-					$this->appendLine($line);
-					$lineTop += $lineChildrenHeight;
+					$this->appendBox($line);
+					$boxTop += $lineChildrenHeight;
 					$lineChildren = [];
 					$lineChildrenWidth = 0;
 					$lineChildrenHeight = 0;
-					$currentLeft = $lineLeft;
+					$currentLeft = $boxLeft;
 				}
-				$this->appendBlock($child);
 				$child->getLayout()->reflow();
+				$childHeight = $child->getLayout()->getHeight();
+				$height += $childHeight;
+				$blockBox = (new BlockBox())->setDocument($this->document)->setStyles([$child])
+					->setChildrenWidth($dimensions->getInnerWidth())
+					->setChildrenHeight($childHeight)
+					->setLeftPosition($boxLeft)
+					->setTopPosition($boxTop)
+					->init();
+				$this->appendBox($blockBox);
+				$boxTop += $childHeight;
 				continue;
 			}
 			// calculate child position and dimension
 			$childDimensions = $child->getDimensions();
 			$childCoordinates = $child->getCoordinates();
 			$childOffset = $child->getOffset();
-
+			$child->getLayout()->reflow();
+			$lineChildren[] = $child;
+		}
+		// add collected boxes inside line
+		if (!empty($lineChildren)) {
+			$line = (new LineBox())->setDocument($this->document)
+				->setStyles($lineChildren)
+				->setChildrenWidth($lineChildrenWidth)
+				->setChildrenHeight($lineChildrenHeight)
+				->setLeftPosition($boxLeft)
+				->setTopPosition($boxTop)
+				->init();
+			$this->appendBox($line);
 		}
 		$paddingHeight = $rules['padding-top'] + $rules['padding-bottom'];
 		$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
-		if ($rules['height'] !== 'auto') {
+		if ($rules['height'] !== 'auto' && $rules['display'] !== 'inline') {
 			$dimensions->setInnerHeight($rules['height']);
 			$dimensions->setHeight($rules['height'] + $paddingHeight + $borderHeight);
 		} else {

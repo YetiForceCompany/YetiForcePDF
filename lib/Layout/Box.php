@@ -65,6 +65,15 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get height
+	 * @return float
+	 */
+	public function getHeight()
+	{
+		return $this->childrenHeight;
+	}
+
+	/**
 	 * Set left position
 	 * @param float $left
 	 * @return $this

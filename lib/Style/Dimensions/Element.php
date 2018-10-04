@@ -100,30 +100,24 @@ class Element extends Dimensions
 
 	/**
 	 * Calculate text dimensions
-	 * @return $this
+	 * @return float
 	 */
 	public function getTextWidth()
 	{
 		$text = $this->style->getElement()->getDOMElement()->textContent;
 		$font = $this->style->getFont();
-		$width = $font->getTextWidth($text);
-		$this->setWidth($width);
-		$this->setInnerWidth($width);
-		return $this;
+		return $font->getTextWidth($text);
 	}
 
 	/**
 	 * Calculate text dimensions
-	 * @return $this
+	 * @return float
 	 */
 	public function getTextHeight()
 	{
 		$text = $this->style->getElement()->getDOMElement()->textContent;
 		$font = $this->style->getFont();
-		$height = $font->getTextHeight($text);
-		$this->setHeight($height);
-		$this->setInnerHeight($height);
-		return $this;
+		return $font->getTextHeight($text);
 	}
 
 }
