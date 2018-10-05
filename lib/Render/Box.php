@@ -348,15 +348,26 @@ class Box extends \YetiForcePDF\Base
 			$style = $this->getStyle();
 			$dimensions->setWidth($style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth());
 			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
+		} elseif (!$this->getElement()->hasChildren() && $this->getStyle()->getRules('display') === 'block') {
+			$style = $this->getStyle();
+			$dimensions->setWidth($this->getParentWidth());
+			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
 		} elseif ($this->getStyle()->getRules('display') === 'block') {
 			$dimensions->setWidth($this->getParentWidth());
 			// but if element has specified width other than auto take it
 			$this->takeStyleDimensions();
 			// we can't measure height right now because it depends on child elements heights
-		} else {
-			// now we can measure children widths and some heights
-			foreach ($this->getChildren() as $boxChildren) {
-				$boxChildren->measurePhaseOne();
+		}
+		// now we can measure children widths and some heights
+		$width = 0;
+		foreach ($this->getChildren() as $boxChildren) {
+			$boxChildren->measurePhaseOne();
+			$width += $boxChildren->getDimensions()->getOuterWidth();
+		}
+		if ($this->getStyle()->getRules('display') !== 'block') {
+			$dimensions->setWidth($width);
+			if ($this->getStyle()->getRules('display') !== 'inline') {
+				$this->takeStyleDimensions();
 			}
 		}
 		return $this;
