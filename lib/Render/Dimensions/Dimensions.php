@@ -22,9 +22,10 @@ class Dimensions extends \YetiForcePDF\Base
 	 */
 	protected $width = 0;
 	/**
-	 * @var float
+	 * Height initially must be null to figure out it was calculated already or not
+	 * @var float|null
 	 */
-	protected $height = 0;
+	protected $height;
 
 	/**
 	 * Get width

@@ -18,14 +18,5 @@ namespace YetiForcePDF\Render;
 class InlineBox extends BlockBox
 {
 
-	/**
-	 * Reflow
-	 * @return $this
-	 */
-	public function reflow()
-	{
-
-		return $this;
-	}
 
 }

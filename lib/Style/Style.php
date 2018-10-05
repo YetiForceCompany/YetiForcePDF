@@ -321,6 +321,42 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get horizontal borders width
+	 * @return float
+	 */
+	public function getHorizontalBordersWidth()
+	{
+		return $this->rules['border-left-width'] + $this->rules['border-right-width'];
+	}
+
+	/**
+	 * Get vertical borders width
+	 * @return float
+	 */
+	public function getVerticalBordersWidth()
+	{
+		return $this->rules['border-top-width'] + $this->rules['border-bottom-width'];
+	}
+
+	/**
+	 * Get horizontal paddings width
+	 * @return float
+	 */
+	public function getHorizontalPaddingsWidth()
+	{
+		return $this->rules['padding-left'] + $this->rules['padding-right'];
+	}
+
+	/**
+	 * Get vertical paddings width
+	 * @return float
+	 */
+	public function getVerticalPaddingsWidth()
+	{
+		return $this->rules['padding-top'] + $this->rules['padding-bottom'];
+	}
+
+	/**
 	 * Get current style font
 	 * @return \YetiForcePDF\Objects\Font
 	 */

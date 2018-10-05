@@ -55,24 +55,6 @@ class BlockBox extends Box
 	}
 
 	/**
-	 * Append child box
-	 * @param Box $box
-	 * @return $this
-	 */
-	public function appendChild(Box $box)
-	{
-		$box->setParent($this);
-		$childrenCount = count($this->children);
-		if ($childrenCount > 0) {
-			$previous = $this->children[$childrenCount - 1];
-			$box->setPrevious($previous);
-			$previous->setNext($box);
-		}
-		$this->children[] = $box;
-		return $this;
-	}
-
-	/**
 	 * Get element
 	 * @return Element
 	 */
@@ -102,90 +84,6 @@ class BlockBox extends Box
 		return $this->style;
 	}
 
-	/**
-	 * Get new line box
-	 * @return \YetiForcePDF\Render\LineBox
-	 */
-	public function getNewLineBox()
-	{
-		$newLineBox = (new LineBox())->setDocument($this->document)->init();
-		$newLineBox->getDimensions()->setWidth($this->getDimensions()->getInnerWidth());
-		return $newLineBox;
-	}
-
-	/**
-	 * Close line box
-	 * @param \YetiForcePDF\Render\LineBox|null $lineBox
-	 * @param bool                              $createNew
-	 * @return \YetiForcePDF\Render\LineBox
-	 */
-	protected function closeLine(LineBox $lineBox, bool $createNew = true)
-	{
-		$this->appendChild($lineBox);
-		if ($createNew) {
-			return $this->getNewLineBox();
-		}
-		return null;
-	}
-
-	/**
-	 * Reflow elements and create render tree basing on dom tree
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$dimensions = $this->getDimensions();
-		// first of all calculate width of the current box
-		if ($parent = $this->getParent()) {
-			if ($parent instanceof BlockBox) {
-				// in block box we take full available space
-				$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
-			}
-			// if we are inside line box we must reflow all childrens to get cumulated children width
-		} else {
-			// get page dimensions
-			$pageDimensions = $this->document->getCurrentPage()->getPageDimensions();
-			$dimensions->setWidth($pageDimensions->getWidth());
-		}
-		$lineBox = null;
-		foreach ($this->getElement()->getChildren() as $childElement) {
-			// make render box from the dom element
-			if ($childElement->getStyle()->getRules('display') === 'block') {
-				if ($lineBox !== null) { // faster than count()
-					// finish line and add to current children boxes as line box
-					$this->closeLine($lineBox, false);
-				}
-				$box = (new BlockBox())
-					->setDocument($this->document)
-					->setElement($childElement)
-					->init();
-				$this->appendChild($box);
-				$box->reflow();
-				continue;
-			}
-			// inline boxes
-			$box = (new InlineBox())
-				->setDocument($this->document)
-				->setElement($childElement)
-				->init();
-			$this->appendChild($box);
-			$box->reflow();
-			$lineBox = $this->getNewLineBox();
-			if ($lineBox->willFit($box)) {
-				$lineBox->appendChild($box);
-				$box->reflow();
-			} else {
-				$lineBox = $this->closeLine($lineBox);
-				$lineBox->appendChild($box);
-				$box->reflow();
-			}
-		}
-		if ($lineBox !== null) {
-			$this->closeLine($lineBox, false);
-		}
-		$this->getDimensions()->calculate();
-		return $this;
-	}
 
 	/**
 	 * Filter text
