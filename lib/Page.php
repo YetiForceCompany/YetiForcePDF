@@ -483,8 +483,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->outerDimensions = (new Dimensions())
 			->setDocument($this->document)
 			->init();
-		$this->outerDimensions->setWidth($dimensions[0])
-			->setHeight($dimensions[1]);
+		$this->outerDimensions->setWidth($dimensions[0])->setHeight($dimensions[1]);
 		$this->coordinates = (new Coordinates())
 			->setDocument($this->document)
 			->init();

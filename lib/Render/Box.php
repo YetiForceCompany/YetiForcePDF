@@ -596,6 +596,9 @@ class Box extends \YetiForcePDF\Base
 					if (!$this instanceof LineBox) {
 						$top += $this->getStyle()->getRules('margin-top');
 					}
+				} else {
+					$parentRules = $parent->getStyle()->getRules();
+					$top += $parentRules['border-top-width'] + $parentRules['padding-top'];
 				}
 			}
 			return $top;
