@@ -283,6 +283,34 @@ class Box extends \YetiForcePDF\Base
 	protected function getParentWidth()
 	{
 		if ($parent = $this->getParent()) {
+			return $parent->getDimensions()->getWidth();
+		} else {
+			// if there is no parent - root element get width from page width - margins
+			return $this->document->getCurrentPage()->getPageDimensions()->getWidth();
+		}
+	}
+
+	/**
+	 * Get parent height shorthand
+	 * @return float
+	 */
+	protected function getParentHeight()
+	{
+		if ($parent = $this->getParent()) {
+			return $parent->getDimensions()->getHeight();
+		} else {
+			// if there is no parent - root element get width from page width - margins
+			return $this->document->getCurrentPage()->getPageDimensions()->getHeight();
+		}
+	}
+
+	/**
+	 * Get parent inner width shorthand
+	 * @return float
+	 */
+	protected function getParentInnerWidth()
+	{
+		if ($parent = $this->getParent()) {
 			return $parent->getDimensions()->getInnerWidth();
 		} else {
 			// if there is no parent - root element get width from page width - margins
@@ -318,7 +346,7 @@ class Box extends \YetiForcePDF\Base
 					$percentPos = strpos($height, '%');
 					if ($percentPos !== false) {
 						$heightInPercent = substr($height, 0, $percentPos);
-						$parentHeight = $this->getParentWidth();
+						$parentHeight = $this->getParentHeight();
 						if ($parentHeight) {
 							$height = $parentHeight / 100 * $heightInPercent;
 							$dimensions->setHeight($height);
@@ -348,23 +376,20 @@ class Box extends \YetiForcePDF\Base
 			$style = $this->getStyle();
 			$dimensions->setWidth($style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth());
 			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
-		} elseif (!$this->getElement()->hasChildren() && $this->getStyle()->getRules('display') === 'block') {
-			$style = $this->getStyle();
-			$dimensions->setWidth($this->getParentWidth());
-			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
 		} elseif ($this->getStyle()->getRules('display') === 'block') {
-			$dimensions->setWidth($this->getParentWidth());
+			$dimensions->setWidth($this->getParentInnerWidth());
 			// but if element has specified width other than auto take it
 			$this->takeStyleDimensions();
 			// we can't measure height right now because it depends on child elements heights
 		}
 		// now we can measure children widths and some heights
+		// this box might be inline / inline block box so we can measure width of its children
 		$width = 0;
 		foreach ($this->getChildren() as $boxChildren) {
 			$boxChildren->measurePhaseOne();
 			$width += $boxChildren->getDimensions()->getOuterWidth();
 		}
-		if ($this->getStyle()->getRules('display') !== 'block') {
+		if ($this->getDimensions()->getWidth() === null) {
 			$dimensions->setWidth($width);
 			if ($this->getStyle()->getRules('display') !== 'inline') {
 				$this->takeStyleDimensions();

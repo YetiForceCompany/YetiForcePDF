@@ -20,7 +20,7 @@ class Dimensions extends \YetiForcePDF\Base
 	/**
 	 * @var float
 	 */
-	protected $width = 0;
+	protected $width;
 	/**
 	 * Height initially must be null to figure out it was calculated already or not
 	 * @var float|null
@@ -31,7 +31,7 @@ class Dimensions extends \YetiForcePDF\Base
 	 * Get width
 	 * @return float
 	 */
-	public function getWidth(): float
+	public function getWidth()
 	{
 		return $this->width;
 	}
