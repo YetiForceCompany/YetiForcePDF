@@ -121,5 +121,4 @@ class Parser extends \YetiForcePDF\Base
 			}
 		}
 	}
-
 }

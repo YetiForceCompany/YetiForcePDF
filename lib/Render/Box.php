@@ -526,8 +526,13 @@ class Box extends \YetiForcePDF\Base
 	public function measurePhaseTwo()
 	{
 		if ($this instanceof LineBox) {
+			$height = 0;
 			foreach ($this->getChildren() as $child) {
-				$child->measurePhaseTwo();
+				$child->measureBoxPhaseTwo();
+				$height = max($height, $child->getDimensions()->getOuterHeight());
+			}
+			if ($this->getDimensions()->getHeight() === null) {
+				$this->getDimensions()->setHeight($height);
 			}
 		} else {
 			$this->measureBoxPhaseTwo();
@@ -542,15 +547,22 @@ class Box extends \YetiForcePDF\Base
 	protected function getParentOffsetTop()
 	{
 		if ($parent = $this->getParent()) {
-			if (!$parent instanceof LineBox) {
-				$rules = $parent->getStyle()->getRules();
-				$top = $rules['padding-top'] + $rules['border-top-width'];
-				if (!$this instanceof LineBox) {
-					$top += $this->getStyle()->getRules('margin-top');
+			$top = 0;
+			if ($parent instanceof LineBox) {
+				$top = $this->getStyle()->getRules('margin-top');
+			} else {
+				if ($previous = $this->getPrevious()) {
+					$top = $previous->getOffset()->getTop();
+					$top += $previous->getDimensions()->getHeight();
+					if (!$previous instanceof LineBox) {
+						$top += $previous->getStyle()->getRules('margin-bottom');
+					}
+					if (!$this instanceof LineBox) {
+						$top += $this->getStyle()->getRules('margin-top');
+					}
 				}
-				return $top;
 			}
-			return 0;
+			return $top;
 		}
 		return $this->document->getCurrentPage()->getCoordinates()->getY();
 	}
@@ -562,15 +574,22 @@ class Box extends \YetiForcePDF\Base
 	protected function getParentOffsetLeft()
 	{
 		if ($parent = $this->getParent()) {
-			if (!$parent instanceof LineBox) {
-				$rules = $parent->getStyle()->getRules();
-				$top = $rules['padding-left'] + $rules['border-left-width'];
-				if (!$this instanceof LineBox) {
-					$top += $this->getStyle()->getRules('margin-left');
+			$left = 0;
+			if ($parent instanceof LineBox) {
+				if ($previous = $this->getPrevious()) {
+					$left += $previous->getOffset()->getLeft();
+					$left += $previous->getDimensions()->getWidth();
+					$left += $previous->getStyle()->getRules('margin-right');
+					$left += $this->getStyle()->getRules('margin-left');
 				}
-				return $top;
+			} else {
+				$rules = $parent->getStyle()->getRules();
+				$left = $rules['padding-left'] + $rules['border-left-width'];
+				if (!$this instanceof LineBox) {
+					$left += $this->getStyle()->getRules('margin-left');
+				}
 			}
-			return 0;
+			return $left;
 		}
 		return $this->document->getCurrentPage()->getCoordinates()->getX();
 	}
@@ -605,7 +624,7 @@ class Box extends \YetiForcePDF\Base
 		$coordinates = $this->getCoordinates();
 		$offset = $this->getOffset();
 		$coordinates->setX($x + $offset->getLeft());
-		$coordinates->setY($y + $offset->getLeft());
+		$coordinates->setY($y + $offset->getTop());
 		foreach ($this->getChildren() as $child) {
 			$child->measureCoordinates();
 		}

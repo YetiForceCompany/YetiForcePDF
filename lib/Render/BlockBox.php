@@ -211,12 +211,12 @@ class BlockBox extends Box
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
 		$element = $this->getElement();
-		$textWidth = $style->getFont()->getTextWidth($element->getDOMElement()->textContent);
+		$textWidth = $style->getFont()->getTextWidth($element->getText());
 		$textHeight = $style->getFont()->getTextHeight();
 		$baseLine = $style->getFont()->getDescender();
 		$baseLineY = $pdfY - $baseLine;
 		if ($this->getElement()->isTextNode()) {
-			$textContent = '(' . $this->filterText($element->getDOMElement()->textContent) . ')';
+			$textContent = '(' . $this->filterText($element->getText()) . ')';
 			$element = [
 				'q',
 				"1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
