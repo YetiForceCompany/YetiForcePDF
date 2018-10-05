@@ -74,6 +74,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dimensions;
 	/**
+	 * Page outer dimensions
+	 * @var \YetiForcePDF\Render\Dimensions\BoxDimensions
+	 */
+	protected $outerDimensions;
+	/**
 	 * @var \YetiForcePDF\Render\Coordinates\Coordinates
 	 */
 	protected $coordinates;
@@ -475,6 +480,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			->init();
 		$this->dimensions->setWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
 			->setHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
+		$this->outerDimensions = (new Dimensions())
+			->setDocument($this->document)
+			->init();
+		$this->outerDimensions->setWidth($dimensions[0])
+			->setHeight($dimensions[1]);
 		$this->coordinates = (new Coordinates())
 			->setDocument($this->document)
 			->init();
@@ -604,9 +614,18 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * Get page dimensions
 	 * @return \YetiForcePDF\Render\Dimensions\Dimensions
 	 */
-	public function getPageDimensions(): \YetiForcePDF\Render\Dimensions\Dimensions
+	public function getDimensions(): \YetiForcePDF\Render\Dimensions\Dimensions
 	{
 		return $this->dimensions;
+	}
+
+	/**
+	 * Get page dimensions
+	 * @return \YetiForcePDF\Render\Dimensions\Dimensions
+	 */
+	public function getOuterDimensions(): \YetiForcePDF\Render\Dimensions\Dimensions
+	{
+		return $this->outerDimensions;
 	}
 
 	/**
@@ -643,7 +662,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function render(): string
 	{
-		$dimensions = $this->getPageDimensions();
+		$dimensions = $this->getDimensions();
 		return implode("\n", [
 			$this->getRawId() . " obj",
 			'<<',

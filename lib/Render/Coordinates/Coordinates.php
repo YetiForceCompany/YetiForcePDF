@@ -58,9 +58,9 @@ class Coordinates extends \YetiForcePDF\Base
 	/**
 	 * Set absolute html coordinates x position
 	 * @param float $x
-	 * @return \YetiForcePDF\Render\Coordinates
+	 * @return $this
 	 */
-	public function setX(float $x): Coordinates
+	public function setX(float $x)
 	{
 		$this->htmlX = $x;
 		return $this;
@@ -87,9 +87,9 @@ class Coordinates extends \YetiForcePDF\Base
 	/**
 	 * Set absolute html coordinates y position
 	 * @param float $y
-	 * @return \YetiForcePDF\Render\Coordinates
+	 * @return $this
 	 */
-	public function setY(float $y): Coordinates
+	public function setY(float $y)
 	{
 		$this->htmlY = $y;
 		return $this;
@@ -111,7 +111,7 @@ class Coordinates extends \YetiForcePDF\Base
 	{
 		$height = $this->box->getDimensions()->getHeight();
 		$page = $this->document->getCurrentPage();
-		return $page->getPageDimensions()->getHeight() - $this->htmlY - $height;
+		return $page->getOuterDimensions()->getHeight() - $this->htmlY - $height;
 	}
 
 }

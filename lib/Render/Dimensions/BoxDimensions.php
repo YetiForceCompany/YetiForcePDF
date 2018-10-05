@@ -109,7 +109,7 @@ class BoxDimensions extends Dimensions
 	public function getAvailableSpace()
 	{
 		if ($this->box->getElement()->isRoot()) {
-			return $this->document->getCurrentPage()->getPageDimensions()->getInnerWidth();
+			return $this->document->getCurrentPage()->getDimensions()->getInnerWidth();
 		}
 		$style = $this->box->getStyle();
 		$paddingWidth = $style->getRules('padding-left') + $style->getRules('padding-right');

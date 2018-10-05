@@ -286,7 +286,7 @@ class Box extends \YetiForcePDF\Base
 			return $parent->getDimensions()->getWidth();
 		} else {
 			// if there is no parent - root element get width from page width - margins
-			return $this->document->getCurrentPage()->getPageDimensions()->getWidth();
+			return $this->document->getCurrentPage()->getDimensions()->getWidth();
 		}
 	}
 
@@ -300,7 +300,7 @@ class Box extends \YetiForcePDF\Base
 			return $parent->getDimensions()->getHeight();
 		} else {
 			// if there is no parent - root element get width from page width - margins
-			return $this->document->getCurrentPage()->getPageDimensions()->getHeight();
+			return $this->document->getCurrentPage()->getDimensions()->getHeight();
 		}
 	}
 
@@ -314,7 +314,7 @@ class Box extends \YetiForcePDF\Base
 			return $parent->getDimensions()->getInnerWidth();
 		} else {
 			// if there is no parent - root element get width from page width - margins
-			return $this->document->getCurrentPage()->getPageDimensions()->getWidth();
+			return $this->document->getCurrentPage()->getDimensions()->getWidth();
 		}
 	}
 
