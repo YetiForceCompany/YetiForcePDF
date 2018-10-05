@@ -38,9 +38,9 @@ class Dimensions extends \YetiForcePDF\Base
 
 	/**
 	 * Get height
-	 * @return float
+	 * @return float|null
 	 */
-	public function getHeight(): float
+	public function getHeight()
 	{
 		return $this->height;
 	}

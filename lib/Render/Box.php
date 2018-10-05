@@ -59,8 +59,9 @@ class Box extends \YetiForcePDF\Base
 	public function init()
 	{
 		parent::init();
-		$this->dimensions = (new Dimensions())
+		$this->dimensions = (new BoxDimensions())
 			->setDocument($this->document)
+			->setBox($this)
 			->init();
 		$this->coordinates = (new Coordinates())
 			->setDocument($this->document)
@@ -276,6 +277,62 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get parent width shorthand
+	 * @return float
+	 */
+	protected function getParentWidth()
+	{
+		if ($parent = $this->getParent()) {
+			return $parent->getDimensions()->getInnerWidth();
+		} else {
+			// if there is no parent - root element get width from page width - margins
+			return $this->document->getCurrentPage()->getPageDimensions()->getWidth();
+		}
+	}
+
+	/**
+	 * Take style specified dimensions instead of calculated one
+	 * @return $this
+	 */
+	protected function takeStyleDimensions()
+	{
+		if (!$this instanceof LineBox) {
+			if ($this->getStyle()->getRules('display') !== 'inline') {
+				$dimensions = $this->getDimensions();
+				$width = $this->getStyle()->getRules('width');
+				if ($width !== 'auto') {
+					$percentPos = strpos($width, '%');
+					if ($percentPos !== false) {
+						$widthInPercent = substr($width, 0, $percentPos);
+						$parentWidth = $this->getParentWidth();
+						if ($parentWidth) {
+							$width = $parentWidth / 100 * $widthInPercent;
+							$dimensions->setWidth($width);
+						}
+					} else {
+						$dimensions->setWidth($width);
+					}
+				}
+				$height = $this->getStyle()->getRules('height');
+				if ($height !== 'auto') {
+					$percentPos = strpos($height, '%');
+					if ($percentPos !== false) {
+						$heightInPercent = substr($height, 0, $percentPos);
+						$parentHeight = $this->getParentWidth();
+						if ($parentHeight) {
+							$height = $parentHeight / 100 * $heightInPercent;
+							$dimensions->setHeight($height);
+						}
+					} else {
+						$dimensions->setHeight($height);
+					}
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * Measure all children widths and some heights if we can
 	 * @return $this
 	 */
@@ -292,13 +349,9 @@ class Box extends \YetiForcePDF\Base
 			$dimensions->setWidth($style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth());
 			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
 		} elseif ($this->getStyle()->getRules('display') === 'block') {
-			if ($parent = $this->getParent()) {
-				// it is block element so we can take width from parent - border - padding
-				$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
-			} else {
-				// if there is no parent - root element get width from page width - margins
-				$dimensions->setWidth($this->document->getCurrentPage()->getPageDimensions()->getWidth());
-			}
+			$dimensions->setWidth($this->getParentWidth());
+			// but if element has specified width other than auto take it
+			$this->takeStyleDimensions();
 			// we can't measure height right now because it depends on child elements heights
 		} else {
 			// now we can measure children widths and some heights
@@ -446,6 +499,41 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Measure missing heights
+	 * @return $this
+	 */
+	public function measureBoxPhaseTwo()
+	{
+		$height = 0;
+		foreach ($this->getChildren() as $child) {
+			$child->measurePhaseTwo();
+			$height += $child->getDimensions()->getOuterHeight();
+		}
+		$dimensions = $this->getDimensions();
+		$style = $this->getStyle();
+		if ($dimensions->getHeight() === null) {
+			$dimensions->setHeight($height + $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
+		}
+		return $this;
+	}
+
+	/**
+	 * Measure phase two - measure missing heights
+	 * @return $this
+	 */
+	public function measurePhaseTwo()
+	{
+		if ($this instanceof LineBox) {
+			foreach ($this->getChildren() as $child) {
+				$child->measurePhaseTwo();
+			}
+		} else {
+			$this->measureBoxPhaseTwo();
+		}
+		return $this;
+	}
+
+	/**
 	 * Reflow elements and create render tree basing on dom tree
 	 * @return $this
 	 */
@@ -456,9 +544,15 @@ class Box extends \YetiForcePDF\Base
 		$this->segregate();
 		// we have all boxes created and segregated, now we can measure widths of this elements
 		$this->measurePhaseOne();
+		// we have all elements widths but not for percentage width in all elements - now we can calculate percent widths
+		$this->takeStyleDimensions();
 		// all boxes that can be measured were measured whoa!
 		// now we can split lineBoxes into more lines basing on its width and children widths
 		$this->splitLines();
+		// we have all elements in place, it's time to measure heights for those dependent on children heights
+		$this->measurePhaseTwo();
+		// after heights are calculated we can calculate percent heights
+		$this->takeStyleDimensions();
 		return $this;
 	}
 

@@ -77,8 +77,12 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getOuterWidth()
 	{
-		$rules = $this->getBox()->getStyle()->getRules();
-		return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
+		$box = $this->getBox();
+		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+			$rules = $this->getBox()->getStyle()->getRules();
+			return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
+		}
+		return $this->getWidth();
 	}
 
 	/**
@@ -87,8 +91,12 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getOuterHeight()
 	{
-		$rules = $this->getBox()->getStyle()->getRules();
-		return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
+		$box = $this->getBox();
+		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+			$rules = $this->getBox()->getStyle()->getRules();
+			return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
+		}
+		return $this->getHeight();
 	}
 
 	/**
