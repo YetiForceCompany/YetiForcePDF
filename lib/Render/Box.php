@@ -534,6 +534,83 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get offset from top relative to parent element
+	 * @return float
+	 */
+	protected function getParentOffsetTop()
+	{
+		if ($parent = $this->getParent()) {
+			if (!$parent instanceof LineBox) {
+				$rules = $parent->getStyle()->getRules();
+				$top = $rules['padding-top'] + $rules['border-top-width'];
+				if (!$this instanceof LineBox) {
+					$top += $this->getStyle()->getRules('margin-top');
+				}
+				return $top;
+			}
+			return 0;
+		}
+		return $this->document->getCurrentPage()->getCoordinates()->getY();
+	}
+
+	/**
+	 * Get offset from left relative to parent element
+	 * @return float
+	 */
+	protected function getParentOffsetLeft()
+	{
+		if ($parent = $this->getParent()) {
+			if (!$parent instanceof LineBox) {
+				$rules = $parent->getStyle()->getRules();
+				$top = $rules['padding-left'] + $rules['border-left-width'];
+				if (!$this instanceof LineBox) {
+					$top += $this->getStyle()->getRules('margin-left');
+				}
+				return $top;
+			}
+			return 0;
+		}
+		return $this->document->getCurrentPage()->getCoordinates()->getX();
+	}
+
+	/**
+	 * Measure relative offsets
+	 * @return $this
+	 */
+	public function measureOffsets()
+	{
+		$offset = $this->getOffset();
+		$offset->setTop($this->getParentOffsetTop());
+		$offset->setLeft($this->getParentOffsetLeft());
+		foreach ($this->getChildren() as $child) {
+			$child->measureOffsets();
+		}
+		return $this;
+	}
+
+	/**
+	 * Measure coordinates
+	 * @return $this
+	 */
+	public function measureCoordinates()
+	{
+		$x = 0;
+		$y = 0;
+		if ($parent = $this->getParent()) {
+			$x = $parent->getCoordinates()->getX();
+			$y = $parent->getCoordinates()->getY();
+		}
+		$coordinates = $this->getCoordinates();
+		$offset = $this->getOffset();
+		$coordinates->setX($x + $offset->getLeft());
+		$coordinates->setY($y + $offset->getLeft());
+		foreach ($this->getChildren() as $child) {
+			$child->measureCoordinates();
+		}
+		return $this;
+	}
+
+	/**
 	 * Reflow elements and create render tree basing on dom tree
 	 * @return $this
 	 */
@@ -553,6 +630,11 @@ class Box extends \YetiForcePDF\Base
 		$this->measurePhaseTwo();
 		// after heights are calculated we can calculate percent heights
 		$this->takeStyleDimensions();
+		// now measure relative offsets to the parent elements
+		$this->measureOffsets();
+		// and absolute coordinates inside document
+		$this->measureCoordinates();
+		// done!
 		return $this;
 	}
 
