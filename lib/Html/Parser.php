@@ -113,8 +113,12 @@ class Parser extends \YetiForcePDF\Base
 			->setElement($this->rootElement)
 			->init();
 		$this->box->reflow();
-		foreach ($this->box->getAllChildren() as $box) {
-			$this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
+		$children = [];
+		$this->box->getAllChildren($children);
+		foreach ($children as $box) {
+			if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+				$this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
+			}
 		}
 	}
 

@@ -228,10 +228,10 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get all children
-	 * @param array $allChildren
+	 * @param Box[] $allChildren
 	 * @return Box[]
 	 */
-	public function getAllChildren($allChildren = [])
+	public function getAllChildren(&$allChildren = [])
 	{
 		$allChildren[] = $this;
 		foreach ($this->getChildren() as $child) {
@@ -435,7 +435,9 @@ class Box extends \YetiForcePDF\Base
 				->setDocument($this->document)
 				->setElement($childElement)
 				->init();
-			$lineBox = $this->getNewLineBox();
+			if ($lineBox === null) {
+				$lineBox = $this->getNewLineBox();
+			}
 			$lineBox->appendChild($box);
 			$box->reflow();
 		}
