@@ -19,11 +19,11 @@ class LineBox extends Box
 {
 
 	/**
-	 * Append child box - line box can have only block boxes - not line boxes!
-	 * @param BlockBox $box
+	 * Append child box - line box can have only inline boxes - not line boxes!
+	 * @param InlineBox $box
 	 * @return $this
 	 */
-	public function appendChild(BlockBox $box)
+	public function appendChild(InlineBox $box)
 	{
 		$box->setParent($this);
 		$childrenCount = count($this->children);
@@ -38,10 +38,10 @@ class LineBox extends Box
 
 	/**
 	 * Will this box fit in line? (or need to create new one)
-	 * @param \YetiForcePDF\Render\BlockBox $box
+	 * @param \YetiForcePDF\Render\InlineBox $box
 	 * @return bool
 	 */
-	public function willFit(BlockBox $box)
+	public function willFit(InlineBox $box)
 	{
 		$availableSpace = $this->getDimensions()->getWidth() - $this->getChildrenWidth();
 		return $availableSpace >= $box->getDimensions()->getOuterWidth();

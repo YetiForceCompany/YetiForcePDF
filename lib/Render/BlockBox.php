@@ -150,19 +150,26 @@ class BlockBox extends Box
 		$lineBox = null;
 		foreach ($this->getElement()->getChildren() as $childElement) {
 			// make render box from the dom element
-			$box = (new BlockBox())
-				->setDocument($this->document)
-				->setElement($childElement)
-				->init();
 			if ($childElement->getStyle()->getRules('display') === 'block') {
 				if ($lineBox !== null) { // faster than count()
 					// finish line and add to current children boxes as line box
 					$this->closeLine($lineBox, false);
 				}
+				$box = (new BlockBox())
+					->setDocument($this->document)
+					->setElement($childElement)
+					->init();
 				$this->appendChild($box);
 				$box->reflow();
 				continue;
 			}
+			// inline boxes
+			$box = (new InlineBox())
+				->setDocument($this->document)
+				->setElement($childElement)
+				->init();
+			$this->appendChild($box);
+			$box->reflow();
 			$lineBox = $this->getNewLineBox();
 			if ($lineBox->willFit($box)) {
 				$lineBox->appendChild($box);
