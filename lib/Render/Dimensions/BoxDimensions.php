@@ -51,11 +51,12 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getInnerWidth(): float
 	{
-		$rules = $this->getBox()->getStyle()->getRules();
-		$borderWidth = $rules['border-left-width'] + $rules['border-right-width'];
-		$paddingWidth = $rules['padding-left'] + $rules['padding-right'];
-		return $this->getWidth() - $borderWidth - $paddingWidth;
-
+		$box = $this->getBox();
+		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+			$style = $box->getStyle();
+			return $this->getWidth() - $style->getHorizontalBordersWidth() - $style->getHorizontalPaddingsWidth();
+		}
+		return $this->getWidth();
 	}
 
 	/**
@@ -64,10 +65,12 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getInnerHeight(): float
 	{
-		$rules = $this->getBox()->getStyle()->getRules();
-		$borderHeight = $rules['border-top-width'] + $rules['border-bottom-width'];
-		$paddingHeight = $rules['padding-top'] + $rules['padding-bottom'];
-		return $this->getHeight() - $borderHeight - $paddingHeight;
+		$box = $this->getBox();
+		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+			$style = $box->getStyle();
+			return $this->getHeight() - $style->getVerticalBordersWidth() - $style->getVerticalPaddingsWidth();
+		}
+		return $this->getWidth();
 	}
 
 
