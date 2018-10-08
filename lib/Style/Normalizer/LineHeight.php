@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * MarginBottom class
+ * LineHeight class
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,20 +13,20 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class MarginBottom
+ * Class LineHeight
  */
-class MarginBottom extends Normalizer
+class LineHeight extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
 		if (is_string($ruleValue)) {
 			$matches = [];
 			preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1][0];
+			$originalSize = $this->style->getFont()->getSize() * (float)$matches[1][0];
 			$originalUnit = $matches[2][0];
-			return ['margin-bottom' => $this->document->convertUnits($originalUnit, $originalSize)];
+			return ['line-height' => $this->document->convertUnits($originalUnit, $originalSize)];
 		}
 		// value is already parsed
-		return ['margin-bottom' => $ruleValue];
+		return ['line-height' => $ruleValue];
 	}
 }

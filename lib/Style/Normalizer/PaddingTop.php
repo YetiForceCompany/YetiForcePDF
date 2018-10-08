@@ -19,11 +19,14 @@ class PaddingTop extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
-		$matches = [];
-		preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-		$originalSize = (float)$matches[1][0];
-		$originalUnit = $matches[2][0];
-		$normalized = ['padding-top' => $this->document->convertUnits($originalUnit, $originalSize)];
-		return $normalized;
+		if (is_string($ruleValue)) {
+			$matches = [];
+			preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
+			$originalSize = (float)$matches[1][0];
+			$originalUnit = $matches[2][0];
+			return ['padding-top' => $this->document->convertUnits($originalUnit, $originalSize)];
+		}
+		// value is already parsed
+		return ['padding-top' => $ruleValue];
 	}
 }

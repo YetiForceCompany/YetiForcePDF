@@ -83,6 +83,19 @@ class LineBox extends Box
 	}
 
 	/**
+	 * Get children height
+	 * @return float|int
+	 */
+	public function getChildrenHeight()
+	{
+		$height = 0;
+		foreach ($this->getChildren() as $childBox) {
+			$height += $childBox->getDimensions()->getOuterHeight();
+		}
+		return $height;
+	}
+
+	/**
 	 * Add border instructions
 	 * @param array $element
 	 * @param float $pdfX

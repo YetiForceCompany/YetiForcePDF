@@ -371,6 +371,10 @@ class Box extends \YetiForcePDF\Base
 					}
 				}
 			}
+		} else {
+			$style = $this->getStyle();
+			$rules = $style->getRules();
+			$this->getDimensions()->setHeight($rules['line-height']);
 		}
 		return $this;
 	}
@@ -571,7 +575,11 @@ class Box extends \YetiForcePDF\Base
 		$dimensions = $this->getDimensions();
 		$style = $this->getStyle();
 		if ($dimensions->getHeight() === null) {
-			$dimensions->setHeight($height + $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
+			if ($style->getRules('display') !== 'inline') {
+				$dimensions->setHeight($height + $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
+			} else {
+				$dimensions->setHeight($height + $style->getVerticalBordersWidth());
+			}
 		}
 		return $this;
 	}
@@ -606,7 +614,20 @@ class Box extends \YetiForcePDF\Base
 		if ($parent = $this->getParent()) {
 			$top = 0;
 			if ($parent instanceof LineBox) {
-				$top = $this->getStyle()->getRules('margin-top');
+				if ($this->getStyle()->getRules('display') !== 'inline') {
+					$top = $this->getStyle()->getRules('margin-top');
+				} else {
+					$verticalAlign = $this->getStyle()->getRules('vertical-align');
+					if ($verticalAlign === 'middle') {
+						$top = $parent->getDimensions()->getHeight() / 2 - $this->getDimensions()->getHeight() / 2;
+					} elseif ($verticalAlign === 'top') {
+						$top = 0;
+					} elseif ($verticalAlign === 'bottom') {
+						$top = $parent->getDimensions()->getHeight() - $this->getDimensions()->getHeight();
+					} elseif ($verticalAlign === 'baseline') {
+
+					}
+				}
 			} else {
 				if ($previous = $this->getPrevious()) {
 					$top = $previous->getOffset()->getTop();

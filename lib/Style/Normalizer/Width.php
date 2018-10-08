@@ -19,11 +19,14 @@ class Width extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
-		$matches = [];
-		preg_match_all('/([0-9]+)([a-z\%]+)/', $ruleValue, $matches);
-		$originalSize = (float)$matches[1][0];
-		$originalUnit = $matches[2][0];
-		$normalized = ['width' => $this->document->convertUnits($originalUnit, $originalSize)];
-		return $normalized;
+		if (is_string($ruleValue) && $ruleValue !== 'auto') {
+			$matches = [];
+			preg_match_all('/([0-9]+)([a-z\%]+)/', $ruleValue, $matches);
+			$originalSize = (float)$matches[1][0];
+			$originalUnit = $matches[2][0];
+			return ['width' => $this->document->convertUnits($originalUnit, $originalSize)];
+		}
+		// value is already parsed
+		return ['width' => $ruleValue];
 	}
 }

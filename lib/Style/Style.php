@@ -119,6 +119,8 @@ class Style extends \YetiForcePDF\Base
 		'width' => 'auto',
 		'height' => 'auto',
 		'overflow' => 'visible',
+		'vertical-align' => 'baseline',
+		'line-height' => 1.2,
 	];
 	/**
 	 * Css rules
@@ -153,6 +155,8 @@ class Style extends \YetiForcePDF\Base
 		'width' => 'auto',
 		'height' => 'auto',
 		'overflow' => 'visible',
+		'vertical-align' => 'baseline',
+		'line-height' => 1.2,
 	];
 
 	/**
@@ -402,24 +406,32 @@ class Style extends \YetiForcePDF\Base
 				$parsed['display'] = 'inline';
 			}
 		}
-		if (!$this->content) {
-			//var_dump('no css' . ($this->element->isTextNode() ? ' [text] ' : ' [html] ') . $this->element->getText());
-			return $parsed;
+		if ($this->content) {
+			$rules = explode(';', $this->content);
+		} else {
+			$rules = [];
 		}
-		$rules = explode(';', $this->content);
+		$rulesParsed = [];
 		foreach ($rules as $rule) {
 			$rule = trim($rule);
 			if ($rule !== '') {
 				$ruleExploded = explode(':', $rule);
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
-				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
-				$normalizer = (new $normalizerName())->setDocument($this->document)->init();
-				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
-					$parsed[$name] = $value;
-				}
+				$rulesParsed[$ruleName] = $ruleValue;
 			}
 		}
-		return $parsed;
+		$finalRules = [];
+		foreach (array_merge($parsed, $rulesParsed) as $ruleName => $ruleValue) {
+			$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
+			$normalizer = (new $normalizerName())
+				->setDocument($this->document)
+				->setStyle($this)
+				->init();
+			foreach ($normalizer->normalize($ruleValue) as $name => $value) {
+				$finalRules[$name] = $value;
+			}
+		}
+		return $finalRules;
 	}
 }

@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style\Normalizer;
 
+use YetiForcePDF\Style\Style;
+
 /**
  * Class Normalizer
  */
@@ -19,18 +21,18 @@ class Normalizer extends \YetiForcePDF\Base
 {
 
 	/**
-	 * @var \YetiForcePDF\Html\Element
+	 * @var Style
 	 */
-	protected $element;
+	protected $style;
 
 	/**
-	 * Set element
-	 * @param \YetiForcePDF\Html\Element $element
+	 * Set style
+	 * @param \YetiForcePDF\Style\Style $style
 	 * @return $this
 	 */
-	public function setElement(\YetiForcePDF\Html\Element $element)
+	public function setStyle(Style $style)
 	{
-		$this->element = $element;
+		$this->style = $style;
 		return $this;
 	}
 
