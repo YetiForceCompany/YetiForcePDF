@@ -111,7 +111,7 @@ class Coordinates extends \YetiForcePDF\Base
 	{
 		$height = $this->box->getDimensions()->getHeight();
 		$page = $this->document->getCurrentPage();
-		return $page->getDimensions()->getHeight() - $this->htmlY - $height;
+		return $page->getOuterDimensions()->getHeight() - $this->htmlY - $height;
 	}
 
 }

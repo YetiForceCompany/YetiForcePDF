@@ -14,7 +14,6 @@ namespace YetiForcePDF\Render;
 
 use \YetiForcePDF\Render\Coordinates\Coordinates;
 use \YetiForcePDF\Render\Coordinates\Offset;
-use \YetiForcePDF\Render\Dimensions\Dimensions;
 use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 
 

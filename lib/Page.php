@@ -661,7 +661,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function render(): string
 	{
-		$dimensions = $this->getDimensions();
+		$dimensions = $this->getOuterDimensions();
 		return implode("\n", [
 			$this->getRawId() . " obj",
 			'<<',
