@@ -26,7 +26,8 @@ class LineBox extends Box
 	public function willFit(InlineBox $box)
 	{
 		$availableSpace = $this->getDimensions()->getWidth() - $this->getChildrenWidth();
-		return $availableSpace >= $box->getDimensions()->getOuterWidth();
+		$boxOuterWidth = $box->getDimensions()->getOuterWidth();
+		return bccomp((string)$availableSpace, (string)$boxOuterWidth) >= 0;
 	}
 
 	/**

@@ -320,6 +320,20 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get parent height shorthand
+	 * @return float
+	 */
+	protected function getParentInnerHeight()
+	{
+		if ($parent = $this->getParent()) {
+			return $parent->getDimensions()->getInnerHeight();
+		} else {
+			// if there is no parent - root element get width from page width - margins
+			return $this->document->getCurrentPage()->getDimensions()->getHeight();
+		}
+	}
+
+	/**
 	 * Take style specified dimensions instead of calculated one
 	 * @return $this
 	 */
@@ -333,9 +347,9 @@ class Box extends \YetiForcePDF\Base
 					$percentPos = strpos($width, '%');
 					if ($percentPos !== false) {
 						$widthInPercent = substr($width, 0, $percentPos);
-						$parentWidth = $this->getParentWidth();
+						$parentWidth = $this->getParentInnerWidth();
 						if ($parentWidth) {
-							$width = $parentWidth / 100 * $widthInPercent;
+							$width = $parentWidth / 100 * (float)$widthInPercent;
 							$dimensions->setWidth($width);
 						}
 					} else {
@@ -347,7 +361,7 @@ class Box extends \YetiForcePDF\Base
 					$percentPos = strpos($height, '%');
 					if ($percentPos !== false) {
 						$heightInPercent = substr($height, 0, $percentPos);
-						$parentHeight = $this->getParentHeight();
+						$parentHeight = $this->getParentInnerHeight();
 						if ($parentHeight) {
 							$height = $parentHeight / 100 * $heightInPercent;
 							$dimensions->setHeight($height);

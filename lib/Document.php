@@ -439,7 +439,7 @@ class Document
 	 * @param float  $size
 	 * @return float
 	 */
-	public function convertUnits(string $unit, float $size): float
+	public function convertUnits(string $unit, float $size)
 	{
 		switch ($unit) {
 			case 'px':
@@ -451,6 +451,8 @@ class Document
 				return $size / (72 / 2.54);
 			case 'in':
 				return $size / 72;
+			case '%':
+				return $size . '%';
 
 		}
 
