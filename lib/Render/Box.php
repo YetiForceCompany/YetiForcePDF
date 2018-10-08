@@ -364,10 +364,21 @@ class Box extends \YetiForcePDF\Base
 	 * Measure all children widths and some heights if we can
 	 * @return $this
 	 */
-	public function measureBoxPhaseOne()
+	public function measurePhaseOne()
 	{
 		// first measure current element if we can
 		$dimensions = $this->getDimensions();
+
+		if ($this instanceof LineBox) {
+			$lineWidth = 0;
+			foreach ($this->getChildren() as $boxChild) {
+				$boxChild->measurePhaseOne();
+				$lineWidth += $boxChild->getDimensions()->getOuterWidth();
+			}
+			$dimensions->setWidth($lineWidth);
+			return $this;
+		}
+
 		if ($this->getElement()->isTextNode()) {
 			$dimensions->setWidth($dimensions->getTextWidth($this->getElement()->getText()));
 			$dimensions->setHeight($dimensions->getTextHeight($this->getElement()->getText()));
@@ -394,26 +405,6 @@ class Box extends \YetiForcePDF\Base
 			if ($this->getStyle()->getRules('display') !== 'inline') {
 				$this->takeStyleDimensions();
 			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Measure phase one
-	 * @return $this
-	 */
-	public function measurePhaseOne()
-	{
-		if ($this instanceof LineBox) {
-			// line take all available space inside block - parent is always block
-			$dimensions = $this->getDimensions();
-			$parent = $this->getParent();
-			$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
-			foreach ($this->getChildren() as $boxChild) {
-				$boxChild->measureBoxPhaseOne();
-			}
-		} else {
-			$this->measureBoxPhaseOne();
 		}
 		return $this;
 	}
