@@ -150,6 +150,8 @@ class Box extends \YetiForcePDF\Base
 			$previous = $this->children[$childrenCount - 1];
 			$box->setPrevious($previous);
 			$previous->setNext($box);
+		} else {
+			$box->setPrevious()->setNext();
 		}
 		$this->children[] = $box;
 		return $this;
