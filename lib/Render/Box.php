@@ -142,7 +142,7 @@ class Box extends \YetiForcePDF\Base
 	public function appendChild(Box $box)
 	{
 		if ($this instanceof LineBox && $box instanceof LineBox) {
-			throw new \InvalidArgumentException('LineBox cannot append another LineBox child.');
+			throw new \InvalidArgumentException('LineBox can\'t append another LineBox child.');
 		}
 		$box->setParent($this);
 		$childrenCount = count($this->children);
@@ -369,13 +369,19 @@ class Box extends \YetiForcePDF\Base
 		// first measure current element if we can
 		$dimensions = $this->getDimensions();
 
-		if ($this instanceof LineBox) {
+		if ($this instanceof LineBox && $this->getParent()->getDimensions()->getWidth() === null) {
 			$lineWidth = 0;
 			foreach ($this->getChildren() as $boxChild) {
 				$boxChild->measurePhaseOne();
 				$lineWidth += $boxChild->getDimensions()->getOuterWidth();
 			}
 			$dimensions->setWidth($lineWidth);
+			return $this;
+		} elseif ($this instanceof LineBox && $this->getParent()->getDimensions()->getWidth() !== null) {
+			$dimensions->setWidth($this->getParentInnerWidth());
+			foreach ($this->getChildren() as $boxChild) {
+				$boxChild->measurePhaseOne();
+			}
 			return $this;
 		}
 
@@ -388,7 +394,15 @@ class Box extends \YetiForcePDF\Base
 			$dimensions->setWidth($style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth());
 			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
 		} elseif ($this->getStyle()->getRules('display') === 'block') {
-			$dimensions->setWidth($this->getParentInnerWidth());
+			if ($parent = $this->getParent()) {
+				if ($parent->getDimensions()->getWidth() !== null) {
+					$dimensions->setWidth($this->getParentInnerWidth());
+				} else {
+					var_dump('parent doesnt have a width!');
+				}
+			} else {
+				$dimensions->setWidth($this->getParentInnerWidth());
+			}
 			// but if element has specified width other than auto take it
 			$this->takeStyleDimensions();
 			// we can't measure height right now because it depends on child elements heights
@@ -416,7 +430,10 @@ class Box extends \YetiForcePDF\Base
 	public function getNewLineBox()
 	{
 		$newLineBox = (new LineBox())->setDocument($this->document)->init();
-		$newLineBox->getDimensions()->setWidth($this->getDimensions()->getInnerWidth());
+		$newLineBox->setParent($this);
+		if ($this->getDimensions()->getWidth() !== null) {
+			$newLineBox->getDimensions()->setWidth($this->getDimensions()->getInnerWidth());
+		}
 		return $newLineBox;
 	}
 

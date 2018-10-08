@@ -49,12 +49,14 @@ class LineBox extends Box
 		if (!$this->elementsFit()) {
 			$line = (new LineBox())->setDocument($this->document)->init();
 			$line->getDimensions()->setWidth($lineWidth);
+			$line->setParent($this->setParent());
 			foreach ($this->getChildren() as $childBox) {
 				if ($line->willFit($childBox)) {
 					$line->appendChild($childBox);
 				} else {
 					$lines[] = $line;
 					$line = (new LineBox())->setDocument($this->document)->init();
+					$line->setParent($this->getParent());
 					$line->getDimensions()->setWidth($lineWidth);
 					$line->appendChild($childBox);
 				}
