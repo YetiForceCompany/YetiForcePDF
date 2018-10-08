@@ -471,7 +471,7 @@ class Box extends \YetiForcePDF\Base
 					->setElement($childElement)
 					->init();
 				$this->appendChild($box);
-				$box->reflow();
+				$box->segregate();
 				continue;
 			}
 			// inline boxes
@@ -483,7 +483,7 @@ class Box extends \YetiForcePDF\Base
 				$lineBox = $this->getNewLineBox();
 			}
 			$lineBox->appendChild($box);
-			$box->reflow();
+			$box->segregate();
 		}
 		if ($lineBox !== null) {
 			$this->closeLine($lineBox, false);
