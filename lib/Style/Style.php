@@ -357,6 +357,24 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get horizontal margins width
+	 * @return float
+	 */
+	public function getHorizontalMarginsWidth()
+	{
+		return $this->rules['margin-left'] + $this->rules['margin-right'];
+	}
+
+	/**
+	 * Get vertical paddings width
+	 * @return float
+	 */
+	public function getVerticalMarginsWidth()
+	{
+		return $this->rules['margin-top'] + $this->rules['margin-bottom'];
+	}
+
+	/**
 	 * Get current style font
 	 * @return \YetiForcePDF\Objects\Font
 	 */

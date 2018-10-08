@@ -397,12 +397,10 @@ class Box extends \YetiForcePDF\Base
 		} elseif ($this->getStyle()->getRules('display') === 'block') {
 			if ($parent = $this->getParent()) {
 				if ($parent->getDimensions()->getWidth() !== null) {
-					$dimensions->setWidth($this->getParentInnerWidth());
-				} else {
-					var_dump('parent doesnt have a width!');
+					$dimensions->setWidth($this->getParentInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
 				}
 			} else {
-				$dimensions->setWidth($this->getParentInnerWidth());
+				$dimensions->setWidth($this->getParentInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
 			}
 			// but if element has specified width other than auto take it
 			$this->takeStyleDimensions();
