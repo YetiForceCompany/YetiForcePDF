@@ -44,11 +44,15 @@ class Parser extends \YetiForcePDF\Base
 	/**
 	 * Cleanup html
 	 * @param string $html
+	 * @param string $fromEncoding
 	 * @return string
 	 */
-	protected function cleanUpHtml(string $html)
+	protected function cleanUpHtml(string $html, string $fromEncoding = '')
 	{
-		$html = mb_convert_encoding($html, 'UTF-8');
+		if (!$fromEncoding) {
+			$fromEncoding = mb_detect_encoding($html);
+		}
+		$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
 		$html = preg_replace('/[\n\r\t]+/', '', $html);
 		$html = trim(preg_replace('/\s+/', ' ', $html), " \n\t\r");
 		return $html;
@@ -57,11 +61,12 @@ class Parser extends \YetiForcePDF\Base
 	/**
 	 * Load html string
 	 * @param string $html
+	 * @param string $fromEncoding
 	 * @return \YetiForcePDF\Html\Parser
 	 */
-	public function loadHtml(string $html): \YetiForcePDF\Html\Parser
+	public function loadHtml(string $html, string $fromEncoding = ''): \YetiForcePDF\Html\Parser
 	{
-		$html = $this->cleanUpHtml($html);
+		$html = $this->cleanUpHtml($html, $fromEncoding);
 		$this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
 		$this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
