@@ -121,6 +121,8 @@ class Style extends \YetiForcePDF\Base
 		'overflow' => 'visible',
 		'vertical-align' => 'baseline',
 		'line-height' => '1.2',
+		'background-color' => 'transparent',
+		'color' => '#000000',
 	];
 	/**
 	 * Css rules
@@ -157,6 +159,8 @@ class Style extends \YetiForcePDF\Base
 		'overflow' => 'visible',
 		'vertical-align' => 'baseline',
 		'line-height' => '1.2',
+		'background-color' => 'transparent',
+		'color' => '#000000',
 	];
 
 	/**

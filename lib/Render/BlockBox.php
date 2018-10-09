@@ -130,7 +130,7 @@ class BlockBox extends Box
 				"1 0 0 1 $pdfX $pdfY cm",
 				"$x1 $y1 m", // move to start point
 				$path . ' l h',
-				'F',
+				'f',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
@@ -148,7 +148,7 @@ class BlockBox extends Box
 				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
 				"$x2 $y1 m",
 				$path . ' l h',
-				'F',
+				'f',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
@@ -166,7 +166,7 @@ class BlockBox extends Box
 				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
 				"$x1 $y2 m",
 				$path . ' l h',
-				'F',
+				'f',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
@@ -184,12 +184,33 @@ class BlockBox extends Box
 				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
 				"$x1 $y1 m",
 				$path . ' l h',
-				'F',
+				'f',
 				'Q'
 			];
 			$element = array_merge($element, $borderTop);
 		}
 		$element[] = '% end border';
+		return $element;
+	}
+
+	public function addBackgroundColorInstructions(array $element, float $pdfX, float $pdfY, float $width, float $height)
+	{
+		$rules = $this->style->getRules();
+		if ($rules['background-color'] !== 'transparent') {
+			$x1 = 0;
+			$y1 = $height;
+			$x2 = $width;
+			$y2 = 0;
+			$bgColor = [
+				'q',
+				"1 0 0 1 $pdfX $pdfY cm",
+				"{$rules['background-color'][0]} {$rules['background-color'][1]} {$rules['background-color'][2]} rg",
+				"0 0 $width $height re",
+				'f',
+				'Q'
+			];
+			$element = array_merge($element, $bgColor);
+		}
 		return $element;
 	}
 
@@ -200,6 +221,7 @@ class BlockBox extends Box
 	public function getInstructions(): string
 	{
 		$style = $this->getStyle();
+		$rules = $style->getRules();
 		$font = $style->getFont();
 		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
 		$coordinates = $this->getCoordinates();
@@ -220,6 +242,7 @@ class BlockBox extends Box
 			$element = [
 				'q',
 				"1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
+				"{$rules['color'][0]} {$rules['color'][1]} {$rules['color'][2]} rg",
 				'BT',
 				$fontStr,
 				"$textContent Tj",
@@ -239,6 +262,7 @@ class BlockBox extends Box
 			}
 		} else {
 			$element = [];
+			$element = $this->addBackgroundColorInstructions($element, $pdfX, $pdfY, $width, $height);
 			$element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
 		}
 		return implode("\n", $element);
