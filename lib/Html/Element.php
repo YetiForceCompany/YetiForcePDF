@@ -102,6 +102,29 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Create and append text node to parent element
+	 * @param string $text
+	 * @return Element
+	 */
+	public function createTextNode(string $text)
+	{
+		$textNode = $this->domElement->ownerDocument->createTextNode($text);
+		$this->domElement->appendChild($textNode);
+		$element = (new Element())
+			->setDocument($this->document)
+			->setElement($textNode)
+			->setParent($this)
+			->setTextNode(true);
+		if ($previous = $this->getLastChild()) {
+			$element->setPrevious($previous);
+			$previous->setNext($element);
+		}
+		$element->init();
+		$this->addChild($element);
+		return $element;
+	}
+
+	/**
 	 * Set element
 	 * @param $element
 	 * @return \YetiForcePDF\Html\Element
@@ -300,6 +323,18 @@ class Element extends \YetiForcePDF\Base
 			$child->getAllChildren($current);
 		}
 		return $current;
+	}
+
+	/**
+	 * Get last children
+	 * @return \YetiForcePDF\Html\Element|null
+	 */
+	public function getLastChild()
+	{
+		$children = $this->getChildren();
+		if ($count = count($children)) {
+			return $children[$count - 1];
+		}
 	}
 
 	/**

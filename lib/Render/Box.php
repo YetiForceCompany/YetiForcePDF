@@ -134,6 +134,26 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Create and append text box (text node) element
+	 * @param string $text
+	 * @return InlineBox|null
+	 */
+	public function createTextBox(string $text)
+	{
+		if (!$this->getElement()->isTextNode()) {
+			$element = $this->getElement()->createTextNode($text);
+			$box = (new InlineBox())
+				->setDocument($this->document)
+				->setElement($element)
+				->init();
+			$this->appendChild($box);
+			return $box;
+		} else {
+			throw new \InvalidArgumentException('Cannot create child element inside text node.');
+		}
+	}
+
+	/**
 	 * Append child box - line box can have only inline/block boxes - not line boxes!
 	 * @param Box $box
 	 * @return $this
@@ -141,7 +161,7 @@ class Box extends \YetiForcePDF\Base
 	public function appendChild(Box $box)
 	{
 		if ($this instanceof LineBox && $box instanceof LineBox) {
-			throw new \InvalidArgumentException('LineBox can\'t append another LineBox child.');
+			throw new \InvalidArgumentException('LineBox cannnot append another LineBox as child.');
 		}
 		$box->setParent($this);
 		$childrenCount = count($this->children);
@@ -248,6 +268,17 @@ class Box extends \YetiForcePDF\Base
 	public function hasChildren()
 	{
 		return isset($this->children[0]); // faster than count
+	}
+
+	/**
+	 * Get last child
+	 * @return \YetiForcePDF\Render\Box|null
+	 */
+	public function getLastChild()
+	{
+		if ($count = count($this->children)) {
+			return $this->children[$count - 1];
+		}
 	}
 
 	/**
@@ -558,6 +589,16 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Remove white space characters (empty lines) around blockBox elements
+	 * @return $this
+	 */
+	public function clearCharsAroundBlocks()
+	{
+
+		return $this;
+	}
+
+	/**
 	 * Measure missing heights
 	 * @return $this
 	 */
@@ -730,6 +771,8 @@ class Box extends \YetiForcePDF\Base
 		// all boxes that can be measured were measured whoa!
 		// now we can split lineBoxes into more lines basing on its width and children widths
 		$this->splitLines();
+		// clear empty lines (with just white space) around blocksBoxes
+		$this->clearCharsAroundBlocks();
 		// we have all elements in place, it's time to measure heights for those dependent on children heights
 		$this->measurePhaseTwo();
 		// after heights are calculated we can calculate percent heights

@@ -123,6 +123,7 @@ class Style extends \YetiForcePDF\Base
 		'line-height' => '1.2',
 		'background-color' => 'transparent',
 		'color' => '#000000',
+		'word-wrap' => 'normal',
 	];
 	/**
 	 * Css rules
@@ -161,6 +162,7 @@ class Style extends \YetiForcePDF\Base
 		'line-height' => '1.2',
 		'background-color' => 'transparent',
 		'color' => '#000000',
+		'word-wrap' => 'normal',
 	];
 
 	/**
