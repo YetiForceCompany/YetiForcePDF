@@ -53,8 +53,7 @@ class Parser extends \YetiForcePDF\Base
 			$fromEncoding = mb_detect_encoding($html);
 		}
 		$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
-		$html = preg_replace('/[\n\r\t]+/', '', $html);
-		$html = trim(preg_replace('/\s+/', ' ', $html), " \n\t\r");
+		$html = preg_replace('/[\n\r\t]+/', ' ', $html);
 		return $html;
 	}
 
