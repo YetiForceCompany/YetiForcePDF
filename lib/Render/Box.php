@@ -734,6 +734,33 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Fix offsets inside lines where text-align !== 'left'
+	 * @return $this
+	 */
+	public function alignText()
+	{
+		if ($this instanceof LineBox) {
+			$textAlign = $this->getParent()->getStyle()->getRules('text-align');
+			if ($textAlign === 'right') {
+				$offset = $this->getDimensions()->getWidth() - $this->getChildrenWidth();
+				foreach ($this->getChildren() as $childBox) {
+					$childBox->getOffset()->setLeft($childBox->getOffset()->getLeft() + $offset);
+				}
+			} elseif ($textAlign === 'center') {
+				$offset = $this->getDimensions()->getWidth() / 2 - $this->getChildrenWidth() / 2;
+				foreach ($this->getChildren() as $childBox) {
+					$childBox->getOffset()->setLeft($childBox->getOffset()->getLeft() + $offset);
+				}
+			}
+		} else {
+			foreach ($this->getChildren() as $child) {
+				$child->alignText();
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * Measure coordinates
 	 * @return $this
 	 */
@@ -779,6 +806,8 @@ class Box extends \YetiForcePDF\Base
 		$this->takeStyleDimensions();
 		// now measure relative offsets to the parent elements
 		$this->measureOffsets();
+		// offsets are set but easier will be to correct text-align now than in offset measure phase
+		$this->alignText();
 		// and absolute coordinates inside document
 		$this->measureCoordinates();
 		// done!
