@@ -31,7 +31,7 @@ class Padding extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['padding-top'] = $computedValue;
 		$normalized['padding-bottom'] = $computedValue;
 		$normalized['padding-left'] = $computedValue;
@@ -53,13 +53,13 @@ class Padding extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['padding-top'] = $computedValue;
 		$normalized['padding-bottom'] = $computedValue;
 
 		$originalSize = (float)$values[1];
 		$originalUnit = $units[1];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['padding-left'] = $computedValue;
 		$normalized['padding-right'] = $computedValue;
 		return $normalized;
@@ -79,17 +79,17 @@ class Padding extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$normalized['padding-top'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['padding-top'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[1];
 		$originalUnit = $units[1];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['padding-left'] = $computedValue;
 		$normalized['padding-right'] = $computedValue;
 
 		$originalSize = (float)$values[2];
 		$originalUnit = $units[2];
-		$normalized['padding-bottom'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['padding-bottom'] = $this->style->convertUnits($originalUnit, $originalSize);
 		return $normalized;
 	}
 
@@ -107,19 +107,19 @@ class Padding extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$normalized['padding-top'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['padding-top'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[1];
 		$originalUnit = $units[1];
-		$normalized['padding-right'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['padding-right'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[2];
 		$originalUnit = $units[2];
-		$normalized['padding-bottom'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['padding-bottom'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[3];
 		$originalUnit = $units[3];
-		$normalized['padding-left'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['padding-left'] = $this->style->convertUnits($originalUnit, $originalSize);
 		return $normalized;
 	}
 

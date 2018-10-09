@@ -24,7 +24,7 @@ class MarginTop extends Normalizer
 			preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
 			$originalSize = (float)$matches[1][0];
 			$originalUnit = $matches[2][0];
-			$size = $this->document->convertUnits($originalUnit, $originalSize);
+			$size = $this->style->convertUnits($originalUnit, $originalSize);
 		} else {
 			$size = $ruleValue;
 		}

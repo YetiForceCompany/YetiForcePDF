@@ -24,7 +24,7 @@ class Width extends Normalizer
 			preg_match_all('/([0-9]+)([a-z\%]+)/', $ruleValue, $matches);
 			$originalSize = (float)$matches[1][0];
 			$originalUnit = $matches[2][0];
-			return ['width' => $this->document->convertUnits($originalUnit, $originalSize)];
+			return ['width' => $this->style->convertUnits($originalUnit, $originalSize)];
 		}
 		// value is already parsed
 		return ['width' => $ruleValue];

@@ -31,7 +31,7 @@ class Margin extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['margin-top'] = $computedValue;
 		$normalized['margin-bottom'] = $computedValue;
 		$normalized['margin-left'] = $computedValue;
@@ -53,13 +53,13 @@ class Margin extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['margin-top'] = $computedValue;
 		$normalized['margin-bottom'] = $computedValue;
 
 		$originalSize = (float)$values[1];
 		$originalUnit = $units[1];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['margin-left'] = $computedValue;
 		$normalized['margin-right'] = $computedValue;
 		return $normalized;
@@ -79,17 +79,17 @@ class Margin extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$normalized['margin-top'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['margin-top'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[1];
 		$originalUnit = $units[1];
-		$computedValue = $this->document->convertUnits($originalUnit, $originalSize);
+		$computedValue = $this->style->convertUnits($originalUnit, $originalSize);
 		$normalized['margin-left'] = $computedValue;
 		$normalized['margin-right'] = $computedValue;
 
 		$originalSize = (float)$values[2];
 		$originalUnit = $units[2];
-		$normalized['margin-bottom'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['margin-bottom'] = $this->style->convertUnits($originalUnit, $originalSize);
 		return $normalized;
 	}
 
@@ -107,19 +107,19 @@ class Margin extends Normalizer
 
 		$originalSize = (float)$values[0];
 		$originalUnit = $units[0];
-		$normalized['margin-top'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['margin-top'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[1];
 		$originalUnit = $units[1];
-		$normalized['margin-right'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['margin-right'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[2];
 		$originalUnit = $units[2];
-		$normalized['margin-bottom'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['margin-bottom'] = $this->style->convertUnits($originalUnit, $originalSize);
 
 		$originalSize = (float)$values[3];
 		$originalUnit = $units[3];
-		$normalized['margin-left'] = $this->document->convertUnits($originalUnit, $originalSize);
+		$normalized['margin-left'] = $this->style->convertUnits($originalUnit, $originalSize);
 		return $normalized;
 	}
 

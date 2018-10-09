@@ -120,7 +120,7 @@ class Style extends \YetiForcePDF\Base
 		'height' => 'auto',
 		'overflow' => 'visible',
 		'vertical-align' => 'baseline',
-		'line-height' => 1.2,
+		'line-height' => '1.2',
 	];
 	/**
 	 * Css rules
@@ -156,7 +156,7 @@ class Style extends \YetiForcePDF\Base
 		'height' => 'auto',
 		'overflow' => 'visible',
 		'vertical-align' => 'baseline',
-		'line-height' => 1.2,
+		'line-height' => '1.2',
 	];
 
 	/**
@@ -385,6 +385,32 @@ class Style extends \YetiForcePDF\Base
 	public function getFont(): \YetiForcePDF\Objects\Font
 	{
 		return $this->font;
+	}
+
+	/**
+	 * Convert units from unit to pdf document units
+	 * @param string $unit
+	 * @param float  $size
+	 * @return float
+	 */
+	public function convertUnits(string $unit, float $size)
+	{
+		switch ($unit) {
+			case 'px':
+			case 'pt':
+				return $size;
+			case 'mm':
+				return $size / (72 / 25.4);
+			case 'cm':
+				return $size / (72 / 2.54);
+			case 'in':
+				return $size / 72;
+			case '%':
+				return $size . '%';
+			case 'em':
+				return ((float)$this->rules['font-size']) * $size;
+
+		}
 	}
 
 

@@ -35,7 +35,7 @@ class Border extends Normalizer
 		}
 		$color = \YetiForcePDF\Style\Color::toRGBA($color, true);
 		$normalized = [
-			'border-width' => $this->document->convertUnits($originalUnit, $originalSize),
+			'border-width' => $this->style->convertUnits($originalUnit, $originalSize),
 			'border-color' => $color,
 			'border-style' => $style,
 		];

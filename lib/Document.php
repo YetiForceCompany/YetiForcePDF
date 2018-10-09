@@ -433,29 +433,4 @@ class Document
 		return $this->buffer;
 	}
 
-	/**
-	 * Convert units from unit to pdf document units
-	 * @param string $unit
-	 * @param float  $size
-	 * @return float
-	 */
-	public function convertUnits(string $unit, float $size)
-	{
-		switch ($unit) {
-			case 'px':
-			case 'pt':
-				return $size;
-			case 'mm':
-				return $size / (72 / 25.4);
-			case 'cm':
-				return $size / (72 / 2.54);
-			case 'in':
-				return $size / 72;
-			case '%':
-				return $size . '%';
-
-		}
-
-	}
-
 }

@@ -24,7 +24,7 @@ class BorderRightWidth extends Normalizer
 			preg_match('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
 			$originalSize = (float)$matches[1];
 			$originalUnit = $matches[2];
-			$size = $this->document->convertUnits($originalUnit, $originalSize);
+			$size = $this->style->convertUnits($originalUnit, $originalSize);
 		} else {
 			// if it is number it was calculated already
 			$size = $ruleValue;
