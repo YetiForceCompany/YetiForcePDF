@@ -22,9 +22,9 @@ class LineHeight extends Normalizer
 		if (is_string($ruleValue)) {
 			$matches = [];
 			preg_match('/^([0-9\.]+)([a-z]+)?$/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1][0];
+			$originalSize = (float)$matches[1];
 			if (isset($matches[2])) {
-				$originalUnit = $matches[2][0];
+				$originalUnit = $matches[2];
 			} else {
 				$originalUnit = 'em';
 			}

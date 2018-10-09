@@ -371,10 +371,6 @@ class Box extends \YetiForcePDF\Base
 					}
 				}
 			}
-		} else {
-			$style = $this->getStyle();
-			$rules = $style->getRules();
-			$this->getDimensions()->setHeight($rules['line-height']);
 		}
 		return $this;
 	}
@@ -592,12 +588,18 @@ class Box extends \YetiForcePDF\Base
 	{
 		if ($this instanceof LineBox) {
 			$height = 0;
+			$lineHeight = 0;
 			foreach ($this->getChildren() as $child) {
 				$child->measureBoxPhaseTwo();
 				$height = max($height, $child->getDimensions()->getOuterHeight());
+				$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'));
 			}
 			if ($this->getDimensions()->getHeight() === null) {
-				$this->getDimensions()->setHeight($height);
+				if ($height > $lineHeight) {
+					$this->getDimensions()->setHeight($height);
+				} else {
+					$this->getDimensions()->setHeight($lineHeight);
+				}
 			}
 		} else {
 			$this->measureBoxPhaseTwo();
@@ -625,7 +627,7 @@ class Box extends \YetiForcePDF\Base
 					} elseif ($verticalAlign === 'bottom') {
 						$top = $parent->getDimensions()->getHeight() - $this->getDimensions()->getHeight();
 					} elseif ($verticalAlign === 'baseline') {
-
+						$top = $parent->getDimensions()->getHeight() / 2 - $this->getDimensions()->getHeight() / 2;
 					}
 				}
 			} else {
