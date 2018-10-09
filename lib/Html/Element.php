@@ -80,12 +80,16 @@ class Element extends \YetiForcePDF\Base
 			$children = [];
 			// basing on dom children elements automatically setup nested instances of BoxDimensions (pdf)
 			foreach ($this->domElement->childNodes as $index => $childNode) {
+				$isTextNode = $childNode instanceof \DOMText;
 				// if element already exists for this domNode use it (in case current element is moved and initialised again)
 				$childElement = $children[] = (new Element())
 					->setDocument($this->document)
 					->setElement($childNode)
 					->setParent($this)// setParent will remove this element from previous parent if exists
-					->setTextNode($childNode instanceof \DOMText);
+					->setTextNode($isTextNode);
+				if ($isTextNode) {
+					$childNode->normalize();
+				}
 				$this->addChild($childElement);
 			}
 			foreach ($children as $index => $child) {
