@@ -25,9 +25,10 @@ class LineBox extends Box
 	 */
 	public function willFit(Box $box)
 	{
-		$availableSpace = $this->getDimensions()->getWidth() - $this->getChildrenWidth();
+		$childrenWidth = $this->getChildrenWidth();
+		$availableSpace = $this->getDimensions()->getAvailableSpace();
 		$boxOuterWidth = $box->getDimensions()->getOuterWidth();
-		return bccomp((string)$availableSpace, (string)$boxOuterWidth) >= 0;
+		return bccomp((string)($availableSpace - $childrenWidth), (string)$boxOuterWidth) >= 0;
 	}
 
 	/**
@@ -36,7 +37,7 @@ class LineBox extends Box
 	 */
 	public function elementsFit()
 	{
-		return $this->getDimensions()->getWidth() >= $this->getChildrenWidth();
+		return $this->getDimensions()->getAvailableSpace() >= $this->getChildrenWidth();
 	}
 
 	/**
@@ -94,7 +95,7 @@ class LineBox extends Box
 		$lines = [];
 		if (!$this->elementsFit()) {
 			$line = (new LineBox())->setDocument($this->document)->init();
-			$line->getDimensions()->setWidth($lineWidth);
+			$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
 			$line->setParent($this->getParent());
 			foreach ($this->getChildren() as $childBox) {
 				$wrapped = $this->wrapWord($childBox);
@@ -105,7 +106,7 @@ class LineBox extends Box
 						$lines[] = $line;
 						$line = (new LineBox())->setDocument($this->document)->init();
 						$line->setParent($this->getParent());
-						$line->getDimensions()->setWidth($lineWidth);
+						$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
 						$line->appendChild($wrappedChild);
 					}
 				}

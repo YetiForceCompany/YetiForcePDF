@@ -108,21 +108,6 @@ class BoxDimensions extends Dimensions
 	}
 
 	/**
-	 * Get available space inside container
-	 * @return float
-	 */
-	public function getAvailableSpace()
-	{
-		if ($this->box->getElement()->isRoot()) {
-			return $this->document->getCurrentPage()->getDimensions()->getInnerWidth();
-		}
-		$style = $this->box->getStyle();
-		$paddingWidth = $style->getRules('padding-left') + $style->getRules('padding-right');
-		$borderWidth = $style->getRules('border-left-width') + $style->getRules('border-right-width');
-		return $this->box->getParent()->getDimensions()->getAvailableSpace() - $paddingWidth - $borderWidth;
-	}
-
-	/**
 	 * Get text width
 	 * @param string $text
 	 * @return float
@@ -144,24 +129,31 @@ class BoxDimensions extends Dimensions
 		return $font->getTextHeight($text);
 	}
 
-	public function calculateWidth()
+	/**
+	 * Compute available space (basing on parent available space and parent border and padding)
+	 * @return float
+	 */
+	public function computeAvailableSpace()
 	{
-
-	}
-
-	public function calculateHeight()
-	{
-
+		if ($parent = $this->getBox()->getParent()) {
+			if (!$parent instanceof \YetiForcePDF\Render\LineBox) {
+				$parentStyle = $parent->getStyle();
+				return $this->getBox()->getParent()->getDimensions()->getAvailableSpace() - $parentStyle->getHorizontalBordersWidth() - $parentStyle->getHorizontalPaddingsWidth();
+			} else {
+				return $this->getBox()->getParent()->getDimensions()->getAvailableSpace();
+			}
+		} else {
+			return $this->document->getCurrentPage()->getDimensions()->getAvailableSpace();
+		}
 	}
 
 	/**
-	 * Calculate block box dimensions
+	 * Set up available space
 	 * @return $this
 	 */
-	public function calculate()
+	public function setUpAvailableSpace()
 	{
-		$this->calculateWidth();
-		$this->calculateHeight();
+		$this->setAvailableSpace($this->computeAvailableSpace());
 		return $this;
 	}
 

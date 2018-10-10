@@ -432,6 +432,7 @@ class Box extends \YetiForcePDF\Base
 	{
 		// first measure current element if we can
 		$dimensions = $this->getDimensions();
+		$dimensions->setUpAvailableSpace();
 
 		if ($this instanceof LineBox && $this->getParent()->getDimensions()->getWidth() === null) {
 			$lineWidth = 0;
