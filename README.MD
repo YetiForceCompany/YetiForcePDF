@@ -1,7 +1,7 @@
 # YetiForcePDF
 ## PDF generation library for PHP (work in progress)
 
-### supported css rules
+### Supported css rules
 
 - [x] font-family
 - [x] font-size
@@ -44,16 +44,17 @@
 - [x] background-color [#000000]
 - [x] color [#000000]
 - [x] word-wrap
-- [ ] max-width [px, em, cm, in]
-- [ ] min-width [px, em, cm, in]
+- [ ] max-width
+- [ ] min-width
 - [ ] word-wrap
-- [ ] float, clear
+- [ ] float
+- [ ] clear
 - [ ] table displays
 - [ ] background-image
 - [ ] rgba color
 
 
-### available fonts
+### Available fonts
 
 - NotoSerif-SemiBoldItalic
 - NotoSans-ExtraCondensedExtraBold
