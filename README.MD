@@ -48,8 +48,8 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] border-bottom-style
 - [ ] box-sizing
 - [x] display [block, inline, inline-block, none]
-- [x] width [px, em, cm, in]
-- [x] height [px, em, cm, in]
+- [x] width [%, px, em, cm, mm, pt, in]
+- [x] height [%, px, em, cm, mm, pt, in]
 - [ ] overflow
 - [x] vertical-align [baseline, top, bottom, middle]
 - [x] line-height [px, em, cm, mm, pt, in]
