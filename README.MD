@@ -36,11 +36,11 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] border-top-width [px, em, cm, in]
 - [x] border-right-width [px, em, cm, in]
 - [x] border-bottom-width [px, em, cm, in]
-- [x] border-color [#000000]
-- [x] border-left-color [#000000]
-- [x] border-top-color [#000000]
-- [x] border-right-color [#000000]
-- [x] border-bottom-color [#000000]
+- [x] border-color [hex, rgb]
+- [x] border-left-color [hex, rgb]
+- [x] border-top-color [hex, rgb]
+- [x] border-right-color [hex, rgb]
+- [x] border-bottom-color [hex, rgb]
 - [ ] border-style
 - [ ] border-left-style
 - [ ] border-top-style
@@ -53,8 +53,8 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] overflow
 - [x] vertical-align [baseline, top, bottom, middle]
 - [x] line-height [px, em, cm, in]
-- [x] background-color [#000000]
-- [x] color [#000000]
+- [x] background-color [hex, rgb]
+- [x] color [hex, rgb]
 - [x] word-wrap
 - [ ] max-width
 - [ ] min-width
@@ -255,7 +255,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] page headers / footers
 - [ ] background watermarks
 - [ ] font-weight (font-family without specifying weight and variant)
-- [ ] rgb, rgba, cmyk colors
+- [ ] alpha channel support for colors (rgba)
 - [ ] floats
-- [ ] html elements with default css rules (br, table, image, hr etc.)
+- [ ] basic html elements with default css rules (br, table, image, hr etc.)
 - [ ] barcode generation
