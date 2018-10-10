@@ -1,6 +1,18 @@
 # YetiForcePDF
 ## PDF generation library for PHP (work in progress)
 
+## Basic usage (for more take a look at examples folder)
+
+```php
+<?php
+$loader = require '../vendor/autoload.php';
+$document = (new YetiForcePDF\Document())->init();
+$document->loadHtml('<div style="text-align:center;">your html goes here</div>');
+$pdfFile = $document->render();
+// echo $pdfFile;
+file_put_contents('YourPDFD.pdf', $pdfFile);
+```
+
 ### Supported css rules
 
 - [x] font-family
