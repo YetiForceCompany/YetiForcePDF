@@ -258,3 +258,4 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] rgb, rgba, cmyk colors
 - [ ] floats
 - [ ] html elements with default css rules (br, table, image, hr etc.)
+- [ ] barcode generation
