@@ -124,7 +124,7 @@ class Style extends \YetiForcePDF\Base
 		'background-color' => 'transparent',
 		'color' => '#000000',
 		'word-wrap' => 'normal',
-		'max-width' => '100%',
+		'max-width' => 'none',
 		'min-width' => 0,
 	];
 	/**
@@ -165,7 +165,7 @@ class Style extends \YetiForcePDF\Base
 		'background-color' => 'transparent',
 		'color' => '#000000',
 		'word-wrap' => 'normal',
-		'max-width' => '100%',
+		'max-width' => 'none',
 		'min-width' => 0,
 	];
 
