@@ -1,13 +1,23 @@
 # YetiForcePDF
 ## PDF generation library for PHP (work in progress)
 
-### example
+### supported css rules
 
-```PHP
-<?php
-$loader = require __DIR__ . '/vendor/autoload.php';
-$document = (new YetiForcePDF\Document())->init();
-$document->loadHtml('<div style="font-family: Times-Roman;font-size:50px;margin-left:100px;margin-bottom:200px;">hello world!</div><div style="font-family: Times-Roman;font-size:50px;margin-left:50px;margin-bottom:100px;">hello world2!</div>'');
-$pdfFile = $document->render();
-file_put_contents('test.pdf', $pdfFile);
-```
+- [x] display [block, inline, inline-block]
+- [x] text-align [left, right, center]
+- [x] margin (all variations like margin-top) [px, em, cm, in]
+- [x] padding (all variations) [px, em, cm, in]
+- [x] border (all variations) [without border-image]
+- [x] background-color [#ff0000]
+- [x] color [#ff0000]
+- [x] font-family
+- [x] font-size
+- [x] width [%, px, em, cm, in]
+- [x] height [%, px, em cm, in]
+- [x] line-height [px, em, cm, in]
+- [x] vertical-align
+- [ ] word-wrap
+- [ ] float, clear
+- [ ] table displays
+- [ ] background-image
+- [ ] rgba color
