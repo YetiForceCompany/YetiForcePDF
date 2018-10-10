@@ -246,3 +246,14 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - PT_Sans-Italic
 - PT_Sans-Regular
 - PT_Mono
+
+
+### TODO (crucial)
+
+- [ ] tables
+- [ ] images
+- [ ] page headers / footers
+- [ ] background watermarks
+- [ ] font-weight (font-family without specifying weight and variant)
+- [ ] rgb, rgba, cmyk colors
+- [ ] floats
