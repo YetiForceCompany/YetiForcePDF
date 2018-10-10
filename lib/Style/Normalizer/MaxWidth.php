@@ -19,7 +19,7 @@ class MaxWidth extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
-		if (is_string($ruleValue)) {
+		if (is_string($ruleValue) && $ruleValue !== 'none') {
 			$matches = [];
 			preg_match_all('/([0-9]+)([a-z\%]+)/', $ruleValue, $matches);
 			$originalSize = (float)$matches[1][0];

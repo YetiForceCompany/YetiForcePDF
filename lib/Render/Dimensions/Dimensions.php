@@ -26,6 +26,15 @@ class Dimensions extends \YetiForcePDF\Base
 	 * @var float|null
 	 */
 	protected $height;
+	/**
+	 * Available horizontal space
+	 * No matter if we are blockBox or inline we have some space horizontally to place elements
+	 * This is the page width, parent BlockBox width and so on
+	 * Available horizontal space is just a width limit
+	 * It is used for elements that have width calculated (inline, inline-block, float)
+	 * @var float
+	 */
+	protected $availableSpace;
 
 	/**
 	 * Get width
@@ -65,6 +74,26 @@ class Dimensions extends \YetiForcePDF\Base
 	{
 		$this->height = $height;
 		return $this;
+	}
+
+	/**
+	 * Set available space
+	 * @param float $width
+	 * @return $this
+	 */
+	public function setAvailableSpace(float $width)
+	{
+		$this->availableSpace = $width;
+		return $this;
+	}
+
+	/**
+	 * Get available space
+	 * @return float
+	 */
+	public function getAvailableSpace()
+	{
+		return $this->availableSpace;
 	}
 
 }
