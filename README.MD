@@ -17,25 +17,25 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 
 - [x] font-family
 - [x] font-size
-- [x] margin [px, em, cm, in]
-- [x] margin-left  [px, em, cm, in]
-- [x] margin-top  [px, em, cm, in]
-- [x] margin-right  [px, em, cm, in]
-- [x] margin-bottom  [px, em, cm, in]
-- [x] padding [px, em, cm, in]
-- [x] padding-left [px, em, cm, in]
-- [x] padding-top [px, em, cm, in]
-- [x] padding-right [px, em, cm, in]
-- [x] padding-bottom [px, em, cm, in]
-- [x] border [px, em, cm, in]
+- [x] margin [px, em, cm, mm, pt, in]
+- [x] margin-left  [px, em, cm, mm, pt, in]
+- [x] margin-top  [px, em, cm, mm, pt, in]
+- [x] margin-right  [px, em, cm, mm, pt, in]
+- [x] margin-bottom  [px, em, cm, mm, pt, in]
+- [x] padding [px, em, cm, mm, pt, in]
+- [x] padding-left [px, em, cm, mm, pt, in]
+- [x] padding-top [px, em, cm, mm, pt, in]
+- [x] padding-right [px, em, cm, mm, pt, in]
+- [x] padding-bottom [px, em, cm, mm, pt, in]
+- [x] border [px, em, cm, mm, pt, in]
 - [x] border-left
 - [x] border-top
 - [x] border-right
 - [x] border-bottom
-- [x] border-left-width  [px, em, cm, in]
-- [x] border-top-width [px, em, cm, in]
-- [x] border-right-width [px, em, cm, in]
-- [x] border-bottom-width [px, em, cm, in]
+- [x] border-left-width  [px, em, cm, mm, pt, in]
+- [x] border-top-width [px, em, cm, mm, pt, in]
+- [x] border-right-width [px, em, cm, mm, pt, in]
+- [x] border-bottom-width [px, em, cm, mm, pt, in]
 - [x] border-color [hex, rgb]
 - [x] border-left-color [hex, rgb]
 - [x] border-top-color [hex, rgb]
@@ -52,7 +52,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] height [px, em, cm, in]
 - [ ] overflow
 - [x] vertical-align [baseline, top, bottom, middle]
-- [x] line-height [px, em, cm, in]
+- [x] line-height [px, em, cm, mm, pt, in]
 - [x] background-color [hex, rgb]
 - [x] color [hex, rgb]
 - [x] word-wrap
