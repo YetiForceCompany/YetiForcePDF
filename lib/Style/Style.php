@@ -124,6 +124,8 @@ class Style extends \YetiForcePDF\Base
 		'background-color' => 'transparent',
 		'color' => '#000000',
 		'word-wrap' => 'normal',
+		'max-width' => '100%',
+		'min-width' => 0,
 	];
 	/**
 	 * Css rules
@@ -163,6 +165,8 @@ class Style extends \YetiForcePDF\Base
 		'background-color' => 'transparent',
 		'color' => '#000000',
 		'word-wrap' => 'normal',
+		'max-width' => '100%',
+		'min-width' => 0,
 	];
 
 	/**

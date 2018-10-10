@@ -365,6 +365,44 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get percent height of the parent box
+	 * @param string $width
+	 * @return float|int|string
+	 */
+	public function getPercentWidth(string $width)
+	{
+		$percentPos = strpos($width, '%');
+		if ($percentPos !== false) {
+			$widthInPercent = substr($width, 0, $percentPos);
+			$parentWidth = $this->getParentInnerWidth();
+			if ($parentWidth) {
+				return $parentWidth / 100 * (float)$widthInPercent;
+			}
+		} else {
+			return $width;
+		}
+	}
+
+	/**
+	 * Get percent height of the parent box
+	 * @param string $height
+	 * @return float|int|string
+	 */
+	public function getPercentHeight(string $height)
+	{
+		$percentPos = strpos($height, '%');
+		if ($percentPos !== false) {
+			$heightInPercent = substr($height, 0, $percentPos);
+			$parentHeight = $this->getParentInnerHeight();
+			if ($parentHeight) {
+				return $parentHeight / 100 * $heightInPercent;
+			}
+		} else {
+			return $height;
+		}
+	}
+
+	/**
 	 * Take style specified dimensions instead of calculated one
 	 * @return $this
 	 */
@@ -375,31 +413,11 @@ class Box extends \YetiForcePDF\Base
 				$dimensions = $this->getDimensions();
 				$width = $this->getStyle()->getRules('width');
 				if ($width !== 'auto') {
-					$percentPos = strpos($width, '%');
-					if ($percentPos !== false) {
-						$widthInPercent = substr($width, 0, $percentPos);
-						$parentWidth = $this->getParentInnerWidth();
-						if ($parentWidth) {
-							$width = $parentWidth / 100 * (float)$widthInPercent;
-							$dimensions->setWidth($width);
-						}
-					} else {
-						$dimensions->setWidth($width);
-					}
+					$dimensions->setWidth($this->getPercentWidth($width));
 				}
 				$height = $this->getStyle()->getRules('height');
 				if ($height !== 'auto') {
-					$percentPos = strpos($height, '%');
-					if ($percentPos !== false) {
-						$heightInPercent = substr($height, 0, $percentPos);
-						$parentHeight = $this->getParentInnerHeight();
-						if ($parentHeight) {
-							$height = $parentHeight / 100 * $heightInPercent;
-							$dimensions->setHeight($height);
-						}
-					} else {
-						$dimensions->setHeight($height);
-					}
+					$this->setHeight($this->getPercentHeight($height));
 				}
 			}
 		}
@@ -423,7 +441,7 @@ class Box extends \YetiForcePDF\Base
 			}
 			$dimensions->setWidth($lineWidth);
 			return $this;
-		} elseif ($this instanceof LineBox && $this->getParent()->getDimensions()->getWidth() !== null) {
+		} elseif ($this instanceof LineBox && $this->getParentInnerWidth() !== null) {
 			$dimensions->setWidth($this->getParentInnerWidth());
 			foreach ($this->getChildren() as $boxChild) {
 				$boxChild->measurePhaseOne();
