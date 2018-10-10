@@ -257,3 +257,4 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] font-weight (font-family without specifying weight and variant)
 - [ ] rgb, rgba, cmyk colors
 - [ ] floats
+- [ ] html elements with default css rules (<br />, <table>, <image> etc.)
