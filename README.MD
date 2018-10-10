@@ -47,7 +47,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] border-right-style
 - [ ] border-bottom-style
 - [ ] box-sizing
-- [x] display [block, inline, inline-block]
+- [x] display [block, inline, inline-block, none]
 - [x] width [px, em, cm, in]
 - [x] height [px, em, cm, in]
 - [ ] overflow
@@ -259,3 +259,6 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] floats
 - [ ] basic html elements with default css rules (br, table, image, hr etc.)
 - [ ] barcode generation
+- [ ] display: list-item
+- [ ] basic transformations (rotateXY, scaleXY, translateXY)
+- [ ] position (absolute, relative)
