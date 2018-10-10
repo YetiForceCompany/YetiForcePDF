@@ -255,7 +255,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] page headers / footers
 - [ ] background watermarks
 - [ ] font-weight (font-family without specifying weight and variant)
-- [ ] alpha channel support for colors (rgba)
+- [ ] alpha channel support for colors (rgba) and opacity
 - [ ] floats
 - [ ] basic html elements with default css rules (br, table, image, hr etc.)
 - [ ] barcode generation
