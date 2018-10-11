@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=0);
+declare(strict_types=1);
 /**
  * Box class
  *
@@ -140,12 +140,17 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function createTextBox(string $text)
 	{
-		if (!$this->getElement()->isTextNode()) {
+		if (!$this instanceof LineBox && !$this->getElement()->isTextNode()) {
 			$element = $this->getElement()->createTextNode($text);
 			$box = (new InlineBox())
 				->setDocument($this->document)
 				->setElement($element)
 				->init();
+			$this->appendChild($box);
+			return $box;
+		} elseif ($this instanceof LineBox) {
+			$box = $this->getParent()->createTextBox($text);
+			$this->getParent()->removeChild($box);
 			$this->appendChild($box);
 			return $box;
 		} else {
@@ -196,9 +201,13 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function removeChild(Box $child)
 	{
-		$this->children = array_filter($this->children, function ($currentChild) use ($child) {
-			return $currentChild !== $child;
-		});
+		$oldChildren = $this->children; // copy children
+		$this->children = [];
+		foreach ($oldChildren as $currentChild) {
+			if ($currentChild !== $child) {
+				$this->appendChild($currentChild);
+			}
+		}
 		if ($child->getPrevious()) {
 			if ($child->getNext()) {
 				$child->getPrevious()->setNext($child->getNext());
@@ -585,7 +594,7 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function splitLines()
 	{
-		if (!$this instanceof LineBox) {
+		if (!$this instanceof LineBox && !$this instanceof InlineBox) {
 			// we are block box so we can operate on our children and divide lines into more lines
 			foreach ($this->getChildren() as $child) {
 				if ($child instanceof LineBox) {

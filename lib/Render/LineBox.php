@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=0);
+declare(strict_types=1);
 /**
  * LineBox class
  *
@@ -41,79 +41,33 @@ class LineBox extends Box
 	}
 
 	/**
-	 * Break word normal
-	 * @param \YetiForcePDF\Render\Box $box
-	 * @return Box[]
-	 */
-	protected function wrapWordNormal(Box $box)
-	{
-		if ($box->getElement()->isTextNode()) {
-			$text = $box->getElement()->getText();
-			$parent = $this->getParent();
-			$words = explode(' ', $text);
-			$count = count($words);
-			$boxes = [];
-			foreach ($words as $index => $word) {
-				if ($index !== $count - 1) {
-					$word .= ' ';
-				}
-				$boxes[] = $currentBox = $parent->createTextBox($word);
-				// create box inside parent box and detach it to put it into splitted lines later
-				$currentBox->segregate();
-				$currentBox->measurePhaseOne();
-				$parent->removeChild($currentBox);
-			}
-			return $boxes;
-		} elseif($box instanceof InlineBox) {
-			foreach ($box->getChildren() as $childBox) {
-				$this->wrapWord($childBox);
-			}
-		}
-		return [$box];
-	}
-
-	/**
-	 * Break words into elements
-	 * @param Box $box
-	 * @return Box[]
-	 */
-	protected function wrapWord(Box $box)
-	{
-		$braked = [$box];
-		$wordBreak = $box->getStyle()->getRules('word-wrap');
-		switch ($wordBreak) {
-			case 'normal':
-				$braked = $this->wrapWordNormal($box);
-			case 'break-word':
-				//return $this->breakWordBreakWord($box);
-		}
-		return $braked;
-	}
-
-	/**
 	 * Divide this line into more lines when objects doesn't fit
 	 * @return LineBox[]
 	 */
 	public function divide()
 	{
-		$lineWidth = $this->getDimensions()->getWidth();
+		$lineWidth = $this->getParent()->getDimensions()->getInnerWidth();
 		$lines = [];
 		if (!$this->elementsFit()) {
 			$line = (new LineBox())->setDocument($this->document)->init();
 			$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
 			$line->setParent($this->getParent());
 			foreach ($this->getChildren() as $childBox) {
-				$wrapped = $this->wrapWord($childBox);
-				foreach ($wrapped as $wrappedChild) {
-					if ($line->willFit($wrappedChild)) {
-						$line->appendChild($wrappedChild);
-					} else {
-						$lines[] = $line;
-						$line = (new LineBox())->setDocument($this->document)->init();
-						$line->setParent($this->getParent());
-						$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
-						$line->appendChild($wrappedChild);
-					}
+				$childBox->split();
+			}
+			// flatten children
+			foreach ($this->getChildren() as $childBox) {
+				$childBox->moveUp();
+			}
+			foreach ($this->getChildren() as $childBox) {
+				if ($line->willFit($childBox)) {
+					$line->appendChild($childBox);
+				} else {
+					$lines[] = $line;
+					$line = (new LineBox())->setDocument($this->document)->init();
+					$line->setParent($this->getParent());
+					$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
+					$line->appendChild($childBox);
 				}
 			}
 			// append last line
