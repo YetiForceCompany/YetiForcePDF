@@ -151,7 +151,7 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set element
+	 * Set element (only for parsing dom tree - domElement should not be used anywhere else)
 	 * @param $element
 	 * @return \YetiForcePDF\Html\Element
 	 */

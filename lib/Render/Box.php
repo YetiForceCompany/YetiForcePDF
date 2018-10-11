@@ -135,10 +135,11 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Create and append text box (text node) element
-	 * @param string $text
+	 * @param string   $text
+	 * @param Box|null $insertBefore
 	 * @return InlineBox|null
 	 */
-	public function createTextBox(string $text)
+	public function createTextBox(string $text, Box $insertBefore = null)
 	{
 		if (!$this instanceof LineBox && !$this->getElement()->isTextNode()) {
 			$element = $this->getElement()->createTextNode($text);
@@ -146,15 +147,68 @@ class Box extends \YetiForcePDF\Base
 				->setDocument($this->document)
 				->setElement($element)
 				->init();
-			$this->appendChild($box);
+			if ($insertBefore) {
+				$this->insertBefore($box, $insertBefore);
+			} else {
+				$this->appendChild($box);
+			}
 			return $box;
 		} elseif ($this instanceof LineBox) {
 			$box = $this->getParent()->createTextBox($text);
 			$this->getParent()->removeChild($box);
-			$this->appendChild($box);
+			if ($insertBefore) {
+				$this->insertBefore($box, $insertBefore);
+			} else {
+				$this->appendChild($box);
+			}
 			return $box;
 		} else {
 			throw new \InvalidArgumentException('Cannot create child element inside text node.');
+		}
+	}
+
+	/**
+	 * Wrap each child element with clone of this box instance and push each element to parent box
+	 */
+	public function cutAndWrap()
+	{
+		$oldChildren = $this->getChildren();
+		$parent = $this->getParent();
+		foreach ($oldChildren as $child) {
+			$clone = clone $this;
+			$clone->children = [];
+			$clone->appendChild($child);
+			$parent->insertBefore($clone, $this);
+		}
+		$parent->removeChild($this);
+	}
+
+	/**
+	 * Convert text to words and wrap with InlineBox
+	 */
+	public function split()
+	{
+		if (!$this instanceof LineBox && $this->getElement()->isTextNode()) {
+			$text = $this->getElement()->getText();
+			$parent = $this->getParent();
+			$words = explode(' ', $text);
+			$count = count($words);
+			foreach ($words as $index => $word) {
+				if ($index !== $count - 1) {
+					$word .= ' ';
+				}
+				$parent->createTextBox($word, $this);
+			}
+			$parent->removeChild($this);
+			// we have multiple words instead of long text
+			if (!$parent instanceof LineBox) {
+				$parent->cutAndWrap();
+			}
+			$parent->segregate()->measurePhaseOne();
+		} else {
+			foreach ($this->getChildren() as $box) {
+				$box->split();
+			}
 		}
 	}
 
