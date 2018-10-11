@@ -470,4 +470,35 @@ class Style extends \YetiForcePDF\Base
 		}
 		return $finalRules;
 	}
+
+	/**
+	 * Clear style for first inline element (in line)
+	 * @return $this
+	 */
+	public function clearFirstInline()
+	{
+		$this->rules['margin-right'] = 0;
+		return $this;
+	}
+
+	/**
+	 * Clear style for last inline element (in line)
+	 * @return $this
+	 */
+	public function clearLastInline()
+	{
+		$this->rules['margin-left'] = 0;
+		return $this;
+	}
+
+	/**
+	 * Clear style for middle inline element (in line)
+	 * @return $this
+	 */
+	public function clearMiddleInline()
+	{
+		$this->rules['margin-left'] = 0;
+		$this->rules['margin-right'] = 0;
+		return $this;
+	}
 }

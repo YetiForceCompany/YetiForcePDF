@@ -174,11 +174,22 @@ class Box extends \YetiForcePDF\Base
 	{
 		$oldChildren = $this->getChildren();
 		$parent = $this->getParent();
-		foreach ($oldChildren as $child) {
+		$count = count($oldChildren);
+		foreach ($oldChildren as $index => $child) {
 			$clone = clone $this;
-			$clone->children = [];
+			$clone->getDimensions()->setBox($clone);
+			$clone->getCoordinates()->setBox($clone);
+			$clone->getOffset()->setBox($clone);
 			$clone->appendChild($child);
 			$parent->insertBefore($clone, $this);
+			if ($index === 0) {
+				$clone->getStyle()->clearFirstInline();
+			} elseif ($index + 1 === $count - 1) {
+				$clone->getStyle()->clearLastInline();
+			} else {
+				$clone->getStyle()->clearMiddleInline();
+			}
+			$clone->measurePhaseOne();
 		}
 		$parent->removeChild($this);
 	}
@@ -204,7 +215,7 @@ class Box extends \YetiForcePDF\Base
 			if (!$parent instanceof LineBox) {
 				$parent->cutAndWrap();
 			}
-			$parent->segregate()->measurePhaseOne();
+			$parent->measurePhaseOne();
 		} else {
 			foreach ($this->getChildren() as $box) {
 				$box->split();
@@ -879,6 +890,8 @@ class Box extends \YetiForcePDF\Base
 		$this->measurePhaseOne();
 		// we have all elements widths but not for percentage width in all elements - now we can calculate percent widths
 		$this->takeStyleDimensions();
+		// split long text into inline elements per word
+		$this->split();
 		// all boxes that can be measured were measured whoa!
 		// now we can split lineBoxes into more lines basing on its width and children widths
 		$this->splitLines();

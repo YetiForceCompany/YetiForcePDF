@@ -52,7 +52,6 @@ class LineBox extends Box
 			$line = (new LineBox())->setDocument($this->document)->init();
 			$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
 			$line->setParent($this->getParent());
-			$this->split();
 			foreach ($this->getChildren() as $childBox) {
 				if ($line->willFit($childBox)) {
 					$line->appendChild($childBox);
