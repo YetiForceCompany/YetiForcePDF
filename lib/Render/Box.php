@@ -417,7 +417,7 @@ class Box extends \YetiForcePDF\Base
 				}
 				$height = $this->getStyle()->getRules('height');
 				if ($height !== 'auto') {
-					$this->setHeight($this->getPercentHeight($height));
+					$dimensions->setHeight($this->getPercentHeight($height));
 				}
 			}
 		}
@@ -434,19 +434,13 @@ class Box extends \YetiForcePDF\Base
 		$dimensions = $this->getDimensions();
 		$dimensions->setUpAvailableSpace();
 
-		if ($this instanceof LineBox && $this->getParent()->getDimensions()->getWidth() === null) {
+		if ($this instanceof LineBox) {
 			$lineWidth = 0;
 			foreach ($this->getChildren() as $boxChild) {
 				$boxChild->measurePhaseOne();
 				$lineWidth += $boxChild->getDimensions()->getOuterWidth();
 			}
 			$dimensions->setWidth($lineWidth);
-			return $this;
-		} elseif ($this instanceof LineBox && $this->getParentInnerWidth() !== null) {
-			$dimensions->setWidth($this->getParentInnerWidth());
-			foreach ($this->getChildren() as $boxChild) {
-				$boxChild->measurePhaseOne();
-			}
 			return $this;
 		}
 
@@ -542,10 +536,15 @@ class Box extends \YetiForcePDF\Base
 				->setDocument($this->document)
 				->setElement($childElement)
 				->init();
-			if ($lineBox === null) {
+			// create line only inside block elements
+			if ($lineBox === null && $this->getStyle()->getRules('display') === 'block') {
 				$lineBox = $this->getNewLineBox();
 			}
-			$lineBox->appendChild($box);
+			if ($lineBox !== null) {
+				$lineBox->appendChild($box);
+			} else {
+				$this->appendChild($box);
+			}
 			$box->segregate();
 		}
 		if ($lineBox !== null) {

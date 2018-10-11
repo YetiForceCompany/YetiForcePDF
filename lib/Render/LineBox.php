@@ -64,6 +64,10 @@ class LineBox extends Box
 				$parent->removeChild($currentBox);
 			}
 			return $boxes;
+		} elseif($box instanceof InlineBox) {
+			foreach ($box->getChildren() as $childBox) {
+				$this->wrapWord($childBox);
+			}
 		}
 		return [$box];
 	}
@@ -75,14 +79,15 @@ class LineBox extends Box
 	 */
 	protected function wrapWord(Box $box)
 	{
+		$braked = [$box];
 		$wordBreak = $box->getStyle()->getRules('word-wrap');
 		switch ($wordBreak) {
 			case 'normal':
-				return $this->wrapWordNormal($box);
+				$braked = $this->wrapWordNormal($box);
 			case 'break-word':
 				//return $this->breakWordBreakWord($box);
 		}
-		return [$box];
+		return $braked;
 	}
 
 	/**
