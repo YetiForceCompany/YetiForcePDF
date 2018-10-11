@@ -65,6 +65,10 @@ class Element extends \YetiForcePDF\Base
 	 * @var \YetiForcePDF\Html\Element
 	 */
 	protected $next;
+	/**
+	 * @var string
+	 */
+	protected $text;
 
 	/**
 	 * Initialisation
@@ -76,7 +80,7 @@ class Element extends \YetiForcePDF\Base
 		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
 		$this->style = $this->parseStyle();
-		if ($this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
+		if ($this->domElement && $this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
 			$children = [];
 			// basing on dom children elements automatically setup nested instances of BoxDimensions (pdf)
 			foreach ($this->domElement->childNodes as $index => $childNode) {
@@ -87,10 +91,10 @@ class Element extends \YetiForcePDF\Base
 					->setElement($childNode)
 					->setParent($this)// setParent will remove this element from previous parent if exists
 					->setTextNode($isTextNode);
-				if ($isTextNode) {
-					$childNode->normalize();
-				}
 				$this->addChild($childElement);
+				if ($isTextNode) {
+					$childElement->setText($childNode->textContent);
+				}
 			}
 			foreach ($children as $index => $child) {
 				if ($index > 0) {
@@ -106,19 +110,37 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Set text
+	 * @param string $text
+	 * @return $this
+	 */
+	public function setText(string $text)
+	{
+		$this->text = $text;
+		return $this;
+	}
+
+	/**
+	 * Get text
+	 * @return string
+	 */
+	public function getText()
+	{
+		return $this->text;
+	}
+
+	/**
 	 * Create and append text node to parent element
 	 * @param string $text
 	 * @return Element
 	 */
 	public function createTextNode(string $text)
 	{
-		$textNode = $this->domElement->ownerDocument->createTextNode($text);
-		$this->domElement->appendChild($textNode);
 		$element = (new Element())
 			->setDocument($this->document)
-			->setElement($textNode)
 			->setParent($this)
-			->setTextNode(true);
+			->setTextNode(true)
+			->setText($text);
 		if ($previous = $this->getLastChild()) {
 			$element->setPrevious($previous);
 			$previous->setNext($element);
@@ -136,6 +158,23 @@ class Element extends \YetiForcePDF\Base
 	public function setElement($element): Element
 	{
 		$this->domElement = $element;
+		return $this;
+	}
+
+	/**
+	 * Remove child element
+	 * @param \YetiForcePDF\Html\Element $child
+	 * @return $this
+	 */
+	public function removeChild(Element $child)
+	{
+		$oldChildren = $this->children;
+		$this->children = [];
+		foreach ($oldChildren as $currentChild) {
+			if ($currentChild !== $child) {
+				$this->children[] = $currentChild;
+			}
+		}
 		return $this;
 	}
 
@@ -252,15 +291,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get dom element
-	 * @return \DOMElement|\DOMText
-	 */
-	public function getDOMElement()
-	{
-		return $this->domElement;
-	}
-
-	/**
 	 * Parse element style
 	 * @return \YetiForcePDF\Style\Style
 	 */
@@ -339,34 +369,6 @@ class Element extends \YetiForcePDF\Base
 		if ($count = count($children)) {
 			return $children[$count - 1];
 		}
-	}
-
-	/**
-	 * Get dom document
-	 * @return \DOMDocument
-	 */
-	public function getDomDocument()
-	{
-		return $this->getDOMElement()->ownerDocument;
-	}
-
-	/**
-	 * Get text content
-	 * @param bool $currentNodeOnly - do not retrieve children text nodes concatenated
-	 * @return string
-	 */
-	public function getText(bool $currentNodeOnly = true)
-	{
-		if (!$currentNodeOnly) {
-			return $this->domElement->textContent;
-		}
-		$childrenText = '';
-		foreach ($this->getChildren() as $child) {
-			if (!$child->isTextNode()) {
-				$childrenText .= $child->getText(false);
-			}
-		}
-		return mb_substr($this->domElement->textContent, 0, mb_strlen($this->domElement->textContent) - mb_strlen($childrenText));
 	}
 
 }

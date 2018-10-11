@@ -222,6 +222,9 @@ class Box extends \YetiForcePDF\Base
 				$child->getNext()->setPrevious();
 			}
 		}
+		if (!$child instanceof LineBox) {
+			$child->getElement()->getParent()->removeChild($child->getElement());
+		}
 		$child->setParent()->setPrevious()->setNext();
 		return $child;
 	}
