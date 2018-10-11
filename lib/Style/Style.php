@@ -478,6 +478,7 @@ class Style extends \YetiForcePDF\Base
 	public function clearFirstInline()
 	{
 		$this->rules['margin-right'] = 0;
+		$this->rules['border-right-width'] = 0;
 		return $this;
 	}
 
@@ -488,6 +489,7 @@ class Style extends \YetiForcePDF\Base
 	public function clearLastInline()
 	{
 		$this->rules['margin-left'] = 0;
+		$this->rules['border-left-width'] = 0;
 		return $this;
 	}
 
@@ -499,6 +501,9 @@ class Style extends \YetiForcePDF\Base
 	{
 		$this->rules['margin-left'] = 0;
 		$this->rules['margin-right'] = 0;
+		$this->rules['border-right-width'] = 0;
+		$this->rules['border-left-width'] = 0;
 		return $this;
 	}
+
 }

@@ -97,5 +97,11 @@ class Dimensions extends \YetiForcePDF\Base
 		return $this->availableSpace;
 	}
 
+	public function __clone()
+	{
+		$this->width = null;
+		$this->height = null;
+	}
+
 
 }

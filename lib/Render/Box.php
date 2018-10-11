@@ -182,12 +182,14 @@ class Box extends \YetiForcePDF\Base
 			$clone->getOffset()->setBox($clone);
 			$clone->appendChild($child);
 			$parent->insertBefore($clone, $this);
-			if ($index === 0) {
-				$clone->getStyle()->clearFirstInline();
-			} elseif ($index + 1 === $count - 1) {
-				$clone->getStyle()->clearLastInline();
-			} else {
-				$clone->getStyle()->clearMiddleInline();
+			if ($count > 1) {
+				if ($index === 0) {
+					$clone->getStyle()->clearFirstInline();
+				} elseif ($index === $count - 1) {
+					$clone->getStyle()->clearLastInline();
+				} else {
+					$clone->getStyle()->clearMiddleInline();
+				}
 			}
 			$clone->measurePhaseOne();
 		}
@@ -456,7 +458,7 @@ class Box extends \YetiForcePDF\Base
 				return $parentWidth / 100 * (float)$widthInPercent;
 			}
 		} else {
-			return $width;
+			return (float)$width;
 		}
 	}
 
@@ -475,7 +477,7 @@ class Box extends \YetiForcePDF\Base
 				return $parentHeight / 100 * $heightInPercent;
 			}
 		} else {
-			return $height;
+			return (float)$height;
 		}
 	}
 
@@ -490,11 +492,11 @@ class Box extends \YetiForcePDF\Base
 				$dimensions = $this->getDimensions();
 				$width = $this->getStyle()->getRules('width');
 				if ($width !== 'auto') {
-					$dimensions->setWidth($this->getPercentWidth($width));
+					$dimensions->setWidth($this->getPercentWidth((string)$width));
 				}
 				$height = $this->getStyle()->getRules('height');
 				if ($height !== 'auto') {
-					$dimensions->setHeight($this->getPercentHeight($height));
+					$dimensions->setHeight($this->getPercentHeight((string)$height));
 				}
 			}
 		}
