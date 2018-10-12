@@ -118,6 +118,7 @@ class Parser extends \YetiForcePDF\Base
 			->setRoot(true)
 			->init();
 		$this->box->setStyle($this->rootElement->parseStyle());
+		$this->box->getDimensions()->setUpAvailableSpace();
 		$this->box->reflow();
 		$children = [];
 		$this->box->getAllChildren($children);

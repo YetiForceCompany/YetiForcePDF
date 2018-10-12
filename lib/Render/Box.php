@@ -228,6 +228,7 @@ class Box extends \YetiForcePDF\Base
 			} else {
 				$this->appendChild($box);
 			}
+			$box->getDimensions()->setUpAvailableSpace();
 			return $box;
 		} elseif ($this instanceof LineBox) {
 			$box = $this->getParent()->createTextBox($text);
@@ -237,6 +238,7 @@ class Box extends \YetiForcePDF\Base
 			} else {
 				$this->appendChild($box);
 			}
+			$box->getDimensions()->setUpAvailableSpace();
 			return $box;
 		} else {
 			throw new \InvalidArgumentException('Cannot create child element inside text node.');
@@ -276,6 +278,7 @@ class Box extends \YetiForcePDF\Base
 						}
 					}
 					$clone->measurePhaseOne();
+					$clone->getDimensions()->setUpAvailableSpace();
 				}
 				$parent->removeChild($this);
 				$parent->measurePhaseOne();
@@ -336,6 +339,7 @@ class Box extends \YetiForcePDF\Base
 			$box->setPrevious()->setNext();
 		}
 		$this->children[] = $box;
+		$box->getDimensions()->setUpAvailableSpace();
 		return $this;
 	}
 
@@ -656,7 +660,9 @@ class Box extends \YetiForcePDF\Base
 		$newLineBox = (new LineBox())->setDocument($this->document)->init();
 		$newLineBox->setParent($this);
 		if ($this->getDimensions()->getWidth() !== null) {
-			$newLineBox->getDimensions()->setWidth($this->getDimensions()->getInnerWidth());
+			$newLineBox->getDimensions()->setWidth($this->getDimensions()->getInnerWidth())->setUpAvailableSpace();
+		} else {
+			$newLineBox->getDimensions()->setUpAvailableSpace();
 		}
 		return $newLineBox;
 	}
@@ -667,7 +673,7 @@ class Box extends \YetiForcePDF\Base
 	 * @param bool                              $createNew
 	 * @return \YetiForcePDF\Render\LineBox
 	 */
-	protected function closeLine(LineBox $lineBox, bool $createNew = true)
+	public function closeLine(LineBox $lineBox, bool $createNew = true)
 	{
 		$this->appendChild($lineBox);
 		if ($createNew) {
@@ -677,10 +683,32 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get closest block element
+	 * @return \YetiForcePDF\Render\Box
+	 */
+	public function getClosestBlock()
+	{
+		if ($this instanceof BlockBox && $this->getStyle()->getRules('display') === 'block') {
+			return $this;
+		}
+		if ($parent = $this->getParent()) {
+			if ($parent instanceof LineBox) {
+				return $parent->getParent();
+			} else {
+				if ($parent->getStyle()->getRules('display') === 'block') {
+					return $parent;
+				} else {
+					return $parent->getClosestBlock();
+				}
+			}
+		}
+	}
+
+	/**
 	 * Segregate elements
 	 * @return $this
 	 */
-	public function segregateBox()
+	public function segregate()
 	{
 		$lineBox = null;
 		if ($this->getElement()->getDomElement()->hasChildNodes()) {
@@ -708,54 +736,34 @@ class Box extends \YetiForcePDF\Base
 					continue;
 				}
 				// inline boxes
-				$box = (new InlineBox())
-					->setDocument($this->document)
-					->setElement($childElement)
-					->init();
+				if ($childElementStyle->getRules('display') === 'inline') {
+					$box = (new InlineBox())
+						->setDocument($this->document)
+						->setElement($childElement)
+						->init();
+				} else {
+					$box = (new InlineBlockBox())
+						->setDocument($this->document)
+						->setElement($childElement)
+						->init();
+				}
 				if ($childNode instanceof \DOMText) {
 					$box->setTextNode(true)->setText($childNode->textContent);
 				}
 				$box->setStyle($box->getElement()->parseStyle());
-				// create line only inside block elements
-				if ($lineBox === null && $this->getStyle()->getRules('display') === 'block') {
-					$lineBox = $this->getNewLineBox();
+				if ($lineBox === null) {
+					if ($this->getStyle()->getRules('display') !== 'inline') {
+						$lineBox = $this->getNewLineBox();
+					} else {
+						$lineBox = $this->getClosestBlock()->getNewLineBox();
+					}
 				}
-				if ($lineBox !== null) {
-					$lineBox->appendChild($box);
-				} else {
-					$this->appendChild($box);
-				}
+				$lineBox->appendChild($box);
 				$box->segregate();
 			}
 		}
 		if ($lineBox !== null) {
 			$this->closeLine($lineBox, false);
-		}
-		return $this;
-	}
-
-	/**
-	 * Segregate boxes in lines
-	 * @return $this
-	 */
-	public function segregateLine()
-	{
-		foreach ($this->getChildren() as $boxChildren) {
-			$boxChildren->segregateBox();
-		}
-		return $this;
-	}
-
-	/**
-	 * Segregate elements
-	 * @return $this
-	 */
-	public function segregate()
-	{
-		if ($this instanceof LineBox) {
-			$this->segregateLine();
-		} else {
-			$this->segregateBox();
 		}
 		return $this;
 	}
@@ -814,7 +822,7 @@ class Box extends \YetiForcePDF\Base
 			if ($style->getRules('display') !== 'inline') {
 				$dimensions->setHeight($height + $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
 			} else {
-				$dimensions->setHeight($height + $style->getVerticalBordersWidth());
+				$dimensions->setHeight($height);
 			}
 		}
 		return $this;
@@ -879,7 +887,9 @@ class Box extends \YetiForcePDF\Base
 					}
 				} else {
 					$parentRules = $parent->getStyle()->getRules();
-					$top += $parentRules['border-top-width'] + $parentRules['padding-top'];
+					if ($parentRules['display'] !== 'inline') {
+						$top += $parentRules['border-top-width'] + $parentRules['padding-top'];
+					}
 				}
 				if (!$this instanceof LineBox) {
 					$top += $this->getStyle()->getRules('margin-top');
