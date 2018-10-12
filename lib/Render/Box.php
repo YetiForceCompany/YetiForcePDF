@@ -194,6 +194,7 @@ class Box extends \YetiForcePDF\Base
 			$clone->measurePhaseOne();
 		}
 		$parent->removeChild($this);
+		$parent->measurePhaseOne();
 	}
 
 	/**

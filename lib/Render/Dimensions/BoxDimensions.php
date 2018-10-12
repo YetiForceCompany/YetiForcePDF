@@ -83,9 +83,7 @@ class BoxDimensions extends Dimensions
 		$box = $this->getBox();
 		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
 			$rules = $this->getBox()->getStyle()->getRules();
-			if ($rules['display'] !== 'inline') {
-				return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
-			}
+			return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
 		}
 		return $this->getWidth();
 	}
