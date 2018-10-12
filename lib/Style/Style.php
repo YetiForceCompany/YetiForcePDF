@@ -242,12 +242,14 @@ class Style extends \YetiForcePDF\Base
 
 	/**
 	 * Get parent style
-	 * @return null|\YetiForcePDF\Style\Style
+	 * @return Style|null
 	 */
 	public function getParent()
 	{
-		if ($this->element && $parent = $this->element->getParent()) {
-			return $parent->getStyle();
+		if ($this->box) {
+			if ($parentBox = $this->box->getParent()) {
+				return $parentBox->getStyle();
+			}
 		}
 	}
 
@@ -259,18 +261,8 @@ class Style extends \YetiForcePDF\Base
 	public function getChildren(array $rules = [])
 	{
 		$childrenStyles = [];
-		foreach ($this->element->getChildren() as $child) {
-			$style = $child->getStyle();
-			$rulesCompatible = true;
-			foreach ($rules as $name => $value) {
-				if ($style->getRules($name) !== $value) {
-					$rulesCompatible = false;
-					break;
-				}
-			}
-			if ($rulesCompatible) {
-				$childrenStyles[] = $style;
-			}
+		foreach ($this->box->getChildren() as $childBox) {
+			$childrenStyles[] = $childBox->getStyle();
 		}
 		return $childrenStyles;
 	}
@@ -281,7 +273,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function hasChildren()
 	{
-		return $this->getElement()->hasChildren();
+		return $this->box->hasChildren();
 	}
 
 	/**
@@ -290,7 +282,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function getPrevious()
 	{
-		if ($previous = $this->element->getPrevious()) {
+		if ($previous = $this->box->getPrevious()) {
 			return $previous->getStyle();
 		}
 	}
@@ -301,7 +293,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function getNext()
 	{
-		if ($next = $this->element->getNext()) {
+		if ($next = $this->box->getNext()) {
 			return $next->getStyle();
 		}
 	}

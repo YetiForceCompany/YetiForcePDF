@@ -18,6 +18,14 @@ namespace YetiForcePDF\Html;
 class Element extends \YetiForcePDF\Base
 {
 	/**
+	 * @var Box
+	 */
+	protected $box;
+	/**
+	 * @var Box
+	 */
+	protected $parentBox;
+	/**
 	 * Unique internal element id
 	 * @var string
 	 */
@@ -79,34 +87,58 @@ class Element extends \YetiForcePDF\Base
 		parent::init();
 		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
-		$this->style = $this->parseStyle();
-		if ($this->domElement && $this->domElement->hasChildNodes() && $this->style->getRules('display') !== 'none') {
-			$children = [];
-			// basing on dom children elements automatically setup nested instances of BoxDimensions (pdf)
-			foreach ($this->domElement->childNodes as $index => $childNode) {
-				$isTextNode = $childNode instanceof \DOMText;
-				// if element already exists for this domNode use it (in case current element is moved and initialised again)
-				$childElement = $children[] = (new Element())
-					->setDocument($this->document)
-					->setElement($childNode)
-					->setParent($this)// setParent will remove this element from previous parent if exists
-					->setTextNode($isTextNode);
-				$this->addChild($childElement);
-				if ($isTextNode) {
-					$childElement->setText($childNode->textContent);
-				}
-			}
-			foreach ($children as $index => $child) {
-				if ($index > 0) {
-					$child->setPrevious($children[$index - 1]);
-				}
-				if ($index + 1 < count($children) - 1) {
-					$child->setNext($children[$index + 2]);
-				}
-				$child->init();
-			}
-		}
 		return $this;
+	}
+
+	/**
+	 * Set box for this element (element is always inside box)
+	 * @param \YetiForcePDF\Html\Box $box
+	 * @return $this
+	 */
+	public function setBox($box)
+	{
+		$this->box = $box;
+		return $this;
+	}
+
+	/**
+	 * Get box
+	 * @return \YetiForcePDF\Html\Box
+	 */
+	public function getBox()
+	{
+		return $this->box;
+	}
+
+	/**
+	 * Set parent box (only for style computation! elsewhere use getParent method!)
+	 * @param $box
+	 * @return $this
+	 */
+	public function setParentBox($box)
+	{
+		$this->parentBox = $box;
+		return $this;
+	}
+
+	/**
+	 * Get parent Element
+	 * @return Element|null
+	 */
+	public function getParentBox()
+	{
+		return $this->parentBox;
+	}
+
+	/**
+	 * Get parent element (from parent box)
+	 * @return mixed
+	 */
+	public function getParent()
+	{
+		if ($parentBox = $this->box->getParent()) {
+			return $parentBox->getElement();
+		}
 	}
 
 	/**
@@ -141,104 +173,29 @@ class Element extends \YetiForcePDF\Base
 			->setParent($this)
 			->setTextNode(true)
 			->setText($text);
-		if ($previous = $this->getLastChild()) {
-			$element->setPrevious($previous);
-			$previous->setNext($element);
-		}
-		$element->init();
 		$this->addChild($element);
+		$element->init();
 		return $element;
 	}
 
 	/**
-	 * Set element (only for parsing dom tree - domElement should not be used anywhere else)
+	 * Set dom element (only for parsing dom tree - domElement should not be used anywhere else)
 	 * @param $element
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setElement($element): Element
+	public function setDOMElement($element): Element
 	{
 		$this->domElement = $element;
 		return $this;
 	}
 
 	/**
-	 * Remove child element
-	 * @param \YetiForcePDF\Html\Element $child
-	 * @return $this
+	 * Get dom element
+	 * @return \DOMElement
 	 */
-	public function removeChild(Element $child)
+	public function getDOMElement()
 	{
-		$oldChildren = $this->children;
-		$this->children = [];
-		foreach ($oldChildren as $currentChild) {
-			if ($currentChild !== $child) {
-				$this->children[] = $currentChild;
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Set parent element
-	 * @param \YetiForcePDF\Html\Element $parent
-	 * @return \YetiForcePDF\Html\Element
-	 */
-	public function setParent(Element $parent = null)
-	{
-		if ($this->getParent() !== null) {
-			$this->getParent()->removeChild($this);
-		}
-		$this->parent = $parent;
-		return $this;
-	}
-
-	/**
-	 * Get parent element
-	 * @return null|\YetiForcePDF\Html\Element
-	 */
-	public function getParent()
-	{
-		return $this->parent;
-	}
-
-	/**
-	 * Set previous sibling element
-	 * @param \YetiForcePDF\Html\Element $previous
-	 * @return $this
-	 */
-	public function setPrevious(Element $previous = null)
-	{
-		$this->previous = $previous;
-		return $this;
-	}
-
-	/**
-	 * Get previous sibling element
-	 * @return \YetiForcePDF\Html\Element|null
-	 */
-	public function getPrevious()
-	{
-		return $this->previous;
-	}
-
-	/**
-	 * Set next sibling element
-	 * @param \YetiForcePDF\Html\Element $next
-	 * @return $this
-	 */
-	public function setNext(Element $next = null)
-	{
-		$this->next = $next;
-		return $this;
-	}
-
-	/**
-	 * Get next sibling element
-	 * @return \YetiForcePDF\Html\Element|null
-	 */
-	public function getNext()
-	{
-		return $this->next;
+		return $this->domElement;
 	}
 
 	/**
@@ -294,17 +251,24 @@ class Element extends \YetiForcePDF\Base
 	 * Parse element style
 	 * @return \YetiForcePDF\Style\Style
 	 */
-	protected function parseStyle(): \YetiForcePDF\Style\Style
+	public function parseStyle(): \YetiForcePDF\Style\Style
 	{
 		$styleStr = null;
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		return (new \YetiForcePDF\Style\Style())
+		$parentStyle = null;
+		if ($parentBox = $this->getParentBox()) {
+			$parentStyle = $parentBox->getStyle();
+		}
+		$style = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)
 			->setElement($this)
-			->setContent($styleStr)
-			->init();
+			->setContent($styleStr);
+		if ($parentStyle) {
+			$style->setParentStyle($parentStyle);
+		}
+		return $style->init();
 	}
 
 	/**
@@ -314,61 +278,6 @@ class Element extends \YetiForcePDF\Base
 	public function getStyle(): \YetiForcePDF\Style\Style
 	{
 		return $this->style;
-	}
-
-	/**
-	 * Add child element
-	 * @param \YetiForcePDF\Html\Element $child
-	 * @return \YetiForcePDF\Html\Element
-	 */
-	public function addChild(\YetiForcePDF\Html\Element $child): \YetiForcePDF\Html\Element
-	{
-		$this->children[] = $child;
-		return $this;
-	}
-
-	/**
-	 * Get child elements
-	 * @return \YetiForcePDF\Html\Element[]
-	 */
-	public function getChildren(): array
-	{
-		return $this->children;
-	}
-
-	/**
-	 * Do element have children?
-	 * @return bool
-	 */
-	public function hasChildren()
-	{
-		return count($this->children) > 0;
-	}
-
-	/**
-	 * Get all children (recursive)
-	 * @param Element[] $current
-	 * @return Element[]
-	 */
-	public function getAllChildren(array $current = [])
-	{
-		foreach ($this->getChildren() as $child) {
-			$current[] = $child;
-			$child->getAllChildren($current);
-		}
-		return $current;
-	}
-
-	/**
-	 * Get last children
-	 * @return \YetiForcePDF\Html\Element|null
-	 */
-	public function getLastChild()
-	{
-		$children = $this->getChildren();
-		if ($count = count($children)) {
-			return $children[$count - 1];
-		}
 	}
 
 }

@@ -108,7 +108,7 @@ class Parser extends \YetiForcePDF\Base
 		$this->elements = [];
 		$this->rootElement = (new \YetiForcePDF\Html\Element())
 			->setDocument($this->document)
-			->setElement($this->domDocument->documentElement)
+			->setDOMElement($this->domDocument->documentElement)
 			->setRoot(true);
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
@@ -117,13 +117,14 @@ class Parser extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setElement($this->rootElement)
 			->init();
+		$this->box->setStyle($this->rootElement->parseStyle());
 		$this->box->reflow();
 		$children = [];
 		$this->box->getAllChildren($children);
 		foreach ($children as $box) {
-			if (!$box instanceof \YetiForcePDF\Render\LineBox) {
-				$this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
-			}
+			//if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+			$this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
+			//}
 		}
 	}
 }

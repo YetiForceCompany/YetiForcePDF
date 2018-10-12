@@ -71,7 +71,18 @@ class BlockBox extends Box
 	public function setElement(Element $element)
 	{
 		$this->element = $element;
-		$this->style = $element->getStyle();
+		$element->setBox($this);
+		return $this;
+	}
+
+	/**
+	 * Set style
+	 * @param \YetiForcePDF\Style\Style $style
+	 * @return $this
+	 */
+	public function setStyle(Style $style)
+	{
+		$this->style = $style;
 		return $this;
 	}
 

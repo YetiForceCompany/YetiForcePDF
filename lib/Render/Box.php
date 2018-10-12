@@ -15,7 +15,7 @@ namespace YetiForcePDF\Render;
 use \YetiForcePDF\Render\Coordinates\Coordinates;
 use \YetiForcePDF\Render\Coordinates\Offset;
 use \YetiForcePDF\Render\Dimensions\BoxDimensions;
-
+use \YetiForcePDF\Html\Element;
 
 /**
  * Class Box
@@ -290,9 +290,6 @@ class Box extends \YetiForcePDF\Base
 				$child->getNext()->setPrevious();
 			}
 		}
-		if (!$child instanceof LineBox) {
-			$child->getElement()->getParent()->removeChild($child->getElement());
-		}
 		$child->setParent()->setPrevious()->setNext();
 		return $child;
 	}
@@ -527,7 +524,7 @@ class Box extends \YetiForcePDF\Base
 		if ($this->getElement()->isTextNode()) {
 			$dimensions->setWidth($dimensions->getTextWidth($this->getElement()->getText()));
 			$dimensions->setHeight($dimensions->getTextHeight($this->getElement()->getText()));
-		} elseif (!$this->getElement()->hasChildren() && $this->getStyle()->getRules('display') !== 'block') {
+		} elseif (!$this->hasChildren() && $this->getStyle()->getRules('display') !== 'block') {
 			// empty inline element so we can measure it :  0 + border + padding
 			$style = $this->getStyle();
 			$dimensions->setWidth($style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth());
@@ -596,36 +593,47 @@ class Box extends \YetiForcePDF\Base
 	public function segregateBox()
 	{
 		$lineBox = null;
-		foreach ($this->getElement()->getChildren() as $childElement) {
-			// make render box from the dom element
-			if ($childElement->getStyle()->getRules('display') === 'block') {
-				if ($lineBox !== null) { // faster than count()
-					// finish line and add to current children boxes as line box
-					$lineBox = $this->closeLine($lineBox, false);
+		if ($this->getElement()->getDomElement()->hasChildNodes()) {
+			foreach ($this->getElement()->getDOMElement()->childNodes as $childNode) {
+				// create Html Element from dom node (and later add to proper child box)
+				$childElement = (new Element())
+					->setDocument($this->document)
+					->setDOMElement($childNode)
+					->init();
+				// create style and later add to proper box
+				$childElementStyle = $childElement->parseStyle();
+				// make render box from the dom element
+				if ($childElementStyle->getRules('display') === 'block') {
+					if ($lineBox !== null) { // faster than count()
+						// finish line and add to current children boxes as line box
+						$lineBox = $this->closeLine($lineBox, false);
+					}
+					$box = (new BlockBox())
+						->setDocument($this->document)
+						->setElement($childElement)
+						->init();
+					$box->setStyle($box->getElement()->parseStyle());
+					$this->appendChild($box);
+					$box->segregate();
+					continue;
 				}
-				$box = (new BlockBox())
+				// inline boxes
+				$box = (new InlineBox())
 					->setDocument($this->document)
 					->setElement($childElement)
 					->init();
-				$this->appendChild($box);
+				$box->setStyle($box->getElement()->parseStyle());
+				// create line only inside block elements
+				if ($lineBox === null && $this->getStyle()->getRules('display') === 'block') {
+					$lineBox = $this->getNewLineBox();
+				}
+				if ($lineBox !== null) {
+					$lineBox->appendChild($box);
+				} else {
+					$this->appendChild($box);
+				}
 				$box->segregate();
-				continue;
 			}
-			// inline boxes
-			$box = (new InlineBox())
-				->setDocument($this->document)
-				->setElement($childElement)
-				->init();
-			// create line only inside block elements
-			if ($lineBox === null && $this->getStyle()->getRules('display') === 'block') {
-				$lineBox = $this->getNewLineBox();
-			}
-			if ($lineBox !== null) {
-				$lineBox->appendChild($box);
-			} else {
-				$this->appendChild($box);
-			}
-			$box->segregate();
 		}
 		if ($lineBox !== null) {
 			$this->closeLine($lineBox, false);
