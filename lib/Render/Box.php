@@ -293,9 +293,9 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function split()
 	{
+		$parent = $this->getParent();
 		if (!$this instanceof LineBox && $this->isTextNode()) {
 			$text = $this->getText();
-			$parent = $this->getParent();
 			$words = explode(' ', $text);
 			$count = count($words);
 			foreach ($words as $index => $word) {
@@ -305,9 +305,13 @@ class Box extends \YetiForcePDF\Base
 				$parent->createTextBox($word, $this);
 			}
 			$parent->removeChild($this);
+			$parent->cutAndWrap();
 		} else {
 			foreach ($this->getChildren() as $box) {
 				$box->split();
+			}
+			if ($parent) {
+				$parent->cutAndWrap();
 			}
 		}
 	}
@@ -992,7 +996,7 @@ class Box extends \YetiForcePDF\Base
 		$this->takeStyleDimensions();
 		// split long text into inline elements per word
 		$this->split();
-		$this->cutAndWrap();
+		//$this->cutAndWrap();
 		// all boxes that can be measured were measured whoa!
 		// now we can split lineBoxes into more lines basing on its width and children widths
 		$this->splitLines();
