@@ -16,6 +16,7 @@ use \YetiForcePDF\Render\Coordinates\Coordinates;
 use \YetiForcePDF\Render\Coordinates\Offset;
 use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 use \YetiForcePDF\Html\Element;
+use YetiForcePDF\Style\Style;
 
 /**
  * Class Box
@@ -214,8 +215,13 @@ class Box extends \YetiForcePDF\Base
 	public function createTextBox(string $text, Box $insertBefore = null)
 	{
 		if (!$this instanceof LineBox && !$this->isTextNode()) {
+			$style = (new Style())->setDocument($this->document)->init();
+			$style->setRule('display', 'inline');
 			$box = (new InlineBox())
 				->setDocument($this->document)
+				->setStyle($style)
+				->setTextNode(true)
+				->setText($text)
 				->init();
 			if ($insertBefore) {
 				$this->insertBefore($box, $insertBefore);
@@ -250,6 +256,10 @@ class Box extends \YetiForcePDF\Base
 			$clone->getDimensions()->setBox($clone);
 			$clone->getCoordinates()->setBox($clone);
 			$clone->getOffset()->setBox($clone);
+			$clone->getStyle()->setBox($clone);
+			if ($clone->getElement()) {
+				$clone->getElement()->setBox($clone);
+			}
 			$clone->appendChild($child);
 			$parent->insertBefore($clone, $this);
 			if ($count > 1) {

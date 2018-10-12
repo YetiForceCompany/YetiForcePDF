@@ -37,6 +37,10 @@ class Style extends \YetiForcePDF\Base
 	 */
 	protected $font;
 	/**
+	 * @var Box
+	 */
+	protected $box;
+	/**
 	 * Css properties that are inherited by default
 	 * @var array
 	 */
@@ -185,6 +189,26 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Set box for this element (element is always inside box)
+	 * @param \YetiForcePDF\Html\Box $box
+	 * @return $this
+	 */
+	public function setBox($box)
+	{
+		$this->box = $box;
+		return $this;
+	}
+
+	/**
+	 * Get box
+	 * @return \YetiForcePDF\Html\Box
+	 */
+	public function getBox()
+	{
+		return $this->box;
+	}
+
+	/**
 	 * Set element
 	 * @param \YetiForcePDF\Html\Element $element
 	 * @return \YetiForcePDF\Style\Style
@@ -199,7 +223,7 @@ class Style extends \YetiForcePDF\Base
 	 * Get element
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function getElement(): \YetiForcePDF\Html\Element
+	public function getElement()
 	{
 		return $this->element;
 	}
@@ -309,6 +333,18 @@ class Style extends \YetiForcePDF\Base
 			return $this->rules[$ruleName];
 		}
 		return $this->rules;
+	}
+
+	/**
+	 * Set rule
+	 * @param string $ruleName
+	 * @param        $ruleValue
+	 * @return $this
+	 */
+	public function setRule(string $ruleName, $ruleValue)
+	{
+		$this->rules[$ruleName] = $ruleValue;
+		return $this;
 	}
 
 	/**
@@ -429,8 +465,10 @@ class Style extends \YetiForcePDF\Base
 		if ($parent = $this->getParent()) {
 			$parsed = array_merge($parsed, $parent->getInheritedRules());
 		}
-		if ($this->getElement()->getDOMElement() instanceof \DOMText) {
-			$parsed['display'] = 'inline';
+		if ($this->getElement()) {
+			if ($this->getElement()->getDOMElement() instanceof \DOMText) {
+				$parsed['display'] = 'inline';
+			}
 		}
 		if ($this->content) {
 			$rules = explode(';', $this->content);
