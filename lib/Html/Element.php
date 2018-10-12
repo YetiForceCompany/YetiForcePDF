@@ -90,23 +90,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Create and append text node to parent element
-	 * @param string $text
-	 * @return Element
-	 */
-	public function createTextNode(string $text)
-	{
-		$element = (new Element())
-			->setDocument($this->document)
-			->setParent($this)
-			->setTextNode(true)
-			->setText($text);
-		$this->addChild($element);
-		$element->init();
-		return $element;
-	}
-
-	/**
 	 * Set dom element (only for parsing dom tree - domElement should not be used anywhere else)
 	 * @param $element
 	 * @return \YetiForcePDF\Html\Element

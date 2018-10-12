@@ -213,11 +213,9 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function createTextBox(string $text, Box $insertBefore = null)
 	{
-		if (!$this instanceof LineBox && !$this->getElement()->isTextNode()) {
-			$element = $this->getElement()->createTextNode($text);
+		if (!$this instanceof LineBox && !$this->isTextNode()) {
 			$box = (new InlineBox())
 				->setDocument($this->document)
-				->setElement($element)
 				->init();
 			if ($insertBefore) {
 				$this->insertBefore($box, $insertBefore);
@@ -275,7 +273,7 @@ class Box extends \YetiForcePDF\Base
 	public function split()
 	{
 		if (!$this instanceof LineBox && $this->isTextNode()) {
-			$text = $this->getElement()->getText();
+			$text = $this->getText();
 			$parent = $this->getParent();
 			$words = explode(' ', $text);
 			$count = count($words);
@@ -594,8 +592,8 @@ class Box extends \YetiForcePDF\Base
 		}
 
 		if ($this->isTextNode()) {
-			$dimensions->setWidth($dimensions->getTextWidth($this->getElement()->getText()));
-			$dimensions->setHeight($dimensions->getTextHeight($this->getElement()->getText()));
+			$dimensions->setWidth($dimensions->getTextWidth($this->getText()));
+			$dimensions->setHeight($dimensions->getTextHeight($this->getText()));
 		} elseif (!$this->hasChildren() && $this->getStyle()->getRules('display') !== 'block') {
 			// empty inline element so we can measure it :  0 + border + padding
 			$style = $this->getStyle();
@@ -694,6 +692,9 @@ class Box extends \YetiForcePDF\Base
 					->setDocument($this->document)
 					->setElement($childElement)
 					->init();
+				if ($childNode instanceof \DOMText) {
+					$box->setTextNode(true)->setText($childNode->textContent);
+				}
 				$box->setStyle($box->getElement()->parseStyle());
 				// create line only inside block elements
 				if ($lineBox === null && $this->getStyle()->getRules('display') === 'block') {

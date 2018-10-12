@@ -90,7 +90,7 @@ class BlockBox extends Box
 	 * Get style
 	 * @return Style
 	 */
-	public function getStyle(): Style
+	public function getStyle()
 	{
 		return $this->style;
 	}
