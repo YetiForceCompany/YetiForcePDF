@@ -43,40 +43,6 @@ class Element extends \YetiForcePDF\Base
 	 * @var \DOMElement
 	 */
 	protected $domElement;
-	/**
-	 * @var \YetiForcePDF\Style\Style
-	 */
-	protected $style;
-	/**
-	 * @var null|\YetiForcePDF\Html\Element
-	 */
-	protected $parent;
-	/**
-	 * Is this root element?
-	 * @var bool
-	 */
-	protected $root = false;
-	/**
-	 * Is this text node or element ?
-	 * @var bool
-	 */
-	protected $textNode = false;
-	/**
-	 * @var \YetiForcePDF\Html\Element[]
-	 */
-	protected $children = [];
-	/**
-	 * @var \YetiForcePDF\Html\Element
-	 */
-	protected $previous;
-	/**
-	 * @var \YetiForcePDF\Html\Element
-	 */
-	protected $next;
-	/**
-	 * @var string
-	 */
-	protected $text;
 
 	/**
 	 * Initialisation
@@ -111,54 +77,16 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set parent box (only for style computation! elsewhere use getParent method!)
-	 * @param $box
-	 * @return $this
-	 */
-	public function setParentBox($box)
-	{
-		$this->parentBox = $box;
-		return $this;
-	}
-
-	/**
-	 * Get parent Element
-	 * @return Element|null
-	 */
-	public function getParentBox()
-	{
-		return $this->parentBox;
-	}
-
-	/**
 	 * Get parent element (from parent box)
 	 * @return mixed
 	 */
 	public function getParent()
 	{
-		if ($parentBox = $this->box->getParent()) {
-			return $parentBox->getElement();
+		if ($this->box) {
+			if ($parentBox = $this->box->getParent()) {
+				return $parentBox->getElement();
+			}
 		}
-	}
-
-	/**
-	 * Set text
-	 * @param string $text
-	 * @return $this
-	 */
-	public function setText(string $text)
-	{
-		$this->text = $text;
-		return $this;
-	}
-
-	/**
-	 * Get text
-	 * @return string
-	 */
-	public function getText()
-	{
-		return $this->text;
 	}
 
 	/**
@@ -199,46 +127,6 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set root - is this root element?
-	 * @param bool $isRoot
-	 * @return \YetiForcePDF\Html\Element
-	 */
-	public function setRoot(bool $isRoot): Element
-	{
-		$this->root = $isRoot;
-		return $this;
-	}
-
-	/**
-	 * Set text node status
-	 * @param bool $isTextNode
-	 * @return \YetiForcePDF\Html\Element
-	 */
-	public function setTextNode(bool $isTextNode = false): Element
-	{
-		$this->textNode = $isTextNode;
-		return $this;
-	}
-
-	/**
-	 * Is this text node? or element
-	 * @return bool
-	 */
-	public function isTextNode(): bool
-	{
-		return $this->textNode;
-	}
-
-	/**
-	 * Is this root element?
-	 * @return bool
-	 */
-	public function isRoot(): bool
-	{
-		return $this->root;
-	}
-
-	/**
 	 * Get element internal unique id
 	 * @return string
 	 */
@@ -258,7 +146,7 @@ class Element extends \YetiForcePDF\Base
 			$styleStr = $this->domElement->getAttribute('style');
 		}
 		$parentStyle = null;
-		if ($parentBox = $this->getParentBox()) {
+		if ($parentBox = $this->getParent()) {
 			$parentStyle = $parentBox->getStyle();
 		}
 		$style = (new \YetiForcePDF\Style\Style())

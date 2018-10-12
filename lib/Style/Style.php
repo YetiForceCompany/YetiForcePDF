@@ -429,8 +429,8 @@ class Style extends \YetiForcePDF\Base
 		if ($parent = $this->getParent()) {
 			$parsed = array_merge($parsed, $parent->getInheritedRules());
 		}
-		if ($this->element) {
-			if ($this->element->isTextNode()) {
+		if ($this->box) {
+			if ($this->box->isTextNode()) {
 				$parsed['display'] = 'inline';
 			}
 		}

@@ -51,6 +51,18 @@ class Box extends \YetiForcePDF\Base
 	 * @var Offset
 	 */
 	protected $offset;
+	/**
+	 * @var string
+	 */
+	protected $text;
+	/**
+	 * @var bool
+	 */
+	protected $textNode = false;
+	/**
+	 * @var bool
+	 */
+	protected $root = false;
 
 	/**
 	 * {@inheritdoc}
@@ -134,6 +146,66 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Set root - is this root element?
+	 * @param bool $isRoot
+	 * @return $this
+	 */
+	public function setRoot(bool $isRoot)
+	{
+		$this->root = $isRoot;
+		return $this;
+	}
+
+	/**
+	 * Set text node status
+	 * @param bool $isTextNode
+	 * @return $this
+	 */
+	public function setTextNode(bool $isTextNode = false)
+	{
+		$this->textNode = $isTextNode;
+		return $this;
+	}
+
+	/**
+	 * Is this text node? or element
+	 * @return bool
+	 */
+	public function isTextNode(): bool
+	{
+		return $this->textNode;
+	}
+
+	/**
+	 * Is this root element?
+	 * @return bool
+	 */
+	public function isRoot(): bool
+	{
+		return $this->root;
+	}
+
+	/**
+	 * Set text
+	 * @param string $text
+	 * @return $this
+	 */
+	public function setText(string $text)
+	{
+		$this->text = $text;
+		return $this;
+	}
+
+	/**
+	 * Get text
+	 * @return string
+	 */
+	public function getText()
+	{
+		return $this->text;
+	}
+
+	/**
 	 * Create and append text box (text node) element
 	 * @param string   $text
 	 * @param Box|null $insertBefore
@@ -202,7 +274,7 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function split()
 	{
-		if (!$this instanceof LineBox && $this->getElement()->isTextNode()) {
+		if (!$this instanceof LineBox && $this->isTextNode()) {
 			$text = $this->getElement()->getText();
 			$parent = $this->getParent();
 			$words = explode(' ', $text);
@@ -521,7 +593,7 @@ class Box extends \YetiForcePDF\Base
 			return $this;
 		}
 
-		if ($this->getElement()->isTextNode()) {
+		if ($this->isTextNode()) {
 			$dimensions->setWidth($dimensions->getTextWidth($this->getElement()->getText()));
 			$dimensions->setHeight($dimensions->getTextHeight($this->getElement()->getText()));
 		} elseif (!$this->hasChildren() && $this->getStyle()->getRules('display') !== 'block') {

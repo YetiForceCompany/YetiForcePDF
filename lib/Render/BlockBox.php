@@ -246,7 +246,7 @@ class BlockBox extends Box
 		$element = $this->getElement();
 		$baseLine = $style->getFont()->getDescender();
 		$baseLineY = $pdfY - $baseLine;
-		if ($this->getElement()->isTextNode()) {
+		if ($this->isTextNode()) {
 			$textWidth = $style->getFont()->getTextWidth($element->getText());
 			$textHeight = $style->getFont()->getTextHeight();
 			$textContent = '(' . $this->filterText($element->getText()) . ')';
