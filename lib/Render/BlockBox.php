@@ -243,7 +243,6 @@ class BlockBox extends Box
 		$dimensions = $this->getDimensions();
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
-		$element = $this->getElement();
 		$baseLine = $style->getFont()->getDescender();
 		$baseLineY = $pdfY - $baseLine;
 		if ($this->isTextNode()) {
