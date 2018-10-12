@@ -248,33 +248,44 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function cutAndWrap()
 	{
-		$oldChildren = $this->getChildren();
-		$parent = $this->getParent();
-		$count = count($oldChildren);
-		foreach ($oldChildren as $index => $child) {
-			$clone = clone $this;
-			$clone->getDimensions()->setBox($clone);
-			$clone->getCoordinates()->setBox($clone);
-			$clone->getOffset()->setBox($clone);
-			$clone->getStyle()->setBox($clone);
-			if ($clone->getElement()) {
-				$clone->getElement()->setBox($clone);
+		if ($this instanceof InlineBox) {
+			$parent = $this->getParent();
+			$count = count($this->getChildren());
+			foreach ($this->getChildren() as $child) {
+				$child->cutAndWrap();
 			}
-			$clone->appendChild($child);
-			$parent->insertBefore($clone, $this);
 			if ($count > 1) {
-				if ($index === 0) {
-					$clone->getStyle()->clearFirstInline();
-				} elseif ($index === $count - 1) {
-					$clone->getStyle()->clearLastInline();
-				} else {
-					$clone->getStyle()->clearMiddleInline();
+				foreach ($this->getChildren() as $index => $child) {
+					$clone = clone $this;
+					$clone->getDimensions()->setBox($clone);
+					$clone->getCoordinates()->setBox($clone);
+					$clone->getOffset()->setBox($clone);
+					$clone->getStyle()->setBox($clone);
+					if ($clone->getElement()) {
+						$clone->getElement()->setBox($clone);
+					}
+					$clone->appendChild($child);
+					$parent->insertBefore($clone, $this);
+					if ($count > 1) {
+						if ($index === 0) {
+							$clone->getStyle()->clearFirstInline();
+						} elseif ($index === $count - 1) {
+							$clone->getStyle()->clearLastInline();
+						} else {
+							$clone->getStyle()->clearMiddleInline();
+						}
+					}
+					$clone->measurePhaseOne();
 				}
+				$parent->removeChild($this);
+				$parent->measurePhaseOne();
 			}
-			$clone->measurePhaseOne();
+
+		} else {
+			foreach ($this->getChildren() as $childBox) {
+				$childBox->cutAndWrap();
+			}
 		}
-		$parent->removeChild($this);
-		$parent->measurePhaseOne();
 	}
 
 	/**
@@ -294,11 +305,6 @@ class Box extends \YetiForcePDF\Base
 				$parent->createTextBox($word, $this);
 			}
 			$parent->removeChild($this);
-			// we have multiple words instead of long text
-			if (!$parent instanceof LineBox) {
-				$parent->cutAndWrap();
-			}
-			$parent->measurePhaseOne();
 		} else {
 			foreach ($this->getChildren() as $box) {
 				$box->split();
@@ -986,6 +992,7 @@ class Box extends \YetiForcePDF\Base
 		$this->takeStyleDimensions();
 		// split long text into inline elements per word
 		$this->split();
+		$this->cutAndWrap();
 		// all boxes that can be measured were measured whoa!
 		// now we can split lineBoxes into more lines basing on its width and children widths
 		$this->splitLines();
