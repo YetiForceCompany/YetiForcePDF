@@ -71,6 +71,26 @@ class LineBox extends Box
 	}
 
 	/**
+	 * Measure width
+	 * @return $this
+	 */
+	public function measureWidth()
+	{
+
+		return $this;
+	}
+
+	/**
+	 * Reflow
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		$this->measureWidth();
+		return $this;
+	}
+
+	/**
 	 * Get children width
 	 * @return float|int
 	 */

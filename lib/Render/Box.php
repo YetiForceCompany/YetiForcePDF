@@ -64,14 +64,7 @@ class Box extends \YetiForcePDF\Base
 	 * @var bool
 	 */
 	protected $root = false;
-	/**
-	 * @var \YetiForcePDF\Render\LineBox
-	 */
-	protected $currentLineBox;
-	/**
-	 * @var array of LineBox and Block elements
-	 */
-	protected $lines = [];
+
 
 	/**
 	 * {@inheritdoc}
@@ -212,26 +205,6 @@ class Box extends \YetiForcePDF\Base
 	public function getText()
 	{
 		return $this->text;
-	}
-
-	/**
-	 * Add line
-	 * @param \YetiForcePDF\Render\LineBox|\YetiForcePDF\Render\BlockBox $box
-	 * @return $this
-	 */
-	public function addLine($box)
-	{
-		$this->lines[] = $box;
-		return $this;
-	}
-
-	/**
-	 * Get lines
-	 * @return array
-	 */
-	public function getLines()
-	{
-		return $this->lines;
 	}
 
 	/**
@@ -624,175 +597,6 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Measure all children widths and some heights if we can
-	 * @return $this
-	 */
-	public function measurePhaseOne()
-	{
-		// first measure current element if we can
-		$dimensions = $this->getDimensions();
-		$dimensions->setUpAvailableSpace();
-
-		if ($this instanceof LineBox) {
-			$lineWidth = 0;
-			foreach ($this->getChildren() as $boxChild) {
-				$boxChild->measurePhaseOne();
-				$lineWidth += $boxChild->getDimensions()->getOuterWidth();
-			}
-			$dimensions->setWidth($lineWidth);
-			return $this;
-		}
-
-		if ($this->isTextNode()) {
-			$dimensions->setWidth($dimensions->getTextWidth($this->getText()));
-			$dimensions->setHeight($dimensions->getTextHeight($this->getText()));
-		} elseif (!$this->hasChildren() && $this->getStyle()->getRules('display') !== 'block') {
-			// empty inline element so we can measure it :  0 + border + padding
-			$style = $this->getStyle();
-			$dimensions->setWidth($style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth());
-			$dimensions->setHeight($style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
-		} elseif ($this->getStyle()->getRules('display') === 'block') {
-			if ($parent = $this->getParent()) {
-				if ($parent->getDimensions()->getWidth() !== null) {
-					$dimensions->setWidth($this->getParentInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
-				}
-			} else {
-				$dimensions->setWidth($this->getParentInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
-			}
-			// but if element has specified width other than auto take it
-			$this->takeStyleDimensions();
-			// we can't measure height right now because it depends on child elements heights
-		}
-		// now we can measure children widths and some heights
-		// this box might be inline / inline block box so we can measure width of its children
-		$width = 0;
-		foreach ($this->getChildren() as $boxChildren) {
-			$boxChildren->measurePhaseOne();
-			$width += $boxChildren->getDimensions()->getOuterWidth();
-		}
-		if ($this->getDimensions()->getWidth() === null) {
-			$dimensions->setWidth($width);
-			if ($this->getStyle()->getRules('display') !== 'inline') {
-				$this->takeStyleDimensions();
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Get new line box
-	 * @return \YetiForcePDF\Render\LineBox
-	 */
-	public function getNewLineBox()
-	{
-		$this->currentLineBox = (new LineBox())->setDocument($this->document)->init();
-		$this->appendChild($this->currentLineBox);
-		if ($this->getDimensions()->getWidth() !== null) {
-			$this->currentLineBox->getDimensions()->setWidth($this->getDimensions()->getInnerWidth())->setUpAvailableSpace();
-		} else {
-			$this->currentLineBox->getDimensions()->setUpAvailableSpace();
-		}
-		return $this->currentLineBox;
-	}
-
-	/**
-	 * Close line box
-	 * @param \YetiForcePDF\Render\LineBox|null $lineBox
-	 * @param bool                              $createNew
-	 * @return \YetiForcePDF\Render\LineBox
-	 */
-	public function closeLine(bool $createNew = true)
-	{
-		$this->appendChild($this->currentLineBox);
-		if ($createNew) {
-			return $this->getNewLineBox();
-		}
-		return null;
-	}
-
-	/**
-	 * Get closest block element
-	 * @return \YetiForcePDF\Render\Box
-	 */
-	public function getClosestBlock()
-	{
-		if ($this instanceof BlockBox && $this->getStyle()->getRules('display') === 'block') {
-			return $this;
-		}
-		if ($parent = $this->getParent()) {
-			if (!$parent instanceof LineBox && $parent->getStyle()->getRules('display') === 'block') {
-				return $parent;
-			}
-			return $parent->getClosestBlock();
-		}
-	}
-
-	/**
-	 * Get current linebox
-	 * @return \YetiForcePDF\Render\LineBox
-	 */
-	public function getCurrentLineBox()
-	{
-		return $this->currentLineBox;
-	}
-
-	/**
-	 * Segregate elements
-	 * @return $this
-	 */
-	public function segregate()
-	{
-		if ($this->getElement()->getDomElement()->hasChildNodes()) {
-			foreach ($this->getElement()->getDOMElement()->childNodes as $childNode) {
-				// create Html Element from dom node (and later add to proper child box)
-				$childElement = (new Element())
-					->setDocument($this->document)
-					->setDOMElement($childNode)
-					->init();
-				// create style and later add to proper box
-				$childElementStyle = $childElement->parseStyle();
-				// make render box from the dom element
-				if ($childElementStyle->getRules('display') === 'block') {
-					if ($this->getClosestBlock()->getCurrentLineBox() !== null) {
-						// finish line and add to current children boxes as line box
-						$this->getClosestBlock()->closeLine(false);
-					}
-					$box = (new BlockBox())
-						->setDocument($this->document)
-						->setElement($childElement)
-						->setParent($this)
-						->init();
-					$box->setStyle($box->getElement()->parseStyle());
-					$this->getClosestBlock()->addLine($box);
-					$box->segregate();
-					continue;
-				}
-				// inline boxes
-
-				$box = (new InlineBox())
-					->setDocument($this->document)
-					->setElement($childElement)
-					->setParent($this)
-					->init();
-				if ($childNode instanceof \DOMText) {
-					$box->setTextNode(true)->setText($childNode->textContent);
-				}
-				$box->setStyle($box->getElement()->parseStyle());
-				if ($this->getClosestBlock()->getCurrentLineBox() === null) {
-					$this->getClosestBlock()->getNewLineBox()->appendChild($box);
-				} else {
-					$this->getClosestBlock()->getCurrentLineBox()->appendChild($box);
-				}
-				$box->segregate();
-			}
-		}
-		if ($this->getClosestBlock()->getCurrentLineBox() !== null) {
-			$this->getClosestBlock()->closeLine(false);
-		}
-		return $this;
-	}
-
-	/**
 	 * Split lines into more lines if elements want fit
 	 * @return $this
 	 */
@@ -819,65 +623,6 @@ class Box extends \YetiForcePDF\Base
 		return $this;
 	}
 
-	/**
-	 * Remove white space characters (empty lines) around blockBox elements
-	 * @return $this
-	 */
-	public function clearCharsAroundBlocks()
-	{
-
-		return $this;
-	}
-
-	/**
-	 * Measure missing heights
-	 * @return $this
-	 */
-	public function measureBoxPhaseTwo()
-	{
-		$height = 0;
-		foreach ($this->getChildren() as $child) {
-			$child->measurePhaseTwo();
-			$height += $child->getDimensions()->getOuterHeight();
-		}
-		$dimensions = $this->getDimensions();
-		$style = $this->getStyle();
-		if ($dimensions->getHeight() === null) {
-			if ($style->getRules('display') !== 'inline') {
-				$dimensions->setHeight($height + $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth());
-			} else {
-				$dimensions->setHeight($height);
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Measure phase two - measure missing heights
-	 * @return $this
-	 */
-	public function measurePhaseTwo()
-	{
-		if ($this instanceof LineBox) {
-			$height = 0;
-			$lineHeight = 0;
-			foreach ($this->getChildren() as $child) {
-				$child->measureBoxPhaseTwo();
-				$height = max($height, $child->getDimensions()->getOuterHeight());
-				$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'));
-			}
-			if ($this->getDimensions()->getHeight() === null) {
-				if ($height > $lineHeight) {
-					$this->getDimensions()->setHeight($height);
-				} else {
-					$this->getDimensions()->setHeight($lineHeight);
-				}
-			}
-		} else {
-			$this->measureBoxPhaseTwo();
-		}
-		return $this;
-	}
 
 	/**
 	 * Get offset from top relative to parent element
@@ -1012,41 +757,6 @@ class Box extends \YetiForcePDF\Base
 		foreach ($this->getChildren() as $child) {
 			$child->measureCoordinates();
 		}
-		return $this;
-	}
-
-	/**
-	 * Reflow elements and create render tree basing on dom tree
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		// first phase is to convert all elements to boxes and put it inside line boxes if needed
-		// later if we have widths specified we will split elements in line boxes making dividing line
-		$this->segregate();
-		// we have all boxes created and segregated, now we can measure widths of this elements
-		$this->measurePhaseOne();
-		// we have all elements widths but not for percentage width in all elements - now we can calculate percent widths
-		$this->takeStyleDimensions();
-		// split long text into inline elements per word
-		$this->split();
-		//$this->cutAndWrap();
-		// all boxes that can be measured were measured whoa!
-		// now we can split lineBoxes into more lines basing on its width and children widths
-		$this->splitLines();
-		// clear empty lines (with just white space) around blocksBoxes
-		$this->clearCharsAroundBlocks();
-		// we have all elements in place, it's time to measure heights for those dependent on children heights
-		$this->measurePhaseTwo();
-		// after heights are calculated we can calculate percent heights
-		$this->takeStyleDimensions();
-		// now measure relative offsets to the parent elements
-		$this->measureOffsets();
-		// offsets are set but easier will be to correct text-align now than in offset measure phase
-		$this->alignText();
-		// and absolute coordinates inside document
-		$this->measureCoordinates();
-		// done!
 		return $this;
 	}
 

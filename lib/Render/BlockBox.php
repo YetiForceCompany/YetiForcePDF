@@ -32,6 +32,10 @@ class BlockBox extends Box
 	 * @var Style
 	 */
 	protected $style;
+	/**
+	 * @var \YetiForcePDF\Render\LineBox
+	 */
+	protected $currentLineBox;
 
 	/**
 	 * {@inheritdoc}
@@ -95,6 +99,110 @@ class BlockBox extends Box
 		return $this->style;
 	}
 
+	/**
+	 * Get new line box
+	 * @return \YetiForcePDF\Render\LineBox
+	 */
+	public function getNewLineBox()
+	{
+		$this->currentLineBox = (new LineBox())->setDocument($this->document)->init();
+		$this->appendChild($this->currentLineBox);
+		return $this->currentLineBox;
+	}
+
+	/**
+	 * Close line box
+	 * @param \YetiForcePDF\Render\LineBox|null $lineBox
+	 * @param bool                              $createNew
+	 * @return \YetiForcePDF\Render\LineBox
+	 */
+	public function closeLine()
+	{
+		$this->appendChild($this->currentLineBox);
+		$this->currentLineBox = $this->getNewLineBox();
+		return $this->currentLineBox;
+	}
+
+	/**
+	 * Get current linebox
+	 * @return \YetiForcePDF\Render\LineBox
+	 */
+	public function getCurrentLineBox()
+	{
+		return $this->currentLineBox;
+	}
+
+	/**
+	 * Segregate
+	 * @param $parentBlock
+	 * @return $this
+	 */
+	public function buildTree($parentBlock = null)
+	{
+		$domElement = $this->getElement()->getDOMElement();
+		if ($domElement->hasChildNodes()) {
+			foreach ($domElement->childNodes as $childDomElement) {
+				$element = (new Element())
+					->setDocument($this->document)
+					->setDOMElement($childDomElement)
+					->init();
+				$style = $element->parseStyle();
+				if ($style->getRules('display') === 'block') {
+					if ($this->getCurrentLineBox()) {
+						$this->closeLine();
+					}
+					$box = (new BlockBox())
+						->setDocument($this->document)
+						->setElement($element)
+						->setStyle($element->parseStyle())//second phase with css inheritance
+						->init();
+					$this->appendChild($box);
+					$box->buildTree($this);
+					continue;
+				}
+				// childDomElement is an inline element
+				$box = (new InlineBox())
+					->setDocument($this->document)
+					->setElement($element)
+					->setStyle($element->parseStyle())
+					->init();
+				if ($this->getCurrentLineBox()) {
+					$currentLineBox = $this->getCurrentLineBox();
+				} else {
+					$currentLineBox = $this->getNewLineBox();
+				}
+				$currentLineBox->appendChild($box);
+				$box->buildTree($this);
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * Measure width of this block
+	 * @return $this
+	 */
+	public function measureWidth()
+	{
+		$dimensions = $this->getDimensions();
+		if ($parent = $this->getParent()) {
+			$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
+		} else {
+			$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
+		}
+		return $this;
+	}
+
+	/**
+	 * Reflow
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		$this->measureWidth();
+
+		return $this;
+	}
 
 	/**
 	 * Filter text

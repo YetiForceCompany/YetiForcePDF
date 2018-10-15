@@ -128,22 +128,12 @@ class Element extends \YetiForcePDF\Base
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		$parentStyle = null;
-		if ($this->box) {
-			if ($parentBox = $this->box->getParent()) {
-				if ($parentBox instanceof \YetiForcePDF\Render\BlockBox) {
-					$parentStyle = $parentBox->getStyle();
-				} elseif ($parentBox = $this->box->getParent()->getParent()) {
-					$parentStyle = $parentBox->getStyle();
-				}
-			}
-		}
 		$style = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)
 			->setElement($this)
 			->setContent($styleStr);
-		if ($parentStyle) {
-			$style->setParentStyle($parentStyle);
+		if ($this->box) {
+			$style->setBox($this->box);
 		}
 		return $style->init();
 	}
