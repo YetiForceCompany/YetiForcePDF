@@ -194,9 +194,6 @@ class BlockBox extends Box
 		} else {
 			$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
 		}
-		foreach ($this->getChildren() as $child) {
-			$child->measureWidth();
-		}
 		return $this;
 	}
 
@@ -208,9 +205,7 @@ class BlockBox extends Box
 	{
 		$this->measureWidth();
 		foreach ($this->getChildren() as $child) {
-			if ($child instanceof LineBox) {
-				$child->divide();
-			}
+			$child->reflow();
 		}
 		return $this;
 	}

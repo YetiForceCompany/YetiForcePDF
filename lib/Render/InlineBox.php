@@ -203,7 +203,6 @@ class InlineBox extends Box
 	{
 		$width = 0;
 		foreach ($this->getChildren() as $child) {
-			$child->measureWidth();
 			$width += $child->getDimensions()->getOuterWidth();
 		}
 		if ($this->isTextNode()) {
@@ -219,6 +218,9 @@ class InlineBox extends Box
 	 */
 	public function reflow()
 	{
+		foreach ($this->getChildren() as $child) {
+			$child->reflow();
+		}
 		$this->measureWidth();
 		return $this;
 	}
