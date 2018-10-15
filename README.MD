@@ -1,5 +1,7 @@
 # YetiForcePDF
 [![SymfonyInsight](https://insight.symfony.com/projects/2988ef66-83db-4ed9-9ba8-6fb4474566bd/big.png)](https://insight.symfony.com/projects/2988ef66-83db-4ed9-9ba8-6fb4474566bd)
+[![Latest Stable Version](https://poser.pugx.org/yetiforce/yetiforcepdf/v/stable)](https://packagist.org/packages/yetiforce/yetiforcepdf)
+[![Analytics](https://ga-beacon.appspot.com/UA-81376231-2/welcome-page)](https://github.com/igrigorik/ga-beacon)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2e8645f5091496089ed203d05a05d61)](https://app.codacy.com/app/mariuszkrzaczkowski/YetiForcePDF?utm_source=github.com&utm_medium=referral&utm_content=YetiForceCompany/YetiForcePDF&utm_campaign=Badge_Grade_Settings)
 [![Maintainability](https://api.codeclimate.com/v1/badges/af478ddd07cf7278841a/maintainability)](https://codeclimate.com/github/YetiForceCompany/YetiForcePDF/maintainability)
