@@ -154,22 +154,41 @@ class InlineBox extends Box
 					$box->buildTree($parentBlock);
 					continue;
 				}
-				// childDomElement is an inline element
-				$box = (new InlineBox())
-					->setDocument($this->document)
-					->setElement($element)
-					->setStyle($element->parseStyle())
-					->init();
-				$currentChildren = $this->getChildren();
-				if (isset($currentChildren[0])) { // faster than count
-					$this->cloneParent($box);
-				} else {
-					$this->appendChild($box);
-				}
+				// split words into text dom elements
+				$childDomElements = [$childDomElement];
 				if ($childDomElement instanceof \DOMText) {
-					$box->setTextNode(true)->setText($childDomElement->textContent);
-				} else {
-					$box->buildTree($parentBlock);
+					$childDomElements = [];
+					$text = $childDomElement->textContent;
+					$words = explode(' ', $text);
+					$wordsCount = count($words);
+					foreach ($words as $index => $word) {
+						if ($index < $wordsCount - 1) {
+							$word .= ' ';
+						}
+						$childDomElements[] = $childDomElement->ownerDocument->createTextNode($word);
+					}
+				}
+				foreach ($childDomElements as $childDomElementText) {
+					$element = (new Element())
+						->setDocument($this->document)
+						->setDOMElement($childDomElementText)
+						->init();
+					$box = (new InlineBox())
+						->setDocument($this->document)
+						->setElement($element)
+						->setStyle($element->parseStyle())
+						->init();
+					$currentChildren = $this->getChildren();
+					if (isset($currentChildren[0])) {
+						$this->cloneParent($box);
+					} else {
+						$this->appendChild($box);
+					}
+					if ($childDomElementText instanceof \DOMText) {
+						$box->setTextNode(true)->setText($childDomElementText->textContent);
+					} else {
+						$box->buildTree($parentBlock);
+					}
 				}
 			}
 		}
