@@ -198,6 +198,24 @@ class BlockBox extends Box
 	}
 
 	/**
+	 * Divide lines
+	 * @return $this;
+	 */
+	public function divideLines()
+	{
+		foreach ($this->getChildren() as $child) {
+			if ($child instanceof LineBox) {
+				$lines = $child->divide();
+				foreach ($lines as $line) {
+					$this->insertBefore($line, $child);
+				}
+				$this->removeChild($child);
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * Reflow
 	 * @return $this
 	 */
@@ -207,6 +225,7 @@ class BlockBox extends Box
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
+		$this->divideLines();
 		return $this;
 	}
 

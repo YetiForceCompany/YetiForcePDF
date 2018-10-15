@@ -78,9 +78,6 @@ class LineBox extends Box
 	{
 		$dimensions = $this->getDimensions();
 		$dimensions->setWidth($this->getParent()->getDimensions()->getInnerWidth());
-		foreach ($this->getChildren() as $child) {
-			$child->measureWidth();
-		}
 		return $this;
 	}
 
@@ -90,6 +87,9 @@ class LineBox extends Box
 	 */
 	public function reflow()
 	{
+		foreach ($this->getChildren() as $child) {
+			$child->reflow();
+		}
 		$this->measureWidth();
 		return $this;
 	}
