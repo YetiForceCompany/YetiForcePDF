@@ -205,13 +205,72 @@ class BlockBox extends Box
 	{
 		foreach ($this->getChildren() as $child) {
 			if ($child instanceof LineBox) {
-				$lines = $child->divide();
-				foreach ($lines as $line) {
+				foreach ($child->divide() as $line) {
 					$this->insertBefore($line, $child);
+					$line->reflow();
 				}
 				$this->removeChild($child);
 			}
 		}
+		return $this;
+	}
+
+	/**
+	 * Measure height
+	 * @return $this
+	 */
+	public function measureHeight()
+	{
+		$height = 0;
+		foreach ($this->getChildren() as $child) {
+			$height += $child->getDimensions()->getHeight();
+		}
+		$this->getDimensions()->setHeight($height);
+		return $this;
+	}
+
+	/**
+	 * Offset elements
+	 * @return $this
+	 */
+	public function offset()
+	{
+		$top = $this->document->getCurrentPage()->getCoordinates()->getY();
+		$left = $this->document->getCurrentPage()->getCoordinates()->getX();
+		if ($parent = $this->getParent()) {
+			$parentRules = $parent->getStyle()->getRules();
+			$top = $parentRules['padding-top'] + $parentRules['border-top-width'];
+			$left = $parentRules['padding-left'] + $parentRules['border-left-width'];
+			if (($previous = $this->getPrevious())) {
+				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
+				$marginTop = $this->getStyle()->getRules('margin-top');
+				if ($previous instanceof BlockBox) {
+					$marginTop = max($marginTop, $previous->getStyle()->getRules('margin-bottom'));
+				} elseif (!$previous instanceof LineBox) {
+					$marginTop += $previous->getStyle()->getRules('margin-bottom');
+				}
+				$top += $marginTop;
+			}
+		}
+		$this->getOffset()->setTop($top);
+		$this->getOffset()->setLeft($left);
+		return $this;
+	}
+
+	/**
+	 * Position
+	 * @return $this
+	 */
+	public function position()
+	{
+		$x = $this->document->getCurrentPage()->getCoordinates()->getX();
+		$y = $this->document->getCurrentPage()->getCoordinates()->getY();
+		if ($parent = $this->getParent()) {
+			$x = $parent->getCoordinates()->getX() + $this->getOffset()->getLeft();
+			$y = $parent->getCoordinates()->getY() + $this->getOffset()->getTop();
+		}
+		$this->getCoordinates()->setX($x);
+		$this->getCoordinates()->setY($y);
 		return $this;
 	}
 
@@ -221,11 +280,14 @@ class BlockBox extends Box
 	 */
 	public function reflow()
 	{
+		$this->offset();
+		$this->position();
 		$this->measureWidth();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
 		$this->divideLines();
+		$this->measureHeight();
 		return $this;
 	}
 

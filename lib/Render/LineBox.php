@@ -82,15 +82,62 @@ class LineBox extends Box
 	}
 
 	/**
+	 * Measure height
+	 * @return $this
+	 */
+	public function measureHeight()
+	{
+		$lineHeight = 0;
+		foreach ($this->getChildren() as $child) {
+			$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'), $child->getDimensions()->getOuterHeight());
+		}
+		$this->getDimensions()->setHeight($lineHeight);
+		return $this;
+	}
+
+	/**
+	 * Position
+	 * @return $this
+	 */
+	public function offset()
+	{
+		$parent = $this->getParent();
+		$parentRules = $parent->getStyle()->getRules();
+		$top = $parentRules['padding-top'] + $parentRules['border-top-width'];
+		$left = $parentRules['padding-left'] + $parentRules['border-left-width'];
+		if ($previous = $this->getPrevious()) {
+			$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
+		}
+		$this->getOffset()->setTop($top);
+		$this->getOffset()->setLeft($left);
+		return $this;
+	}
+
+	/**
+	 * Position
+	 * @return $this
+	 */
+	public function position()
+	{
+		$parent = $this->getParent();
+		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
+		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+		return $this;
+	}
+
+	/**
 	 * Reflow
 	 * @return $this
 	 */
 	public function reflow()
 	{
+		$this->offset();
+		$this->measureWidth();
+		$this->position();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
-		$this->measureWidth();
+		$this->measureHeight();
 		return $this;
 	}
 
