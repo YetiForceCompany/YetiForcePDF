@@ -1,4 +1,6 @@
 # YetiForcePDF
+[![SymfonyInsight](https://insight.symfony.com/projects/2988ef66-83db-4ed9-9ba8-6fb4474566bd/big.png)](https://insight.symfony.com/projects/2988ef66-83db-4ed9-9ba8-6fb4474566bd)
+
 ## PDF generation library for PHP (work in progress)
 
 ## Basic usage (for more take a look at examples folder)
