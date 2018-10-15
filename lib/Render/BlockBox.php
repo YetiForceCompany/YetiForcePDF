@@ -174,12 +174,8 @@ class BlockBox extends Box
 				$currentLineBox->appendChild($box);
 				if ($childDomElement instanceof \DOMText) {
 					$box->setTextNode(true)->setText($childDomElement->textContent);
-				}
-				$box->buildTree($this);
-			}
-			foreach ($this->getChildren() as $child) {
-				if ($child instanceof LineBox) {
-					$child->splitInlines();
+				} else {
+					$box->buildTree($this);
 				}
 			}
 		}

@@ -94,20 +94,7 @@ class InlineBox extends Box
 	 */
 	public function setText(string $text)
 	{
-		$words = explode(' ', $text);
-		$count = count($words);
-		foreach ($words as $index => $word) {
-			if ($index !== $count - 1) {
-				$word .= ' ';
-			}
-			$inline = clone $this;
-			$inline->setTextNode(true)->setText($word);
-			$this->getParent()->appendChild($inline);
-		}
-		$this->getParent()->removeChild($this);
-		if ($count > 1) {
-			$this->setTextNode(false);
-		}
+		$this->text = $text;
 		return $this;
 	}
 
@@ -118,6 +105,23 @@ class InlineBox extends Box
 	public function getText()
 	{
 		return $this->text;
+	}
+
+	/**
+	 * Go up to Line box and clone and wrap element
+	 * @param $box
+	 */
+	public function cloneParent($box)
+	{
+		if ($parent = $this->getParent()) {
+			$clone = clone $this;
+			$clone->appendChild($box);
+			if (!$parent instanceof LineBox) {
+				$parent->cloneParent($clone);
+			} else {
+				$parent->appendChild($clone);
+			}
+		}
 	}
 
 	/**
@@ -156,8 +160,17 @@ class InlineBox extends Box
 					->setElement($element)
 					->setStyle($element->parseStyle())
 					->init();
-				$this->appendChild($box);
-				$box->buildTree($parentBlock);
+				$currentChildren = $this->getChildren();
+				if (isset($currentChildren[0])) { // faster than count
+					$this->cloneParent($box);
+				} else {
+					$this->appendChild($box);
+				}
+				if ($childDomElement instanceof \DOMText) {
+					$box->setTextNode(true)->setText($childDomElement->textContent);
+				} else {
+					$box->buildTree($parentBlock);
+				}
 			}
 		}
 		return $this;

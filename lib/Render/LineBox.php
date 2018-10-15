@@ -19,15 +19,6 @@ class LineBox extends Box
 {
 
 	/**
-	 * Split
-	 * @return $this
-	 */
-	public function splitInlines()
-	{
-		return $this;
-	}
-
-	/**
 	 * Will this box fit in line? (or need to create new one)
 	 * @param \YetiForcePDF\Render\Box $box
 	 * @return bool
