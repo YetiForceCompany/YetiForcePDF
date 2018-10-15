@@ -1,4 +1,5 @@
 # YetiForcePDF
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2e8645f5091496089ed203d05a05d61)](https://app.codacy.com/app/mariuszkrzaczkowski/YetiForcePDF?utm_source=github.com&utm_medium=referral&utm_content=YetiForceCompany/YetiForcePDF&utm_campaign=Badge_Grade_Settings)
 [![SymfonyInsight](https://insight.symfony.com/projects/2988ef66-83db-4ed9-9ba8-6fb4474566bd/big.png)](https://insight.symfony.com/projects/2988ef66-83db-4ed9-9ba8-6fb4474566bd)
 
 ## PDF generation library for PHP (work in progress)
