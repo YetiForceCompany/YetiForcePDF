@@ -21,8 +21,62 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class InlineBox
  */
-class InlineBox extends BlockBox
+class InlineBox extends Box
 {
+
+	/**
+	 * @var Element
+	 */
+	protected $element;
+	/**
+	 * @var Style
+	 */
+	protected $style;
+	/**
+	 * @var string
+	 */
+	protected $text;
+
+	/**
+	 * Get element
+	 * @return Element
+	 */
+	public function getElement()
+	{
+		return $this->element;
+	}
+
+	/**
+	 * Set element
+	 * @param Element $element
+	 * @return $this
+	 */
+	public function setElement(Element $element)
+	{
+		$this->element = $element;
+		$element->setBox($this);
+		return $this;
+	}
+
+	/**
+	 * Set style
+	 * @param \YetiForcePDF\Style\Style $style
+	 * @return $this
+	 */
+	public function setStyle(Style $style)
+	{
+		$this->style = $style;
+		return $this;
+	}
+
+	/**
+	 * Get style
+	 * @return Style
+	 */
+	public function getStyle()
+	{
+		return $this->style;
+	}
 
 	/**
 	 * Get closest parent block
@@ -31,6 +85,39 @@ class InlineBox extends BlockBox
 	public function getParentBlock()
 	{
 		return $this->getParent()->getParent();
+	}
+
+	/**
+	 * Set text
+	 * @param string $text
+	 * @return $this
+	 */
+	public function setText(string $text)
+	{
+		$words = explode(' ', $text);
+		$count = count($words);
+		foreach ($words as $index => $word) {
+			if ($index !== $count - 1) {
+				$word .= ' ';
+			}
+			$inline = clone $this;
+			$inline->setTextNode(true)->setText($word);
+			$this->getParent()->appendChild($inline);
+		}
+		$this->getParent()->removeChild($this);
+		if ($count > 1) {
+			$this->setTextNode(false);
+		}
+		return $this;
+	}
+
+	/**
+	 * Get text
+	 * @return string
+	 */
+	public function getText()
+	{
+		return $this->text;
 	}
 
 	/**
@@ -57,6 +144,8 @@ class InlineBox extends BlockBox
 						->setElement($childDomElement)
 						->setStyle($element->parseStyle())//second phase with css inheritance
 						->init();
+					// if we add this child to parent box we loose parent inline styles if nested
+					// so we need to wrap this box later and split lines at block element
 					$this->appendChild($box);
 					$box->buildTree($parentBlock);
 					continue;
@@ -67,12 +156,7 @@ class InlineBox extends BlockBox
 					->setElement($element)
 					->setStyle($element->parseStyle())
 					->init();
-				if ($parentBlock->getCurrentLineBox()) {
-					$currentLineBox = $parentBlock->getCurrentLineBox();
-				} else {
-					$currentLineBox = $parentBlock->getNewLineBox();
-				}
-				$currentLineBox->appendChild($box);
+				$this->appendChild($box);
 				$box->buildTree($parentBlock);
 			}
 		}
@@ -85,7 +169,15 @@ class InlineBox extends BlockBox
 	 */
 	public function measureWidth()
 	{
-
+		$width = 0;
+		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
+			$width += $child->getDimensions()->getOuterWidth();
+		}
+		if ($this->isTextNode()) {
+			$width = $this->getStyle()->getFont()->getTextWidth($this->getText());
+		}
+		$this->getDimensions()->setWidth($width);
 		return $this;
 	}
 

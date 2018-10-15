@@ -19,6 +19,15 @@ class LineBox extends Box
 {
 
 	/**
+	 * Split
+	 * @return $this
+	 */
+	public function splitInlines()
+	{
+		return $this;
+	}
+
+	/**
 	 * Will this box fit in line? (or need to create new one)
 	 * @param \YetiForcePDF\Render\Box $box
 	 * @return bool
@@ -76,7 +85,11 @@ class LineBox extends Box
 	 */
 	public function measureWidth()
 	{
-
+		$dimensions = $this->getDimensions();
+		$dimensions->setWidth($this->getParent()->getDimensions()->getInnerWidth());
+		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
+		}
 		return $this;
 	}
 

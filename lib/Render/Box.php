@@ -188,26 +188,6 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set text
-	 * @param string $text
-	 * @return $this
-	 */
-	public function setText(string $text)
-	{
-		$this->text = $text;
-		return $this;
-	}
-
-	/**
-	 * Get text
-	 * @return string
-	 */
-	public function getText()
-	{
-		return $this->text;
-	}
-
-	/**
 	 * Create and append text box (text node) element
 	 * @param string   $text
 	 * @param Box|null $insertBefore
@@ -292,33 +272,6 @@ class Box extends \YetiForcePDF\Base
 		}
 	}
 
-	/**
-	 * Convert text to words and wrap with InlineBox
-	 */
-	public function split()
-	{
-		$parent = $this->getParent();
-		if (!$this instanceof LineBox && $this->isTextNode()) {
-			$text = $this->getText();
-			$words = explode(' ', $text);
-			$count = count($words);
-			foreach ($words as $index => $word) {
-				if ($index !== $count - 1) {
-					$word .= ' ';
-				}
-				$parent->createTextBox($word, $this);
-			}
-			$parent->removeChild($this);
-			$parent->cutAndWrap();
-		} else {
-			foreach ($this->getChildren() as $box) {
-				$box->split();
-			}
-			if ($parent) {
-				$parent->cutAndWrap();
-			}
-		}
-	}
 
 	/**
 	 * Append child box - line box can have only inline/block boxes - not line boxes!

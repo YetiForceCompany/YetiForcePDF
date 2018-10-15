@@ -172,7 +172,15 @@ class BlockBox extends Box
 					$currentLineBox = $this->getNewLineBox();
 				}
 				$currentLineBox->appendChild($box);
+				if ($childDomElement instanceof \DOMText) {
+					$box->setTextNode(true)->setText($childDomElement->textContent);
+				}
 				$box->buildTree($this);
+			}
+			foreach ($this->getChildren() as $child) {
+				if ($child instanceof LineBox) {
+					$child->splitInlines();
+				}
 			}
 		}
 		return $this;
@@ -190,6 +198,9 @@ class BlockBox extends Box
 		} else {
 			$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
 		}
+		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
+		}
 		return $this;
 	}
 
@@ -200,7 +211,11 @@ class BlockBox extends Box
 	public function reflow()
 	{
 		$this->measureWidth();
-
+		foreach ($this->getChildren() as $child) {
+			if ($child instanceof LineBox) {
+				$child->divide();
+			}
+		}
 		return $this;
 	}
 
