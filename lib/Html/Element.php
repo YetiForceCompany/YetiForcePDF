@@ -129,8 +129,14 @@ class Element extends \YetiForcePDF\Base
 			$styleStr = $this->domElement->getAttribute('style');
 		}
 		$parentStyle = null;
-		if ($parentBox = $this->getParent()) {
-			$parentStyle = $parentBox->getStyle();
+		if ($this->box) {
+			if ($parentBox = $this->box->getParent()) {
+				if ($parentBox instanceof \YetiForcePDF\Render\BlockBox) {
+					$parentStyle = $parentBox->getStyle();
+				} elseif ($parentBox = $this->box->getParent()->getParent()) {
+					$parentStyle = $parentBox->getStyle();
+				}
+			}
 		}
 		$style = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)
