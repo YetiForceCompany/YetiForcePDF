@@ -52,11 +52,8 @@ class BoxDimensions extends Dimensions
 	public function getInnerWidth(): float
 	{
 		$box = $this->getBox();
-		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
-			$style = $box->getStyle();
-			return $this->getWidth() - $style->getHorizontalBordersWidth() - $style->getHorizontalPaddingsWidth();
-		}
-		return $this->getWidth();
+		$style = $box->getStyle();
+		return $this->getWidth() - $style->getHorizontalBordersWidth() - $style->getHorizontalPaddingsWidth();
 	}
 
 	/**
@@ -66,11 +63,8 @@ class BoxDimensions extends Dimensions
 	public function getInnerHeight(): float
 	{
 		$box = $this->getBox();
-		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
-			$style = $box->getStyle();
-			return $this->getHeight() - $style->getVerticalBordersWidth() - $style->getVerticalPaddingsWidth();
-		}
-		return $this->getWidth();
+		$style = $box->getStyle();
+		return $this->getHeight() - $style->getVerticalBordersWidth() - $style->getVerticalPaddingsWidth();
 	}
 
 
@@ -80,12 +74,8 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getOuterWidth()
 	{
-		$box = $this->getBox();
-		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
-			$rules = $this->getBox()->getStyle()->getRules();
-			return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
-		}
-		return $this->getWidth();
+		$rules = $this->getBox()->getStyle()->getRules();
+		return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
 	}
 
 	/**
@@ -94,13 +84,8 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getOuterHeight()
 	{
-		$box = $this->getBox();
-		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
-			$rules = $this->getBox()->getStyle()->getRules();
-			return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
-		} else {
-			return $this->getHeight() + $this->box->getStyle()->getRules('margin-top') + $this->box->getStyle()->getRules('margin-bottom');
-		}
+		$rules = $this->getBox()->getStyle()->getRules();
+		return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
 	}
 
 	/**
@@ -132,12 +117,8 @@ class BoxDimensions extends Dimensions
 	public function computeAvailableSpace()
 	{
 		if ($parent = $this->getBox()->getParent()) {
-			if (!$parent instanceof \YetiForcePDF\Render\LineBox) {
-				$parentStyle = $parent->getStyle();
-				return $this->getBox()->getParent()->getDimensions()->getAvailableSpace() - $parentStyle->getHorizontalBordersWidth() - $parentStyle->getHorizontalPaddingsWidth();
-			} else {
-				return $this->getBox()->getParent()->getDimensions()->getAvailableSpace();
-			}
+			$parentStyle = $parent->getStyle();
+			return $this->getBox()->getParent()->getDimensions()->getAvailableSpace() - $parentStyle->getHorizontalBordersWidth() - $parentStyle->getHorizontalPaddingsWidth();
 		} else {
 			return $this->document->getCurrentPage()->getDimensions()->getAvailableSpace();
 		}
