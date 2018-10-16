@@ -17,6 +17,32 @@ namespace YetiForcePDF\Render;
  */
 class LineBox extends Box
 {
+	/**
+	 * @var float
+	 */
+	protected $marginTop = 0;
+	/**
+	 * @var float
+	 */
+	protected $marginBottom = 0;
+
+	/**
+	 * Get margin top
+	 * @return float
+	 */
+	public function getMarginTop()
+	{
+		return $this->marginTop;
+	}
+
+	/**
+	 * Get margin bottom
+	 * @return float
+	 */
+	public function getMarginBottom()
+	{
+		return $this->marginBottom;
+	}
 
 	/**
 	 * Will this box fit in line? (or need to create new one)
@@ -90,9 +116,27 @@ class LineBox extends Box
 	{
 		$lineHeight = 0;
 		foreach ($this->getChildren() as $child) {
-			$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'), $child->getDimensions()->getOuterHeight());
+			$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'), $child->getDimensions()->getHeight());
 		}
 		$this->getDimensions()->setHeight($lineHeight);
+		return $this;
+	}
+
+	/**
+	 * Measure margins
+	 * @return $this
+	 */
+	public function measureMargins()
+	{
+		$allChildren = [];
+		$this->getAllChildren($allChildren);
+		array_shift($allChildren);
+		foreach ($allChildren as $child) {
+			if ($child->getStyle()->getRules('display') === 'inline-block') {
+				$this->marginTop = max($this->marginTop, $child->getStyle()->getRules('margin-top'));
+				$this->marginBottom = max($this->marginBottom, $child->getStyle()->getRules('margin-bottom'));
+			}
+		}
 		return $this;
 	}
 
@@ -107,8 +151,13 @@ class LineBox extends Box
 		$top = $parentRules['padding-top'] + $parentRules['border-top-width'];
 		$left = $parentRules['padding-left'] + $parentRules['border-left-width'];
 		if ($previous = $this->getPrevious()) {
-			$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
+			if ($previous instanceof LineBox) {
+				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getMarginBottom();
+			} else {
+				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getStyle()->getRules('margin-bottom');
+			}
 		}
+		$top += $this->getMarginTop();
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);
 		return $this;
@@ -172,14 +221,15 @@ class LineBox extends Box
 	 */
 	public function reflow()
 	{
-		$this->offset();
 		$this->measureWidth();
+		$this->measureHeight();
+		$this->measureMargins();
+		$this->offset();
 		$this->position();
 		$this->clearStyles();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
-		$this->measureHeight();
 		return $this;
 	}
 

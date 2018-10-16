@@ -228,7 +228,11 @@ class InlineBox extends Box
 		} else {
 			$height = 0;
 			foreach ($this->getChildren() as $child) {
-				$height += $child->getDimensions()->getOuterHeight();
+				if ($this->getStyle()->getRules('display') === 'inline') {
+					$height += $child->getDimensions()->getHeight();
+				} else {
+					$height += $child->getDimensions()->getOuterHeight();
+				}
 			}
 			$this->getDimensions()->setHeight($height);
 		}
@@ -243,7 +247,9 @@ class InlineBox extends Box
 	{
 		$parent = $this->getParent();
 		$rules = $this->getStyle()->getRules();
-		$top = $rules['margin-top'];
+		$top = 0;
+		// margin top inside inline and inline block doesnt affect relative to line top position
+		// it only affects line margins
 		$left = $rules['margin-left'];
 		if ($parent instanceof LineBox) {
 			if ($previous = $this->getPrevious()) {
