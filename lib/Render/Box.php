@@ -23,7 +23,11 @@ use YetiForcePDF\Style\Style;
  */
 class Box extends \YetiForcePDF\Base
 {
-
+	/**
+	 * Id of this box (should be cloned to track inline wrapped elements)
+	 * @var string
+	 */
+	protected $id;
 	/**
 	 * @var Box
 	 */
@@ -64,6 +68,10 @@ class Box extends \YetiForcePDF\Base
 	 * @var bool
 	 */
 	protected $root = false;
+	/**
+	 * @var Style
+	 */
+	protected $style;
 
 
 	/**
@@ -72,6 +80,7 @@ class Box extends \YetiForcePDF\Base
 	public function init()
 	{
 		parent::init();
+		$this->id = uniqid();
 		$this->dimensions = (new BoxDimensions())
 			->setDocument($this->document)
 			->setBox($this)
@@ -85,6 +94,15 @@ class Box extends \YetiForcePDF\Base
 			->setBox($this)
 			->init();
 		return $this;
+	}
+
+	/**
+	 * Get box id (id might be cloned and then we can track cloned elements)
+	 * @return string
+	 */
+	public function getId()
+	{
+		return $this->id;
 	}
 
 	/**
@@ -185,6 +203,26 @@ class Box extends \YetiForcePDF\Base
 	public function isRoot(): bool
 	{
 		return $this->root;
+	}
+
+	/**
+	 * Set style
+	 * @param \YetiForcePDF\Style\Style $style
+	 * @return $this
+	 */
+	public function setStyle(Style $style)
+	{
+		$this->style = $style;
+		return $this;
+	}
+
+	/**
+	 * Get style
+	 * @return Style
+	 */
+	public function getStyle()
+	{
+		return $this->style;
 	}
 
 	/**

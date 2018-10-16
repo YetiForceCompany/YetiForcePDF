@@ -12,36 +12,29 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Render;
 
+use YetiForcePDF\Style\Style;
+
 /**
  * Class LineBox
  */
 class LineBox extends Box
 {
 	/**
-	 * @var float
+	 * @var Style
 	 */
-	protected $marginTop = 0;
-	/**
-	 * @var float
-	 */
-	protected $marginBottom = 0;
+	protected $style;
 
 	/**
-	 * Get margin top
-	 * @return float
+	 * {@inheritdoc}
 	 */
-	public function getMarginTop()
+	public function init()
 	{
-		return $this->marginTop;
-	}
-
-	/**
-	 * Get margin bottom
-	 * @return float
-	 */
-	public function getMarginBottom()
-	{
-		return $this->marginBottom;
+		parent::init();
+		$this->style = (new Style())
+			->setDocument($this->document)
+			->setBox($this)
+			->init();
+		return $this;
 	}
 
 	/**
@@ -131,12 +124,17 @@ class LineBox extends Box
 		$allChildren = [];
 		$this->getAllChildren($allChildren);
 		array_shift($allChildren);
+		$marginTop = 0;
+		$marginBottom = 0;
 		foreach ($allChildren as $child) {
 			if ($child->getStyle()->getRules('display') === 'inline-block') {
-				$this->marginTop = max($this->marginTop, $child->getStyle()->getRules('margin-top'));
-				$this->marginBottom = max($this->marginBottom, $child->getStyle()->getRules('margin-bottom'));
+				$marginTop = max($marginTop, $child->getStyle()->getRules('margin-top'));
+				$marginBottom = max($marginBottom, $child->getStyle()->getRules('margin-bottom'));
 			}
 		}
+		$style = $this->getStyle();
+		$style->setRule('margin-top', $marginTop);
+		$style->setRule('margin-bottom', $marginBottom);
 		return $this;
 	}
 
@@ -151,13 +149,9 @@ class LineBox extends Box
 		$top = $parentRules['padding-top'] + $parentRules['border-top-width'];
 		$left = $parentRules['padding-left'] + $parentRules['border-left-width'];
 		if ($previous = $this->getPrevious()) {
-			if ($previous instanceof LineBox) {
-				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getMarginBottom();
-			} else {
-				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getStyle()->getRules('margin-bottom');
-			}
+			$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getStyle()->getRules('margin-bottom');
 		}
-		$top += $this->getMarginTop();
+		$top += $this->getStyle()->getRules('margin-top');
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);
 		return $this;
@@ -194,7 +188,7 @@ class LineBox extends Box
 			foreach ($allNestedChildren as $column => $childArray) {
 				if (isset($childArray[$row])) {
 					$current = $childArray[$row];
-					$clones[$current->getElement()->getElementId()][] = $current;
+					$clones[$current->getId()][] = $current;
 				}
 			}
 		}

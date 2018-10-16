@@ -26,11 +26,6 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $parentBox;
 	/**
-	 * Unique internal element id
-	 * @var string
-	 */
-	protected $elementId;
-	/**
 	 * DOMElement tagName
 	 * @var string
 	 */
@@ -51,7 +46,6 @@ class Element extends \YetiForcePDF\Base
 	public function init()
 	{
 		parent::init();
-		$this->elementId = uniqid();
 		$this->name = $this->domElement->tagName;
 		return $this;
 	}

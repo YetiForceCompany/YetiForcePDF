@@ -99,7 +99,7 @@ class BoxDimensions extends Dimensions
 			$rules = $this->getBox()->getStyle()->getRules();
 			return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
 		} else {
-			return $this->getHeight() + $this->box->getMarginTop() + $this->box->getMarginBottom();
+			return $this->getHeight() + $this->box->getStyle()->getRules('margin-top') + $this->box->getStyle()->getRules('margin-bottom');
 		}
 	}
 
