@@ -48,6 +48,7 @@ class LineBox extends Box
 	{
 		$lineWidth = $this->getParent()->getDimensions()->getInnerWidth();
 		$lines = [];
+		$this->clearStyles();
 		if (!$this->elementsFit()) {
 			$line = (new LineBox())->setDocument($this->document)->init();
 			$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
@@ -162,7 +163,6 @@ class LineBox extends Box
 				}
 			}
 		}
-		// element width are changed because of margin removal process
 		return $this;
 	}
 

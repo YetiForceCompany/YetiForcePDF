@@ -496,6 +496,10 @@ class Style extends \YetiForcePDF\Base
 				$finalRules[$name] = $value;
 			}
 		}
+		if ($finalRules['display'] === 'inline') {
+			$finalRules['margin-top'] = 0;
+			$finalRules['margin-bottom'] = 0;
+		}
 		return $finalRules;
 	}
 
@@ -512,6 +516,10 @@ class Style extends \YetiForcePDF\Base
 		}
 		$this->rules['margin-right'] = 0;
 		$this->rules['border-right-width'] = 0;
+		if ($this->rules['display'] === 'inline') {
+			$this->rules['margin-top'] = 0;
+			$this->rules['margin-bottom'] = 0;
+		}
 		return $this;
 	}
 
@@ -536,6 +544,10 @@ class Style extends \YetiForcePDF\Base
 		}
 		$this->rules['margin-left'] = 0;
 		$this->rules['border-left-width'] = 0;
+		if ($this->rules['display'] === 'inline') {
+			$this->rules['margin-top'] = 0;
+			$this->rules['margin-bottom'] = 0;
+		}
 		return $this;
 	}
 
@@ -562,6 +574,10 @@ class Style extends \YetiForcePDF\Base
 		$this->rules['margin-right'] = 0;
 		$this->rules['border-right-width'] = 0;
 		$this->rules['border-left-width'] = 0;
+		if ($this->rules['display'] === 'inline') {
+			$this->rules['margin-top'] = 0;
+			$this->rules['margin-bottom'] = 0;
+		}
 		return $this;
 	}
 
