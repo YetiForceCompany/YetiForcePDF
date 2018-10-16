@@ -505,6 +505,11 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function clearFirstInline()
 	{
+		$box = $this->getBox();
+		$dimensions = $box->getDimensions();
+		if ($dimensions->getWidth()) {
+			$dimensions->setWidth($dimensions->getWidth() - $this->rules['margin-right'] - $this->rules['border-right-width']);
+		}
 		$this->rules['margin-right'] = 0;
 		$this->rules['border-right-width'] = 0;
 		return $this;
@@ -516,6 +521,19 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function clearLastInline()
 	{
+		$box = $this->getBox();
+		$dimensions = $box->getDimensions();
+		if ($dimensions->getWidth()) {
+			$dimensions->setWidth($dimensions->getWidth() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+		}
+		$offset = $box->getOffset();
+		if ($offset->getLeft()) {
+			$offset->setLeft($offset->getLeft() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+		}
+		$coordinates = $box->getCoordinates();
+		if ($coordinates->getX()) {
+			$coordinates->setX($coordinates->getX() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+		}
 		$this->rules['margin-left'] = 0;
 		$this->rules['border-left-width'] = 0;
 		return $this;
@@ -527,6 +545,19 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function clearMiddleInline()
 	{
+		$box = $this->getBox();
+		$dimensions = $box->getDimensions();
+		if ($dimensions->getWidth()) {
+			$dimensions->setWidth($dimensions->getWidth() - $this->rules['margin-left'] - $this->rules['border-left-width'] - $this->rules['margin-right'] - $this->rules['border-right-width']);
+		}
+		$offset = $box->getOffset();
+		if ($offset->getLeft()) {
+			$offset->setLeft($offset->getLeft() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+		}
+		$coordinates = $box->getCoordinates();
+		if ($coordinates->getX()) {
+			$coordinates->setX($coordinates->getX() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+		}
 		$this->rules['margin-left'] = 0;
 		$this->rules['margin-right'] = 0;
 		$this->rules['border-right-width'] = 0;

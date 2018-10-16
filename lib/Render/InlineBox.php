@@ -115,6 +115,10 @@ class InlineBox extends Box
 	{
 		if ($parent = $this->getParent()) {
 			$clone = clone $this;
+			$clone->getStyle()->setBox($clone);
+			$clone->getDimensions()->setBox($clone);
+			$clone->getOffset()->setBox($clone);
+			$clone->getElement()->setBox($clone);
 			$clone->appendChild($box);
 			if (!$parent instanceof LineBox) {
 				$parent->cloneParent($clone);

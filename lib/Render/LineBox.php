@@ -154,15 +154,15 @@ class LineBox extends Box
 				foreach ($cloneArray as $index => $clone) {
 					if ($index === 0) {
 						$clone->getStyle()->clearFirstInline();
-					} elseif ($index > 0 && $index < $count - 1) {
-						$clone->getStyle()->clearMiddleInline();
 					} elseif ($index === $count - 1) {
 						$clone->getStyle()->clearLastInline();
+					} elseif ($index > 0 && $index < ($count - 1)) {
+						$clone->getStyle()->clearMiddleInline();
 					}
 				}
 			}
 		}
-
+		// element width are changed because of margin removal process
 		return $this;
 	}
 
@@ -175,11 +175,11 @@ class LineBox extends Box
 		$this->offset();
 		$this->measureWidth();
 		$this->position();
+		$this->clearStyles();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
 		$this->measureHeight();
-		$this->clearStyles();
 		return $this;
 	}
 
