@@ -121,16 +121,7 @@ class InlineBox extends Box
 			} else {
 				$parent->appendChild($clone);
 			}
-			if ($previous = $clone->getPrevious()) {
-				if ($previous->getElement()->getElementId() === $clone->getElement()->getElementId()) {
-					$previous->getStyle()->clearFirstInline();
-				}
-				if ($previous2 = $previous->getPrevious()) {
-					if ($previous2->getElement()->getElementId() === $clone->getElement()->getElementId()) {
-						$previous2->getStyle()->clearMiddleInline();
-					}
-				}
-			}
+
 		}
 	}
 
@@ -155,12 +146,12 @@ class InlineBox extends Box
 					}
 					$box = (new BlockBox())
 						->setDocument($this->document)
-						->setElement($childDomElement)
+						->setElement($element)
 						->setStyle($element->parseStyle())//second phase with css inheritance
 						->init();
 					// if we add this child to parent box we loose parent inline styles if nested
 					// so we need to wrap this box later and split lines at block element
-					$this->appendChild($box);
+					$this->cloneParent($box);
 					$box->buildTree($parentBlock);
 					continue;
 				}

@@ -126,6 +126,47 @@ class LineBox extends Box
 	}
 
 	/**
+	 * Clear styles
+	 * return $this;
+	 */
+	public function clearStyles()
+	{
+		$allNestedChildren = [];
+		$maxLevel = 0;
+		foreach ($this->getChildren() as $child) {
+			$allChildren = [];
+			$child->getAllChildren($allChildren);
+			$maxLevel = max($maxLevel, count($allChildren));
+			$allNestedChildren[] = $allChildren;
+		}
+		$clones = [];
+		for ($row = 0; $row < $maxLevel; $row++) {
+			foreach ($allNestedChildren as $column => $childArray) {
+				if (isset($childArray[$row])) {
+					$current = $childArray[$row];
+					$clones[$current->getElement()->getElementId()][] = $current;
+				}
+			}
+		}
+		foreach ($clones as $row => $cloneArray) {
+			$count = count($cloneArray);
+			if ($count > 1) {
+				foreach ($cloneArray as $index => $clone) {
+					if ($index === 0) {
+						$clone->getStyle()->clearFirstInline();
+					} elseif ($index > 0 && $index < $count - 1) {
+						$clone->getStyle()->clearMiddleInline();
+					} elseif ($index === $count - 1) {
+						$clone->getStyle()->clearLastInline();
+					}
+				}
+			}
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Reflow
 	 * @return $this
 	 */
@@ -138,6 +179,7 @@ class LineBox extends Box
 			$child->reflow();
 		}
 		$this->measureHeight();
+		$this->clearStyles();
 		return $this;
 	}
 
