@@ -223,8 +223,11 @@ class BlockBox extends Box
 	{
 		$height = 0;
 		foreach ($this->getChildren() as $child) {
-			$height += $child->getDimensions()->getHeight();
+			$height += $child->getDimensions()->getOuterHeight();
 		}
+		$rules = $this->getStyle()->getRules();
+		$height += $rules['border-top-width'] + $rules['padding-top'];
+		$height += $rules['border-bottom-width'] + $rules['padding-bottom'];
 		$this->getDimensions()->setHeight($height);
 		return $this;
 	}

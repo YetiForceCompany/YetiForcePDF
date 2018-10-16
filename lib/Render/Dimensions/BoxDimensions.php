@@ -98,8 +98,9 @@ class BoxDimensions extends Dimensions
 		if (!$box instanceof \YetiForcePDF\Render\LineBox) {
 			$rules = $this->getBox()->getStyle()->getRules();
 			return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
+		} else {
+			return $this->getHeight() + $this->box->getMarginTop() + $this->box->getMarginBottom();
 		}
-		return $this->getHeight();
 	}
 
 	/**
