@@ -319,7 +319,7 @@ class Box extends \YetiForcePDF\Base
 	public function appendChild(Box $box)
 	{
 		if ($this instanceof LineBox && $box instanceof LineBox) {
-			throw new \InvalidArgumentException('LineBox cannnot append another LineBox as child.');
+			throw new \InvalidArgumentException('LineBox cannot append another LineBox as child.');
 		}
 		$box->setParent($this);
 		$childrenCount = count($this->children);

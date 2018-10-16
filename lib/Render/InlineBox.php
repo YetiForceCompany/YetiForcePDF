@@ -121,9 +121,6 @@ class InlineBox extends Box
 					->init();
 				$style = $element->parseStyle();
 				if ($style->getRules('display') === 'block') {
-					if ($parentBlock->getCurrentLineBox()) {
-						$parentBlock->closeLine();
-					}
 					$box = (new BlockBox())
 						->setDocument($this->document)
 						->setElement($element)
@@ -131,7 +128,11 @@ class InlineBox extends Box
 						->init();
 					// if we add this child to parent box we loose parent inline styles if nested
 					// so we need to wrap this box later and split lines at block element
-					$this->cloneParent($box);
+					if ($this->getStyle()->getRules('display') === 'inline') {
+						$this->cloneParent($box);
+					} else {
+						$this->appendChild($box);
+					}
 					$box->buildTree($parentBlock);
 					continue;
 				}
@@ -160,7 +161,7 @@ class InlineBox extends Box
 						->setStyle($element->parseStyle())
 						->init();
 					$currentChildren = $this->getChildren();
-					if (isset($currentChildren[0])) {
+					if (isset($currentChildren[0]) && $this->getStyle()->getRules('display') === 'inline') {
 						$this->cloneParent($box);
 					} else {
 						$this->appendChild($box);

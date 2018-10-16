@@ -83,6 +83,7 @@ class BlockBox extends Box
 	{
 		$this->currentLineBox = (new LineBox())->setDocument($this->document)->init();
 		$this->appendChild($this->currentLineBox);
+		$this->currentLineBox->getDimensions()->computeAvailableSpace();
 		return $this->currentLineBox;
 	}
 
@@ -165,8 +166,19 @@ class BlockBox extends Box
 	public function measureWidth()
 	{
 		$dimensions = $this->getDimensions();
-		if ($parent = $this->getParent()) {
-			$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
+		$parent = $this->getParent();
+		if ($parent) {
+			if ($parent instanceof BlockBox) {
+				$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
+			} else {
+				$maxWidth = 0;
+				foreach ($this->getChildren() as $child) {
+					$maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
+				}
+				$style = $this->getStyle();
+				$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+				$dimensions->setWidth($maxWidth);
+			}
 		} else {
 			$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
 		}
@@ -181,11 +193,16 @@ class BlockBox extends Box
 	{
 		foreach ($this->getChildren() as $child) {
 			if ($child instanceof LineBox) {
-				foreach ($child->divide() as $line) {
+				$lines = $child->divide();
+				foreach ($lines as $line) {
 					$this->insertBefore($line, $child);
-					$line->reflow();
 				}
 				$this->removeChild($child);
+				$this->measureWidth();
+				foreach ($lines as $line) {
+					$line->measureWidth()->getDimensions()->computeAvailableSpace();
+					$line->reflow();
+				}
 			}
 		}
 		return $this;
@@ -259,15 +276,29 @@ class BlockBox extends Box
 	 */
 	public function reflow()
 	{
-		$this->getDimensions()->computeAvailableSpace();
-		$this->offset();
-		$this->position();
-		$this->measureWidth();
-		foreach ($this->getChildren() as $child) {
-			$child->reflow();
+		$parent = $this->getParent();
+		if ($parent && !$parent->getDimensions()->getWidth()) {
+			$this->getDimensions()->computeAvailableSpace();
+			$this->offset();
+			foreach ($this->getChildren() as $child) {
+				$child->reflow();
+			}
+			$this->measureWidth();
+			$this->getDimensions()->computeAvailableSpace();
+			$this->position();
+			$this->divideLines();
+			$this->measureHeight();
+		} else {
+			$this->getDimensions()->computeAvailableSpace();
+			$this->offset();
+			$this->position();
+			$this->measureWidth();
+			foreach ($this->getChildren() as $child) {
+				$child->reflow();
+			}
+			$this->divideLines();
+			$this->measureHeight();
 		}
-		$this->divideLines();
-		$this->measureHeight();
 		return $this;
 	}
 
