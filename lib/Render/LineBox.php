@@ -77,7 +77,7 @@ class LineBox extends Box
 		$this->clearStyles();
 		if (!$this->elementsFit()) {
 			$line = (new LineBox())->setDocument($this->document)->init();
-			$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
+			$line->getDimensions()->setWidth($lineWidth)->setAvailableSpace($lineWidth);
 			$line->setParent($this->getParent());
 			foreach ($this->getChildren() as $childBox) {
 				if ($line->willFit($childBox)) {
@@ -221,6 +221,7 @@ class LineBox extends Box
 	 */
 	public function reflow()
 	{
+		$this->getDimensions()->computeAvailableSpace();
 		$this->measureWidth();
 		$this->measureHeight();
 		$this->measureMargins();

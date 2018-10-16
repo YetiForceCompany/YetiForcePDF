@@ -283,6 +283,7 @@ class BlockBox extends Box
 	 */
 	public function reflow()
 	{
+		$this->getDimensions()->computeAvailableSpace();
 		$this->offset();
 		$this->position();
 		$this->measureWidth();

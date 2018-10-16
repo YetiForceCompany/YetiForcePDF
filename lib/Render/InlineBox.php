@@ -279,6 +279,7 @@ class InlineBox extends Box
 	 */
 	public function reflow()
 	{
+		$this->getDimensions()->computeAvailableSpace();
 		if ($this->isTextNode()) {
 			$this->measureWidth();
 			$this->measureHeight();
