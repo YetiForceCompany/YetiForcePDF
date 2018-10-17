@@ -165,6 +165,9 @@ class BlockBox extends Box
 	public function measureWidth()
 	{
 		$dimensions = $this->getDimensions();
+		if ($dimensions->getWidth() !== null) {
+			return $this;
+		}
 		$parent = $this->getParent();
 		if ($parent) {
 			if ($parent->getDimensions()->getWidth() !== null) {

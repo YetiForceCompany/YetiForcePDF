@@ -186,6 +186,8 @@ class InlineBox extends Box
 		$width = 0;
 		foreach ($this->getChildren() as $child) {
 			$width += $child->getDimensions()->getOuterWidth();
+			$style = $this->getStyle();
+			$width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
 		}
 		if ($this->isTextNode()) {
 			$width = $this->getStyle()->getFont()->getTextWidth($this->getText());
@@ -211,6 +213,8 @@ class InlineBox extends Box
 					$height += $child->getDimensions()->getOuterHeight();
 				}
 			}
+			$style = $this->getStyle();
+			$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
 			$this->getDimensions()->setHeight($height);
 		}
 		return $this;
