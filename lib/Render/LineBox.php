@@ -67,16 +67,20 @@ class LineBox extends Box
 	{
 		$lines = [];
 		$this->clearStyles();
-		$line = (new LineBox())->setDocument($this->document)->init();
-		$line->setParent($this->getParent());
+		$line = (new LineBox())
+			->setDocument($this->document)
+			->setParent($this->getParent())
+			->init();
 		$line->getDimensions()->setUpAvailableSpace();
 		foreach ($this->getChildren() as $childBox) {
 			if ($line->willFit($childBox)) {
 				$line->appendChild($childBox);
 			} else {
 				$lines[] = $line;
-				$line = (new LineBox())->setDocument($this->document)->init();
-				$line->setParent($this->getParent());
+				$line = (new LineBox())
+					->setDocument($this->document)
+					->setParent($this->getParent())
+					->init();
 				$line->getDimensions()->setUpAvailableSpace();
 				$line->appendChild($childBox);
 			}
