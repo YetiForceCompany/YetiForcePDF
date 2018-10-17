@@ -65,15 +65,10 @@ class LineBox extends Box
 	 */
 	public function divide()
 	{
-		if ($this->getParent()->getDimensions()->getWidth() !== null) {
-			$lineWidth = $this->getParent()->getDimensions()->getInnerWidth();
-		} else {
-			$lineWidth = $this->getDimensions()->getAvailableSpace();
-		}
 		$lines = [];
 		$this->clearStyles();
 		$line = (new LineBox())->setDocument($this->document)->init();
-		$line->getDimensions()->setWidth($lineWidth)->setAvailableSpace($lineWidth);
+		$line->getDimensions()->setUpAvailableSpace();
 		$line->setParent($this->getParent());
 		foreach ($this->getChildren() as $childBox) {
 			if ($line->willFit($childBox)) {
@@ -82,7 +77,7 @@ class LineBox extends Box
 				$lines[] = $line;
 				$line = (new LineBox())->setDocument($this->document)->init();
 				$line->setParent($this->getParent());
-				$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
+				$line->getDimensions()->setUpAvailableSpace();
 				$line->appendChild($childBox);
 			}
 		}
@@ -99,11 +94,7 @@ class LineBox extends Box
 	public function measureWidth()
 	{
 		$dimensions = $this->getDimensions();
-		if ($this->getParent()->getDimensions()->getWidth() !== null) {
-			$dimensions->setWidth($this->getParent()->getDimensions()->getInnerWidth());
-		} else {
-			$dimensions->setWidth($dimensions->getAvailableSpace());
-		}
+		$dimensions->setWidth($this->getChildrenWidth());
 		return $this;
 	}
 
@@ -222,8 +213,6 @@ class LineBox extends Box
 	public function reflow()
 	{
 		$this->getDimensions()->computeAvailableSpace();
-		$this->measureWidth();
-		$this->measureHeight();
 		$this->measureMargins();
 		$this->offset();
 		$this->position();
@@ -231,6 +220,8 @@ class LineBox extends Box
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
+		$this->measureWidth();
+		$this->measureHeight();
 		return $this;
 	}
 

@@ -226,16 +226,13 @@ class InlineBox extends Box
 	 */
 	public function offset()
 	{
-		$parent = $this->getParent();
 		$rules = $this->getStyle()->getRules();
 		$top = 0;
 		// margin top inside inline and inline block doesnt affect relative to line top position
 		// it only affects line margins
 		$left = $rules['margin-left'];
-		if ($parent instanceof LineBox) {
-			if ($previous = $this->getPrevious()) {
-				$left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth() + $previous->getStyle()->getRules('margin-right');
-			}
+		if ($previous = $this->getPrevious()) {
+			$left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth() + $previous->getStyle()->getRules('margin-right');
 		}
 		$this->getOffset()->setLeft($left);
 		$this->getOffset()->setTop($top);
