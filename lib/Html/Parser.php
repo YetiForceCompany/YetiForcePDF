@@ -106,20 +106,19 @@ class Parser extends \YetiForcePDF\Base
 			return null;
 		}
 		$this->elements = [];
+		$this->box = (new BlockBox())
+			->setDocument($this->document)
+			->setRoot(true)
+			->init();
+		$this->box->prepareTree($this->domDocument->documentElement);
 		$this->rootElement = (new \YetiForcePDF\Html\Element())
 			->setDocument($this->document)
-			->setDOMElement($this->domDocument->documentElement);
+			->setDOMElement($this->box->getDOMTree());
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
 		$this->rootElement->init();
-		$this->box = (new BlockBox())
-			->setDocument($this->document)
-			->setElement($this->rootElement)
-			->setRoot(true)
-			->init();
 		$this->box->setStyle($this->rootElement->parseStyle());
 		$this->box->getDimensions()->setUpAvailableSpace();
-		//$this->box->prepareTree();
 		$this->box->buildTree();
 		$this->box->reflow();
 		$children = [];

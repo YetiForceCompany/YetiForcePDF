@@ -76,6 +76,26 @@ class BlockBox extends Box
 	}
 
 	/**
+	 * Prepare tree - divide each string into characters DOMText - each character will be DOMText from now
+	 * This method exists only inside BlockBox because root element is always BlockBox (recurrence)
+	 * @return $this
+	 */
+	public function prepareTree($domElement)
+	{
+		// clone tree because we don't want to modify source of truth
+		if ($this->isRoot()) {
+			$domElement = $domElement->cloneNode(true);
+		}
+		/*if ($domElement->hasChildNodes()) {
+			foreach ($domElement->childNodes as $childNode) {
+
+			}
+		}*/
+		$this->domTree = $domElement;
+		return $this;
+	}
+
+	/**
 	 * Get new line box
 	 * @return \YetiForcePDF\Render\LineBox
 	 */
@@ -115,7 +135,11 @@ class BlockBox extends Box
 	 */
 	public function buildTree($parentBlock = null)
 	{
-		$domElement = $this->getElement()->getDOMElement();
+		if ($this->isRoot()) {
+			$domElement = $this->domTree;
+		} else {
+			$domElement = $this->getElement()->getDOMElement();
+		}
 		if ($domElement->hasChildNodes()) {
 			foreach ($domElement->childNodes as $childDomElement) {
 				$element = (new Element())

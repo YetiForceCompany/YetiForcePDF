@@ -29,6 +29,10 @@ class Box extends \YetiForcePDF\Base
 	 */
 	protected $id;
 	/**
+	 * @var \DOMElement
+	 */
+	protected $domTree;
+	/**
 	 * @var Box
 	 */
 	protected $parent;
@@ -103,6 +107,15 @@ class Box extends \YetiForcePDF\Base
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * Get current box dom tree structure
+	 * @return \DOMElement
+	 */
+	public function getDOMTree()
+	{
+		return $this->domTree;
 	}
 
 	/**
@@ -263,53 +276,6 @@ class Box extends \YetiForcePDF\Base
 			throw new \InvalidArgumentException('Cannot create child element inside text node.');
 		}
 	}
-
-	/**
-	 * Wrap each child element with clone of this box instance and push each element to parent box
-	 */
-	public function cutAndWrap()
-	{
-		if ($this instanceof InlineBox) {
-			$parent = $this->getParent();
-			$count = count($this->getChildren());
-			foreach ($this->getChildren() as $child) {
-				$child->cutAndWrap();
-			}
-			if ($count > 1) {
-				foreach ($this->getChildren() as $index => $child) {
-					$clone = clone $this;
-					$clone->getDimensions()->setBox($clone);
-					$clone->getCoordinates()->setBox($clone);
-					$clone->getOffset()->setBox($clone);
-					$clone->getStyle()->setBox($clone);
-					if ($clone->getElement()) {
-						$clone->getElement()->setBox($clone);
-					}
-					$clone->appendChild($child);
-					$parent->insertBefore($clone, $this);
-					if ($count > 1) {
-						if ($index === 0) {
-							$clone->getStyle()->clearFirstInline();
-						} elseif ($index === $count - 1) {
-							$clone->getStyle()->clearLastInline();
-						} else {
-							$clone->getStyle()->clearMiddleInline();
-						}
-					}
-					$clone->measurePhaseOne();
-					$clone->getDimensions()->setUpAvailableSpace();
-				}
-				$parent->removeChild($this);
-				$parent->measurePhaseOne();
-			}
-
-		} else {
-			foreach ($this->getChildren() as $childBox) {
-				$childBox->cutAndWrap();
-			}
-		}
-	}
-
 
 	/**
 	 * Append child box - line box can have only inline/block boxes - not line boxes!
