@@ -72,26 +72,24 @@ class LineBox extends Box
 		}
 		$lines = [];
 		$this->clearStyles();
-		if (!$this->elementsFit()) {
-			$line = (new LineBox())->setDocument($this->document)->init();
-			$line->getDimensions()->setWidth($lineWidth)->setAvailableSpace($lineWidth);
-			$line->setParent($this->getParent());
-			foreach ($this->getChildren() as $childBox) {
-				if ($line->willFit($childBox)) {
-					$line->appendChild($childBox);
-				} else {
-					$lines[] = $line;
-					$line = (new LineBox())->setDocument($this->document)->init();
-					$line->setParent($this->getParent());
-					$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
-					$line->appendChild($childBox);
-				}
+		$line = (new LineBox())->setDocument($this->document)->init();
+		$line->getDimensions()->setWidth($lineWidth)->setAvailableSpace($lineWidth);
+		$line->setParent($this->getParent());
+		foreach ($this->getChildren() as $childBox) {
+			if ($line->willFit($childBox)) {
+				$line->appendChild($childBox);
+			} else {
+				$lines[] = $line;
+				$line = (new LineBox())->setDocument($this->document)->init();
+				$line->setParent($this->getParent());
+				$line->getDimensions()->setWidth($lineWidth)->setUpAvailableSpace();
+				$line->appendChild($childBox);
 			}
-			// append last line
-			$lines[] = $line;
-			return $lines;
 		}
-		return [$this];
+		// append last line
+		$lines[] = $line;
+		return $lines;
+
 	}
 
 	/**
