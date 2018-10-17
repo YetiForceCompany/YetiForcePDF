@@ -95,7 +95,7 @@ class BlockBox extends Box
 	 */
 	public function closeLine()
 	{
-		$this->currentLineBox = $this->getNewLineBox();
+		$this->currentLineBox = null;
 		return $this->currentLineBox;
 	}
 
