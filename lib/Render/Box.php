@@ -445,6 +445,32 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get closest line box
+	 * @return \YetiForcePDF\Render\LineBox
+	 */
+	public function getClosestLineBox()
+	{
+		$parent = $this->getParent();
+		if ($parent instanceof LineBox) {
+			return $parent;
+		}
+		return $parent->getClosestLineBox();
+	}
+
+	/**
+	 * Get closet box that is not a LineBox
+	 * @return \YetiForcePDF\Render\Box
+	 */
+	public function getClosestBox()
+	{
+		$parent = $this->getParent();
+		if (!$parent instanceof LineBox) {
+			return $parent;
+		}
+		return $parent->getClosestBox();
+	}
+
+	/**
 	 * Get dimensions
 	 * @return BoxDimensions
 	 */

@@ -417,6 +417,24 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get offset top -  get top border width and top padding
+	 * @return float
+	 */
+	public function getOffsetTop()
+	{
+		return $this->rules['border-top-width'] + $this->rules['padding-top'];
+	}
+
+	/**
+	 * Get offset left - get left border width and left padding
+	 * @return float
+	 */
+	public function getOffsetLeft()
+	{
+		return $this->rules['border-left-width'] + $this->rules['padding-left'];
+	}
+
+	/**
 	 * Get current style font
 	 * @return \YetiForcePDF\Objects\Font
 	 */
