@@ -65,7 +65,11 @@ class LineBox extends Box
 	 */
 	public function divide()
 	{
-		$lineWidth = $this->getParent()->getDimensions()->getInnerWidth();
+		if ($this->getParent()->getDimensions()->getWidth() !== null) {
+			$lineWidth = $this->getParent()->getDimensions()->getInnerWidth();
+		} else {
+			$lineWidth = $this->getDimensions()->getAvailableSpace();
+		}
 		$lines = [];
 		$this->clearStyles();
 		if (!$this->elementsFit()) {
@@ -97,7 +101,11 @@ class LineBox extends Box
 	public function measureWidth()
 	{
 		$dimensions = $this->getDimensions();
-		$dimensions->setWidth($this->getParent()->getDimensions()->getInnerWidth());
+		if ($this->getParent()->getDimensions()->getWidth() !== null) {
+			$dimensions->setWidth($this->getParent()->getDimensions()->getInnerWidth());
+		} else {
+			$dimensions->setWidth($dimensions->getAvailableSpace());
+		}
 		return $this;
 	}
 

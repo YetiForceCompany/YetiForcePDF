@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Render\Dimensions;
 
 use YetiForcePDF\Render\Box;
+use \YetiForcePDF\Render\LineBox;
 
 /**
  * Class BoxDimensions
@@ -74,8 +75,12 @@ class BoxDimensions extends Dimensions
 	 */
 	public function getOuterWidth()
 	{
-		$rules = $this->getBox()->getStyle()->getRules();
-		return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
+		if (!$this->getBox() instanceof LineBox) {
+			$rules = $this->getBox()->getStyle()->getRules();
+			return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
+		} else {
+			return $this->getBox()->getChildrenWidth();
+		}
 	}
 
 	/**

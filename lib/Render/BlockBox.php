@@ -95,7 +95,6 @@ class BlockBox extends Box
 	 */
 	public function closeLine()
 	{
-		$this->appendChild($this->currentLineBox);
 		$this->currentLineBox = $this->getNewLineBox();
 		return $this->currentLineBox;
 	}
@@ -168,7 +167,7 @@ class BlockBox extends Box
 		$dimensions = $this->getDimensions();
 		$parent = $this->getParent();
 		if ($parent) {
-			if ($parent instanceof BlockBox) {
+			if ($parent->getDimensions()->getWidth() !== null) {
 				$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
 			} else {
 				$maxWidth = 0;
@@ -196,13 +195,9 @@ class BlockBox extends Box
 				$lines = $child->divide();
 				foreach ($lines as $line) {
 					$this->insertBefore($line, $child);
-				}
-				$this->removeChild($child);
-				$this->measureWidth();
-				foreach ($lines as $line) {
-					$line->measureWidth()->getDimensions()->computeAvailableSpace();
 					$line->reflow();
 				}
+				$this->removeChild($child);
 			}
 		}
 		return $this;
@@ -283,10 +278,9 @@ class BlockBox extends Box
 			foreach ($this->getChildren() as $child) {
 				$child->reflow();
 			}
-			$this->measureWidth();
-			$this->getDimensions()->computeAvailableSpace();
 			$this->position();
 			$this->divideLines();
+			$this->measureWidth();
 			$this->measureHeight();
 		} else {
 			$this->getDimensions()->computeAvailableSpace();
