@@ -133,7 +133,7 @@ class BlockBox extends Box
 						->setStyle($element->parseStyle())//second phase with css inheritance
 						->init();
 					$this->appendChild($box);
-					$box->buildTree($this);
+					$box->buildTree($box);
 					continue;
 				}
 				// childDomElement is an inline element

@@ -128,12 +128,12 @@ class InlineBox extends Box
 						->init();
 					// if we add this child to parent box we loose parent inline styles if nested
 					// so we need to wrap this box later and split lines at block element
-					if ($this->getStyle()->getRules('display') === 'inline') {
+					if (isset($currentChildren[0])) {
 						$this->cloneParent($box);
 					} else {
 						$this->appendChild($box);
 					}
-					$box->buildTree($parentBlock);
+					$box->buildTree($box);
 					continue;
 				}
 				// split words into text dom elements
@@ -161,7 +161,7 @@ class InlineBox extends Box
 						->setStyle($element->parseStyle())
 						->init();
 					$currentChildren = $this->getChildren();
-					if (isset($currentChildren[0]) && $this->getStyle()->getRules('display') === 'inline') {
+					if (isset($currentChildren[0])) {
 						$this->cloneParent($box);
 					} else {
 						$this->appendChild($box);
