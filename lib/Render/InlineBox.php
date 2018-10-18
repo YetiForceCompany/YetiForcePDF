@@ -23,45 +23,12 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
  */
 class InlineBox extends Box
 {
+	use ElementBoxTrait;
 
-	/**
-	 * @var Element
-	 */
-	protected $element;
 	/**
 	 * @var string
 	 */
 	protected $text;
-
-	/**
-	 * Get element
-	 * @return Element
-	 */
-	public function getElement()
-	{
-		return $this->element;
-	}
-
-	/**
-	 * Set element
-	 * @param Element $element
-	 * @return $this
-	 */
-	public function setElement(Element $element)
-	{
-		$this->element = $element;
-		$element->setBox($this);
-		return $this;
-	}
-
-	/**
-	 * Get closest parent block
-	 * @return \YetiForcePDF\Render\Box
-	 */
-	public function getParentBlock()
-	{
-		return $this->getParent()->getParent();
-	}
 
 	/**
 	 * Set text
@@ -85,9 +52,9 @@ class InlineBox extends Box
 
 	/**
 	 * Go up to Line box and clone and wrap element
-	 * @param $box
+	 * @param Box $box
 	 */
-	public function cloneParent($box)
+	public function cloneParent(Box $box)
 	{
 		if ($parent = $this->getParent()) {
 			$clone = clone $this;
@@ -101,77 +68,102 @@ class InlineBox extends Box
 			} else {
 				$parent->appendChild($clone);
 			}
-
 		}
+		return $this;
 	}
 
 	/**
-	 * Segregate
-	 * @param $parentBlock
+	 * Append block box element
+	 * @param \DOMNode                      $childDomElement
+	 * @param Element                       $element
+	 * @param \YetiForcePDF\Render\BlockBox $parentBlock
 	 * @return $this
 	 */
-	public function buildTree($parentBlock = null)
+	public function appendBlock($childDomElement, $element, $parentBlock)
 	{
-		$domElement = $this->getElement()->getDOMElement();
-		if ($domElement->hasChildNodes()) {
-			foreach ($domElement->childNodes as $childDomElement) {
-				$element = (new Element())
-					->setDocument($this->document)
-					->setDOMElement($childDomElement)
-					->init();
-				$style = $element->parseStyle();
-				if ($style->getRules('display') === 'block') {
-					$box = (new BlockBox())
-						->setDocument($this->document)
-						->setElement($element)
-						->setStyle($element->parseStyle())//second phase with css inheritance
-						->init();
-					// if we add this child to parent box we loose parent inline styles if nested
-					// so we need to wrap this box later and split lines at block element
-					if (isset($currentChildren[0])) {
-						$this->cloneParent($box);
-					} else {
-						$this->appendChild($box);
-					}
-					$box->buildTree($box);
-					continue;
+		$box = (new BlockBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())//second phase with css inheritance
+			->init();
+		// if we add this child to parent box we loose parent inline styles if nested
+		// so we need to wrap this box later and split lines at block element
+		if (isset($currentChildren[0])) {
+			$this->cloneParent($box);
+		} else {
+			$this->appendChild($box);
+		}
+		$box->buildTree($box);
+		return $this;
+	}
+
+	/**
+	 * Append inline block box element
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendInlineBlock($childDomElement, $element, $parentBlock)
+	{
+		$box = (new InlineBlockBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())//second phase with css inheritance
+			->init();
+		// if we add this child to parent box we loose parent inline styles if nested
+		// so we need to wrap this box later and split lines at block element
+		if (isset($currentChildren[0])) {
+			$this->cloneParent($box);
+		} else {
+			$this->appendChild($box);
+		}
+		$box->buildTree($box);
+		return $this;
+	}
+
+	/**
+	 * Add inline child (and split text to individual characters)
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendInline($childDomElement, $element, $parentBlock)
+	{
+		$childDomElements = [$childDomElement];
+		if ($childDomElement instanceof \DOMText) {
+			$childDomElements = [];
+			$text = $childDomElement->textContent;
+			$words = explode(' ', $text);
+			$wordsCount = count($words);
+			foreach ($words as $index => $word) {
+				if ($index < $wordsCount - 1) {
+					$word .= ' ';
 				}
-				// split words into text dom elements
-				$childDomElements = [$childDomElement];
-				if ($childDomElement instanceof \DOMText) {
-					$childDomElements = [];
-					$text = $childDomElement->textContent;
-					$words = explode(' ', $text);
-					$wordsCount = count($words);
-					foreach ($words as $index => $word) {
-						if ($index < $wordsCount - 1) {
-							$word .= ' ';
-						}
-						$childDomElements[] = $childDomElement->ownerDocument->createTextNode($word);
-					}
-				}
-				foreach ($childDomElements as $childDomElementText) {
-					$element = (new Element())
-						->setDocument($this->document)
-						->setDOMElement($childDomElementText)
-						->init();
-					$box = (new InlineBox())
-						->setDocument($this->document)
-						->setElement($element)
-						->setStyle($element->parseStyle())
-						->init();
-					$currentChildren = $this->getChildren();
-					if (isset($currentChildren[0])) {
-						$this->cloneParent($box);
-					} else {
-						$this->appendChild($box);
-					}
-					if ($childDomElementText instanceof \DOMText) {
-						$box->setTextNode(true)->setText($childDomElementText->textContent);
-					} else {
-						$box->buildTree($parentBlock);
-					}
-				}
+				$childDomElements[] = $childDomElement->ownerDocument->createTextNode($word);
+			}
+		}
+		foreach ($childDomElements as $childDomElementText) {
+			$element = (new Element())
+				->setDocument($this->document)
+				->setDOMElement($childDomElementText)
+				->init();
+			$box = (new InlineBox())
+				->setDocument($this->document)
+				->setElement($element)
+				->setStyle($element->parseStyle())
+				->init();
+			$currentChildren = $this->getChildren();
+			if (isset($currentChildren[0])) {
+				$this->cloneParent($box);
+			} else {
+				$this->appendChild($box);
+			}
+			if ($childDomElementText instanceof \DOMText) {
+				$box->setTextNode(true)->setText($childDomElementText->textContent);
+			} else {
+				$box->buildTree($parentBlock);
 			}
 		}
 		return $this;

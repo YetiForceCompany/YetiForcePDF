@@ -23,11 +23,8 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
  */
 class BlockBox extends Box
 {
+	use ElementBoxTrait;
 
-	/**
-	 * @var Element
-	 */
-	protected $element;
 	/**
 	 * @var \YetiForcePDF\Render\LineBox
 	 */
