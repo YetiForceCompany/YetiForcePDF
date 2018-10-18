@@ -174,21 +174,7 @@ class InlineBox extends ElementBox implements BoxInterface
 	 */
 	public function measureHeight()
 	{
-		if ($this->isTextNode()) {
-			$this->getDimensions()->setHeight($this->getStyle()->getRules('line-height'));
-		} else {
-			$height = 0;
-			foreach ($this->getChildren() as $child) {
-				if ($child instanceof InlineBox) {
-					$height += $child->getDimensions()->getInnerHeight();
-				} elseif ($child instanceof InlineBlockBox) {
-					$height += $child->getDimensions()->getInnerHeight();
-				} else {
-					$height += $child->getDimensions()->getOuterHeight();
-				}
-			}
-			$this->getDimensions()->setHeight($height);
-		}
+		$this->getDimensions()->setHeight($this->getStyle()->getRules('line-height'));
 		return $this;
 	}
 
@@ -200,9 +186,11 @@ class InlineBox extends ElementBox implements BoxInterface
 	{
 		$rules = $this->getStyle()->getRules();
 		$parent = $this->getParent();
-		/*$lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
-		$top = $lineHeight / 2 - $this->getDimensions()->getHeight() / 2;*/
 		$top = $parent->getStyle()->getOffsetTop();
+		if ($parent instanceof LineBox) {
+			$lineHeight = $parent->getDimensions()->getHeight();
+			$top = (float)bcsub(bcdiv((string)$lineHeight, '2', 4), bcdiv((string)$this->getDimensions()->getHeight(), '2', 4), 4);
+		}
 		// margin top inside inline and inline block doesn't affect relative to line top position
 		// it only affects line margins
 		$left = $rules['margin-left'];

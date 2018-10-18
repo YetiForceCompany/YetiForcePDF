@@ -464,7 +464,7 @@ class Style extends \YetiForcePDF\Base
 			case '%':
 				return $size . '%';
 			case 'em':
-				return (float)bcmul((string)$this->getFont()->getTextHeight(), (string)$size);
+				return (float)bcmul((string)$this->getFont()->getTextHeight(), (string)$size, 4);
 		}
 	}
 

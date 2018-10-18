@@ -47,6 +47,14 @@ class BoxDimensions extends Dimensions
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function getHeight()
+	{
+		return max(parent::getHeight(), $this->getBox()->getStyle()->getRules('line-height'));
+	}
+
+	/**
 	 * Get innerWidth
 	 * @return float
 	 */
