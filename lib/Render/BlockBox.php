@@ -21,7 +21,7 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class BlockBox
  */
-class BlockBox extends Box
+class BlockBox extends Box implements BoxInterface
 {
 	use ElementBoxTrait;
 
@@ -126,55 +126,75 @@ class BlockBox extends Box
 	}
 
 	/**
-	 * Segregate
-	 * @param $parentBlock
+	 * Append block box element
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
 	 * @return $this
 	 */
-	public function buildTree($parentBlock = null)
+	public function appendBlock($childDomElement, $element, $parentBlock)
 	{
-		if ($this->isRoot()) {
-			$domElement = $this->domTree;
-		} else {
-			$domElement = $this->getElement()->getDOMElement();
+		if ($this->getCurrentLineBox()) {
+			$this->closeLine();
 		}
-		if ($domElement->hasChildNodes()) {
-			foreach ($domElement->childNodes as $childDomElement) {
-				$element = (new Element())
-					->setDocument($this->document)
-					->setDOMElement($childDomElement)
-					->init();
-				$style = $element->parseStyle();
-				if ($style->getRules('display') === 'block') {
-					if ($this->getCurrentLineBox()) {
-						$this->closeLine();
-					}
-					$box = (new BlockBox())
-						->setDocument($this->document)
-						->setElement($element)
-						->setStyle($element->parseStyle())//second phase with css inheritance
-						->init();
-					$this->appendChild($box);
-					$box->buildTree($box);
-					continue;
-				}
-				// childDomElement is an inline element
-				$box = (new InlineBox())
-					->setDocument($this->document)
-					->setElement($element)
-					->setStyle($element->parseStyle())
-					->init();
-				if ($this->getCurrentLineBox()) {
-					$currentLineBox = $this->getCurrentLineBox();
-				} else {
-					$currentLineBox = $this->getNewLineBox();
-				}
-				$currentLineBox->appendChild($box);
-				if ($childDomElement instanceof \DOMText) {
-					$box->setTextNode(true)->setText($childDomElement->textContent);
-				} else {
-					$box->buildTree($this);
-				}
-			}
+		$box = (new BlockBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())//second phase with css inheritance
+			->init();
+		$this->appendChild($box);
+		$box->buildTree($box);
+		return $this;
+	}
+
+	/**
+	 * Append inline block box element
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendInlineBlock($childDomElement, $element, $parentBlock)
+	{
+		$box = (new InlineBlockBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
+		if ($this->getCurrentLineBox()) {
+			$currentLineBox = $this->getCurrentLineBox();
+		} else {
+			$currentLineBox = $this->getNewLineBox();
+		}
+		$currentLineBox->appendChild($box);
+		$box->buildTree($this);
+		return $this;
+	}
+
+	/**
+	 * Add inline child (and split text to individual characters)
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendInline($childDomElement, $element, $parentBlock)
+	{
+		$box = (new InlineBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
+		if ($this->getCurrentLineBox()) {
+			$currentLineBox = $this->getCurrentLineBox();
+		} else {
+			$currentLineBox = $this->getNewLineBox();
+		}
+		$currentLineBox->appendChild($box);
+		if ($childDomElement instanceof \DOMText) {
+			$box->setTextNode(true)->setText($childDomElement->textContent);
+		} else {
+			$box->buildTree($this);
 		}
 		return $this;
 	}
@@ -248,7 +268,7 @@ class BlockBox extends Box
 	 * Offset elements
 	 * @return $this
 	 */
-	public function offset()
+	public function measureOffset()
 	{
 		$top = $this->document->getCurrentPage()->getCoordinates()->getY();
 		$left = $this->document->getCurrentPage()->getCoordinates()->getX();
@@ -276,7 +296,7 @@ class BlockBox extends Box
 	 * Position
 	 * @return $this
 	 */
-	public function position()
+	public function measurePosition()
 	{
 		$x = $this->document->getCurrentPage()->getCoordinates()->getX();
 		$y = $this->document->getCurrentPage()->getCoordinates()->getY();
@@ -298,18 +318,18 @@ class BlockBox extends Box
 		$parent = $this->getParent();
 		if ($parent && !$parent->getDimensions()->getWidth()) {
 			$this->getDimensions()->computeAvailableSpace();
-			$this->offset();
+			$this->measureOffset();
 			foreach ($this->getChildren() as $child) {
 				$child->reflow();
 			}
-			$this->position();
+			$this->measurePosition();
 			$this->divideLines();
 			$this->measureWidth();
 			$this->measureHeight();
 		} else {
 			$this->getDimensions()->computeAvailableSpace();
-			$this->offset();
-			$this->position();
+			$this->measureOffset();
+			$this->measurePosition();
 			$this->measureWidth();
 			foreach ($this->getChildren() as $child) {
 				$child->reflow();

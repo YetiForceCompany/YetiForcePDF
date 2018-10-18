@@ -21,133 +21,111 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class InlineBlockBox
  */
-class InlineBlockBox extends Box
+class InlineBlockBox extends BlockBox implements BoxInterface
 {
 
 	use ElementBoxTrait;
 
 	/**
-	 * Append block box element
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * Measure width
 	 * @return $this
 	 */
-	public function appendBlock($childDomElement, $element, $parentBlock)
+	public function measureWidth()
 	{
-		$box = (new BlockBox())
-			->setDocument($this->document)
-			->setElement($element)
-			->setStyle($element->parseStyle())//second phase with css inheritance
-			->init();
-		$this->appendChild($box);
-		$box->buildTree($box);
+		$width = 0;
+		foreach ($this->getChildren() as $child) {
+			$width += $child->getDimensions()->getOuterWidth();
+			$style = $this->getStyle();
+			$width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+		}
+		if ($this->isTextNode()) {
+			$width = $this->getStyle()->getFont()->getTextWidth($this->getText());
+		}
+		$this->getDimensions()->setWidth($width);
 		return $this;
 	}
 
 	/**
-	 * Append inline block box element
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * Measure height
 	 * @return $this
 	 */
-	public function appendInlineBlock($childDomElement, $element, $parentBlock)
+	public function measureHeight()
 	{
-		$box = (new InlineBlockBox())
-			->setDocument($this->document)
-			->setElement($element)
-			->setStyle($element->parseStyle())//second phase with css inheritance
-			->init();
-		// if we add this child to parent box we loose parent inline styles if nested
-		// so we need to wrap this box later and split lines at block element
-		if (isset($currentChildren[0])) {
-			$this->cloneParent($box);
+		if ($this->isTextNode()) {
+			$this->getDimensions()->setHeight($this->getStyle()->getFont()->getTextHeight($this->getText()));
 		} else {
-			$this->appendChild($box);
-		}
-		$box->buildTree($box);
-		return $this;
-	}
-
-	/**
-	 * Add inline child (and split text to individual characters)
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
-	 */
-	public function appendInline($childDomElement, $element, $parentBlock)
-	{
-		$childDomElements = [$childDomElement];
-		if ($childDomElement instanceof \DOMText) {
-			$childDomElements = [];
-			$text = $childDomElement->textContent;
-			$words = explode(' ', $text);
-			$wordsCount = count($words);
-			foreach ($words as $index => $word) {
-				if ($index < $wordsCount - 1) {
-					$word .= ' ';
+			$height = 0;
+			foreach ($this->getChildren() as $child) {
+				if ($this->getStyle()->getRules('display') === 'inline') {
+					$height += $child->getDimensions()->getHeight();
+				} else {
+					$height += $child->getDimensions()->getOuterHeight();
 				}
-				$childDomElements[] = $childDomElement->ownerDocument->createTextNode($word);
 			}
-		}
-		foreach ($childDomElements as $childDomElementText) {
-			$element = (new Element())
-				->setDocument($this->document)
-				->setDOMElement($childDomElementText)
-				->init();
-			$box = (new InlineBox())
-				->setDocument($this->document)
-				->setElement($element)
-				->setStyle($element->parseStyle())
-				->init();
-			$currentChildren = $this->getChildren();
-			if (isset($currentChildren[0])) {
-				$this->cloneParent($box);
-			} else {
-				$this->appendChild($box);
-			}
-			if ($childDomElementText instanceof \DOMText) {
-				$box->setTextNode(true)->setText($childDomElementText->textContent);
-			} else {
-				$box->buildTree($parentBlock);
-			}
+			$style = $this->getStyle();
+			$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
+			$this->getDimensions()->setHeight($height);
 		}
 		return $this;
 	}
 
 	/**
-	 * Build tree
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * Position
 	 * @return $this
 	 */
-	public function buildTree($parentBlock = null)
+	public function measureOffset()
 	{
-		$domElement = $this->getElement()->getDOMElement();
-		if ($domElement->hasChildNodes()) {
-			foreach ($domElement->childNodes as $childDomElement) {
-				$element = (new Element())
-					->setDocument($this->document)
-					->setDOMElement($childDomElement)
-					->init();
-				$style = $element->parseStyle();
-				$display = $style->getRules('display');
-				if ($display === 'block') {
-					$this->appendBlock($childDomElement, $element, $parentBlock);
-					continue;
-				}
-				if ($display === 'inline') {
-					$this->appendInline($childDomElement, $element, $parentBlock);
-					continue;
-				}
-				if ($display === 'inline-block') {
-					$this->appendInlineBlock($childDomElement, $element, $parentBlock);
-				}
-			}
+		$rules = $this->getStyle()->getRules();
+		$parent = $this->getClosestBox();
+		$top = $parent->getStyle()->getOffsetTop();
+		// margin top inside inline and inline block doesn't affect relative to line top position
+		// it only affects line margins
+		$left = $rules['margin-left'];
+		if ($previous = $this->getPrevious()) {
+			$left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth() + $previous->getStyle()->getRules('margin-right');
+		} else {
+			$left += $parent->getStyle()->getOffsetLeft();
+		}
+		$this->getOffset()->setLeft($left);
+		$this->getOffset()->setTop($top);
+		return $this;
+	}
+
+	/**
+	 * Position
+	 * @return $this
+	 */
+	public function measurePosition()
+	{
+		$parent = $this->getParent();
+		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
+		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+		return $this;
+	}
+
+	/**
+	 * Reflow
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		$this->getDimensions()->computeAvailableSpace();
+		if ($this->isTextNode()) {
+			$this->measureWidth();
+			$this->measureHeight();
+		}
+		$this->measureOffset();
+		$this->measurePosition();
+		foreach ($this->getChildren() as $child) {
+			$child->reflow();
+		}
+		if (!$this->isTextNode()) {
+			$this->measureWidth();
+			$this->measureHeight();
 		}
 		return $this;
 	}
+
 
 	public function __clone()
 	{

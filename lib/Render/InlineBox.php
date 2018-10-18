@@ -21,7 +21,7 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class InlineBox
  */
-class InlineBox extends Box
+class InlineBox extends Box implements BoxInterface
 {
 	use ElementBoxTrait;
 
@@ -53,6 +53,7 @@ class InlineBox extends Box
 	/**
 	 * Go up to Line box and clone and wrap element
 	 * @param Box $box
+	 * @return $this
 	 */
 	public function cloneParent(Box $box)
 	{
@@ -131,40 +132,21 @@ class InlineBox extends Box
 	 */
 	public function appendInline($childDomElement, $element, $parentBlock)
 	{
-		$childDomElements = [$childDomElement];
-		if ($childDomElement instanceof \DOMText) {
-			$childDomElements = [];
-			$text = $childDomElement->textContent;
-			$words = explode(' ', $text);
-			$wordsCount = count($words);
-			foreach ($words as $index => $word) {
-				if ($index < $wordsCount - 1) {
-					$word .= ' ';
-				}
-				$childDomElements[] = $childDomElement->ownerDocument->createTextNode($word);
-			}
+		$box = (new InlineBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
+		$currentChildren = $this->getChildren();
+		if (isset($currentChildren[0])) {
+			$this->cloneParent($box);
+		} else {
+			$this->appendChild($box);
 		}
-		foreach ($childDomElements as $childDomElementText) {
-			$element = (new Element())
-				->setDocument($this->document)
-				->setDOMElement($childDomElementText)
-				->init();
-			$box = (new InlineBox())
-				->setDocument($this->document)
-				->setElement($element)
-				->setStyle($element->parseStyle())
-				->init();
-			$currentChildren = $this->getChildren();
-			if (isset($currentChildren[0])) {
-				$this->cloneParent($box);
-			} else {
-				$this->appendChild($box);
-			}
-			if ($childDomElementText instanceof \DOMText) {
-				$box->setTextNode(true)->setText($childDomElementText->textContent);
-			} else {
-				$box->buildTree($parentBlock);
-			}
+		if ($childDomElement instanceof \DOMText) {
+			$box->setTextNode(true)->setText($childDomElement->textContent);
+		} else {
+			$box->buildTree($parentBlock);
 		}
 		return $this;
 	}
@@ -216,7 +198,7 @@ class InlineBox extends Box
 	 * Position
 	 * @return $this
 	 */
-	public function offset()
+	public function measureOffset()
 	{
 		$rules = $this->getStyle()->getRules();
 		$parent = $this->getClosestBox();
@@ -238,7 +220,7 @@ class InlineBox extends Box
 	 * Position
 	 * @return $this
 	 */
-	public function position()
+	public function measurePosition()
 	{
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
@@ -257,8 +239,8 @@ class InlineBox extends Box
 			$this->measureWidth();
 			$this->measureHeight();
 		}
-		$this->offset();
-		$this->position();
+		$this->measureOffset();
+		$this->measurePosition();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
