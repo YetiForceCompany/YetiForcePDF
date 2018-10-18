@@ -12,17 +12,17 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Render;
 
-use YetiForcePDF\Style\Style;
+use \YetiForcePDF\Style\Style;
+use \YetiForcePDF\Html\Element;
+use \YetiForcePDF\Render\Coordinates\Coordinates;
+use \YetiForcePDF\Render\Coordinates\Offset;
+use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 
 /**
  * Class LineBox
  */
-class LineBox extends Box
+class LineBox extends Box implements BoxInterface
 {
-	/**
-	 * @var Style
-	 */
-	protected $style;
 
 	/**
 	 * {@inheritdoc}
@@ -36,6 +36,68 @@ class LineBox extends Box
 			->init();
 		return $this;
 	}
+
+	/**
+	 * Append block box element
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendBlock($childDomElement, $element, $parentBlock)
+	{
+		$this->getParent()->appendBlock($childDomElement, $element, $parentBlock);
+		return $this;
+	}
+
+	/**
+	 * Append inline block box element
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendInlineBlock($childDomElement, $element, $parentBlock)
+	{
+		$box = (new InlineBlockBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
+		$this->appendChild($box);
+		$box->buildTree($this);
+		return $this;
+	}
+
+	/**
+	 * Add inline child (and split text to individual characters)
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function appendInline($childDomElement, $element, $parentBlock)
+	{
+		$box = (new InlineBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
+		$this->appendChild($box);
+		if ($childDomElement instanceof \DOMText) {
+			$box->setTextNode(true)->setText($childDomElement->textContent);
+		}
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function buildTree($parentBlock = null)
+	{
+		return $this;
+	}
+
 
 	/**
 	 * Will this box fit in line? (or need to create new one)
@@ -143,7 +205,7 @@ class LineBox extends Box
 	 * Position
 	 * @return $this
 	 */
-	public function offset()
+	public function measureOffset()
 	{
 		$parent = $this->getParent();
 		$parentRules = $parent->getStyle()->getRules();
@@ -162,7 +224,7 @@ class LineBox extends Box
 	 * Position
 	 * @return $this
 	 */
-	public function position()
+	public function measurePosition()
 	{
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
@@ -218,8 +280,8 @@ class LineBox extends Box
 	{
 		$this->getDimensions()->computeAvailableSpace();
 		$this->measureMargins();
-		$this->offset();
-		$this->position();
+		$this->measureOffset();
+		$this->measurePosition();
 		$this->clearStyles();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
