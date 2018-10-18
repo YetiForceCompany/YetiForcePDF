@@ -205,9 +205,6 @@ class BlockBox extends ElementBox implements BoxInterface
 	public function measureWidth()
 	{
 		$dimensions = $this->getDimensions();
-		if ($dimensions->getWidth() !== null) {
-			return $this;
-		}
 		$parent = $this->getParent();
 		if ($parent) {
 			if ($parent->getDimensions()->getWidth() !== null) {
@@ -238,11 +235,15 @@ class BlockBox extends ElementBox implements BoxInterface
 				$lines = $child->divide();
 				foreach ($lines as $line) {
 					$this->insertBefore($line, $child);
-					$line->reflow();
 				}
 				$this->removeChild($child);
 			}
 		}
+		foreach ($this->getChildren() as $child) {
+			$child->reflow();
+		}
+		$this->getDimensions()->computeAvailableSpace();
+		$this->measureWidth()->measureOffset()->measurePosition();
 		return $this;
 	}
 
