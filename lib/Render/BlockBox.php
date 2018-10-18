@@ -208,7 +208,7 @@ class BlockBox extends ElementBox implements BoxInterface
 		$parent = $this->getParent();
 		if ($parent) {
 			if ($parent->getDimensions()->getWidth() !== null) {
-				$dimensions->setWidth($parent->getDimensions()->getInnerWidth());
+				$dimensions->setWidth($parent->getDimensions()->getInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
 			} else {
 				$maxWidth = 0;
 				foreach ($this->getChildren() as $child) {
@@ -216,6 +216,7 @@ class BlockBox extends ElementBox implements BoxInterface
 				}
 				$style = $this->getStyle();
 				$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+				$maxWidth -= $style->getHorizontalMarginsWidth();
 				$dimensions->setWidth($maxWidth);
 			}
 		} else {
@@ -272,11 +273,11 @@ class BlockBox extends ElementBox implements BoxInterface
 	{
 		$top = $this->document->getCurrentPage()->getCoordinates()->getY();
 		$left = $this->document->getCurrentPage()->getCoordinates()->getX();
+		$marginTop = $this->getStyle()->getRules('margin-top');
 		if ($parent = $this->getParent()) {
 			$parentStyle = $parent->getStyle();
 			$top = $parentStyle->getOffsetTop();
 			$left = $parentStyle->getOffsetLeft();
-			$marginTop = $this->getStyle()->getRules('margin-top');
 			if ($previous = $this->getPrevious()) {
 				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
 				if ($previous->getStyle()->getRules('display') === 'block') {
@@ -285,8 +286,9 @@ class BlockBox extends ElementBox implements BoxInterface
 					$marginTop += $previous->getStyle()->getRules('margin-bottom');
 				}
 			}
-			$top += $marginTop;
 		}
+		$top += $marginTop;
+		$left += $this->getStyle()->getRules('margin-left');
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);
 		return $this;
