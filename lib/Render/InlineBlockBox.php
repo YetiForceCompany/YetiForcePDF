@@ -30,16 +30,13 @@ class InlineBlockBox extends BlockBox
 	 */
 	public function measureWidth()
 	{
-		$width = 0;
+		$maxWidth = 0;
 		foreach ($this->getChildren() as $child) {
-			$width += $child->getDimensions()->getOuterWidth();
-			$style = $this->getStyle();
-			$width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+			$maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
 		}
-		if ($this->isTextNode()) {
-			$width = $this->getStyle()->getFont()->getTextWidth($this->getText());
-		}
-		$this->getDimensions()->setWidth($width);
+		$style = $this->getStyle();
+		$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+		$this->getDimensions()->setWidth($maxWidth);
 		return $this;
 	}
 
@@ -70,7 +67,7 @@ class InlineBlockBox extends BlockBox
 	public function measureOffset()
 	{
 		$rules = $this->getStyle()->getRules();
-		$parent = $this->getClosestBox();
+		$parent = $this->getParent();
 		$top = $parent->getStyle()->getOffsetTop();
 		// margin top inside inline and inline block doesn't affect relative to line top position
 		// it only affects line margins
@@ -94,6 +91,24 @@ class InlineBlockBox extends BlockBox
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
 		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+		return $this;
+	}
+
+	/**
+	 * Reflow
+	 * @return $this
+	 */
+	public function reflow()
+	{
+		$this->getDimensions()->computeAvailableSpace();
+		$this->measureOffset();
+		foreach ($this->getChildren() as $child) {
+			$child->reflow();
+		}
+		$this->measurePosition();
+		$this->divideLines();
+		$this->measureWidth();
+		$this->measureHeight();
 		return $this;
 	}
 

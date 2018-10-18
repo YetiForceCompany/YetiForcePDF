@@ -200,7 +200,7 @@ class InlineBox extends ElementBox implements BoxInterface
 	public function measureOffset()
 	{
 		$rules = $this->getStyle()->getRules();
-		$parent = $this->getClosestBox();
+		$parent = $this->getParent();
 		$top = $parent->getStyle()->getOffsetTop();
 		// margin top inside inline and inline block doesn't affect relative to line top position
 		// it only affects line margins
