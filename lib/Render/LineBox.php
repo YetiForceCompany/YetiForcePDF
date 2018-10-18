@@ -186,7 +186,10 @@ class LineBox extends Box implements BoxInterface
 	{
 		$allChildren = [];
 		$this->getAllChildren($allChildren);
-		array_shift($allChildren);
+		// array_reverse + array_pop + array_reverse is faster than array_shift
+		$allChildren = array_reverse($allChildren);
+		array_pop($allChildren);
+		$allChildren = array_reverse($allChildren);
 		$marginTop = 0;
 		$marginBottom = 0;
 		foreach ($allChildren as $child) {
@@ -279,13 +282,13 @@ class LineBox extends Box implements BoxInterface
 	public function reflow()
 	{
 		$this->getDimensions()->computeAvailableSpace();
-		$this->measureMargins();
 		$this->measureOffset();
 		$this->measurePosition();
 		$this->clearStyles();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
+		$this->measureMargins();
 		$this->measureWidth();
 		$this->measureHeight();
 		return $this;

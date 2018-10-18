@@ -272,13 +272,13 @@ class BlockBox extends ElementBox implements BoxInterface
 		$top = $this->document->getCurrentPage()->getCoordinates()->getY();
 		$left = $this->document->getCurrentPage()->getCoordinates()->getX();
 		if ($parent = $this->getParent()) {
-			$parentRules = $parent->getStyle()->getRules();
-			$top = $parentRules['padding-top'] + $parentRules['border-top-width'];
-			$left = $parentRules['padding-left'] + $parentRules['border-left-width'];
-			if (($previous = $this->getPrevious())) {
+			$parentStyle = $parent->getStyle();
+			$top = $parentStyle->getOffsetTop();
+			$left = $parentStyle->getOffsetLeft();
+			if ($previous = $this->getPrevious()) {
 				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
 				$marginTop = $this->getStyle()->getRules('margin-top');
-				if ($previous instanceof BlockBox) {
+				if ($previous->getStyle()->getRules('display') === 'block') {
 					$marginTop = max($marginTop, $previous->getStyle()->getRules('margin-bottom'));
 				} elseif (!$previous instanceof LineBox) {
 					$marginTop += $previous->getStyle()->getRules('margin-bottom');
@@ -315,13 +315,13 @@ class BlockBox extends ElementBox implements BoxInterface
 	public function reflow()
 	{
 		$parent = $this->getParent();
-		if ($parent && !$parent->getDimensions()->getWidth()) {
+		if ($parent && $parent instanceof InlineBlockBox) {
 			$this->getDimensions()->computeAvailableSpace();
 			$this->measureOffset();
+			$this->measurePosition();
 			foreach ($this->getChildren() as $child) {
 				$child->reflow();
 			}
-			$this->measurePosition();
 			$this->divideLines();
 			$this->measureWidth();
 			$this->measureHeight();
