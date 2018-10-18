@@ -59,6 +59,9 @@ class ElementBox extends Box
 		$domElement = $this->getElement()->getDOMElement();
 		if ($domElement->hasChildNodes()) {
 			foreach ($domElement->childNodes as $childDomElement) {
+				if ($childDomElement instanceof \DOMComment) {
+					continue;
+				}
 				$element = (new Element())
 					->setDocument($this->document)
 					->setDOMElement($childDomElement)

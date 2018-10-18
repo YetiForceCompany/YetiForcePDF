@@ -170,9 +170,19 @@ class LineBox extends Box implements BoxInterface
 	 */
 	public function measureHeight()
 	{
+		$allChildren = [];
+		$this->getAllChildren($allChildren);
+		// array_reverse + array_pop + array_reverse is faster than array_shift
+		$allChildren = array_reverse($allChildren);
+		array_pop($allChildren);
+		$allChildren = array_reverse($allChildren);
 		$lineHeight = 0;
-		foreach ($this->getChildren() as $child) {
-			$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'), $child->getDimensions()->getHeight());
+		foreach ($allChildren as $child) {
+			if ($child instanceof InlineBox) {
+				$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'));
+			} else {
+				$lineHeight = max($lineHeight, $child->getDimensions()->getOuterHeight());
+			}
 		}
 		$this->getDimensions()->setHeight($lineHeight);
 		return $this;
@@ -193,7 +203,7 @@ class LineBox extends Box implements BoxInterface
 		$marginTop = 0;
 		$marginBottom = 0;
 		foreach ($allChildren as $child) {
-			if ($child->getStyle()->getRules('display') === 'inline-block') {
+			if (!$child instanceof InlineBox) {
 				$marginTop = max($marginTop, $child->getStyle()->getRules('margin-top'));
 				$marginBottom = max($marginBottom, $child->getStyle()->getRules('margin-bottom'));
 			}
@@ -211,9 +221,9 @@ class LineBox extends Box implements BoxInterface
 	public function measureOffset()
 	{
 		$parent = $this->getParent();
-		$parentRules = $parent->getStyle()->getRules();
-		$top = $parentRules['padding-top'] + $parentRules['border-top-width'];
-		$left = $parentRules['padding-left'] + $parentRules['border-left-width'];
+		$parentStyle = $parent->getStyle();
+		$top = $parentStyle->getOffsetTop();
+		$left = $parentStyle->getOffsetLeft();
 		if ($previous = $this->getPrevious()) {
 			$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getStyle()->getRules('margin-bottom');
 		}
@@ -282,13 +292,13 @@ class LineBox extends Box implements BoxInterface
 	public function reflow()
 	{
 		$this->getDimensions()->computeAvailableSpace();
+		$this->measureMargins();
 		$this->measureOffset();
 		$this->measurePosition();
 		$this->clearStyles();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
-		$this->measureMargins();
 		$this->measureWidth();
 		$this->measureHeight();
 		return $this;

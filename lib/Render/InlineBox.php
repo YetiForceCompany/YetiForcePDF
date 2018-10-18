@@ -74,9 +74,9 @@ class InlineBox extends ElementBox implements BoxInterface
 
 	/**
 	 * Append block box element
-	 * @param \DOMNode                      $childDomElement
-	 * @param Element                       $element
-	 * @param \YetiForcePDF\Render\BlockBox $parentBlock
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
 	 * @return $this
 	 */
 	public function appendBlock($childDomElement, $element, $parentBlock)
@@ -88,7 +88,7 @@ class InlineBox extends ElementBox implements BoxInterface
 			->init();
 		// if we add this child to parent box we loose parent inline styles if nested
 		// so we need to wrap this box later and split lines at block element
-		if (isset($currentChildren[0])) {
+		if (isset($this->getChildren()[0])) {
 			$this->cloneParent($box);
 		} else {
 			$this->appendChild($box);
@@ -113,7 +113,7 @@ class InlineBox extends ElementBox implements BoxInterface
 			->init();
 		// if we add this child to parent box we loose parent inline styles if nested
 		// so we need to wrap this box later and split lines at block element
-		if (isset($currentChildren[0])) {
+		if (isset($this->getChildren()[0])) {
 			$this->cloneParent($box);
 		} else {
 			$this->appendChild($box);
@@ -136,8 +136,7 @@ class InlineBox extends ElementBox implements BoxInterface
 			->setElement($element)
 			->setStyle($element->parseStyle())
 			->init();
-		$currentChildren = $this->getChildren();
-		if (isset($currentChildren[0])) {
+		if (isset($this->getChildren()[0])) {
 			$this->cloneParent($box);
 		} else {
 			$this->appendChild($box);
@@ -180,14 +179,14 @@ class InlineBox extends ElementBox implements BoxInterface
 		} else {
 			$height = 0;
 			foreach ($this->getChildren() as $child) {
-				if ($this->getStyle()->getRules('display') === 'inline') {
-					$height += $child->getDimensions()->getHeight();
+				if ($child instanceof InlineBox) {
+					$height += $child->getStyle()->getRules('line-height');
+				} elseif ($child instanceof InlineBlockBox) {
+					$height += $child->getDimensions()->getInnerHeight();
 				} else {
 					$height += $child->getDimensions()->getOuterHeight();
 				}
 			}
-			$style = $this->getStyle();
-			$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
 			$this->getDimensions()->setHeight($height);
 		}
 		return $this;
