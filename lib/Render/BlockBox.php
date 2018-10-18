@@ -229,7 +229,7 @@ class BlockBox extends ElementBox implements BoxInterface
 
 	/**
 	 * Divide lines
-	 * @return $this;
+	 * @return $this
 	 */
 	public function divideLines()
 	{
