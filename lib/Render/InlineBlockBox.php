@@ -49,21 +49,17 @@ class InlineBlockBox extends BlockBox
 	 */
 	public function measureHeight()
 	{
-		if ($this->isTextNode()) {
-			$this->getDimensions()->setHeight($this->getStyle()->getFont()->getTextHeight($this->getText()));
-		} else {
-			$height = 0;
-			foreach ($this->getChildren() as $child) {
-				if ($this->getStyle()->getRules('display') === 'inline') {
-					$height += $child->getDimensions()->getHeight();
-				} else {
-					$height += $child->getDimensions()->getOuterHeight();
-				}
+		$height = 0;
+		foreach ($this->getChildren() as $child) {
+			if ($this->getStyle()->getRules('display') === 'inline') {
+				$height += $child->getDimensions()->getHeight();
+			} else {
+				$height += $child->getDimensions()->getOuterHeight();
 			}
-			$style = $this->getStyle();
-			$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
-			$this->getDimensions()->setHeight($height);
 		}
+		$style = $this->getStyle();
+		$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
+		$this->getDimensions()->setHeight($height);
 		return $this;
 	}
 
@@ -100,30 +96,6 @@ class InlineBlockBox extends BlockBox
 		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
 		return $this;
 	}
-
-	/**
-	 * Reflow
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$this->getDimensions()->computeAvailableSpace();
-		if ($this->isTextNode()) {
-			$this->measureWidth();
-			$this->measureHeight();
-		}
-		$this->measureOffset();
-		$this->measurePosition();
-		foreach ($this->getChildren() as $child) {
-			$child->reflow();
-		}
-		if (!$this->isTextNode()) {
-			$this->measureWidth();
-			$this->measureHeight();
-		}
-		return $this;
-	}
-
 
 	public function __clone()
 	{
