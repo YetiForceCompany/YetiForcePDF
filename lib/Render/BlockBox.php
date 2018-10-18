@@ -318,7 +318,7 @@ class BlockBox extends ElementBox implements BoxInterface
 	public function reflow()
 	{
 		$parent = $this->getParent();
-		if ($parent && $parent instanceof InlineBlockBox) {
+		if ($parent && $parent->getDimensions()->getWidth() === null) {
 			$this->getDimensions()->computeAvailableSpace();
 			$this->measureOffset();
 			$this->measurePosition();
