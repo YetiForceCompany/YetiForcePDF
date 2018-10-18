@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * ElementBox classs
+ * ElementBox class
  *
  * @package   YetiForcePDF\Render
  *
