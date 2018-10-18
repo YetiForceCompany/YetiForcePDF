@@ -276,16 +276,16 @@ class BlockBox extends ElementBox implements BoxInterface
 			$parentStyle = $parent->getStyle();
 			$top = $parentStyle->getOffsetTop();
 			$left = $parentStyle->getOffsetLeft();
+			$marginTop = $this->getStyle()->getRules('margin-top');
 			if ($previous = $this->getPrevious()) {
 				$top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
-				$marginTop = $this->getStyle()->getRules('margin-top');
 				if ($previous->getStyle()->getRules('display') === 'block') {
 					$marginTop = max($marginTop, $previous->getStyle()->getRules('margin-bottom'));
 				} elseif (!$previous instanceof LineBox) {
 					$marginTop += $previous->getStyle()->getRules('margin-bottom');
 				}
-				$top += $marginTop;
 			}
+			$top += $marginTop;
 		}
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);
