@@ -550,28 +550,4 @@ class Box extends \YetiForcePDF\Base
 		return $this;
 	}
 
-	/**
-	 * Measure coordinates
-	 * @return $this
-	 */
-	public function measureCoordinates()
-	{
-		$x = 0;
-		$y = 0;
-		if ($parent = $this->getParent()) {
-			$x = $parent->getCoordinates()->getX();
-			$y = $parent->getCoordinates()->getY();
-		}
-		$coordinates = $this->getCoordinates();
-		$offset = $this->getOffset();
-		$coordinates->setX($x + $offset->getLeft());
-		$coordinates->setY($y + $offset->getTop());
-		foreach ($this->getChildren() as $child) {
-			$child->measureCoordinates();
-		}
-		return $this;
-	}
-
-
-
 }

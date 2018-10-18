@@ -179,9 +179,9 @@ class LineBox extends Box implements BoxInterface
 		$lineHeight = 0;
 		foreach ($allChildren as $child) {
 			if ($child instanceof InlineBox) {
-				$lineHeight = max($lineHeight, $child->getStyle()->getRules('line-height'));
+				$lineHeight = max($lineHeight, $child->getDimensions()->getHeight(), $child->getStyle()->getRules('line-height'));
 			} else {
-				$lineHeight = max($lineHeight, $child->getDimensions()->getOuterHeight());
+				$lineHeight = max($lineHeight, $child->getDimensions()->getOuterHeight(), $child->getStyle()->getRules('line-height'));
 			}
 		}
 		$this->getDimensions()->setHeight($lineHeight);
@@ -296,11 +296,14 @@ class LineBox extends Box implements BoxInterface
 		$this->measureOffset();
 		$this->measurePosition();
 		$this->clearStyles();
+		$this->measureWidth();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}
-		$this->measureWidth();
 		$this->measureHeight();
+		foreach ($this->getChildren() as $child) {
+			$child->reflow();
+		}
 		return $this;
 	}
 
@@ -315,19 +318,6 @@ class LineBox extends Box implements BoxInterface
 			$width += $childBox->getDimensions()->getOuterWidth();
 		}
 		return $width;
-	}
-
-	/**
-	 * Get children height
-	 * @return float|int
-	 */
-	public function getChildrenHeight()
-	{
-		$height = 0;
-		foreach ($this->getChildren() as $childBox) {
-			$height += $childBox->getDimensions()->getOuterHeight();
-		}
-		return $height;
 	}
 
 	/**

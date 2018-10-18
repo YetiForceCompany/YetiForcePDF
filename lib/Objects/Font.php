@@ -421,10 +421,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$height = $this->size * $this->height / $this->unitsPerEm;
 		if ($text === null) {
 			return $height;
-		} else {
-			// TODO: break text inside element and summarize line height
-			return $height;
 		}
+		return $height;
 	}
 
 	/**

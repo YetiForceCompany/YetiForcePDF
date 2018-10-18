@@ -179,12 +179,12 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function init(): Style
 	{
-		$this->rules = $this->parse();
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
 			->setFamily($this->rules['font-family'])
 			->setSize($this->rules['font-size'])
 			->init();
+		$this->rules = $this->parse();
 		return $this;
 	}
 
@@ -464,8 +464,7 @@ class Style extends \YetiForcePDF\Base
 			case '%':
 				return $size . '%';
 			case 'em':
-				return ((float)$this->rules['font-size']) * $size;
-
+				return (float)bcmul((string)$this->getFont()->getTextHeight(), (string)$size);
 		}
 	}
 
