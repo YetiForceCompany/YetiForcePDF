@@ -21,9 +21,8 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class InlineBox
  */
-class InlineBox extends Box implements BoxInterface
+class InlineBox extends ElementBox implements BoxInterface
 {
-	use ElementBoxTrait;
 
 	/**
 	 * @var string

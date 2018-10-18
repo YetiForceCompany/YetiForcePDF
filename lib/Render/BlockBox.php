@@ -21,9 +21,8 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class BlockBox
  */
-class BlockBox extends Box implements BoxInterface
+class BlockBox extends ElementBox implements BoxInterface
 {
-	use ElementBoxTrait;
 
 	/**
 	 * @var \YetiForcePDF\Render\LineBox

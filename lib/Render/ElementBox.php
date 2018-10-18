@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * ElementBoxTrait trait
+ * ElementBox classs
  *
  * @package   YetiForcePDF\Render
  *
@@ -19,9 +19,9 @@ use \YetiForcePDF\Html\Element;
 use YetiForcePDF\Style\Style;
 
 /**
- * Trait ElementBoxTrait
+ * Class ElementBox
  */
-Trait ElementBoxTrait
+class ElementBox extends Box
 {
 	/**
 	 * @var Element

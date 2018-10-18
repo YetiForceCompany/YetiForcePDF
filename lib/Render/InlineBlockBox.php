@@ -21,10 +21,8 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class InlineBlockBox
  */
-class InlineBlockBox extends BlockBox implements BoxInterface
+class InlineBlockBox extends BlockBox
 {
-
-	use ElementBoxTrait;
 
 	/**
 	 * Measure width
