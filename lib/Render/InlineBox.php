@@ -83,6 +83,7 @@ class InlineBox extends ElementBox implements BoxInterface
 	{
 		$box = (new BlockBox())
 			->setDocument($this->document)
+			->setParent($this)
 			->setElement($element)
 			->setStyle($element->parseStyle())//second phase with css inheritance
 			->init();
@@ -108,6 +109,7 @@ class InlineBox extends ElementBox implements BoxInterface
 	{
 		$box = (new InlineBlockBox())
 			->setDocument($this->document)
+			->setParent($this)
 			->setElement($element)
 			->setStyle($element->parseStyle())//second phase with css inheritance
 			->init();
@@ -133,6 +135,7 @@ class InlineBox extends ElementBox implements BoxInterface
 	{
 		$box = (new InlineBox())
 			->setDocument($this->document)
+			->setParent($this)
 			->setElement($element)
 			->setStyle($element->parseStyle())
 			->init();
@@ -187,8 +190,12 @@ class InlineBox extends ElementBox implements BoxInterface
 		$rules = $this->getStyle()->getRules();
 		$parent = $this->getParent();
 		$top = $parent->getStyle()->getOffsetTop();
-		if ($parent instanceof LineBox) {
-			$lineHeight = $parent->getDimensions()->getHeight();
+		$lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
+		if ($rules['vertical-align'] === 'bottom') {
+			$top = $lineHeight - $this->getDimensions()->getInnerHeight();
+		} elseif ($rules['vertical-align'] === 'top') {
+			$top = 0;
+		} elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
 			$top = (float)bcsub(bcdiv((string)$lineHeight, '2', 4), bcdiv((string)$this->getDimensions()->getHeight(), '2', 4), 4);
 		}
 		// margin top inside inline and inline block doesn't affect relative to line top position
@@ -212,6 +219,7 @@ class InlineBox extends ElementBox implements BoxInterface
 	{
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
+		$parent = $this->getClosestLineBox();
 		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
 		return $this;
 	}

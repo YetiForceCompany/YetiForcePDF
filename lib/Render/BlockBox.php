@@ -138,6 +138,7 @@ class BlockBox extends ElementBox implements BoxInterface
 		}
 		$box = (new BlockBox())
 			->setDocument($this->document)
+			->setParent($this)
 			->setElement($element)
 			->setStyle($element->parseStyle())//second phase with css inheritance
 			->init();
@@ -155,16 +156,17 @@ class BlockBox extends ElementBox implements BoxInterface
 	 */
 	public function appendInlineBlock($childDomElement, $element, $parentBlock)
 	{
-		$box = (new InlineBlockBox())
-			->setDocument($this->document)
-			->setElement($element)
-			->setStyle($element->parseStyle())
-			->init();
 		if ($this->getCurrentLineBox()) {
 			$currentLineBox = $this->getCurrentLineBox();
 		} else {
 			$currentLineBox = $this->getNewLineBox();
 		}
+		$box = (new InlineBlockBox())
+			->setDocument($this->document)
+			->setParent($currentLineBox)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
 		$currentLineBox->appendChild($box);
 		$box->buildTree($this);
 		return $this;
@@ -179,16 +181,17 @@ class BlockBox extends ElementBox implements BoxInterface
 	 */
 	public function appendInline($childDomElement, $element, $parentBlock)
 	{
-		$box = (new InlineBox())
-			->setDocument($this->document)
-			->setElement($element)
-			->setStyle($element->parseStyle())
-			->init();
 		if ($this->getCurrentLineBox()) {
 			$currentLineBox = $this->getCurrentLineBox();
 		} else {
 			$currentLineBox = $this->getNewLineBox();
 		}
+		$box = (new InlineBox())
+			->setDocument($this->document)
+			->setParent($currentLineBox)
+			->setElement($element)
+			->setStyle($element->parseStyle())
+			->init();
 		$currentLineBox->appendChild($box);
 		if ($childDomElement instanceof \DOMText) {
 			$box->setTextNode(true)->setText($childDomElement->textContent);

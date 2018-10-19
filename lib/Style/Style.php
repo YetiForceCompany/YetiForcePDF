@@ -485,6 +485,11 @@ class Style extends \YetiForcePDF\Base
 		if ($this->getElement()) {
 			if ($this->getElement()->getDOMElement() instanceof \DOMText) {
 				$parsed['display'] = 'inline';
+				// if this is text node it's mean that it was wrapped by anonymous inline element
+				// so wee need to copy vertical align property (because it is not inherited by default)
+				if ($this->getParent()) {
+					$parsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
+				}
 			}
 		}
 		if ($this->content) {
