@@ -480,12 +480,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			->init();
 		$this->dimensions->setWidth($dimensions[0] - $this->margins['left'] - $this->margins['right'])
 			->setHeight($dimensions[1] - $this->margins['top'] - $this->margins['bottom']);
-		$this->dimensions->setAvailableSpace($this->dimensions->getWidth());
 		$this->outerDimensions = (new Dimensions())
 			->setDocument($this->document)
 			->init();
 		$this->outerDimensions->setWidth($dimensions[0])->setHeight($dimensions[1]);
-		$this->outerDimensions->setAvailableSpace($this->outerDimensions->getWidth());
 		$this->coordinates = (new Coordinates())
 			->setDocument($this->document)
 			->init();

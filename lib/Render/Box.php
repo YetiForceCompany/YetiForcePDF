@@ -272,7 +272,6 @@ class Box extends \YetiForcePDF\Base
 			$box->setPrevious()->setNext();
 		}
 		$this->children[] = $box;
-		$box->getDimensions()->setUpAvailableSpace();
 		return $this;
 	}
 

@@ -25,31 +25,6 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 {
 
 	/**
-	 * @var string
-	 */
-	protected $text;
-
-	/**
-	 * Set text
-	 * @param string $text
-	 * @return $this
-	 */
-	public function setText(string $text)
-	{
-		$this->text = $text;
-		return $this;
-	}
-
-	/**
-	 * Get text
-	 * @return string
-	 */
-	public function getText()
-	{
-		return $this->text;
-	}
-
-	/**
 	 * Go up to Line box and clone and wrap element
 	 * @param Box $box
 	 * @return $this
@@ -180,6 +155,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	{
 		$width = 0;
 		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
 			$width += $child->getDimensions()->getOuterWidth();
 			$style = $this->getStyle();
 			$width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
@@ -194,11 +170,12 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	public function measureHeight()
 	{
-		if ($this->hasChildren()) {
-			$this->getDimensions()->setHeight($this->getFirstChild()->getDimensions()->getHeight());
-			return $this;
+		$height = 0;
+		foreach ($this->getChildren() as $child) {
+			$child->measureHeight();
+			$height = $this->getFirstChild()->getDimensions()->getHeight();
 		}
-		$this->getDimensions()->setHeight(0);
+		$this->getDimensions()->setHeight($height);
 		return $this;
 	}
 
@@ -229,6 +206,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		}
 		$this->getOffset()->setLeft($left);
 		$this->getOffset()->setTop($top);
+		foreach ($this->getChildren() as $child) {
+			$child->measureOffset();
+		}
 		return $this;
 	}
 
@@ -242,25 +222,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
 		$parent = $this->getClosestLineBox();
 		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
-		return $this;
-	}
-
-	/**
-	 * Reflow
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$this->getDimensions()->computeAvailableSpace();
-		$this->measureOffset();
-		$this->measurePosition();
 		foreach ($this->getChildren() as $child) {
-			$child->reflow();
+			$child->measurePosition();
 		}
-		$this->measureOffset();
-		$this->measurePosition();
-		$this->measureWidth();
-		$this->measureHeight();
 		return $this;
 	}
 

@@ -87,15 +87,6 @@ class LineBox extends Box implements BoxInterface
 	}
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function buildTree($parentBlock = null)
-	{
-		return $this;
-	}
-
-
-	/**
 	 * Will this box fit in line? (or need to create new one)
 	 * @param \YetiForcePDF\Render\Box $box
 	 * @return bool
@@ -103,7 +94,7 @@ class LineBox extends Box implements BoxInterface
 	public function willFit(Box $box)
 	{
 		$childrenWidth = $this->getChildrenWidth();
-		$availableSpace = $this->getDimensions()->getAvailableSpace();
+		$availableSpace = $this->getDimensions()->computeAvailableSpace();
 		$boxOuterWidth = $box->getDimensions()->getOuterWidth();
 		return bccomp((string)($availableSpace - $childrenWidth), (string)$boxOuterWidth) >= 0;
 	}
@@ -129,7 +120,6 @@ class LineBox extends Box implements BoxInterface
 			->setDocument($this->document)
 			->setParent($this->getParent())
 			->init();
-		$line->getDimensions()->setUpAvailableSpace();
 		foreach ($this->getChildren() as $childBox) {
 			if ($line->willFit($childBox)) {
 				$line->appendChild($childBox);
@@ -139,7 +129,6 @@ class LineBox extends Box implements BoxInterface
 					->setDocument($this->document)
 					->setParent($this->getParent())
 					->init();
-				$line->getDimensions()->setUpAvailableSpace();
 				$line->appendChild($childBox);
 			}
 		}
@@ -155,8 +144,10 @@ class LineBox extends Box implements BoxInterface
 	 */
 	public function measureWidth()
 	{
-		$dimensions = $this->getDimensions();
-		$dimensions->setWidth($this->getChildrenWidth());
+		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
+		}
+		$this->getDimensions()->setWidth($this->getChildrenWidth());
 		return $this;
 	}
 
@@ -222,6 +213,9 @@ class LineBox extends Box implements BoxInterface
 		$top += $this->getStyle()->getRules('margin-top');
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);
+		foreach ($this->getChildren() as $child) {
+			$child->measureOffset();
+		}
 		return $this;
 	}
 
@@ -234,6 +228,9 @@ class LineBox extends Box implements BoxInterface
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
 		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+		foreach ($this->getChildren() as $child) {
+			$child->measurePosition();
+		}
 		return $this;
 	}
 
@@ -273,25 +270,6 @@ class LineBox extends Box implements BoxInterface
 					}
 				}
 			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Reflow
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$this->getDimensions()->computeAvailableSpace();
-		$this->measureHeight();
-		$this->measureMargins();
-		$this->measureOffset();
-		$this->measurePosition();
-		$this->clearStyles();
-		$this->measureWidth();
-		foreach ($this->getChildren() as $child) {
-			$child->reflow();
 		}
 		return $this;
 	}

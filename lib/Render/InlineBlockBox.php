@@ -32,6 +32,7 @@ class InlineBlockBox extends BlockBox
 	{
 		$maxWidth = 0;
 		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
 			$maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
 		}
 		$style = $this->getStyle();
@@ -48,6 +49,7 @@ class InlineBlockBox extends BlockBox
 	{
 		$height = 0;
 		foreach ($this->getChildren() as $child) {
+			$child->measureHeight();
 			$height += $child->getDimensions()->getOuterHeight();
 		}
 		$style = $this->getStyle();
@@ -75,6 +77,9 @@ class InlineBlockBox extends BlockBox
 		}
 		$this->getOffset()->setLeft($left);
 		$this->getOffset()->setTop($top);
+		foreach ($this->getChildren() as $child) {
+			$child->measureOffset();
+		}
 		return $this;
 	}
 
@@ -91,24 +96,9 @@ class InlineBlockBox extends BlockBox
 		} else {
 			$this->getCoordinates()->setY($this->getClosestLineBox()->getCoordinates()->getY());
 		}
-		return $this;
-	}
-
-	/**
-	 * Reflow
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$this->getDimensions()->computeAvailableSpace();
-		$this->measureOffset();
 		foreach ($this->getChildren() as $child) {
-			$child->reflow();
+			$child->measurePosition();
 		}
-		$this->measurePosition();
-		$this->divideLines();
-		$this->measureWidth();
-		$this->measureHeight();
 		return $this;
 	}
 

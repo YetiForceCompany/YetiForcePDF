@@ -208,19 +208,23 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		if ($parent) {
 			if ($parent->getDimensions()->getWidth() !== null) {
 				$dimensions->setWidth($parent->getDimensions()->getInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
-			} else {
-				$maxWidth = 0;
 				foreach ($this->getChildren() as $child) {
-					$maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
+					$child->measureWidth();
 				}
-				$style = $this->getStyle();
-				$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
-				$maxWidth -= $style->getHorizontalMarginsWidth();
-				$dimensions->setWidth($maxWidth);
+				return $this;
 			}
-		} else {
-			$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
+			$maxWidth = 0;
+			foreach ($this->getChildren() as $child) {
+				$child->measureWidth();
+				$maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
+			}
+			$style = $this->getStyle();
+			$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+			$maxWidth -= $style->getHorizontalMarginsWidth();
+			$dimensions->setWidth($maxWidth);
+			return $this;
 		}
+		$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
 		return $this;
 	}
 
@@ -240,7 +244,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			}
 		}
 		foreach ($this->getChildren() as $child) {
-			$child->reflow();
+			$child->measureWidth()->measureHeight()->measureOffset()->measurePosition();
 		}
 		$this->getDimensions()->computeAvailableSpace();
 		$this->measureWidth()->measureOffset()->measurePosition();
@@ -253,6 +257,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function measureHeight()
 	{
+		foreach ($this->getChildren() as $child) {
+			$child->measureHeight();
+		}
 		$height = 0;
 		foreach ($this->getChildren() as $child) {
 			$height += $child->getDimensions()->getOuterHeight();
@@ -290,6 +297,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$left += $this->getStyle()->getRules('margin-left');
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);
+		foreach ($this->getChildren() as $child) {
+			$child->measureOffset();
+		}
 		return $this;
 	}
 
@@ -307,34 +317,29 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		}
 		$this->getCoordinates()->setX($x);
 		$this->getCoordinates()->setY($y);
+		foreach ($this->getChildren() as $child) {
+			$child->measurePosition();
+		}
 		return $this;
 	}
 
 	/**
-	 * Reflow
+	 * Layout elements
 	 * @return $this
 	 */
-	public function reflow()
+	public function layout()
 	{
 		$parent = $this->getParent();
 		if ($parent && $parent->getDimensions()->getWidth() === null) {
-			$this->getDimensions()->computeAvailableSpace();
 			$this->measureOffset();
 			$this->measurePosition();
-			foreach ($this->getChildren() as $child) {
-				$child->reflow();
-			}
 			$this->divideLines();
 			$this->measureWidth();
 			$this->measureHeight();
 		} else {
-			$this->getDimensions()->computeAvailableSpace();
 			$this->measureOffset();
 			$this->measurePosition();
 			$this->measureWidth();
-			foreach ($this->getChildren() as $child) {
-				$child->reflow();
-			}
 			$this->divideLines();
 			$this->measureHeight();
 		}

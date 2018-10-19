@@ -132,23 +132,13 @@ class BoxDimensions extends Dimensions
 		if ($parent = $this->getBox()->getParent()) {
 			$parentStyle = $parent->getStyle();
 			if ($parent->getDimensions()->getWidth() === null) {
-				return $this->getBox()->getParent()->getDimensions()->getAvailableSpace() - $parentStyle->getHorizontalBordersWidth() - $parentStyle->getHorizontalPaddingsWidth();
+				return $this->getBox()->getParent()->getDimensions()->computeAvailableSpace() - $parentStyle->getHorizontalBordersWidth() - $parentStyle->getHorizontalPaddingsWidth();
 			} else {
 				return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
 			}
 		} else {
-			return $this->document->getCurrentPage()->getDimensions()->getAvailableSpace();
+			return $this->document->getCurrentPage()->getDimensions()->getWidth();
 		}
-	}
-
-	/**
-	 * Set up available space
-	 * @return $this
-	 */
-	public function setUpAvailableSpace()
-	{
-		$this->setAvailableSpace($this->computeAvailableSpace());
-		return $this;
 	}
 
 }

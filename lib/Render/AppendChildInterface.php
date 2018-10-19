@@ -50,4 +50,11 @@ interface AppendChildInterface
 	 * @return $this
 	 */
 	public function appendInline($childDomElement, $element, $parentBlock);
+
+	/**
+	 * Build tree from dom tree
+	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @return $this
+	 */
+	public function buildTree($parentBlock = null);
 }

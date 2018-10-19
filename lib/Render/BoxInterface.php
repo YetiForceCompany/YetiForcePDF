@@ -23,16 +23,6 @@ use YetiForcePDF\Style\Style;
  */
 interface BoxInterface
 {
-
-
-
-	/**
-	 * Build tree from dom tree
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
-	 */
-	public function buildTree($parentBlock = null);
-
 	/**
 	 * Measure width
 	 * @return $this
@@ -57,9 +47,4 @@ interface BoxInterface
 	 */
 	public function measurePosition();
 
-	/**
-	 * Lay out boxes
-	 * @return $this
-	 */
-	public function reflow();
 }

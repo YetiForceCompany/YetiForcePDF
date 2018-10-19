@@ -104,20 +104,6 @@ class TextBox extends ElementBox implements BoxInterface
 		return $this;
 	}
 
-	/**
-	 * Reflow
-	 * @return $this
-	 */
-	public function reflow()
-	{
-		$this->getDimensions()->computeAvailableSpace();
-		$this->measureWidth();
-		$this->measureHeight();
-		$this->measureOffset();
-		$this->measurePosition();
-		return $this;
-	}
-
 	public function __clone()
 	{
 		$this->element = clone $this->element;
