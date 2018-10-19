@@ -48,11 +48,7 @@ class InlineBlockBox extends BlockBox
 	{
 		$height = 0;
 		foreach ($this->getChildren() as $child) {
-			if ($this->getStyle()->getRules('display') === 'inline') {
-				$height += $child->getDimensions()->getHeight();
-			} else {
-				$height += $child->getDimensions()->getOuterHeight();
-			}
+			$height += $child->getDimensions()->getOuterHeight();
 		}
 		$style = $this->getStyle();
 		$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();

@@ -73,7 +73,11 @@ class ElementBox extends Box
 					continue;
 				}
 				if ($display === 'inline') {
-					$this->appendInline($childDomElement, $element, $parentBlock);
+					$inline = $this->appendInline($childDomElement, $element, $parentBlock);
+					if ($childDomElement instanceof \DOMText) {
+						$inline->appendText($childDomElement, $element, $parentBlock);
+						continue;
+					}
 					continue;
 				}
 				if ($display === 'inline-block') {

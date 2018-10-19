@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style;
 
 use YetiForcePDF\Render\Box;
+use \YetiForcePDF\Render\InlineBox;
 
 /**
  * Class Style
@@ -468,6 +469,17 @@ class Style extends \YetiForcePDF\Base
 		}
 	}
 
+	/**
+	 * Get line height
+	 * @return float
+	 */
+	public function getLineHeight()
+	{
+		if ($this->getBox() instanceof InlineBox) {
+			return $this->rules['line-height'];
+		}
+		return $this->rules['line-height'] + $this->getVerticalPaddingsWidth();
+	}
 
 	/**
 	 * Parse css style

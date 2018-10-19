@@ -67,10 +67,6 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * @var bool
 	 */
-	protected $textNode = false;
-	/**
-	 * @var bool
-	 */
 	protected $root = false;
 	/**
 	 * @var Style
@@ -190,26 +186,6 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set text node status
-	 * @param bool $isTextNode
-	 * @return $this
-	 */
-	public function setTextNode(bool $isTextNode = false)
-	{
-		$this->textNode = $isTextNode;
-		return $this;
-	}
-
-	/**
-	 * Is this text node? or element
-	 * @return bool
-	 */
-	public function isTextNode(): bool
-	{
-		return $this->textNode;
-	}
-
-	/**
 	 * Is this root element?
 	 * @return bool
 	 */
@@ -242,17 +218,16 @@ class Box extends \YetiForcePDF\Base
 	 * Create and append text box (text node) element
 	 * @param string   $text
 	 * @param Box|null $insertBefore
-	 * @return InlineBox|null
+	 * @return TextBox|null
 	 */
 	public function createTextBox(string $text, Box $insertBefore = null)
 	{
-		if (!$this instanceof LineBox && !$this->isTextNode()) {
+		if (!$this instanceof LineBox && !$this instanceof TextBox) {
 			$style = (new Style())->setDocument($this->document)->init();
 			$style->setRule('display', 'inline');
-			$box = (new InlineBox())
+			$box = (new TextBox())
 				->setDocument($this->document)
 				->setStyle($style)
-				->setTextNode(true)
 				->setText($text)
 				->init();
 			if ($insertBefore) {
@@ -262,7 +237,8 @@ class Box extends \YetiForcePDF\Base
 			}
 			$box->getDimensions()->setUpAvailableSpace();
 			return $box;
-		} elseif ($this instanceof LineBox) {
+		}
+		if ($this instanceof LineBox) {
 			$box = $this->getParent()->createTextBox($text);
 			$this->getParent()->removeChild($box);
 			if ($insertBefore) {
@@ -272,9 +248,8 @@ class Box extends \YetiForcePDF\Base
 			}
 			$box->getDimensions()->setUpAvailableSpace();
 			return $box;
-		} else {
-			throw new \InvalidArgumentException('Cannot create child element inside text node.');
 		}
+		throw new \InvalidArgumentException('Cannot create child element inside text node.');
 	}
 
 	/**
@@ -298,19 +273,6 @@ class Box extends \YetiForcePDF\Base
 		}
 		$this->children[] = $box;
 		$box->getDimensions()->setUpAvailableSpace();
-		return $this;
-	}
-
-	/**
-	 * Append children boxes
-	 * @param Box $box
-	 * @return $this
-	 */
-	public function appendChildren(array $boxes)
-	{
-		foreach ($boxes as $box) {
-			$this->appendChild($box);
-		}
 		return $this;
 	}
 
@@ -397,6 +359,17 @@ class Box extends \YetiForcePDF\Base
 	public function hasChildren()
 	{
 		return isset($this->children[0]); // faster than count
+	}
+
+	/**
+	 * Get first child
+	 * @return \YetiForcePDF\Render\Box|null
+	 */
+	public function getFirstChild()
+	{
+		if (isset($this->children[0])) {
+			return $this->children[0];
+		}
 	}
 
 	/**

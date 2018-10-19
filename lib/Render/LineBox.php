@@ -42,12 +42,11 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
+	 * @return \YetiForcePDF\Render\BlockBox
 	 */
 	public function appendBlock($childDomElement, $element, $parentBlock)
 	{
-		$this->getParent()->appendBlock($childDomElement, $element, $parentBlock);
-		return $this;
+		return $this->getParent()->appendBlock($childDomElement, $element, $parentBlock);
 	}
 
 	/**
@@ -55,7 +54,7 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
+	 * @return \YetiForcePDF\Render\InlineBlockBox
 	 */
 	public function appendInlineBlock($childDomElement, $element, $parentBlock)
 	{
@@ -66,7 +65,7 @@ class LineBox extends Box implements BoxInterface
 			->init();
 		$this->appendChild($box);
 		$box->buildTree($this);
-		return $this;
+		return $box;
 	}
 
 	/**
@@ -74,7 +73,7 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
+	 * @return \YetiForcePDF\Render\InlineBox
 	 */
 	public function appendInline($childDomElement, $element, $parentBlock)
 	{
@@ -84,10 +83,7 @@ class LineBox extends Box implements BoxInterface
 			->setStyle($element->parseStyle())
 			->init();
 		$this->appendChild($box);
-		if ($childDomElement instanceof \DOMText) {
-			$box->setTextNode(true)->setText($childDomElement->textContent);
-		}
-		return $this;
+		return $box;
 	}
 
 	/**
@@ -178,11 +174,7 @@ class LineBox extends Box implements BoxInterface
 		$allChildren = array_reverse($allChildren);
 		$lineHeight = 0;
 		foreach ($allChildren as $child) {
-			if ($child instanceof InlineBox) {
-				$lineHeight = max($lineHeight, $child->getDimensions()->getHeight(), $child->getStyle()->getRules('line-height'));
-			} else {
-				$lineHeight = max($lineHeight, $child->getDimensions()->getOuterHeight(), $child->getStyle()->getRules('line-height'));
-			}
+			$lineHeight = max($lineHeight, $child->getStyle()->getLineHeight());
 		}
 		$this->getDimensions()->setHeight($lineHeight);
 		return $this;
@@ -292,15 +284,12 @@ class LineBox extends Box implements BoxInterface
 	public function reflow()
 	{
 		$this->getDimensions()->computeAvailableSpace();
+		$this->measureHeight();
 		$this->measureMargins();
 		$this->measureOffset();
 		$this->measurePosition();
 		$this->clearStyles();
 		$this->measureWidth();
-		foreach ($this->getChildren() as $child) {
-			$child->reflow();
-		}
-		$this->measureHeight();
 		foreach ($this->getChildren() as $child) {
 			$child->reflow();
 		}

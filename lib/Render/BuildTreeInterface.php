@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * Box interface
+ * BuildTree interface
  *
  * @package   YetiForcePDF\Render
  *
@@ -19,11 +19,10 @@ use \YetiForcePDF\Html\Element;
 use YetiForcePDF\Style\Style;
 
 /**
- * Interface BoxInterface
+ * Interface BuildTreeInterface
  */
-interface BoxInterface
+interface BuildTreeInterface
 {
-
 
 
 	/**
@@ -32,34 +31,4 @@ interface BoxInterface
 	 * @return $this
 	 */
 	public function buildTree($parentBlock = null);
-
-	/**
-	 * Measure width
-	 * @return $this
-	 */
-	public function measureWidth();
-
-	/**
-	 * Measure height
-	 * @return $this
-	 */
-	public function measureHeight();
-
-	/**
-	 * Measure offset relative to parent Box
-	 * @return $this
-	 */
-	public function measureOffset();
-
-	/**
-	 * Measure absolute position
-	 * @return $this
-	 */
-	public function measurePosition();
-
-	/**
-	 * Lay out boxes
-	 * @return $this
-	 */
-	public function reflow();
 }

@@ -21,7 +21,7 @@ use \YetiForcePDF\Render\Dimensions\BoxDimensions;
 /**
  * Class BlockBox
  */
-class BlockBox extends ElementBox implements BoxInterface
+class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface, BuildTreeInterface
 {
 
 	/**
@@ -129,7 +129,7 @@ class BlockBox extends ElementBox implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
+	 * @return \YetiForcePDF\Render\BlockBox
 	 */
 	public function appendBlock($childDomElement, $element, $parentBlock)
 	{
@@ -144,7 +144,7 @@ class BlockBox extends ElementBox implements BoxInterface
 			->init();
 		$this->appendChild($box);
 		$box->buildTree($box);
-		return $this;
+		return $box;
 	}
 
 	/**
@@ -152,7 +152,7 @@ class BlockBox extends ElementBox implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
+	 * @return \YetiForcePDF\Render\InlineBlockBox
 	 */
 	public function appendInlineBlock($childDomElement, $element, $parentBlock)
 	{
@@ -169,7 +169,7 @@ class BlockBox extends ElementBox implements BoxInterface
 			->init();
 		$currentLineBox->appendChild($box);
 		$box->buildTree($this);
-		return $this;
+		return $box;
 	}
 
 	/**
@@ -177,7 +177,7 @@ class BlockBox extends ElementBox implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return $this
+	 * @return \YetiForcePDF\Render\InlineBox
 	 */
 	public function appendInline($childDomElement, $element, $parentBlock)
 	{
@@ -193,12 +193,8 @@ class BlockBox extends ElementBox implements BoxInterface
 			->setStyle($element->parseStyle())
 			->init();
 		$currentLineBox->appendChild($box);
-		if ($childDomElement instanceof \DOMText) {
-			$box->setTextNode(true)->setText($childDomElement->textContent);
-		} else {
-			$box->buildTree($this);
-		}
-		return $this;
+		$box->buildTree($this);
+		return $box;
 	}
 
 	/**
@@ -346,21 +342,6 @@ class BlockBox extends ElementBox implements BoxInterface
 	}
 
 	/**
-	 * Filter text
-	 * Filter the text, this is applied to all text just before being inserted into the pdf document
-	 * it escapes the various things that need to be escaped, and so on
-	 *
-	 * @return string
-	 */
-	protected function filterText($text)
-	{
-		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
-		$text = preg_replace('/\s+/', ' ', $text);
-		$text = mb_convert_encoding($text, 'UTF-16');
-		return strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
-	}
-
-	/**
 	 * Add border instructions
 	 * @param array $element
 	 * @param float $pdfX
@@ -480,50 +461,15 @@ class BlockBox extends ElementBox implements BoxInterface
 	 */
 	public function getInstructions(): string
 	{
-		$style = $this->getStyle();
-		$rules = $style->getRules();
-		$font = $style->getFont();
-		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
 		$coordinates = $this->getCoordinates();
 		$pdfX = $coordinates->getPdfX();
 		$pdfY = $coordinates->getPdfY();
-		$htmlX = $coordinates->getX();
-		$htmlY = $coordinates->getY();
 		$dimensions = $this->getDimensions();
 		$width = $dimensions->getWidth();
 		$height = $dimensions->getHeight();
-		$baseLine = $style->getFont()->getDescender();
-		$baseLineY = $pdfY - $baseLine;
-		if ($this->isTextNode()) {
-			$textWidth = $style->getFont()->getTextWidth($this->getText());
-			$textHeight = $style->getFont()->getTextHeight();
-			$textContent = '(' . $this->filterText($this->getText()) . ')';
-			$element = [
-				'q',
-				"1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
-				"{$rules['color'][0]} {$rules['color'][1]} {$rules['color'][2]} rg",
-				'BT',
-				$fontStr,
-				"$textContent Tj",
-				'ET',
-				'Q'
-			];
-			if ($this->drawTextOutline) {
-				$element = array_merge($element, [
-					'q',
-					'1 w',
-					'1 0 0 RG',
-					"1 0 0 1 $pdfX $pdfY cm",
-					"0 0 $textWidth $textHeight re",
-					'S',
-					'Q'
-				]);
-			}
-		} else {
-			$element = [];
-			$element = $this->addBackgroundColorInstructions($element, $pdfX, $pdfY, $width, $height);
-			$element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
-		}
+		$element = [];
+		$element = $this->addBackgroundColorInstructions($element, $pdfX, $pdfY, $width, $height);
+		$element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
 		return implode("\n", $element);
 	}
 }
