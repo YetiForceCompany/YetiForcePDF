@@ -528,6 +528,11 @@ class Style extends \YetiForcePDF\Base
 		return $this;
 	}
 
+	/**
+	 * First of all parse font for convertUnits method
+	 * @param array $ruleParsed
+	 * @return $this
+	 */
 	protected function parseFont(array $ruleParsed)
 	{
 		$finalRules = [];
@@ -548,6 +553,7 @@ class Style extends \YetiForcePDF\Base
 			->setFamily($finalRules['font-family'])
 			->setSize($finalRules['font-size'])
 			->init();
+		return $this;
 	}
 
 	/**
