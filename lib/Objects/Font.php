@@ -290,6 +290,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var float
 	 */
 	protected $descender = 0;
+	/**
+	 * @var string
+	 */
+	protected $fontPostscriptName;
 
 	/**
 	 * Initialisation
@@ -314,8 +318,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 			return $this;
 		}
 		$this->setAddToDocument(false);
-		parent::init();
-		return $alreadyExists;
+		// do not init parent! we don't want to create resources etc.
+		return clone $alreadyExists;
 	}
 
 	/**
@@ -355,7 +359,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getFullName()
 	{
-		return $this->fontData->getFontPostscriptName();
+		return $this->fontPostscriptName;
 	}
 
 	/**
@@ -598,9 +602,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 			->setDocument($this->document)
 			->init();
 		$this->setUpUnicode($charMapUnicode);
+		$this->fontPostscriptName = $font->getFontPostscriptName();
 		$this->fontType0->setDictionaryType('Font')
 			->addValue('Subtype', '/Type0')
-			->addValue('BaseFont', '/' . $font->getFontPostscriptName())
+			->addValue('BaseFont', '/' . $this->fontPostscriptName)
 			->addValue('Encoding', '/Identity-H')
 			->addValue('DescendantFonts', '[' . $this->getReference() . ']')
 			->addValue('ToUnicode', $this->toUnicode->getReference());
@@ -626,4 +631,5 @@ class Font extends \YetiForcePDF\Objects\Resource
 			">>",
 			"endobj"]);
 	}
+
 }

@@ -97,7 +97,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public static $mandatoryRules = [
 		'font-family' => 'NotoSerif-Regular',
-		'font-size' => 12,
+		'font-size' => '12px',
 		'font-weight' => 'normal',
 		'margin-left' => 0,
 		'margin-top' => 0,
@@ -133,12 +133,17 @@ class Style extends \YetiForcePDF\Base
 		'min-width' => 0,
 	];
 	/**
-	 * Css rules
+	 * Original css rules
+	 * @var array
+	 */
+	protected $originalRules = [];
+	/**
+	 * Css rules (computed)
 	 * @var array
 	 */
 	protected $rules = [
 		'font-family' => 'NotoSerif-Regular',
-		'font-size' => 12,
+		'font-size' => '12px',
 		'font-weight' => 'normal',
 		'margin-left' => 0,
 		'margin-top' => 0,
@@ -330,6 +335,19 @@ class Style extends \YetiForcePDF\Base
 			return $this->rules[$ruleName];
 		}
 		return $this->rules;
+	}
+
+	/**
+	 * Get original rules (or concrete rule if specified)
+	 * @param string|null $ruleName
+	 * @return array|mixed
+	 */
+	public function getOriginalRules(string $ruleName = null)
+	{
+		if ($ruleName) {
+			return $this->originalRules[$ruleName];
+		}
+		return $this->originalRules;
 	}
 
 	/**
@@ -548,10 +566,12 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
+		$fontSize = $finalRules['font-size'];
+		$fontFamily = $finalRules['font-family'];
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
-			->setFamily($finalRules['font-family'])
-			->setSize($finalRules['font-size'])
+			->setFamily($finalRules['font-family'])->init();
+		$this->font->setSize($finalRules['font-size'])
 			->init();
 		return $this;
 	}
@@ -692,6 +712,11 @@ class Style extends \YetiForcePDF\Base
 			$this->rules['margin-bottom'] = 0;
 		}
 		return $this;
+	}
+
+	public function __clone()
+	{
+		$this->font = clone $this->font;
 	}
 
 }
