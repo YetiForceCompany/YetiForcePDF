@@ -438,61 +438,57 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get percent height of the parent box
-	 * @param string $width
-	 * @return float|int|string
+	 * Get height from style
+	 * @return $this
 	 */
-	public function getPercentWidth(string $width)
+	public function applyStyleWidth()
 	{
+		$width = $this->getStyle()->getRules('width');
+		if ($width === 'auto') {
+			return $this;
+		}
+		if (!is_string($width)) {
+			$this->getDimensions()->setWidth((float)$width);
+			return $this;
+		}
 		$percentPos = strpos($width, '%');
 		if ($percentPos !== false) {
 			$widthInPercent = substr($width, 0, $percentPos);
-			$parentWidth = $this->getParentInnerWidth();
+			$parentWidth = $this->getParent()->getDimensions()->getInnerWidth();
 			if ($parentWidth) {
-				return $parentWidth / 100 * (float)$widthInPercent;
+				$calculatedWidth = (float)bcmul(bcdiv((string)$parentWidth, '100'), $widthInPercent, 4);
+				$this->getDimensions()->setWidth($calculatedWidth);
+				return $this;
 			}
-		} else {
-			return (float)$width;
+			return $this;
 		}
+		return $this;
 	}
 
 	/**
-	 * Get percent height of the parent box
-	 * @param string $height
-	 * @return float|int|string
+	 * Get height from style
+	 * @return $this
 	 */
-	public function getPercentHeight(string $height)
+	public function applyStyleHeight()
 	{
+		$height = $this->getStyle()->getRules('height');
+		if ($height === 'auto') {
+			return $this;
+		}
+		if (!is_string($height)) {
+			$this->getDimensions()->setHeight((float)$height);
+			return $this;
+		}
 		$percentPos = strpos($height, '%');
 		if ($percentPos !== false) {
 			$heightInPercent = substr($height, 0, $percentPos);
-			$parentHeight = $this->getParentInnerHeight();
+			$parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
 			if ($parentHeight) {
-				return $parentHeight / 100 * $heightInPercent;
+				$calculatedHeight = (float)bcmul(bcdiv((string)$parentHeight, '100'), $heightInPercent);
+				$this->getDimensions()->setHeight($calculatedHeight);
+				return $this;
 			}
-		} else {
-			return (float)$height;
-		}
-	}
-
-	/**
-	 * Take style specified dimensions instead of calculated one
-	 * @return $this
-	 */
-	protected function takeStyleDimensions()
-	{
-		if (!$this instanceof LineBox) {
-			if ($this->getStyle()->getRules('display') !== 'inline') {
-				$dimensions = $this->getDimensions();
-				$width = $this->getStyle()->getRules('width');
-				if ($width !== 'auto') {
-					$dimensions->setWidth($this->getPercentWidth((string)$width));
-				}
-				$height = $this->getStyle()->getRules('height');
-				if ($height !== 'auto') {
-					$dimensions->setHeight($this->getPercentHeight((string)$height));
-				}
-			}
+			return $this;
 		}
 		return $this;
 	}
@@ -506,12 +502,12 @@ class Box extends \YetiForcePDF\Base
 		if ($this instanceof LineBox) {
 			$textAlign = $this->getParent()->getStyle()->getRules('text-align');
 			if ($textAlign === 'right') {
-				$offset = $this->getDimensions()->getWidth() - $this->getChildrenWidth();
+				$offset = $this->getDimensions()->computeAvailableSpace() - $this->getChildrenWidth();
 				foreach ($this->getChildren() as $childBox) {
 					$childBox->getOffset()->setLeft($childBox->getOffset()->getLeft() + $offset);
 				}
 			} elseif ($textAlign === 'center') {
-				$offset = $this->getDimensions()->getWidth() / 2 - $this->getChildrenWidth() / 2;
+				$offset = $this->getDimensions()->computeAvailableSpace() / 2 - $this->getChildrenWidth() / 2;
 				foreach ($this->getChildren() as $childBox) {
 					$childBox->getOffset()->setLeft($childBox->getOffset()->getLeft() + $offset);
 				}

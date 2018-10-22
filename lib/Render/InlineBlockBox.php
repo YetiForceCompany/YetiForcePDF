@@ -42,6 +42,7 @@ class InlineBlockBox extends BlockBox
 		$style = $this->getStyle();
 		$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
 		$this->getDimensions()->setWidth($maxWidth);
+		$this->applyStyleWidth();
 		return $this;
 	}
 
@@ -59,6 +60,7 @@ class InlineBlockBox extends BlockBox
 		$style = $this->getStyle();
 		$height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
 		$this->getDimensions()->setHeight($height);
+		$this->applyStyleHeight();
 		return $this;
 	}
 

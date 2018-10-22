@@ -229,6 +229,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			return $this;
 		}
 		$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
+		$this->applyStyleWidth();
 		foreach ($this->getChildren() as $child) {
 			$child->measureWidth();
 		}
@@ -274,6 +275,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$height += $rules['border-top-width'] + $rules['padding-top'];
 		$height += $rules['border-bottom-width'] + $rules['padding-bottom'];
 		$this->getDimensions()->setHeight($height);
+		$this->applyStyleHeight();
 		return $this;
 	}
 
@@ -338,6 +340,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->measureWidth();
 		$this->measureHeight();
 		$this->measureOffset();
+		$this->alignText();
 		$this->measurePosition();
 		return $this;
 	}
