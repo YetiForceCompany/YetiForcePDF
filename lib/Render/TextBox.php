@@ -29,6 +29,19 @@ class TextBox extends ElementBox implements BoxInterface
 	 */
 	protected $text;
 
+	/*
+	 * {@inheritdoc}
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->style = (new \YetiForcePDF\Style\Style())
+			->setDocument($this->document)
+			->setBox($this)
+			->init();
+		return $this;
+	}
+
 	/**
 	 * Set text
 	 * @param string $text
@@ -75,19 +88,8 @@ class TextBox extends ElementBox implements BoxInterface
 	 */
 	public function measureOffset()
 	{
-		$rules = $this->getStyle()->getRules();
-		$parent = $this->getParent();
-		$top = $parent->getStyle()->getOffsetTop();
-		$lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
-		if ($rules['vertical-align'] === 'bottom') {
-			$top = $lineHeight - $this->getDimensions()->getHeight();
-		} elseif ($rules['vertical-align'] === 'top') {
-			$top = 0;
-		} elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
-			$top = (float)bcsub(bcdiv((string)$lineHeight, '2', 4), bcdiv((string)$this->getDimensions()->getHeight(), '2', 4), 4);
-		}
 		$this->getOffset()->setLeft(0);
-		$this->getOffset()->setTop($top);
+		$this->getOffset()->setTop(0);
 		return $this;
 	}
 
@@ -99,7 +101,6 @@ class TextBox extends ElementBox implements BoxInterface
 	{
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
-		$parent = $this->getClosestLineBox();
 		$this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
 		return $this;
 	}

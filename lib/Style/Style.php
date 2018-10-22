@@ -478,7 +478,23 @@ class Style extends \YetiForcePDF\Base
 		if ($this->getBox() instanceof InlineBox) {
 			return $this->rules['line-height'];
 		}
-		return $this->rules['line-height'] + $this->getVerticalPaddingsWidth();
+		return $this->rules['line-height'] + $this->getVerticalPaddingsWidth() + $this->getVerticalBordersWidth();
+	}
+
+	/**
+	 * Get line height
+	 * @return float
+	 */
+	public function getMaxLineHeight()
+	{
+		$lineHeight = $this->rules['line-height'];
+		if (!$this->getBox() instanceof InlineBox) {
+			$lineHeight += $this->getVerticalPaddingsWidth() + $this->getVerticalBordersWidth();
+		}
+		foreach ($this->getBox()->getChildren() as $child) {
+			$lineHeight = max($lineHeight, $child->getStyle()->getMaxLineHeight());
+		}
+		return $lineHeight;
 	}
 
 	/**
@@ -497,6 +513,7 @@ class Style extends \YetiForcePDF\Base
 		if ($this->getElement()) {
 			if ($this->getElement()->getDOMElement() instanceof \DOMText) {
 				$parsed['display'] = 'inline';
+				$parsed['line-height'] = $this->getFont()->getTextHeight();
 				// if this is text node it's mean that it was wrapped by anonymous inline element
 				// so wee need to copy vertical align property (because it is not inherited by default)
 				if ($this->getParent()) {

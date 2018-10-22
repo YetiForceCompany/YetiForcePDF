@@ -30,6 +30,10 @@ class InlineBlockBox extends BlockBox
 	 */
 	public function measureWidth()
 	{
+		foreach ($this->getChildren() as $child) {
+			$child->measureWidth();
+		}
+		$this->divideLines();
 		$maxWidth = 0;
 		foreach ($this->getChildren() as $child) {
 			$child->measureWidth();

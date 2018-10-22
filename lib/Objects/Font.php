@@ -419,9 +419,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getTextHeight(string $text = null): float
 	{
 		$height = $this->size * $this->height / $this->unitsPerEm;
-		if ($text === null) {
-			return $height;
-		}
 		return $height;
 	}
 

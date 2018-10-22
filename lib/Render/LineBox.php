@@ -64,7 +64,7 @@ class LineBox extends Box implements BoxInterface
 			->setStyle($element->parseStyle())
 			->init();
 		$this->appendChild($box);
-		$box->buildTree($this);
+		$box->buildTree($parentBlock);
 		return $box;
 	}
 
@@ -83,6 +83,7 @@ class LineBox extends Box implements BoxInterface
 			->setStyle($element->parseStyle())
 			->init();
 		$this->appendChild($box);
+		$box->buildTree($parentBlock);
 		return $box;
 	}
 
@@ -100,15 +101,6 @@ class LineBox extends Box implements BoxInterface
 	}
 
 	/**
-	 * Are elements inside this line fit?
-	 * @return bool
-	 */
-	public function elementsFit()
-	{
-		return $this->getDimensions()->getAvailableSpace() >= $this->getChildrenWidth();
-	}
-
-	/**
 	 * Divide this line into more lines when objects doesn't fit
 	 * @return LineBox[]
 	 */
@@ -121,6 +113,7 @@ class LineBox extends Box implements BoxInterface
 			->setParent($this->getParent())
 			->init();
 		foreach ($this->getChildren() as $childBox) {
+			$childBox->measureWidth();
 			if ($line->willFit($childBox)) {
 				$line->appendChild($childBox);
 			} else {
@@ -144,10 +137,12 @@ class LineBox extends Box implements BoxInterface
 	 */
 	public function measureWidth()
 	{
+		$width = 0;
 		foreach ($this->getChildren() as $child) {
 			$child->measureWidth();
+			$width += $child->getDimensions()->getOuterWidth();
 		}
-		$this->getDimensions()->setWidth($this->getChildrenWidth());
+		$this->getDimensions()->setWidth($width);
 		return $this;
 	}
 
@@ -157,17 +152,12 @@ class LineBox extends Box implements BoxInterface
 	 */
 	public function measureHeight()
 	{
-		$allChildren = [];
-		$this->getAllChildren($allChildren);
-		// array_reverse + array_pop + array_reverse is faster than array_shift
-		$allChildren = array_reverse($allChildren);
-		array_pop($allChildren);
-		$allChildren = array_reverse($allChildren);
-		$lineHeight = 0;
-		foreach ($allChildren as $child) {
-			$lineHeight = max($lineHeight, $child->getStyle()->getLineHeight());
+		foreach ($this->getChildren() as $child) {
+			$child->measureHeight();
 		}
+		$lineHeight = $this->getStyle()->getMaxLineHeight();
 		$this->getDimensions()->setHeight($lineHeight);
+		$this->measureMargins();
 		return $this;
 	}
 

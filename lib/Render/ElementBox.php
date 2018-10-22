@@ -65,6 +65,7 @@ class ElementBox extends Box
 				$element = (new Element())
 					->setDocument($this->document)
 					->setDOMElement($childDomElement)
+					->setBox($this)
 					->init();
 				$style = $element->parseStyle();
 				$display = $style->getRules('display');
@@ -75,7 +76,7 @@ class ElementBox extends Box
 				if ($display === 'inline') {
 					$inline = $this->appendInline($childDomElement, $element, $parentBlock);
 					if ($childDomElement instanceof \DOMText) {
-						$inline->appendText($childDomElement, $element, $parentBlock);
+						$inline->setAnonymous(true)->appendText($childDomElement, null, $parentBlock);
 						continue;
 					}
 					continue;

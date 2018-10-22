@@ -202,6 +202,10 @@ class Box extends \YetiForcePDF\Base
 	public function setStyle(Style $style)
 	{
 		$this->style = $style;
+		if ($element = $style->getElement()) {
+			$element->setBox($this);
+		}
+		$style->setBox($this);
 		return $this;
 	}
 
@@ -235,7 +239,6 @@ class Box extends \YetiForcePDF\Base
 			} else {
 				$this->appendChild($box);
 			}
-			$box->getDimensions()->setUpAvailableSpace();
 			return $box;
 		}
 		if ($this instanceof LineBox) {
@@ -246,7 +249,6 @@ class Box extends \YetiForcePDF\Base
 			} else {
 				$this->appendChild($box);
 			}
-			$box->getDimensions()->setUpAvailableSpace();
 			return $box;
 		}
 		throw new \InvalidArgumentException('Cannot create child element inside text node.');

@@ -25,6 +25,32 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 {
 
 	/**
+	 * Anonymous inline element is created to wrap TextBox
+	 * @var bool
+	 */
+	protected $anonymous = false;
+
+	/**
+	 * Is this box anonymous
+	 * @return bool
+	 */
+	public function isAnonymous()
+	{
+		return $this->anonymous;
+	}
+
+	/**
+	 * Set anonymous field
+	 * @param bool $anonymous
+	 * @return $this
+	 */
+	public function setAnonymous(bool $anonymous)
+	{
+		$this->anonymous = $anonymous;
+		return $this;
+	}
+
+	/**
 	 * Go up to Line box and clone and wrap element
 	 * @param Box $box
 	 * @return $this
@@ -130,13 +156,11 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
 	 * @return \YetiForcePDF\Render\TextBox
 	 */
-	public function appendText($childDomElement, $element, $parentBlock)
+	public function appendText($childDomElement, $element = null, $parentBlock = null)
 	{
 		$box = (new TextBox())
 			->setDocument($this->document)
 			->setParent($this)
-			->setElement($element)
-			->setStyle($element->parseStyle())
 			->init();
 		if (isset($this->getChildren()[0])) {
 			$this->cloneParent($box);
@@ -157,9 +181,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		foreach ($this->getChildren() as $child) {
 			$child->measureWidth();
 			$width += $child->getDimensions()->getOuterWidth();
-			$style = $this->getStyle();
-			$width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
 		}
+		$style = $this->getStyle();
+		$width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
 		$this->getDimensions()->setWidth($width);
 		return $this;
 	}
@@ -170,12 +194,10 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	public function measureHeight()
 	{
-		$height = 0;
 		foreach ($this->getChildren() as $child) {
 			$child->measureHeight();
-			$height = $this->getFirstChild()->getDimensions()->getHeight();
 		}
-		$this->getDimensions()->setHeight($height);
+		$this->getDimensions()->setHeight($this->getStyle()->getLineHeight());
 		return $this;
 	}
 
@@ -190,11 +212,12 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		$top = $parent->getStyle()->getOffsetTop();
 		$lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
 		if ($rules['vertical-align'] === 'bottom') {
-			$top = $lineHeight - $this->getDimensions()->getInnerHeight();
+			$top = $lineHeight - $this->getDimensions()->getHeight();
 		} elseif ($rules['vertical-align'] === 'top') {
 			$top = 0;
 		} elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
-			$top = (float)bcsub(bcdiv((string)$lineHeight, '2', 4), bcdiv((string)$this->getDimensions()->getHeight(), '2', 4), 4);
+			$height = $this->getDimensions()->getHeight();
+			$top = (float)bcsub(bcdiv((string)$lineHeight, '2', 4), bcdiv((string)$height, '2', 4), 4);
 		}
 		// margin top inside inline and inline block doesn't affect relative to line top position
 		// it only affects line margins
