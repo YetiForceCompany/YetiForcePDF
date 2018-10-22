@@ -62,27 +62,34 @@ class ElementBox extends Box
 				if ($childDomElement instanceof \DOMComment) {
 					continue;
 				}
+				$styleStr = '';
+				if ($childDomElement instanceof \DOMElement && $childDomElement->hasAttribute('style')) {
+					$styleStr = $childDomElement->getAttribute('style');
+				}
 				$element = (new Element())
 					->setDocument($this->document)
 					->setDOMElement($childDomElement)
-					->setBox($this)
 					->init();
-				$style = $element->parseStyle();
+				$style = (new \YetiForcePDF\Style\Style())
+					->setDocument($this->document)
+					->setElement($element)
+					->setContent($styleStr)
+					->parseInline();
 				$display = $style->getRules('display');
 				if ($display === 'block') {
-					$this->appendBlock($childDomElement, $element, $parentBlock);
+					$this->appendBlock($childDomElement, $element, $style, $parentBlock);
 					continue;
 				}
 				if ($display === 'inline') {
-					$inline = $this->appendInline($childDomElement, $element, $parentBlock);
+					$inline = $this->appendInline($childDomElement, $element, $style, $parentBlock);
 					if ($childDomElement instanceof \DOMText) {
-						$inline->setAnonymous(true)->appendText($childDomElement, null, $parentBlock);
+						$inline->setAnonymous(true)->appendText($childDomElement, null, null, $parentBlock);
 						continue;
 					}
 					continue;
 				}
 				if ($display === 'inline-block') {
-					$this->appendInlineBlock($childDomElement, $element, $parentBlock);
+					$this->appendInlineBlock($childDomElement, $element, $style, $parentBlock);
 				}
 			}
 		}

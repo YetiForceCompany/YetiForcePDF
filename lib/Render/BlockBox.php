@@ -97,9 +97,16 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function getNewLineBox()
 	{
-		$this->currentLineBox = (new LineBox())->setDocument($this->document)->init();
+		$this->currentLineBox = (new LineBox())
+			->setDocument($this->document)
+			->setParent($this)
+			->init();
 		$this->appendChild($this->currentLineBox);
-		$this->currentLineBox->getDimensions()->computeAvailableSpace();
+		$style = (new Style())
+			->setDocument($this->document)
+			->setBox($this->currentLineBox);
+		$this->currentLineBox->setStyle($style);
+		$this->currentLineBox->getStyle()->init();
 		return $this->currentLineBox;
 	}
 
@@ -125,13 +132,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	}
 
 	/**
-	 * Append block box element
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\BlockBox
+	 * {@inheritdoc}
 	 */
-	public function appendBlock($childDomElement, $element, $parentBlock)
+	public function appendBlock($childDomElement, $element, $style, $parentBlock)
 	{
 		if ($this->getCurrentLineBox()) {
 			$this->closeLine();
@@ -140,61 +143,38 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			->setDocument($this->document)
 			->setParent($this)
 			->setElement($element)
-			->setStyle($element->parseStyle())//second phase with css inheritance
+			->setStyle($style)
 			->init();
 		$this->appendChild($box);
+		$box->getStyle()->init();
 		$box->buildTree($box);
 		return $box;
 	}
 
 	/**
-	 * Append inline block box element
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\InlineBlockBox
+	 * {@inheritdoc}
 	 */
-	public function appendInlineBlock($childDomElement, $element, $parentBlock)
+	public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
 	{
 		if ($this->getCurrentLineBox()) {
 			$currentLineBox = $this->getCurrentLineBox();
 		} else {
 			$currentLineBox = $this->getNewLineBox();
 		}
-		$box = (new InlineBlockBox())
-			->setDocument($this->document)
-			->setParent($currentLineBox)
-			->setElement($element)
-			->setStyle($element->parseStyle())
-			->init();
-		$currentLineBox->appendChild($box);
-		$box->buildTree($this);
-		return $box;
+		return $currentLineBox->appendInlineBlock($childDomElement, $element, $style, $parentBlock);
 	}
 
 	/**
-	 * Add inline child (and split text to individual characters)
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\InlineBox
+	 * {@inheritdoc}
 	 */
-	public function appendInline($childDomElement, $element, $parentBlock)
+	public function appendInline($childDomElement, $element, $style, $parentBlock)
 	{
 		if ($this->getCurrentLineBox()) {
 			$currentLineBox = $this->getCurrentLineBox();
 		} else {
 			$currentLineBox = $this->getNewLineBox();
 		}
-		$box = (new InlineBox())
-			->setDocument($this->document)
-			->setParent($currentLineBox)
-			->setElement($element)
-			->setStyle($element->parseStyle())
-			->init();
-		$currentLineBox->appendChild($box);
-		$box->buildTree($this);
-		return $box;
+		return $currentLineBox->appendInline($childDomElement, $element, $style, $parentBlock);
 	}
 
 	/**

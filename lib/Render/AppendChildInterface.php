@@ -28,28 +28,31 @@ interface AppendChildInterface
 	 * Append block box element
 	 * @param \DOMNode                      $childDomElement
 	 * @param Element                       $element
+	 * @param Style                         $style
 	 * @param \YetiForcePDF\Render\BlockBox $parentBlock
 	 * @return $this
 	 */
-	public function appendBlock($childDomElement, $element, $parentBlock);
+	public function appendBlock($childDomElement, $element, $style, $parentBlock);
 
 	/**
 	 * Append inline block box element
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
 	 * @return $this
 	 */
-	public function appendInlineBlock($childDomElement, $element, $parentBlock);
+	public function appendInlineBlock($childDomElement, $element, $style, $parentBlock);
 
 	/**
 	 * Add inline child (and split text to individual characters)
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
 	 * @return $this
 	 */
-	public function appendInline($childDomElement, $element, $parentBlock);
+	public function appendInline($childDomElement, $element, $style, $parentBlock);
 
 	/**
 	 * Build tree from dom tree

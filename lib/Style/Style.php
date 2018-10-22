@@ -180,12 +180,8 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function init(): Style
 	{
-		$this->font = (new \YetiForcePDF\Objects\Font())
-			->setDocument($this->document)
-			->setFamily($this->rules['font-family'])
-			->setSize($this->rules['font-size'])
-			->init();
-		$this->rules = $this->parse();
+		parent::init();
+		$this->parse();
 		return $this;
 	}
 
@@ -498,28 +494,14 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Parse css style
-	 * @return array
+	 * Parse inline style without inheritance and normalizer
+	 * @return $this
 	 */
-	protected function parse(): array
+	public function parseInline()
 	{
 		$parsed = [];
 		foreach (static::$mandatoryRules as $mandatoryName => $mandatoryValue) {
 			$parsed[$mandatoryName] = $mandatoryValue;
-		}
-		if ($parent = $this->getParent()) {
-			$parsed = array_merge($parsed, $parent->getInheritedRules());
-		}
-		if ($this->getElement()) {
-			if ($this->getElement()->getDOMElement() instanceof \DOMText) {
-				$parsed['display'] = 'inline';
-				$parsed['line-height'] = $this->getFont()->getTextHeight();
-				// if this is text node it's mean that it was wrapped by anonymous inline element
-				// so wee need to copy vertical align property (because it is not inherited by default)
-				if ($this->getParent()) {
-					$parsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
-				}
-			}
 		}
 		if ($this->content) {
 			$rules = explode(';', $this->content);
@@ -536,8 +518,81 @@ class Style extends \YetiForcePDF\Base
 				$rulesParsed[$ruleName] = $ruleValue;
 			}
 		}
+		$rulesParsed = array_merge($parsed, $rulesParsed);
+		if ($this->getElement()) {
+			if ($this->getElement()->getDOMElement() instanceof \DOMText) {
+				$rulesParsed['display'] = 'inline';
+			}
+		}
+		$this->rules = $rulesParsed;
+		return $this;
+	}
+
+	protected function parseFont(array $ruleParsed)
+	{
 		$finalRules = [];
-		foreach (array_merge($parsed, $rulesParsed) as $ruleName => $ruleValue) {
+		foreach ($ruleParsed as $ruleName => $ruleValue) {
+			if (substr($ruleName, 0, 4) === 'font') {
+				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
+				$normalizer = (new $normalizerName())
+					->setDocument($this->document)
+					->setStyle($this)
+					->init();
+				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
+					$finalRules[$name] = $value;
+				}
+			}
+		}
+		$this->font = (new \YetiForcePDF\Objects\Font())
+			->setDocument($this->document)
+			->setFamily($finalRules['font-family'])
+			->setSize($finalRules['font-size'])
+			->init();
+	}
+
+	/**
+	 * Parse css style
+	 * @return $this
+	 */
+	protected function parse()
+	{
+		$parsed = [];
+		foreach (static::$mandatoryRules as $mandatoryName => $mandatoryValue) {
+			$parsed[$mandatoryName] = $mandatoryValue;
+		}
+		if ($parent = $this->getParent()) {
+			$parsed = array_merge($parsed, $parent->getInheritedRules());
+		}
+		if ($this->content) {
+			$rules = explode(';', $this->content);
+		} else {
+			$rules = [];
+		}
+		$rulesParsed = [];
+		foreach ($rules as $rule) {
+			$rule = trim($rule);
+			if ($rule !== '') {
+				$ruleExploded = explode(':', $rule);
+				$ruleName = trim($ruleExploded[0]);
+				$ruleValue = trim($ruleExploded[1]);
+				$rulesParsed[$ruleName] = $ruleValue;
+			}
+		}
+		$rulesParsed = array_merge($parsed, $rulesParsed);
+		$this->parseFont($rulesParsed);
+		if ($this->getElement()) {
+			if ($this->getElement()->getDOMElement() instanceof \DOMText) {
+				$rulesParsed['display'] = 'inline';
+				$rulesParsed['line-height'] = $this->getFont()->getTextHeight();
+				// if this is text node it's mean that it was wrapped by anonymous inline element
+				// so wee need to copy vertical align property (because it is not inherited by default)
+				if ($this->getParent()) {
+					$rulesParsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
+				}
+			}
+		}
+		$finalRules = [];
+		foreach ($rulesParsed as $ruleName => $ruleValue) {
 			$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 			$normalizer = (new $normalizerName())
 				->setDocument($this->document)
@@ -551,7 +606,8 @@ class Style extends \YetiForcePDF\Base
 			$finalRules['margin-top'] = 0;
 			$finalRules['margin-bottom'] = 0;
 		}
-		return $finalRules;
+		$this->rules = $finalRules;
+		return $this;
 	}
 
 	/**

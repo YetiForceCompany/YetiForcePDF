@@ -205,7 +205,7 @@ class Box extends \YetiForcePDF\Base
 		if ($element = $style->getElement()) {
 			$element->setBox($this);
 		}
-		$style->setBox($this);
+		$style->setBox($this)->init();
 		return $this;
 	}
 
