@@ -110,8 +110,7 @@ class Parser extends \YetiForcePDF\Base
 				if ($childNode->nodeName === '#text') {
 					$chars = preg_split('/ /u', $childNode->textContent, 0, PREG_SPLIT_NO_EMPTY);
 					foreach ($chars as $char) {
-						$textNode = $domElement->ownerDocument->createElement('span', $char . ' ');
-						$textNode->setAttribute('style', 'display:inline');
+						$textNode = $domElement->ownerDocument->createTextNode($char . ' ');
 						$clonedElement->appendChild($textNode);
 					}
 				} elseif ($childNode instanceof \DOMElement) {
