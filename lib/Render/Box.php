@@ -454,9 +454,9 @@ class Box extends \YetiForcePDF\Base
 		$percentPos = strpos($width, '%');
 		if ($percentPos !== false) {
 			$widthInPercent = substr($width, 0, $percentPos);
-			$parentWidth = $this->getParent()->getDimensions()->getInnerWidth();
+			$parentWidth = $this->getClosestBox()->getDimensions()->getInnerWidth();
 			if ($parentWidth) {
-				$calculatedWidth = (float)bcmul(bcdiv((string)$parentWidth, '100'), $widthInPercent, 4);
+				$calculatedWidth = (float)bcmul(bcdiv((string)$parentWidth, '100', 4), $widthInPercent, 4);
 				$this->getDimensions()->setWidth($calculatedWidth);
 				return $this;
 			}

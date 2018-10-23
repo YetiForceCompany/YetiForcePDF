@@ -105,9 +105,11 @@ class LineBox extends Box implements BoxInterface
 			->setParent($this->getParent())
 			->setStyle(clone $this->style)
 			->init();
-		foreach ($this->getChildren() as $childBox) {
+		$children = $this->getChildren();
+		$count = count($children);
+		foreach ($children as $childBox) {
 			$childBox->measureWidth();
-			if ($line->willFit($childBox)) {
+			if ($line->willFit($childBox) || $count === 1) {
 				$line->appendChild($childBox);
 			} else {
 				$lines[] = $line;

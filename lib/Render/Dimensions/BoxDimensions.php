@@ -77,7 +77,12 @@ class BoxDimensions extends Dimensions
 	{
 		if (!$this->getBox() instanceof LineBox) {
 			$rules = $this->getBox()->getStyle()->getRules();
-			return $this->getWidth() + $rules['margin-left'] + $rules['margin-right'];
+			$childrenWidth = 0;
+			// if some of the children overflows
+			foreach ($this->getBox()->getChildren() as $child) {
+				$childrenWidth += $child->getDimensions()->getOuterWidth();
+			}
+			return max($this->getWidth() + $rules['margin-left'] + $rules['margin-right'], $childrenWidth);
 		} else {
 			return $this->getBox()->getChildrenWidth();
 		}

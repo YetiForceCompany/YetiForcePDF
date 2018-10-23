@@ -168,6 +168,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		if ($parent) {
 			if ($parent->getDimensions()->getWidth() !== null) {
 				$dimensions->setWidth($parent->getDimensions()->getInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
+				$this->applyStyleWidth();
 				foreach ($this->getChildren() as $child) {
 					$child->measureWidth();
 				}
@@ -186,9 +187,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			$maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
 			$maxWidth -= $style->getHorizontalMarginsWidth();
 			$dimensions->setWidth($maxWidth);
+			$this->applyStyleWidth();
 			return $this;
 		}
 		$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
+		$this->applyStyleWidth();
 		$this->applyStyleWidth();
 		foreach ($this->getChildren() as $child) {
 			$child->measureWidth();
