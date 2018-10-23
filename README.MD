@@ -68,7 +68,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] line-height [px, em, cm, mm, pt, in]
 - [x] background-color [hex, rgb]
 - [x] color [hex, rgb]
-- [x] word-wrap
+- [x] word-wrap [normal]
 - [ ] max-width
 - [ ] min-width
 - [ ] word-wrap
