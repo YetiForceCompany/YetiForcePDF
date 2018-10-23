@@ -98,6 +98,32 @@ class Parser extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Prepare tree - divide each string into characters DOMText - each character will be DOMText from now
+	 * This method exists only inside BlockBox because root element is always BlockBox (recurrence)
+	 * @return $this
+	 */
+	public function prepareTree($domElement, $clonedElement)
+	{
+		if ($domElement->hasChildNodes()) {
+			foreach ($domElement->childNodes as $childNode) {
+				$clonedChild = $childNode->cloneNode();
+				if ($childNode->nodeName === '#text') {
+					$chars = preg_split('/ /u', $childNode->textContent, 0, PREG_SPLIT_NO_EMPTY);
+					foreach ($chars as $char) {
+						$textNode = $domElement->ownerDocument->createElement('span', $char . ' ');
+						$textNode->setAttribute('style', 'display:inline');
+						$clonedElement->appendChild($textNode);
+					}
+				} elseif ($childNode instanceof \DOMElement) {
+					$clonedChild = $this->prepareTree($childNode, $clonedChild);
+					$clonedElement->appendChild($clonedChild);
+				}
+			}
+		}
+		return $clonedElement;
+	}
+
+	/**
 	 * Convert loaded html to pdf objects
 	 */
 	public function parse()
@@ -110,7 +136,8 @@ class Parser extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setRoot(true)
 			->init();
-		$tree = $this->box->prepareTree($this->domDocument->documentElement->cloneNode(true));
+		$domDocument = new \DOMDocument('1.0', 'UTF-8');
+		$tree = $this->prepareTree($this->domDocument->documentElement, $this->domDocument->documentElement->cloneNode());
 		$this->rootElement = (new \YetiForcePDF\Html\Element())
 			->setDocument($this->document)
 			->setDOMElement($tree);

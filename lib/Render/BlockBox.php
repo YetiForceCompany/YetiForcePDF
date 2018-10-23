@@ -72,32 +72,6 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	}
 
 	/**
-	 * Prepare tree - divide each string into characters DOMText - each character will be DOMText from now
-	 * This method exists only inside BlockBox because root element is always BlockBox (recurrence)
-	 * @return $this
-	 */
-	public function prepareTree($domElement)
-	{
-		// clone tree because we don't want to modify source of truth
-		if ($domElement->hasChildNodes()) {
-			foreach ($domElement->childNodes as $childNode) {
-				if ($childNode instanceof \DOMText) {
-					$chars = preg_split('/ /u', $childNode->textContent, 0, PREG_SPLIT_NO_EMPTY);
-					foreach ($chars as $char) {
-						$textNode = $domElement->ownerDocument->createElement('span', $char . ' ');
-						$textNode->setAttribute('style', 'display:inline');
-						$domElement->insertBefore($textNode, $childNode);
-					}
-					$domElement->removeChild($childNode);
-				} elseif ($childNode instanceof \DOMElement) {
-					$this->prepareTree($childNode);
-				}
-			}
-		}
-		return $domElement;
-	}
-
-	/**
 	 * Get new line box
 	 * @return \YetiForcePDF\Render\LineBox
 	 */
