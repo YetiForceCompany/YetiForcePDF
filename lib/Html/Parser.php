@@ -110,10 +110,10 @@ class Parser extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setRoot(true)
 			->init();
-		$this->box->prepareTree($this->domDocument->documentElement);
+		$tree = $this->box->prepareTree($this->domDocument->documentElement->cloneNode(true));
 		$this->rootElement = (new \YetiForcePDF\Html\Element())
 			->setDocument($this->document)
-			->setDOMElement($this->box->getDOMTree());
+			->setDOMElement($tree);
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
 		$this->rootElement->init();
