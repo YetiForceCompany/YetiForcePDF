@@ -53,7 +53,7 @@ class Parser extends \YetiForcePDF\Base
 			$fromEncoding = mb_detect_encoding($html);
 		}
 		$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
-		$html = preg_replace('/[\n\r\t]+/', '', $html);
+		$html = preg_replace('/[\n\r\t]+/', ' ', $html);
 		$html = preg_replace('/[ ]+/', ' ', $html);
 		return $html;
 	}
@@ -98,8 +98,7 @@ class Parser extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Prepare tree - divide each string into characters DOMText - each character will be DOMText from now
-	 * This method exists only inside BlockBox because root element is always BlockBox (recurrence)
+	 * Prepare tree - divide each string into words (DOMText)
 	 * @return $this
 	 */
 	public function prepareTree($domElement, $clonedElement)
@@ -109,8 +108,12 @@ class Parser extends \YetiForcePDF\Base
 				$clonedChild = $childNode->cloneNode();
 				if ($childNode->nodeName === '#text') {
 					$chars = preg_split('/ /u', $childNode->textContent, 0, PREG_SPLIT_NO_EMPTY);
-					foreach ($chars as $char) {
-						$textNode = $domElement->ownerDocument->createTextNode($char . ' ');
+					$count = count($chars);
+					foreach ($chars as $index => $char) {
+						if ($index + 1 !== $count) {
+							$char .= ' ';
+						}
+						$textNode = $domElement->ownerDocument->createTextNode($char);
 						$clonedElement->appendChild($textNode);
 					}
 				} elseif ($childNode instanceof \DOMElement) {
