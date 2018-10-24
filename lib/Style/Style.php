@@ -131,6 +131,7 @@ class Style extends \YetiForcePDF\Base
 		'word-wrap' => 'normal',
 		'max-width' => 'none',
 		'min-width' => 0,
+		'white-space' => 'normal',
 	];
 	/**
 	 * Original css rules
@@ -177,6 +178,7 @@ class Style extends \YetiForcePDF\Base
 		'word-wrap' => 'normal',
 		'max-width' => 'none',
 		'min-width' => 0,
+		'white-space' => 'normal',
 	];
 
 	/**
@@ -566,8 +568,6 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
-		$fontSize = $finalRules['font-size'];
-		$fontFamily = $finalRules['font-family'];
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
 			->setFamily($finalRules['font-family'])->init();

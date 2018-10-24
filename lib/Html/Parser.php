@@ -53,8 +53,10 @@ class Parser extends \YetiForcePDF\Base
 			$fromEncoding = mb_detect_encoding($html);
 		}
 		$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
-		$html = preg_replace('/[\n\r\t]+/', ' ', $html);
-		$html = preg_replace('/[ ]+/', ' ', $html);
+		$html = preg_replace('/\r\n/i', "\r", $html);
+		$html = preg_replace('/\n/i', "\r", $html);
+		//$html = preg_replace('/[ ]+/', ' ', $html);
+		//$html = preg_replace('/[\n\r\t]+/', ' ', $html);
 		return $html;
 	}
 
@@ -98,34 +100,6 @@ class Parser extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Prepare tree - divide each string into words (DOMText)
-	 * @return $this
-	 */
-	public function prepareTree($domElement, $clonedElement)
-	{
-		if ($domElement->hasChildNodes()) {
-			foreach ($domElement->childNodes as $childNode) {
-				$clonedChild = $childNode->cloneNode();
-				if ($childNode->nodeName === '#text') {
-					$chars = preg_split('/ /u', $childNode->textContent, 0, PREG_SPLIT_NO_EMPTY);
-					$count = count($chars);
-					foreach ($chars as $index => $char) {
-						if ($index + 1 !== $count) {
-							$char .= ' ';
-						}
-						$textNode = $domElement->ownerDocument->createTextNode($char);
-						$clonedElement->appendChild($textNode);
-					}
-				} elseif ($childNode instanceof \DOMElement) {
-					$clonedChild = $this->prepareTree($childNode, $clonedChild);
-					$clonedElement->appendChild($clonedChild);
-				}
-			}
-		}
-		return $clonedElement;
-	}
-
-	/**
 	 * Convert loaded html to pdf objects
 	 */
 	public function parse()
@@ -138,10 +112,9 @@ class Parser extends \YetiForcePDF\Base
 			->setDocument($this->document)
 			->setRoot(true)
 			->init();
-		$tree = $this->prepareTree($this->domDocument->documentElement, $this->domDocument->documentElement->cloneNode());
 		$this->rootElement = (new \YetiForcePDF\Html\Element())
 			->setDocument($this->document)
-			->setDOMElement($tree);
+			->setDOMElement($this->domDocument->documentElement);
 		// root element must be defined before initialisation
 		$this->document->setRootElement($this->rootElement);
 		$this->rootElement->init();

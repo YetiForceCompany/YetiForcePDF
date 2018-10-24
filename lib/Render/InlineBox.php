@@ -29,6 +29,10 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * @var bool
 	 */
 	protected $anonymous = false;
+	/**
+	 * @var \YetiForcePDF\Render\TextBox
+	 */
+	protected $previousTextBox;
 
 	/**
 	 * Is this box anonymous
@@ -53,7 +57,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	/**
 	 * Go up to Line box and clone and wrap element
 	 * @param Box $box
-	 * @return $this
+	 * @return Box
 	 */
 	public function cloneParent(Box $box)
 	{
@@ -70,7 +74,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 				$parent->appendChild($clone);
 			}
 		}
-		return $this;
+		return $box;
 	}
 
 	/**
@@ -141,26 +145,85 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	}
 
 	/**
+	 * Create text
+	 * @param $content
+	 * @return $this
+	 */
+	public function createText($content, bool $sameId = false)
+	{
+		if ($sameId && $this->previousTextBox) {
+			$box = clone $this->previousTextBox;
+		} else {
+			$box = (new TextBox())
+				->setDocument($this->document)
+				->setParent($this)
+				->init();
+		}
+		$box->setText($content);
+		$this->previousTextBox = $box;
+		if (isset($this->getChildren()[0])) {
+			$this->previousTextBox = $this->cloneParent($box);
+		} else {
+			$this->appendChild($box);
+			$this->previousTextBox = $box;
+		}
+		return $box;
+	}
+
+	/**
+	 * Get previous sibling inline-level element text
+	 * @return string|null
+	 */
+	protected function getPreviousText()
+	{
+		$closest = $this->getClosestLineBox()->getLastChild();
+		if ($previousTop = $closest->getPrevious()) {
+			if ($textBox = $previousTop->getFirstTextBox()) {
+				return $textBox->getText();
+			}
+		}
+	}
+
+	/**
 	 * Add text
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
 	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\TextBox
+	 * @return $this
 	 */
 	public function appendText($childDomElement, $element = null, $style = null, $parentBlock = null)
 	{
-		$box = (new TextBox())
-			->setDocument($this->document)
-			->setParent($this)
-			->init();
-		if (isset($this->getChildren()[0])) {
-			$this->cloneParent($box);
-		} else {
-			$this->appendChild($box);
+		$text = $childDomElement->textContent;
+		$whiteSpace = $this->getStyle()->getRules('white-space');
+		switch ($whiteSpace) {
+			case 'normal':
+			case 'nowrap':
+				$text = preg_replace('/([\t ]+)?\r([\t ]+)?/u', "\r", $text);
+				$text = preg_replace('/\r+/u', ' ', $text);
+				$text = preg_replace('/\t+/u', ' ', $text);
+				$text = preg_replace('/ +/u', ' ', $text);
+				break;
 		}
-		$box->setText($childDomElement->textContent);
-		return $box;
+		if ($text !== '') {
+			if ($whiteSpace === 'normal') {
+				$words = preg_split('/ /u', $text, 0, PREG_SPLIT_NO_EMPTY);
+				$count = count($words);
+				if ($count) {
+					foreach ($words as $index => $word) {
+						$this->createText($word);
+						if ($index + 1 !== $count) {
+							$this->createText(' ', true);
+						}
+					}
+				} else {
+					$this->createText(' ', true);
+				}
+			} elseif ($whiteSpace === 'nowrap') {
+				$this->createText($text, true);
+			}
+		}
+		return $this;
 	}
 
 	/**

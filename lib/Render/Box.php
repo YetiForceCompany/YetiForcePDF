@@ -29,10 +29,6 @@ class Box extends \YetiForcePDF\Base
 	 */
 	protected $id;
 	/**
-	 * @var \DOMElement
-	 */
-	protected $domTree;
-	/**
 	 * @var Box
 	 */
 	protected $parent;
@@ -60,10 +56,6 @@ class Box extends \YetiForcePDF\Base
 	 * @var Offset
 	 */
 	protected $offset;
-	/**
-	 * @var string
-	 */
-	protected $text;
 	/**
 	 * @var bool
 	 */
@@ -216,42 +208,6 @@ class Box extends \YetiForcePDF\Base
 	public function getStyle()
 	{
 		return $this->style;
-	}
-
-	/**
-	 * Create and append text box (text node) element
-	 * @param string   $text
-	 * @param Box|null $insertBefore
-	 * @return TextBox|null
-	 */
-	public function createTextBox(string $text, Box $insertBefore = null)
-	{
-		if (!$this instanceof LineBox && !$this instanceof TextBox) {
-			$style = (new Style())->setDocument($this->document)->init();
-			$style->setRule('display', 'inline');
-			$box = (new TextBox())
-				->setDocument($this->document)
-				->setStyle($style)
-				->setText($text)
-				->init();
-			if ($insertBefore) {
-				$this->insertBefore($box, $insertBefore);
-			} else {
-				$this->appendChild($box);
-			}
-			return $box;
-		}
-		if ($this instanceof LineBox) {
-			$box = $this->getParent()->createTextBox($text);
-			$this->getParent()->removeChild($box);
-			if ($insertBefore) {
-				$this->insertBefore($box, $insertBefore);
-			} else {
-				$this->appendChild($box);
-			}
-			return $box;
-		}
-		throw new \InvalidArgumentException('Cannot create child element inside text node.');
 	}
 
 	/**
@@ -435,6 +391,40 @@ class Box extends \YetiForcePDF\Base
 	public function getOffset(): Offset
 	{
 		return $this->offset;
+	}
+
+	/**
+	 * Get text content from current and all nested boxes
+	 * @return string
+	 */
+	public function getTextContent()
+	{
+		$textContent = '';
+		$allChildren = [];
+		$this->getAllChildren($allChildren);
+		foreach ($allChildren as $box) {
+			if ($box instanceof TextBox) {
+				$textContent .= $box->getText();
+			}
+		}
+		return $textContent;
+	}
+
+	/**
+	 * Get first child text box
+	 * @return \YetiForcePDF\Render\TextBox|null
+	 */
+	public function getFirstTextBox()
+	{
+		if ($this instanceof TextBox) {
+			return $this;
+		}
+		foreach ($this->getChildren() as $child) {
+			if ($child instanceof TextBox) {
+				return $child;
+			}
+			return $child->getFirstTextBox();
+		}
 	}
 
 	/**

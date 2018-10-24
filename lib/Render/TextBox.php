@@ -107,7 +107,6 @@ class TextBox extends ElementBox implements BoxInterface
 
 	public function __clone()
 	{
-		$this->element = clone $this->element;
 		$this->style = clone $this->style;
 		$this->offset = clone $this->offset;
 		$this->dimensions = clone $this->dimensions;
@@ -160,6 +159,7 @@ class TextBox extends ElementBox implements BoxInterface
 			'ET',
 			'Q'
 		];
+		$this->drawTextOutline = false;
 		if ($this->drawTextOutline) {
 			$element = array_merge($element, [
 				'q',

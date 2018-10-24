@@ -50,6 +50,24 @@ class ElementBox extends Box
 	}
 
 	/**
+	 * Remove empty lines
+	 * @return $this
+	 */
+	public function removeEmptyLines()
+	{
+		foreach ($this->getChildren() as $child) {
+			if ($child instanceof LineBox) {
+				if ($child->getTextContent() === '') {
+					$this->removeChild($child);
+				}
+			} else {
+				$child->removeEmptyLines();
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * Build tree
 	 * @param $parentBlock
 	 * @return $this
@@ -70,6 +88,7 @@ class ElementBox extends Box
 					->setDocument($this->document)
 					->setDOMElement($childDomElement)
 					->init();
+				// for now only basic style is used - from current element only (with defaults)
 				$style = (new \YetiForcePDF\Style\Style())
 					->setDocument($this->document)
 					->setElement($element)
@@ -93,6 +112,7 @@ class ElementBox extends Box
 				}
 			}
 		}
+		$this->removeEmptyLines();
 		return $this;
 	}
 }
