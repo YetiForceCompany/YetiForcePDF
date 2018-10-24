@@ -74,11 +74,11 @@ class Document
 	protected $htmlParser;
 	/**
 	 * Fonts data
-	 * @var \FontLib\Font[]
+	 * @var array
 	 */
 	protected $fontsData = [];
 	/**
-	 * @var \YetiForcePDF\Objects\Font[]
+	 * @var array
 	 */
 	protected $fontInstances = [];
 	/**
@@ -168,25 +168,29 @@ class Document
 
 	/**
 	 * Set font
-	 * @param string                     $fontName
+	 * @param string                     $family
+	 * @param string                     $weight
+	 * @param string                     $style
 	 * @param \YetiForcePDF\Objects\Font $fontInstance
 	 * @return $this
 	 */
-	public function setFontInstance(string $fontName, \YetiForcePDF\Objects\Font $fontInstance)
+	public function setFontInstance(string $family, string $weight, string $style, \YetiForcePDF\Objects\Font $fontInstance)
 	{
-		$this->fontInstances[$fontName] = $fontInstance;
+		$this->fontInstances[$family][$weight][$style] = $fontInstance;
 		return $this;
 	}
 
 	/**
 	 * Get font instance
-	 * @param $fontName
+	 * @param string $family
+	 * @param string $weight
+	 * @param string $style
 	 * @return null|\YetiForcePDF\Objects\Font
 	 */
-	public function getFontInstance(string $fontName)
+	public function getFontInstance(string $family, string $weight, string $style)
 	{
-		if (!empty($this->fontInstances[$fontName])) {
-			return $this->fontInstances[$fontName];
+		if (!empty($this->fontInstances[$family][$weight][$style])) {
+			return $this->fontInstances[$family][$weight][$style];
 		}
 		return null;
 	}
@@ -197,19 +201,29 @@ class Document
 	 */
 	public function getAllFontInstances()
 	{
-		return $this->fontInstances;
+		$instances = [];
+		foreach ($this->fontInstances as $family) {
+			foreach ($family as $weight) {
+				foreach ($weight as $instance) {
+					$instances[] = $instance;
+				}
+			}
+		}
+		return $instances;
 	}
 
 	/**
 	 * Set font information
-	 * @param string                 $fontName
+	 * @param string                 $family
+	 * @param string                 $weight
+	 * @param string                 $style
 	 * @param \FontLib\TrueType\File $font
 	 * @return $this
 	 */
-	public function setFontData(string $fontName, \FontLib\TrueType\File $font)
+	public function setFontData(string $family, string $weight, string $style, \FontLib\TrueType\File $font)
 	{
-		if (empty($this->fontsData[$fontName])) {
-			$this->fontsData[$fontName] = $font;
+		if (empty($this->fontsData[$family][$weight][$style])) {
+			$this->fontsData[$family][$weight][$style] = $font;
 			return $this;
 		}
 		return $this;
@@ -217,13 +231,15 @@ class Document
 
 	/**
 	 * Get font data
-	 * @param string $fontName
+	 * @param string $family
+	 * @param string $weight
+	 * @param string $style
 	 * @return \FontLib\Font|null
 	 */
-	public function getFontData(string $fontName)
+	public function getFontData(string $family, string $weight, string $style)
 	{
-		if (!empty($this->fontsData[$fontName])) {
-			return $this->fontsData[$fontName];
+		if (!empty($this->fontsData[$family][$weight][$style])) {
+			return $this->fontsData[$family][$weight][$style];
 		}
 		return null;
 	}

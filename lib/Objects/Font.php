@@ -17,187 +17,221 @@ namespace YetiForcePDF\Objects;
  */
 class Font extends \YetiForcePDF\Objects\Resource
 {
-	protected $fontDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fonts' . DIRECTORY_SEPARATOR;
 	protected $fontFiles = [
-		'NotoSerif-SemiBoldItalic' => 'NotoSerif-SemiBoldItalic.ttf',
-		'NotoSans-ExtraCondensedExtraBold' => 'NotoSans-ExtraCondensedExtraBold.ttf',
-		'NotoSans-CondensedExtraBold' => 'NotoSans-CondensedExtraBold.ttf',
-		'NotoSans-SemiCondensedMediumItalic' => 'NotoSans-SemiCondensedMediumItalic.ttf',
-		'NotoSans-SemiBoldItalic' => 'NotoSans-SemiBoldItalic.ttf',
-		'NotoMono-Regular' => 'NotoMono-Regular.ttf',
-		'NotoSans-ThinItalic' => 'NotoSans-ThinItalic.ttf',
-		'NotoSans-Thin' => 'NotoSans-Thin.ttf',
-		'NotoSans-SemiCondensedThinItalic' => 'NotoSans-SemiCondensedThinItalic.ttf',
-		'NotoSans-SemiCondensedThin' => 'NotoSans-SemiCondensedThin.ttf',
-		'NotoSans-SemiCondensedSemiBoldItalic' => 'NotoSans-SemiCondensedSemiBoldItalic.ttf',
-		'NotoSans-SemiCondensedSemiBold' => 'NotoSans-SemiCondensedSemiBold.ttf',
-		'NotoSans-SemiCondensedMedium' => 'NotoSans-SemiCondensedMedium.ttf',
-		'NotoSans-SemiCondensedLightItalic' => 'NotoSans-SemiCondensedLightItalic.ttf',
-		'NotoSans-SemiCondensedLight' => 'NotoSans-SemiCondensedLight.ttf',
-		'NotoSans-SemiCondensedItalic' => 'NotoSans-SemiCondensedItalic.ttf',
-		'NotoSans-SemiCondensedExtraLightItalic' => 'NotoSans-SemiCondensedExtraLightItalic.ttf',
-		'NotoSans-SemiCondensedExtraLight' => 'NotoSans-SemiCondensedExtraLight.ttf',
-		'NotoSans-SemiCondensedExtraBoldItalic' => 'NotoSans-SemiCondensedExtraBoldItalic.ttf',
-		'NotoSans-SemiCondensedExtraBold' => 'NotoSans-SemiCondensedExtraBold.ttf',
-		'NotoSans-SemiCondensedBoldItalic' => 'NotoSans-SemiCondensedBoldItalic.ttf',
-		'NotoSans-SemiCondensedBold' => 'NotoSans-SemiCondensedBold.ttf',
-		'NotoSans-SemiCondensedBlackItalic' => 'NotoSans-SemiCondensedBlackItalic.ttf',
-		'NotoSans-SemiCondensedBlack' => 'NotoSans-SemiCondensedBlack.ttf',
-		'NotoSans-SemiCondensed' => 'NotoSans-SemiCondensed.ttf',
-		'NotoSans-SemiBold' => 'NotoSans-SemiBold.ttf',
-		'NotoSans-Regular' => 'NotoSans-Regular.ttf',
-		'NotoSans-MediumItalic' => 'NotoSans-MediumItalic.ttf',
-		'NotoSans-Medium' => 'NotoSans-Medium.ttf',
-		'NotoSans-LightItalic' => 'NotoSans-LightItalic.ttf',
-		'NotoSans-Light' => 'NotoSans-Light.ttf',
-		'NotoSans-Italic' => 'NotoSans-Italic.ttf',
-		'NotoSans-ExtraLightItalic' => 'NotoSans-ExtraLightItalic.ttf',
-		'NotoSans-ExtraLight' => 'NotoSans-ExtraLight.ttf',
-		'NotoSans-ExtraCondensedThinItalic' => 'NotoSans-ExtraCondensedThinItalic.ttf',
-		'NotoSans-ExtraCondensedThin' => 'NotoSans-ExtraCondensedThin.ttf',
-		'NotoSans-ExtraCondensedSemiBoldItalic' => 'NotoSans-ExtraCondensedSemiBoldItalic.ttf',
-		'NotoSans-ExtraCondensedSemiBold' => 'NotoSans-ExtraCondensedSemiBold.ttf',
-		'NotoSans-ExtraCondensedMediumItalic' => 'NotoSans-ExtraCondensedMediumItalic.ttf',
-		'NotoSans-ExtraCondensedMedium' => 'NotoSans-ExtraCondensedMedium.ttf',
-		'NotoSans-ExtraCondensedLightItalic' => 'NotoSans-ExtraCondensedLightItalic.ttf',
-		'NotoSans-ExtraCondensedLight' => 'NotoSans-ExtraCondensedLight.ttf',
-		'NotoSans-ExtraCondensedItalic' => 'NotoSans-ExtraCondensedItalic.ttf',
-		'NotoSans-ExtraCondensedExtraLightItalic' => 'NotoSans-ExtraCondensedExtraLightItalic.ttf',
-		'NotoSans-ExtraCondensedExtraLight' => 'NotoSans-ExtraCondensedExtraLight.ttf',
-		'NotoSans-ExtraCondensedExtraBoldItalic' => 'NotoSans-ExtraCondensedExtraBoldItalic.ttf',
-		'NotoSans-ExtraCondensedBoldItalic' => 'NotoSans-ExtraCondensedBoldItalic.ttf',
-		'NotoSans-ExtraCondensedBold' => 'NotoSans-ExtraCondensedBold.ttf',
-		'NotoSans-ExtraCondensedBlackItalic' => 'NotoSans-ExtraCondensedBlackItalic.ttf',
-		'NotoSans-ExtraCondensedBlack' => 'NotoSans-ExtraCondensedBlack.ttf',
-		'NotoSans-ExtraCondensed' => 'NotoSans-ExtraCondensed.ttf',
-		'NotoSans-ExtraBoldItalic' => 'NotoSans-ExtraBoldItalic.ttf',
-		'NotoSans-ExtraBold' => 'NotoSans-ExtraBold.ttf',
-		'NotoSans-CondensedThinItalic' => 'NotoSans-CondensedThinItalic.ttf',
-		'NotoSans-CondensedThin' => 'NotoSans-CondensedThin.ttf',
-		'NotoSans-CondensedSemiBoldItalic' => 'NotoSans-CondensedSemiBoldItalic.ttf',
-		'NotoSans-CondensedSemiBold' => 'NotoSans-CondensedSemiBold.ttf',
-		'NotoSans-CondensedMediumItalic' => 'NotoSans-CondensedMediumItalic.ttf',
-		'NotoSans-CondensedMedium' => 'NotoSans-CondensedMedium.ttf',
-		'NotoSans-CondensedLightItalic' => 'NotoSans-CondensedLightItalic.ttf',
-		'NotoSans-CondensedLight' => 'NotoSans-CondensedLight.ttf',
-		'NotoSans-CondensedItalic' => 'NotoSans-CondensedItalic.ttf',
-		'NotoSans-CondensedExtraLightItalic' => 'NotoSans-CondensedExtraLightItalic.ttf',
-		'NotoSans-CondensedExtraLight' => 'NotoSans-CondensedExtraLight.ttf',
-		'NotoSans-CondensedExtraBoldItalic' => 'NotoSans-CondensedExtraBoldItalic.ttf',
-		'NotoSans-CondensedBoldItalic' => 'NotoSans-CondensedBoldItalic.ttf',
-		'NotoSans-CondensedBold' => 'NotoSans-CondensedBold.ttf',
-		'NotoSans-CondensedBlackItalic' => 'NotoSans-CondensedBlackItalic.ttf',
-		'NotoSans-CondensedBlack' => 'NotoSans-CondensedBlack.ttf',
-		'NotoSans-Condensed' => 'NotoSans-Condensed.ttf',
-		'NotoSans-BoldItalic' => 'NotoSans-BoldItalic.ttf',
-		'NotoSans-Bold' => 'NotoSans-Bold.ttf',
-		'NotoSans-BlackItalic' => 'NotoSans-BlackItalic.ttf',
-		'NotoSans-Black' => 'NotoSans-Black.ttf',
-		'NotoSerif-ThinItalic' => 'NotoSerif-ThinItalic.ttf',
-		'NotoSerif-Thin' => 'NotoSerif-Thin.ttf',
-		'NotoSerif-SemiCondensedThinItalic' => 'NotoSerif-SemiCondensedThinItalic.ttf',
-		'NotoSerif-SemiCondensedThin' => 'NotoSerif-SemiCondensedThin.ttf',
-		'NotoSerif-SemiCondensedSemiBoldItalic' => 'NotoSerif-SemiCondensedSemiBoldItalic.ttf',
-		'NotoSerif-SemiCondensedSemiBold' => 'NotoSerif-SemiCondensedSemiBold.ttf',
-		'NotoSerif-SemiCondensedMediumItalic' => 'NotoSerif-SemiCondensedMediumItalic.ttf',
-		'NotoSerif-SemiCondensedMedium' => 'NotoSerif-SemiCondensedMedium.ttf',
-		'NotoSerif-SemiCondensedLightItalic' => 'NotoSerif-SemiCondensedLightItalic.ttf',
-		'NotoSerif-SemiCondensedLight' => 'NotoSerif-SemiCondensedLight.ttf',
-		'NotoSerif-SemiCondensedItalic' => 'NotoSerif-SemiCondensedItalic.ttf',
-		'NotoSerif-SemiCondensedExtraLightItalic' => 'NotoSerif-SemiCondensedExtraLightItalic.ttf',
-		'NotoSerif-SemiCondensedExtraLight' => 'NotoSerif-SemiCondensedExtraLight.ttf',
-		'NotoSerif-SemiCondensedExtraBoldItalic' => 'NotoSerif-SemiCondensedExtraBoldItalic.ttf',
-		'NotoSerif-SemiCondensedExtraBold' => 'NotoSerif-SemiCondensedExtraBold.ttf',
-		'NotoSerif-SemiCondensedBoldItalic' => 'NotoSerif-SemiCondensedBoldItalic.ttf',
-		'NotoSerif-SemiCondensedBold' => 'NotoSerif-SemiCondensedBold.ttf',
-		'NotoSerif-SemiCondensedBlackItalic' => 'NotoSerif-SemiCondensedBlackItalic.ttf',
-		'NotoSerif-SemiCondensedBlack' => 'NotoSerif-SemiCondensedBlack.ttf',
-		'NotoSerif-SemiCondensed' => 'NotoSerif-SemiCondensed.ttf',
-		'NotoSerif-SemiBold' => 'NotoSerif-SemiBold.ttf',
-		'NotoSerif-Regular' => 'NotoSerif-Regular.ttf',
-		'NotoSerif-MediumItalic' => 'NotoSerif-MediumItalic.ttf',
-		'NotoSerif-Medium' => 'NotoSerif-Medium.ttf',
-		'NotoSerif-LightItalic' => 'NotoSerif-LightItalic.ttf',
-		'NotoSerif-Light' => 'NotoSerif-Light.ttf',
-		'NotoSerif-Italic' => 'NotoSerif-Italic.ttf',
-		'NotoSerif-ExtraLightItalic' => 'NotoSerif-ExtraLightItalic.ttf',
-		'NotoSerif-ExtraLight' => 'NotoSerif-ExtraLight.ttf',
-		'NotoSerif-ExtraCondensedThinItalic' => 'NotoSerif-ExtraCondensedThinItalic.ttf',
-		'NotoSerif-ExtraCondensedThin' => 'NotoSerif-ExtraCondensedThin.ttf',
-		'NotoSerif-ExtraCondensedSemiBoldItalic' => 'NotoSerif-ExtraCondensedSemiBoldItalic.ttf',
-		'NotoSerif-ExtraCondensedSemiBold' => 'NotoSerif-ExtraCondensedSemiBold.ttf',
-		'NotoSerif-ExtraCondensedMediumItalic' => 'NotoSerif-ExtraCondensedMediumItalic.ttf',
-		'NotoSerif-ExtraCondensedMedium' => 'NotoSerif-ExtraCondensedMedium.ttf',
-		'NotoSerif-ExtraCondensedLightItalic' => 'NotoSerif-ExtraCondensedLightItalic.ttf',
-		'NotoSerif-ExtraCondensedLight' => 'NotoSerif-ExtraCondensedLight.ttf',
-		'NotoSerif-ExtraCondensedItalic' => 'NotoSerif-ExtraCondensedItalic.ttf',
-		'NotoSerif-ExtraCondensedExtraLightItalic' => 'NotoSerif-ExtraCondensedExtraLightItalic.ttf',
-		'NotoSerif-ExtraCondensedExtraLight' => 'NotoSerif-ExtraCondensedExtraLight.ttf',
-		'NotoSerif-ExtraCondensedExtraBoldItalic' => 'NotoSerif-ExtraCondensedExtraBoldItalic.ttf',
-		'NotoSerif-ExtraCondensedExtraBold' => 'NotoSerif-ExtraCondensedExtraBold.ttf',
-		'NotoSerif-ExtraCondensedBoldItalic' => 'NotoSerif-ExtraCondensedBoldItalic.ttf',
-		'NotoSerif-ExtraCondensedBold' => 'NotoSerif-ExtraCondensedBold.ttf',
-		'NotoSerif-ExtraCondensedBlackItalic' => 'NotoSerif-ExtraCondensedBlackItalic.ttf',
-		'NotoSerif-ExtraCondensedBlack' => 'NotoSerif-ExtraCondensedBlack.ttf',
-		'NotoSerif-ExtraCondensed' => 'NotoSerif-ExtraCondensed.ttf',
-		'NotoSerif-ExtraBoldItalic' => 'NotoSerif-ExtraBoldItalic.ttf',
-		'NotoSerif-ExtraBold' => 'NotoSerif-ExtraBold.ttf',
-		'NotoSerif-CondensedThinItalic' => 'NotoSerif-CondensedThinItalic.ttf',
-		'NotoSerif-CondensedThin' => 'NotoSerif-CondensedThin.ttf',
-		'NotoSerif-CondensedSemiBoldItalic' => 'NotoSerif-CondensedSemiBoldItalic.ttf',
-		'NotoSerif-CondensedSemiBold' => 'NotoSerif-CondensedSemiBold.ttf',
-		'NotoSerif-CondensedMediumItalic' => 'NotoSerif-CondensedMediumItalic.ttf',
-		'NotoSerif-CondensedMedium' => 'NotoSerif-CondensedMedium.ttf',
-		'NotoSerif-CondensedLightItalic' => 'NotoSerif-CondensedLightItalic.ttf',
-		'NotoSerif-CondensedLight' => 'NotoSerif-CondensedLight.ttf',
-		'NotoSerif-CondensedItalic' => 'NotoSerif-CondensedItalic.ttf',
-		'NotoSerif-CondensedExtraLightItalic' => 'NotoSerif-CondensedExtraLightItalic.ttf',
-		'NotoSerif-CondensedExtraLight' => 'NotoSerif-CondensedExtraLight.ttf',
-		'NotoSerif-CondensedExtraBoldItalic' => 'NotoSerif-CondensedExtraBoldItalic.ttf',
-		'NotoSerif-CondensedExtraBold' => 'NotoSerif-CondensedExtraBold.ttf',
-		'NotoSerif-CondensedBoldItalic' => 'NotoSerif-CondensedBoldItalic.ttf',
-		'NotoSerif-CondensedBold' => 'NotoSerif-CondensedBold.ttf',
-		'NotoSerif-CondensedBlackItalic' => 'NotoSerif-CondensedBlackItalic.ttf',
-		'NotoSerif-CondensedBlack' => 'NotoSerif-CondensedBlack.ttf',
-		'NotoSerif-Condensed' => 'NotoSerif-Condensed.ttf',
-		'NotoSerif-BoldItalic' => 'NotoSerif-BoldItalic.ttf',
-		'NotoSerif-Bold' => 'NotoSerif-Bold.ttf',
-		'NotoSerif-BlackItalic' => 'NotoSerif-BlackItalic.ttf',
-		'NotoSerif-Black' => 'NotoSerif-Black.ttf',
-		'SourceCodePro-Bold' => 'SourceCodePro-Bold.ttf',
-		'SourceSerifPro-Bold' => 'SourceSerifPro-Bold.ttf',
-		'SourceSerifPro-Semibold' => 'SourceSerifPro-Semibold.ttf',
-		'SourceSerifPro-Regular' => 'SourceSerifPro-Regular.ttf',
-		'SourceSansPro-BlackItalic' => 'SourceSansPro-BlackItalic.ttf',
-		'SourceSansPro-Black' => 'SourceSansPro-Black.ttf',
-		'SourceSansPro-BoldItalic' => 'SourceSansPro-BoldItalic.ttf',
-		'SourceSansPro-Bold' => 'SourceSansPro-Bold.ttf',
-		'SourceSansPro-SemiBoldItalic' => 'SourceSansPro-SemiBoldItalic.ttf',
-		'SourceSansPro-SemiBold' => 'SourceSansPro-SemiBold.ttf',
-		'SourceSansPro-Italic' => 'SourceSansPro-Italic.ttf',
-		'SourceSansPro-Regular' => 'SourceSansPro-Regular.ttf',
-		'SourceSansPro-LightItalic' => 'SourceSansPro-LightItalic.ttf',
-		'SourceSansPro-Light' => 'SourceSansPro-Light.ttf',
-		'SourceSansPro-ExtraLightItalic' => 'SourceSansPro-ExtraLightItalic.ttf',
-		'SourceSansPro-ExtraLight' => 'SourceSansPro-ExtraLight.ttf',
-		'SourceCodePro-Black' => 'SourceCodePro-Black.ttf',
-		'SourceCodePro-Semibold' => 'SourceCodePro-Semibold.ttf',
-		'SourceCodePro-Medium' => 'SourceCodePro-Medium.ttf',
-		'SourceCodePro-Regular' => 'SourceCodePro-Regular.ttf',
-		'SourceCodePro-Light' => 'SourceCodePro-Light.ttf',
-		'SourceCodePro-ExtraLight' => 'SourceCodePro-ExtraLight.ttf',
-		'PT_Serif-BoldItalic' => 'PT_Serif-BoldItalic.ttf',
-		'PT_Serif-Bold' => 'PT_Serif-Bold.ttf',
-		'PT_Serif-Italic' => 'PT_Serif-Italic.ttf',
-		'PT_Serif-Regular' => 'PT_Serif-Regular.ttf',
-		'PT_Sans-Narrow-Bold' => 'PT_Sans-Narrow-Bold.ttf',
-		'PT_Sans-Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
-		'PT_Sans-BoldItalic' => 'PT_Sans-BoldItalic.ttf',
-		'PT_Sans-Bold' => 'PT_Sans-Bold.ttf',
-		'PT_Sans-Italic' => 'PT_Sans-Italic.ttf',
-		'PT_Sans-Regular' => 'PT_Sans-Regular.ttf',
-		'PT_Mono' => 'PT_Mono.ttf',
+
+		'NotoSansCondensed' => [
+			'Thin' => 'NotoSans-CondensedThin.ttf',
+			'ThinItalic' => 'NotoSans-CondensedThinItalic.ttf',
+			'ExtraLight' => 'NotoSans-CondensedExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSans-CondensedExtraLightItalic.ttf',
+			'Light' => 'NotoSans-CondensedLight.ttf',
+			'LightItalic' => 'NotoSans-CondensedLightItalic.ttf',
+			'Regular' => 'NotoSans-Condensed.ttf',
+			'Italic' => 'NotoSans-CondensedItalic.ttf',
+			'Medium' => 'NotoSans-CondensedMedium.ttf',
+			'MediumItalic' => 'NotoSans-CondensedMediumItalic.ttf',
+			'SemiBold' => 'NotoSans-CondensedSemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSans-CondensedSemiBoldItalic.ttf',
+			'Bold' => 'NotoSans-CondensedBold.ttf',
+			'BoldItalic' => 'NotoSans-CondensedBoldItalic.ttf',
+			'ExtraBold' => 'NotoSans-CondensedExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSans-CondensedExtraBoldItalic.ttf',
+			'Black' => 'NotoSans-CondensedBlack.ttf',
+			'BlackItalic' => 'NotoSans-CondensedBlackItalic.ttf',
+		],
+		'NotoSansSemiCondensed' => [
+			'Thin' => 'NotoSans-SemiCondensedThin.ttf',
+			'ThinItalic' => 'NotoSans-SemiCondensedThinItalic.ttf',
+			'ExtraLight' => 'NotoSans-SemiCondensedExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSans-SemiCondensedExtraLightItalic.ttf',
+			'Light' => 'NotoSans-SemiCondensedLight.ttf',
+			'LightItalic' => 'NotoSans-SemiCondensedLightItalic.ttf',
+			'Regular' => 'NotoSans-SemiCondensed.ttf',
+			'Italic' => 'NotoSans-SemiCondensedItalic.ttf',
+			'Medium' => 'NotoSans-SemiCondensedMedium.ttf',
+			'MediumItalic' => 'NotoSans-SemiCondensedMediumItalic.ttf',
+			'SemiBold' => 'NotoSans-SemiCondensedSemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSans-SemiCondensedSemiBoldItalic.ttf',
+			'Bold' => 'NotoSans-SemiCondensedBold.ttf',
+			'BoldItalic' => 'NotoSans-SemiCondensedBoldItalic.ttf',
+			'ExtraBold' => 'NotoSans-SemiCondensedExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSans-SemiCondensedExtraBoldItalic.ttf',
+			'Black' => 'NotoSans-SemiCondensedBlack.ttf',
+			'BlackItalic' => 'NotoSans-SemiCondensedBlackItalic.ttf',
+		],
+		'NotoSansExtraCondensed' => [
+			'Thin' => 'NotoSans-ExtraCondensedThin.ttf',
+			'ThinItalic' => 'NotoSans-ExtraCondensedThinItalic.ttf',
+			'ExtraLight' => 'NotoSans-ExtraCondensedExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSans-ExtraCondensedExtraLightItalic.ttf',
+			'Light' => 'NotoSans-ExtraCondensedLight.ttf',
+			'LightItalic' => 'NotoSans-ExtraCondensedLightItalic.ttf',
+			'Regular' => 'NotoSans-ExtraCondensed.ttf',
+			'Italic' => 'NotoSans-ExtraCondensedItalic.ttf',
+			'Medium' => 'NotoSans-ExtraCondensedMedium.ttf',
+			'MediumItalic' => 'NotoSans-ExtraCondensedMediumItalic.ttf',
+			'SemiBold' => 'NotoSans-ExtraCondensedSemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSans-ExtraCondensedSemiBoldItalic.ttf',
+			'Bold' => 'NotoSans-ExtraCondensedBold.ttf',
+			'BoldItalic' => 'NotoSans-ExtraCondensedBoldItalic.ttf',
+			'ExtraBold' => 'NotoSans-ExtraCondensedExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSans-ExtraCondensedExtraBoldItalic.ttf',
+			'Black' => 'NotoSans-ExtraCondensedBlack.ttf',
+			'BlackItalic' => 'NotoSans-ExtraCondensedBlackItalic.ttf',
+		],
+		'NotoSans' => [
+			'Thin' => 'NotoSans-Thin.ttf',
+			'ThinItalic' => 'NotoSans-ThinItalic.ttf',
+			'ExtraLight' => 'NotoSans-ExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSans-ExtraLightItalic.ttf',
+			'Light' => 'NotoSans-Light.ttf',
+			'LightItalic' => 'NotoSans-LightItalic.ttf',
+			'Regular' => 'NotoMono-Regular.ttf',
+			'Italic' => 'NotoSans-Italic.ttf',
+			'Medium' => 'NotoSans-Medium.ttf',
+			'MediumItalic' => 'NotoSans-MediumItalic.ttf',
+			'SemiBold' => 'NotoSans-SemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSans-SemiBoldItalic.ttf',
+			'Bold' => 'NotoSans-Bold.ttf',
+			'BoldItalic' => 'NotoSans-BoldItalic.ttf',
+			'ExtraBold' => 'NotoSans-ExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSans-ExtraBoldItalic.ttf',
+			'Black' => 'NotoSans-Black.ttf',
+			'BlackItalic' => 'NotoSans-BlackItalic.ttf',
+		],
+
+		'NotoSerifSemiCondensed' => [
+			'Thin' => 'NotoSerif-SemiCondensedThin.ttf',
+			'ThinItalic' => 'NotoSerif-SemiCondensedThinItalic.ttf',
+			'ExtraLight' => 'NotoSerif-SemiCondensedExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSerif-SemiCondensedExtraLightItalic.ttf',
+			'Light' => 'NotoSerif-SemiCondensedLight.ttf',
+			'LightItalic' => 'NotoSerif-SemiCondensedLightItalic.ttf',
+			'Regular' => 'NotoSerif-SemiCondensed.ttf',
+			'Italic' => 'NotoSerif-SemiCondensedItalic.ttf',
+			'Medium' => 'NotoSerif-SemiCondensedMedium.ttf',
+			'MediumItalic' => 'NotoSerif-SemiCondensedMediumItalic.ttf',
+			'SemiBold' => 'NotoSerif-SemiCondensedSemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSerif-SemiCondensedSemiBoldItalic.ttf',
+			'Bold' => 'NotoSerif-SemiCondensedBold.ttf',
+			'BoldItalic' => 'NotoSerif-SemiCondensedBoldItalic.ttf',
+			'ExtraBold' => 'NotoSerif-SemiCondensedExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSerif-SemiCondensedExtraBoldItalic.ttf',
+			'Black' => 'NotoSerif-SemiCondensedBlack.ttf',
+			'BlackItalic' => 'NotoSerif-SemiCondensedBlackItalic.ttf',
+		],
+		'NotoSerifExtraCondensed' => [
+			'Thin' => 'NotoSerif-ExtraCondensedThin.ttf',
+			'ThinItalic' => 'NotoSerif-ExtraCondensedThinItalic.ttf',
+			'ExtraLight' => 'NotoSerif-ExtraCondensedExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSerif-ExtraCondensedExtraLightItalic.ttf',
+			'Light' => 'NotoSerif-ExtraCondensedLight.ttf',
+			'LightItalic' => 'NotoSerif-ExtraCondensedLightItalic.ttf',
+			'Regular' => 'NotoSerif-ExtraCondensed.ttf',
+			'Italic' => 'NotoSerif-ExtraCondensedItalic.ttf',
+			'Medium' => 'NotoSerif-ExtraCondensedMedium.ttf',
+			'MediumItalic' => 'NotoSerif-ExtraCondensedMediumItalic.ttf',
+			'SemiBold' => 'NotoSerif-ExtraCondensedSemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSerif-ExtraCondensedSemiBoldItalic.ttf',
+			'Bold' => 'NotoSerif-ExtraCondensedBold.ttf',
+			'BoldItalic' => 'NotoSerif-ExtraCondensedBoldItalic.ttf',
+			'ExtraBold' => 'NotoSerif-ExtraCondensedExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSerif-ExtraCondensedExtraBoldItalic.ttf',
+			'Black' => 'NotoSerif-ExtraCondensedBlack.ttf',
+			'BlackItalic' => 'NotoSerif-ExtraCondensedBlackItalic.ttf',
+		],
+		'NotoSerifCondensed' => [
+			'Thin' => 'NotoSerif-CondensedThin.ttf',
+			'ThinItalic' => 'NotoSerif-CondensedThinItalic.ttf',
+			'ExtraLight' => 'NotoSerif-CondensedExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSerif-CondensedExtraLightItalic.ttf',
+			'Light' => 'NotoSerif-CondensedLight.ttf',
+			'LightItalic' => 'NotoSerif-CondensedLightItalic.ttf',
+			'Regular' => 'NotoSerif-Condensed.ttf',
+			'Italic' => 'NotoSerif-CondensedItalic.ttf',
+			'Medium' => 'NotoSerif-CondensedMedium.ttf',
+			'MediumItalic' => 'NotoSerif-CondensedMediumItalic.ttf',
+			'SemiBold' => 'NotoSerif-CondensedSemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSerif-CondensedSemiBoldItalic.ttf',
+			'Bold' => 'NotoSerif-CondensedBold.ttf',
+			'BoldItalic' => 'NotoSerif-CondensedBoldItalic.ttf',
+			'ExtraBold' => 'NotoSerif-CondensedExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSerif-CondensedExtraBoldItalic.ttf',
+			'Black' => 'NotoSerif-CondensedBlack.ttf',
+			'BlackItalic' => 'NotoSerif-CondensedBlackItalic.ttf',
+		],
+		'NotoSerif' => [
+			'Thin' => 'NotoSerif-Thin.ttf',
+			'ThinItalic' => 'NotoSerif-ThinItalic.ttf',
+			'ExtraLight' => 'NotoSerif-ExtraLight.ttf',
+			'ExtraLightItalic' => 'NotoSerif-ExtraLightItalic.ttf',
+			'Light' => 'NotoSerif-Light.ttf',
+			'LightItalic' => 'NotoSerif-LightItalic.ttf',
+			'Regular' => 'NotoSerif-Regular.ttf',
+			'Italic' => 'NotoSerif-Italic.ttf',
+			'Medium' => 'NotoSerif-Medium.ttf',
+			'MediumItalic' => 'NotoSerif-MediumItalic.ttf',
+			'SemiBold' => 'NotoSerif-SemiBold.ttf',
+			'SemiBoldItalic' => 'NotoSerif-SemiBoldItalic.ttf',
+			'Bold' => 'NotoSerif-Bold.ttf',
+			'BoldItalic' => 'NotoSerif-BoldItalic.ttf',
+			'ExtraBold' => 'NotoSerif-ExtraBold.ttf',
+			'ExtraBoldItalic' => 'NotoSerif-ExtraBoldItalic.ttf',
+			'Black' => 'NotoSerif-Black.ttf',
+			'BlackItalic' => 'NotoSerif-BlackItalic.ttf',
+		],
+
+		'SourceCodePro' => [
+			'ExtraLight' => 'SourceCodePro-ExtraLight.ttf',
+			'Light' => 'SourceCodePro-Light.ttf',
+			'Regular' => 'SourceCodePro-Regular.ttf',
+			'Medium' => 'SourceCodePro-Medium.ttf',
+			'Semibold' => 'SourceCodePro-Semibold.ttf',
+			'Bold' => 'SourceCodePro-Bold.ttf',
+			'Black' => 'SourceCodePro-Black.ttf',
+		],
+		'SourceSerifPro' => [
+			'Regular' => 'SourceSerifPro-Regular.ttf',
+			'Semibold' => 'SourceSerifPro-Semibold.ttf',
+			'Bold' => 'SourceSerifPro-Bold.ttf',
+		],
+		'SourceSansPro' => [
+			'ExtraLight' => 'SourceSansPro-ExtraLight.ttf',
+			'ExtraLightItalic' => 'SourceSansPro-ExtraLightItalic.ttf',
+			'Light' => 'SourceSansPro-Light.ttf',
+			'LightItalic' => 'SourceSansPro-LightItalic.ttf',
+			'Regular' => 'SourceSansPro-Regular.ttf',
+			'Italic' => 'SourceSansPro-Italic.ttf',
+			'SemiBold' => 'SourceSansPro-SemiBold.ttf',
+			'SemiBoldItalic' => 'SourceSansPro-SemiBoldItalic.ttf',
+			'Bold' => 'SourceSansPro-Bold.ttf',
+			'BoldItalic' => 'SourceSansPro-BoldItalic.ttf',
+			'Black' => 'SourceSansPro-Black.ttf',
+			'BlackItalic' => 'SourceSansPro-BlackItalic.ttf',
+		],
+
+		'PT Serif' => [
+			'Regular' => 'PT_Serif-Regular.ttf',
+			'Italic' => 'PT_Serif-Italic.ttf',
+			'Bold' => 'PT_Serif-Bold.ttf',
+			'BoldItalic' => 'PT_Serif-BoldItalic.ttf',
+		],
+		'PT Sans Narrow' => [
+			'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			'Narrow-Bold' => 'PT_Sans-Narrow-Bold.ttf',
+		],
+		'PT Sans' => [
+			'Regular' => 'PT_Sans-Regular.ttf',
+			'Italic' => 'PT_Sans-Italic.ttf',
+			'Bold' => 'PT_Sans-Bold.ttf',
+			'BoldItalic' => 'PT_Sans-BoldItalic.ttf',
+		],
+
+		'PT_Mono' => [
+			'Regular' => 'PT_Mono.ttf'
+		],
 	];
+	protected $fontDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fonts' . DIRECTORY_SEPARATOR;
 	/**
 	 * Which type of dictionary (Page, Catalog, Font etc...)
 	 * @var string
@@ -212,7 +246,17 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * Base font type aka font family
 	 * @var string
 	 */
-	protected $family = 'NotoSerif-Regular';
+	protected $family = 'NotoSerif';
+	/**
+	 * Font weight
+	 * @var string
+	 */
+	protected $weight = 'normal';
+	/**
+	 * Font style
+	 * @var string
+	 */
+	protected $style = 'normal';
 	/**
 	 * Font number
 	 * @var string
@@ -301,13 +345,13 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function init()
 	{
-		$alreadyExists = $this->document->getFontInstance($this->family);
+		$alreadyExists = $this->document->getFontInstance($this->family, $this->weight, $this->style);
 		if (!$alreadyExists) {
 			parent::init();
-			$this->document->setFontInstance($this->family, $this);
+			$this->document->setFontInstance($this->family, $this->weight, $this->style, $this);
 			$this->fontNumber = 'F' . $this->document->getActualFontId();
 			$this->fontData = $this->loadFontData();
-			$this->document->setFontData($this->family, $this->fontData);
+			$this->document->setFontData($this->family, $this->weight, $this->style, $this->fontData);
 			$this->fontDescriptor = (new \YetiForcePDF\Objects\FontDescriptor())
 				->setDocument($this->document)
 				->setFont($this)
@@ -335,7 +379,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 
 	/**
 	 * Set font name
-	 * @param string $base
+	 * @param string $name
 	 * @return $this
 	 */
 	public function setFamily(string $name)
@@ -351,6 +395,46 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getFamily(): string
 	{
 		return $this->family;
+	}
+
+	/**
+	 * Set font weight
+	 * @param string $weight
+	 * @return $this
+	 */
+	public function setWeight(string $weight)
+	{
+		$this->weight = $weight;
+		return $this;
+	}
+
+	/**
+	 * Get font name
+	 * @return string
+	 */
+	public function getWeight(): string
+	{
+		return $this->weight;
+	}
+
+	/**
+	 * Set font style
+	 * @param string $style
+	 * @return $this
+	 */
+	public function setStyle(string $style)
+	{
+		$this->style = $style;
+		return $this;
+	}
+
+	/**
+	 * Get font style
+	 * @return string
+	 */
+	public function getStyle(): string
+	{
+		return $this->style;
 	}
 
 	/**
@@ -510,6 +594,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getType0Font()
 	{
 		return $this->fontType0;
+	}
+
+	/**
+	 * Get font file name without extension
+	 * @return string
+	 */
+	public function getFontName()
+	{
+		$fontName = $this->family . '-';
+		return $fontName;
 	}
 
 	/**

@@ -99,6 +99,7 @@ class Style extends \YetiForcePDF\Base
 		'font-family' => 'NotoSerif-Regular',
 		'font-size' => '12px',
 		'font-weight' => 'normal',
+		'font-style' => 'normal',
 		'margin-left' => 0,
 		'margin-top' => 0,
 		'margin-right' => 0,
@@ -146,6 +147,7 @@ class Style extends \YetiForcePDF\Base
 		'font-family' => 'NotoSerif-Regular',
 		'font-size' => '12px',
 		'font-weight' => 'normal',
+		'font-style' => 'normal',
 		'margin-left' => 0,
 		'margin-top' => 0,
 		'margin-right' => 0,
@@ -570,7 +572,10 @@ class Style extends \YetiForcePDF\Base
 		}
 		$this->font = (new \YetiForcePDF\Objects\Font())
 			->setDocument($this->document)
-			->setFamily($finalRules['font-family'])->init();
+			->setFamily($finalRules['font-family'])
+			->setWeight($finalRules['font-weight'])
+			->setStyle($finalRules['font-style'])
+			->init();
 		$this->font->setSize($finalRules['font-size'])
 			->init();
 		return $this;
