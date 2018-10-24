@@ -96,7 +96,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	public static $mandatoryRules = [
-		'font-family' => 'NotoSerif-Regular',
+		'font-family' => 'NotoSerif',
 		'font-size' => '12px',
 		'font-weight' => 'normal',
 		'font-style' => 'normal',
@@ -144,7 +144,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	protected $rules = [
-		'font-family' => 'NotoSerif-Regular',
+		'font-family' => 'NotoSerif',
 		'font-size' => '12px',
 		'font-weight' => 'normal',
 		'font-style' => 'normal',
@@ -575,8 +575,7 @@ class Style extends \YetiForcePDF\Base
 			->setFamily($finalRules['font-family'])
 			->setWeight($finalRules['font-weight'])
 			->setStyle($finalRules['font-style'])
-			->init();
-		$this->font->setSize($finalRules['font-size'])
+			->setSize($finalRules['font-size'])
 			->init();
 		return $this;
 	}

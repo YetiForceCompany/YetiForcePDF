@@ -19,6 +19,19 @@ class FontWeight extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
-		return ['font-weight' => strtolower($ruleValue)];
+		$ruleValue = strtolower($ruleValue);
+		if (!in_array($ruleValue, ['100', '200', '300', '400', '500', '600', '700', '800', '900'])) {
+			switch ($ruleValue) {
+				case 'normal':
+					$ruleValue = '400';
+					break;
+				case 'bold':
+					$ruleValue = '700';
+					break;
+				default:
+					$ruleValue = '400';
+			}
+		}
+		return ['font-weight' => $ruleValue];
 	}
 }

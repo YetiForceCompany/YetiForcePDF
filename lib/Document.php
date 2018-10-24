@@ -202,9 +202,9 @@ class Document
 	public function getAllFontInstances()
 	{
 		$instances = [];
-		foreach ($this->fontInstances as $family) {
-			foreach ($family as $weight) {
-				foreach ($weight as $instance) {
+		foreach ($this->fontInstances as $family => $weights) {
+			foreach ($weights as $weight => $styles) {
+				foreach ($styles as $instance) {
 					$instances[] = $instance;
 				}
 			}
@@ -224,7 +224,6 @@ class Document
 	{
 		if (empty($this->fontsData[$family][$weight][$style])) {
 			$this->fontsData[$family][$weight][$style] = $font;
-			return $this;
 		}
 		return $this;
 	}
@@ -242,15 +241,6 @@ class Document
 			return $this->fontsData[$family][$weight][$style];
 		}
 		return null;
-	}
-
-	/**
-	 * Get all fonts data
-	 * @return \FontLib\TrueType\File[]
-	 */
-	public function getAllFontsData()
-	{
-		return $this->fontsData;
 	}
 
 	/**

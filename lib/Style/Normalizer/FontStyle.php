@@ -19,6 +19,10 @@ class FontStyle extends Normalizer
 {
 	public function normalize($ruleValue): array
 	{
-		return ['font-style' => strtolower($ruleValue)];
+		$ruleValue = strtolower($ruleValue);
+		if (!in_array($ruleValue, ['normal', 'italic'])) {
+			$ruleValue = 'normal';
+		}
+		return ['font-style' => $ruleValue];
 	}
 }
