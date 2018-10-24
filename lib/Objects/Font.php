@@ -20,215 +20,543 @@ class Font extends \YetiForcePDF\Objects\Resource
 	protected $fontFiles = [
 
 		'NotoSansCondensed' => [
-			'Thin' => 'NotoSans-CondensedThin.ttf',
-			'ThinItalic' => 'NotoSans-CondensedThinItalic.ttf',
-			'ExtraLight' => 'NotoSans-CondensedExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSans-CondensedExtraLightItalic.ttf',
-			'Light' => 'NotoSans-CondensedLight.ttf',
-			'LightItalic' => 'NotoSans-CondensedLightItalic.ttf',
-			'Regular' => 'NotoSans-Condensed.ttf',
-			'Italic' => 'NotoSans-CondensedItalic.ttf',
-			'Medium' => 'NotoSans-CondensedMedium.ttf',
-			'MediumItalic' => 'NotoSans-CondensedMediumItalic.ttf',
-			'SemiBold' => 'NotoSans-CondensedSemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSans-CondensedSemiBoldItalic.ttf',
-			'Bold' => 'NotoSans-CondensedBold.ttf',
-			'BoldItalic' => 'NotoSans-CondensedBoldItalic.ttf',
-			'ExtraBold' => 'NotoSans-CondensedExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSans-CondensedExtraBoldItalic.ttf',
-			'Black' => 'NotoSans-CondensedBlack.ttf',
-			'BlackItalic' => 'NotoSans-CondensedBlackItalic.ttf',
+			'100' => [
+				'Regular' => 'NotoSans-CondensedThin.ttf',
+				'Italic' => 'NotoSans-CondensedThinItalic.ttf',
+			],
+			'200' => [
+				'Regular' => 'NotoSans-CondensedExtraLight.ttf',
+				'Italic' => 'NotoSans-CondensedExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Regular' => 'NotoSans-CondensedLight.ttf',
+				'Italic' => 'NotoSans-CondensedLightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSans-Condensed.ttf',
+				'Italic' => 'NotoSans-CondensedItalic.ttf',
+			],
+			'500' => [
+				'Regular' => 'NotoSans-CondensedMedium.ttf',
+				'Italic' => 'NotoSans-CondensedMediumItalic.ttf',
+			],
+			'600' => [
+				'Regular' => 'NotoSans-CondensedSemiBold.ttf',
+				'Italic' => 'NotoSans-CondensedSemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Regular' => 'NotoSans-CondensedBold.ttf',
+				'Italic' => 'NotoSans-CondensedBoldItalic.ttf',
+			],
+			'800' => [
+				'Regular' => 'NotoSans-CondensedExtraBold.ttf',
+				'Italic' => 'NotoSans-CondensedExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Regular' => 'NotoSans-CondensedBlack.ttf',
+				'Italic' => 'NotoSans-CondensedBlackItalic.ttf',
+			],
 		],
 		'NotoSansSemiCondensed' => [
-			'Thin' => 'NotoSans-SemiCondensedThin.ttf',
-			'ThinItalic' => 'NotoSans-SemiCondensedThinItalic.ttf',
-			'ExtraLight' => 'NotoSans-SemiCondensedExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSans-SemiCondensedExtraLightItalic.ttf',
-			'Light' => 'NotoSans-SemiCondensedLight.ttf',
-			'LightItalic' => 'NotoSans-SemiCondensedLightItalic.ttf',
-			'Regular' => 'NotoSans-SemiCondensed.ttf',
-			'Italic' => 'NotoSans-SemiCondensedItalic.ttf',
-			'Medium' => 'NotoSans-SemiCondensedMedium.ttf',
-			'MediumItalic' => 'NotoSans-SemiCondensedMediumItalic.ttf',
-			'SemiBold' => 'NotoSans-SemiCondensedSemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSans-SemiCondensedSemiBoldItalic.ttf',
-			'Bold' => 'NotoSans-SemiCondensedBold.ttf',
-			'BoldItalic' => 'NotoSans-SemiCondensedBoldItalic.ttf',
-			'ExtraBold' => 'NotoSans-SemiCondensedExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSans-SemiCondensedExtraBoldItalic.ttf',
-			'Black' => 'NotoSans-SemiCondensedBlack.ttf',
-			'BlackItalic' => 'NotoSans-SemiCondensedBlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSans-SemiCondensedThin.ttf',
+				'ThinItalic' => 'NotoSans-SemiCondensedThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSans-SemiCondensedExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSans-SemiCondensedExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSans-SemiCondensedLight.ttf',
+				'LightItalic' => 'NotoSans-SemiCondensedLightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSans-SemiCondensed.ttf',
+				'Italic' => 'NotoSans-SemiCondensedItalic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSans-SemiCondensedMedium.ttf',
+				'MediumItalic' => 'NotoSans-SemiCondensedMediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSans-SemiCondensedSemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSans-SemiCondensedSemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSans-SemiCondensedBold.ttf',
+				'BoldItalic' => 'NotoSans-SemiCondensedBoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSans-SemiCondensedExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSans-SemiCondensedExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSans-SemiCondensedBlack.ttf',
+				'BlackItalic' => 'NotoSans-SemiCondensedBlackItalic.ttf',
+			],
 		],
 		'NotoSansExtraCondensed' => [
-			'Thin' => 'NotoSans-ExtraCondensedThin.ttf',
-			'ThinItalic' => 'NotoSans-ExtraCondensedThinItalic.ttf',
-			'ExtraLight' => 'NotoSans-ExtraCondensedExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSans-ExtraCondensedExtraLightItalic.ttf',
-			'Light' => 'NotoSans-ExtraCondensedLight.ttf',
-			'LightItalic' => 'NotoSans-ExtraCondensedLightItalic.ttf',
-			'Regular' => 'NotoSans-ExtraCondensed.ttf',
-			'Italic' => 'NotoSans-ExtraCondensedItalic.ttf',
-			'Medium' => 'NotoSans-ExtraCondensedMedium.ttf',
-			'MediumItalic' => 'NotoSans-ExtraCondensedMediumItalic.ttf',
-			'SemiBold' => 'NotoSans-ExtraCondensedSemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSans-ExtraCondensedSemiBoldItalic.ttf',
-			'Bold' => 'NotoSans-ExtraCondensedBold.ttf',
-			'BoldItalic' => 'NotoSans-ExtraCondensedBoldItalic.ttf',
-			'ExtraBold' => 'NotoSans-ExtraCondensedExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSans-ExtraCondensedExtraBoldItalic.ttf',
-			'Black' => 'NotoSans-ExtraCondensedBlack.ttf',
-			'BlackItalic' => 'NotoSans-ExtraCondensedBlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSans-ExtraCondensedThin.ttf',
+				'ThinItalic' => 'NotoSans-ExtraCondensedThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSans-ExtraCondensedExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSans-ExtraCondensedExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSans-ExtraCondensedLight.ttf',
+				'LightItalic' => 'NotoSans-ExtraCondensedLightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSans-ExtraCondensed.ttf',
+				'Italic' => 'NotoSans-ExtraCondensedItalic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSans-ExtraCondensedMedium.ttf',
+				'MediumItalic' => 'NotoSans-ExtraCondensedMediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSans-ExtraCondensedSemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSans-ExtraCondensedSemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSans-ExtraCondensedBold.ttf',
+				'BoldItalic' => 'NotoSans-ExtraCondensedBoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSans-ExtraCondensedExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSans-ExtraCondensedExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSans-ExtraCondensedBlack.ttf',
+				'BlackItalic' => 'NotoSans-ExtraCondensedBlackItalic.ttf',
+			],
 		],
 		'NotoSans' => [
-			'Thin' => 'NotoSans-Thin.ttf',
-			'ThinItalic' => 'NotoSans-ThinItalic.ttf',
-			'ExtraLight' => 'NotoSans-ExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSans-ExtraLightItalic.ttf',
-			'Light' => 'NotoSans-Light.ttf',
-			'LightItalic' => 'NotoSans-LightItalic.ttf',
-			'Regular' => 'NotoMono-Regular.ttf',
-			'Italic' => 'NotoSans-Italic.ttf',
-			'Medium' => 'NotoSans-Medium.ttf',
-			'MediumItalic' => 'NotoSans-MediumItalic.ttf',
-			'SemiBold' => 'NotoSans-SemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSans-SemiBoldItalic.ttf',
-			'Bold' => 'NotoSans-Bold.ttf',
-			'BoldItalic' => 'NotoSans-BoldItalic.ttf',
-			'ExtraBold' => 'NotoSans-ExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSans-ExtraBoldItalic.ttf',
-			'Black' => 'NotoSans-Black.ttf',
-			'BlackItalic' => 'NotoSans-BlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSans-Thin.ttf',
+				'ThinItalic' => 'NotoSans-ThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSans-ExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSans-ExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSans-Light.ttf',
+				'LightItalic' => 'NotoSans-LightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoMono-Regular.ttf',
+				'Italic' => 'NotoSans-Italic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSans-Medium.ttf',
+				'MediumItalic' => 'NotoSans-MediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSans-SemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSans-SemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSans-Bold.ttf',
+				'BoldItalic' => 'NotoSans-BoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSans-ExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSans-ExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSans-Black.ttf',
+				'BlackItalic' => 'NotoSans-BlackItalic.ttf',
+			],
 		],
 
 		'NotoSerifSemiCondensed' => [
-			'Thin' => 'NotoSerif-SemiCondensedThin.ttf',
-			'ThinItalic' => 'NotoSerif-SemiCondensedThinItalic.ttf',
-			'ExtraLight' => 'NotoSerif-SemiCondensedExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSerif-SemiCondensedExtraLightItalic.ttf',
-			'Light' => 'NotoSerif-SemiCondensedLight.ttf',
-			'LightItalic' => 'NotoSerif-SemiCondensedLightItalic.ttf',
-			'Regular' => 'NotoSerif-SemiCondensed.ttf',
-			'Italic' => 'NotoSerif-SemiCondensedItalic.ttf',
-			'Medium' => 'NotoSerif-SemiCondensedMedium.ttf',
-			'MediumItalic' => 'NotoSerif-SemiCondensedMediumItalic.ttf',
-			'SemiBold' => 'NotoSerif-SemiCondensedSemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSerif-SemiCondensedSemiBoldItalic.ttf',
-			'Bold' => 'NotoSerif-SemiCondensedBold.ttf',
-			'BoldItalic' => 'NotoSerif-SemiCondensedBoldItalic.ttf',
-			'ExtraBold' => 'NotoSerif-SemiCondensedExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSerif-SemiCondensedExtraBoldItalic.ttf',
-			'Black' => 'NotoSerif-SemiCondensedBlack.ttf',
-			'BlackItalic' => 'NotoSerif-SemiCondensedBlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSerif-SemiCondensedThin.ttf',
+				'ThinItalic' => 'NotoSerif-SemiCondensedThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSerif-SemiCondensedExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSerif-SemiCondensedExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSerif-SemiCondensedLight.ttf',
+				'LightItalic' => 'NotoSerif-SemiCondensedLightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSerif-SemiCondensed.ttf',
+				'Italic' => 'NotoSerif-SemiCondensedItalic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSerif-SemiCondensedMedium.ttf',
+				'MediumItalic' => 'NotoSerif-SemiCondensedMediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSerif-SemiCondensedSemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSerif-SemiCondensedSemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSerif-SemiCondensedBold.ttf',
+				'BoldItalic' => 'NotoSerif-SemiCondensedBoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSerif-SemiCondensedExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSerif-SemiCondensedExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSerif-SemiCondensedBlack.ttf',
+				'BlackItalic' => 'NotoSerif-SemiCondensedBlackItalic.ttf',
+			],
 		],
 		'NotoSerifExtraCondensed' => [
-			'Thin' => 'NotoSerif-ExtraCondensedThin.ttf',
-			'ThinItalic' => 'NotoSerif-ExtraCondensedThinItalic.ttf',
-			'ExtraLight' => 'NotoSerif-ExtraCondensedExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSerif-ExtraCondensedExtraLightItalic.ttf',
-			'Light' => 'NotoSerif-ExtraCondensedLight.ttf',
-			'LightItalic' => 'NotoSerif-ExtraCondensedLightItalic.ttf',
-			'Regular' => 'NotoSerif-ExtraCondensed.ttf',
-			'Italic' => 'NotoSerif-ExtraCondensedItalic.ttf',
-			'Medium' => 'NotoSerif-ExtraCondensedMedium.ttf',
-			'MediumItalic' => 'NotoSerif-ExtraCondensedMediumItalic.ttf',
-			'SemiBold' => 'NotoSerif-ExtraCondensedSemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSerif-ExtraCondensedSemiBoldItalic.ttf',
-			'Bold' => 'NotoSerif-ExtraCondensedBold.ttf',
-			'BoldItalic' => 'NotoSerif-ExtraCondensedBoldItalic.ttf',
-			'ExtraBold' => 'NotoSerif-ExtraCondensedExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSerif-ExtraCondensedExtraBoldItalic.ttf',
-			'Black' => 'NotoSerif-ExtraCondensedBlack.ttf',
-			'BlackItalic' => 'NotoSerif-ExtraCondensedBlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSerif-ExtraCondensedThin.ttf',
+				'ThinItalic' => 'NotoSerif-ExtraCondensedThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSerif-ExtraCondensedExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSerif-ExtraCondensedExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSerif-ExtraCondensedLight.ttf',
+				'LightItalic' => 'NotoSerif-ExtraCondensedLightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSerif-ExtraCondensed.ttf',
+				'Italic' => 'NotoSerif-ExtraCondensedItalic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSerif-ExtraCondensedMedium.ttf',
+				'MediumItalic' => 'NotoSerif-ExtraCondensedMediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSerif-ExtraCondensedSemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSerif-ExtraCondensedSemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSerif-ExtraCondensedBold.ttf',
+				'BoldItalic' => 'NotoSerif-ExtraCondensedBoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSerif-ExtraCondensedExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSerif-ExtraCondensedExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSerif-ExtraCondensedBlack.ttf',
+				'BlackItalic' => 'NotoSerif-ExtraCondensedBlackItalic.ttf',
+			],
 		],
 		'NotoSerifCondensed' => [
-			'Thin' => 'NotoSerif-CondensedThin.ttf',
-			'ThinItalic' => 'NotoSerif-CondensedThinItalic.ttf',
-			'ExtraLight' => 'NotoSerif-CondensedExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSerif-CondensedExtraLightItalic.ttf',
-			'Light' => 'NotoSerif-CondensedLight.ttf',
-			'LightItalic' => 'NotoSerif-CondensedLightItalic.ttf',
-			'Regular' => 'NotoSerif-Condensed.ttf',
-			'Italic' => 'NotoSerif-CondensedItalic.ttf',
-			'Medium' => 'NotoSerif-CondensedMedium.ttf',
-			'MediumItalic' => 'NotoSerif-CondensedMediumItalic.ttf',
-			'SemiBold' => 'NotoSerif-CondensedSemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSerif-CondensedSemiBoldItalic.ttf',
-			'Bold' => 'NotoSerif-CondensedBold.ttf',
-			'BoldItalic' => 'NotoSerif-CondensedBoldItalic.ttf',
-			'ExtraBold' => 'NotoSerif-CondensedExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSerif-CondensedExtraBoldItalic.ttf',
-			'Black' => 'NotoSerif-CondensedBlack.ttf',
-			'BlackItalic' => 'NotoSerif-CondensedBlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSerif-CondensedThin.ttf',
+				'ThinItalic' => 'NotoSerif-CondensedThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSerif-CondensedExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSerif-CondensedExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSerif-CondensedLight.ttf',
+				'LightItalic' => 'NotoSerif-CondensedLightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSerif-Condensed.ttf',
+				'Italic' => 'NotoSerif-CondensedItalic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSerif-CondensedMedium.ttf',
+				'MediumItalic' => 'NotoSerif-CondensedMediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSerif-CondensedSemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSerif-CondensedSemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSerif-CondensedBold.ttf',
+				'BoldItalic' => 'NotoSerif-CondensedBoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSerif-CondensedExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSerif-CondensedExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSerif-CondensedBlack.ttf',
+				'BlackItalic' => 'NotoSerif-CondensedBlackItalic.ttf',
+			],
 		],
 		'NotoSerif' => [
-			'Thin' => 'NotoSerif-Thin.ttf',
-			'ThinItalic' => 'NotoSerif-ThinItalic.ttf',
-			'ExtraLight' => 'NotoSerif-ExtraLight.ttf',
-			'ExtraLightItalic' => 'NotoSerif-ExtraLightItalic.ttf',
-			'Light' => 'NotoSerif-Light.ttf',
-			'LightItalic' => 'NotoSerif-LightItalic.ttf',
-			'Regular' => 'NotoSerif-Regular.ttf',
-			'Italic' => 'NotoSerif-Italic.ttf',
-			'Medium' => 'NotoSerif-Medium.ttf',
-			'MediumItalic' => 'NotoSerif-MediumItalic.ttf',
-			'SemiBold' => 'NotoSerif-SemiBold.ttf',
-			'SemiBoldItalic' => 'NotoSerif-SemiBoldItalic.ttf',
-			'Bold' => 'NotoSerif-Bold.ttf',
-			'BoldItalic' => 'NotoSerif-BoldItalic.ttf',
-			'ExtraBold' => 'NotoSerif-ExtraBold.ttf',
-			'ExtraBoldItalic' => 'NotoSerif-ExtraBoldItalic.ttf',
-			'Black' => 'NotoSerif-Black.ttf',
-			'BlackItalic' => 'NotoSerif-BlackItalic.ttf',
+			'100' => [
+				'Thin' => 'NotoSerif-Thin.ttf',
+				'ThinItalic' => 'NotoSerif-ThinItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'NotoSerif-ExtraLight.ttf',
+				'ExtraLightItalic' => 'NotoSerif-ExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'NotoSerif-Light.ttf',
+				'LightItalic' => 'NotoSerif-LightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'NotoSerif-Regular.ttf',
+				'Italic' => 'NotoSerif-Italic.ttf',
+			],
+			'500' => [
+				'Medium' => 'NotoSerif-Medium.ttf',
+				'MediumItalic' => 'NotoSerif-MediumItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'NotoSerif-SemiBold.ttf',
+				'SemiBoldItalic' => 'NotoSerif-SemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'NotoSerif-Bold.ttf',
+				'BoldItalic' => 'NotoSerif-BoldItalic.ttf',
+			],
+			'800' => [
+				'ExtraBold' => 'NotoSerif-ExtraBold.ttf',
+				'ExtraBoldItalic' => 'NotoSerif-ExtraBoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'NotoSerif-Black.ttf',
+				'BlackItalic' => 'NotoSerif-BlackItalic.ttf',
+			],
 		],
 
 		'SourceCodePro' => [
-			'ExtraLight' => 'SourceCodePro-ExtraLight.ttf',
-			'Light' => 'SourceCodePro-Light.ttf',
-			'Regular' => 'SourceCodePro-Regular.ttf',
-			'Medium' => 'SourceCodePro-Medium.ttf',
-			'Semibold' => 'SourceCodePro-Semibold.ttf',
-			'Bold' => 'SourceCodePro-Bold.ttf',
-			'Black' => 'SourceCodePro-Black.ttf',
+			'100' => [
+				'ExtraLight' => 'SourceCodePro-ExtraLight.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'SourceCodePro-ExtraLight.ttf',
+			],
+			'300' => [
+				'Light' => 'SourceCodePro-Light.ttf',
+			],
+			'400' => [
+				'Regular' => 'SourceCodePro-Regular.ttf',
+			],
+			'500' => [
+				'Medium' => 'SourceCodePro-Medium.ttf',
+			],
+			'600' => [
+				'Semibold' => 'SourceCodePro-Semibold.ttf',
+			],
+			'700' => [
+				'Bold' => 'SourceCodePro-Bold.ttf',
+			],
+			'800' => [
+				'Bold' => 'SourceCodePro-Bold.ttf',
+			],
+			'900' => [
+				'Black' => 'SourceCodePro-Black.ttf',
+			],
 		],
 		'SourceSerifPro' => [
-			'Regular' => 'SourceSerifPro-Regular.ttf',
-			'Semibold' => 'SourceSerifPro-Semibold.ttf',
-			'Bold' => 'SourceSerifPro-Bold.ttf',
+			'100' => [
+				'Regular' => 'SourceSerifPro-Regular.ttf',
+			],
+			'200' => [
+				'Regular' => 'SourceSerifPro-Regular.ttf',
+			],
+			'300' => [
+				'Regular' => 'SourceSerifPro-Regular.ttf',
+			],
+			'400' => [
+				'Regular' => 'SourceSerifPro-Regular.ttf',
+			],
+			'500' => [
+				'Regular' => 'SourceSerifPro-Regular.ttf',
+			],
+			'600' => [
+				'Semibold' => 'SourceSerifPro-Semibold.ttf',
+			],
+			'700' => [
+				'Bold' => 'SourceSerifPro-Bold.ttf',
+			],
+			'800' => [
+				'Bold' => 'SourceSerifPro-Bold.ttf',
+			],
+			'900' => [
+				'Bold' => 'SourceSerifPro-Bold.ttf',
+			],
 		],
 		'SourceSansPro' => [
-			'ExtraLight' => 'SourceSansPro-ExtraLight.ttf',
-			'ExtraLightItalic' => 'SourceSansPro-ExtraLightItalic.ttf',
-			'Light' => 'SourceSansPro-Light.ttf',
-			'LightItalic' => 'SourceSansPro-LightItalic.ttf',
-			'Regular' => 'SourceSansPro-Regular.ttf',
-			'Italic' => 'SourceSansPro-Italic.ttf',
-			'SemiBold' => 'SourceSansPro-SemiBold.ttf',
-			'SemiBoldItalic' => 'SourceSansPro-SemiBoldItalic.ttf',
-			'Bold' => 'SourceSansPro-Bold.ttf',
-			'BoldItalic' => 'SourceSansPro-BoldItalic.ttf',
-			'Black' => 'SourceSansPro-Black.ttf',
-			'BlackItalic' => 'SourceSansPro-BlackItalic.ttf',
+			'100' => [
+				'ExtraLight' => 'SourceSansPro-ExtraLight.ttf',
+				'ExtraLightItalic' => 'SourceSansPro-ExtraLightItalic.ttf',
+			],
+			'200' => [
+				'ExtraLight' => 'SourceSansPro-ExtraLight.ttf',
+				'ExtraLightItalic' => 'SourceSansPro-ExtraLightItalic.ttf',
+			],
+			'300' => [
+				'Light' => 'SourceSansPro-Light.ttf',
+				'LightItalic' => 'SourceSansPro-LightItalic.ttf',
+			],
+			'400' => [
+				'Regular' => 'SourceSansPro-Regular.ttf',
+				'Italic' => 'SourceSansPro-Italic.ttf',
+			],
+			'500' => [
+				'SemiBold' => 'SourceSansPro-SemiBold.ttf',
+				'SemiBoldItalic' => 'SourceSansPro-SemiBoldItalic.ttf',
+			],
+			'600' => [
+				'SemiBold' => 'SourceSansPro-SemiBold.ttf',
+				'SemiBoldItalic' => 'SourceSansPro-SemiBoldItalic.ttf',
+			],
+			'700' => [
+				'Bold' => 'SourceSansPro-Bold.ttf',
+				'BoldItalic' => 'SourceSansPro-BoldItalic.ttf',
+			],
+			'800' => [
+				'Bold' => 'SourceSansPro-Bold.ttf',
+				'BoldItalic' => 'SourceSansPro-BoldItalic.ttf',
+			],
+			'900' => [
+				'Black' => 'SourceSansPro-Black.ttf',
+				'BlackItalic' => 'SourceSansPro-BlackItalic.ttf',
+			],
 		],
 
 		'PT Serif' => [
-			'Regular' => 'PT_Serif-Regular.ttf',
-			'Italic' => 'PT_Serif-Italic.ttf',
-			'Bold' => 'PT_Serif-Bold.ttf',
-			'BoldItalic' => 'PT_Serif-BoldItalic.ttf',
+			'100' => [
+				'Regular' => 'PT_Serif-Regular.ttf',
+				'Italic' => 'PT_Serif-Italic.ttf',
+			],
+			'200' => [
+				'Regular' => 'PT_Serif-Regular.ttf',
+				'Italic' => 'PT_Serif-Italic.ttf',
+			],
+			'300' => [
+				'Regular' => 'PT_Serif-Regular.ttf',
+				'Italic' => 'PT_Serif-Italic.ttf',
+			],
+			'400' => [
+				'Regular' => 'PT_Serif-Regular.ttf',
+				'Italic' => 'PT_Serif-Italic.ttf',
+			],
+			'500' => [
+				'Regular' => 'PT_Serif-Regular.ttf',
+				'Italic' => 'PT_Serif-Italic.ttf',
+			],
+			'600' => [
+				'Regular' => 'PT_Serif-Regular.ttf',
+				'Italic' => 'PT_Serif-Italic.ttf',
+			],
+			'700' => [
+				'Bold' => 'PT_Serif-Bold.ttf',
+				'BoldItalic' => 'PT_Serif-BoldItalic.ttf',
+			],
+			'800' => [
+				'Bold' => 'PT_Serif-Bold.ttf',
+				'BoldItalic' => 'PT_Serif-BoldItalic.ttf',
+			],
+			'900' => [
+				'Bold' => 'PT_Serif-Bold.ttf',
+				'BoldItalic' => 'PT_Serif-BoldItalic.ttf',
+			],
 		],
 		'PT Sans Narrow' => [
-			'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
-			'Narrow-Bold' => 'PT_Sans-Narrow-Bold.ttf',
+			'100' => [
+				'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			],
+			'200' => [
+				'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			],
+			'300' => [
+				'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			],
+			'400' => [
+				'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			],
+			'500' => [
+				'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			],
+			'600' => [
+				'Narrow-Regular' => 'PT_Sans-Narrow-Regular.ttf',
+			],
+			'700' => [
+				'Narrow-Bold' => 'PT_Sans-Narrow-Bold.ttf',
+			],
+			'800' => [
+				'Narrow-Bold' => 'PT_Sans-Narrow-Bold.ttf',
+			],
+			'900' => [
+				'Narrow-Bold' => 'PT_Sans-Narrow-Bold.ttf',
+			],
+
 		],
 		'PT Sans' => [
-			'Regular' => 'PT_Sans-Regular.ttf',
-			'Italic' => 'PT_Sans-Italic.ttf',
-			'Bold' => 'PT_Sans-Bold.ttf',
-			'BoldItalic' => 'PT_Sans-BoldItalic.ttf',
+			'100' => [
+				'Regular' => 'PT_Sans-Regular.ttf',
+				'Italic' => 'PT_Sans-Italic.ttf',
+			],
+			'200' => [
+				'Regular' => 'PT_Sans-Regular.ttf',
+				'Italic' => 'PT_Sans-Italic.ttf',
+			],
+			'300' => [
+				'Regular' => 'PT_Sans-Regular.ttf',
+				'Italic' => 'PT_Sans-Italic.ttf',
+			],
+			'400' => [
+				'Regular' => 'PT_Sans-Regular.ttf',
+				'Italic' => 'PT_Sans-Italic.ttf',
+			],
+			'500' => [
+				'Regular' => 'PT_Sans-Regular.ttf',
+				'Italic' => 'PT_Sans-Italic.ttf',
+			],
+			'600' => [
+				'Regular' => 'PT_Sans-Regular.ttf',
+				'Italic' => 'PT_Sans-Italic.ttf',
+			],
+			'700' => [
+				'Bold' => 'PT_Sans-Bold.ttf',
+				'BoldItalic' => 'PT_Sans-BoldItalic.ttf',
+			],
+			'800' => [
+				'Bold' => 'PT_Sans-Bold.ttf',
+				'BoldItalic' => 'PT_Sans-BoldItalic.ttf',
+			],
+			'900' => [
+				'Bold' => 'PT_Sans-Bold.ttf',
+				'BoldItalic' => 'PT_Sans-BoldItalic.ttf',
+			],
 		],
 
 		'PT_Mono' => [
-			'Regular' => 'PT_Mono.ttf'
+			'100' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'200' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'300' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'400' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'500' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'600' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'700' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'800' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
+			'900' => [
+				'Regular' => 'PT_Mono.ttf'
+			],
 		],
 	];
 	protected $fontDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fonts' . DIRECTORY_SEPARATOR;
