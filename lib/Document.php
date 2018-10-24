@@ -411,7 +411,7 @@ class Document
 	}
 
 	/**
-	 * Render document content to pdf string
+	 * Layout document content to pdf string
 	 * @return string
 	 */
 	public function render(): string

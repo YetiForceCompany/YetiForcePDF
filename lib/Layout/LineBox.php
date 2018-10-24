@@ -3,20 +3,20 @@ declare(strict_types=1);
 /**
  * LineBox class
  *
- * @package   YetiForcePDF\Render
+ * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render;
+namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Render\Coordinates\Coordinates;
-use \YetiForcePDF\Render\Coordinates\Offset;
-use \YetiForcePDF\Render\Dimensions\BoxDimensions;
+use \YetiForcePDF\Layout\Coordinates\Coordinates;
+use \YetiForcePDF\Layout\Coordinates\Offset;
+use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class LineBox
@@ -29,8 +29,8 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\BlockBox
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+	 * @return \YetiForcePDF\Layout\BlockBox
 	 */
 	public function appendBlock($childDomElement, $element, $style, $parentBlock)
 	{
@@ -42,8 +42,8 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\InlineBlockBox
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+	 * @return \YetiForcePDF\Layout\InlineBlockBox
 	 */
 	public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
 	{
@@ -63,8 +63,8 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
-	 * @return \YetiForcePDF\Render\InlineBox
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+	 * @return \YetiForcePDF\Layout\InlineBox
 	 */
 	public function appendInline($childDomElement, $element, $style, $parentBlock)
 	{
@@ -81,7 +81,7 @@ class LineBox extends Box implements BoxInterface
 
 	/**
 	 * Will this box fit in line? (or need to create new one)
-	 * @param \YetiForcePDF\Render\Box $box
+	 * @param \YetiForcePDF\Layout\Box $box
 	 * @return bool
 	 */
 	public function willFit(Box $box)

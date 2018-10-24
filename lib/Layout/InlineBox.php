@@ -3,20 +3,20 @@ declare(strict_types=1);
 /**
  * InlineBox class
  *
- * @package   YetiForcePDF\Render
+ * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render;
+namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Render\Coordinates\Coordinates;
-use \YetiForcePDF\Render\Coordinates\Offset;
-use \YetiForcePDF\Render\Dimensions\BoxDimensions;
+use \YetiForcePDF\Layout\Coordinates\Coordinates;
+use \YetiForcePDF\Layout\Coordinates\Offset;
+use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class InlineBox
@@ -30,7 +30,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	protected $anonymous = false;
 	/**
-	 * @var \YetiForcePDF\Render\TextBox
+	 * @var \YetiForcePDF\Layout\TextBox
 	 */
 	protected $previousTextBox;
 
@@ -189,7 +189,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 * @return $this
 	 */
 	public function appendText($childDomElement, $element = null, $style = null, $parentBlock = null)

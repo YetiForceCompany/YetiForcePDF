@@ -3,16 +3,16 @@ declare(strict_types=1);
 /**
  * Coordinates class
  *
- * @package   YetiForcePDF\Render\Coordinates
+ * @package   YetiForcePDF\Layout\Coordinates
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render\Coordinates;
+namespace YetiForcePDF\Layout\Coordinates;
 
-use YetiForcePDF\Render\Box;
+use YetiForcePDF\Layout\Box;
 
 /**
  * Class Coordinates
@@ -37,7 +37,7 @@ class Coordinates extends \YetiForcePDF\Base
 
 	/**
 	 * Set box
-	 * @param \YetiForcePDF\Render\Box $box
+	 * @param \YetiForcePDF\Layout\Box $box
 	 * @return $this
 	 */
 	public function setBox(Box $box)
@@ -48,7 +48,7 @@ class Coordinates extends \YetiForcePDF\Base
 
 	/**
 	 * Get box
-	 * @return \YetiForcePDF\Render\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getBox()
 	{

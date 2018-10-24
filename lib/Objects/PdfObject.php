@@ -163,7 +163,7 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Render current object
+	 * Layout current object
 	 * @return string
 	 */
 	public function render(): string

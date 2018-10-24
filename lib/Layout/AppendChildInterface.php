@@ -3,18 +3,18 @@ declare(strict_types=1);
 /**
  * AppendChild interface
  *
- * @package   YetiForcePDF\Render
+ * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render;
+namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Render\Coordinates\Coordinates;
-use \YetiForcePDF\Render\Coordinates\Offset;
-use \YetiForcePDF\Render\Dimensions\BoxDimensions;
+use \YetiForcePDF\Layout\Coordinates\Coordinates;
+use \YetiForcePDF\Layout\Coordinates\Offset;
+use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use \YetiForcePDF\Html\Element;
 use YetiForcePDF\Style\Style;
 
@@ -29,7 +29,7 @@ interface AppendChildInterface
 	 * @param \DOMNode                      $childDomElement
 	 * @param Element                       $element
 	 * @param Style                         $style
-	 * @param \YetiForcePDF\Render\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox $parentBlock
 	 * @return $this
 	 */
 	public function appendBlock($childDomElement, $element, $style, $parentBlock);
@@ -39,7 +39,7 @@ interface AppendChildInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 * @return $this
 	 */
 	public function appendInlineBlock($childDomElement, $element, $style, $parentBlock);
@@ -49,14 +49,14 @@ interface AppendChildInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 * @return $this
 	 */
 	public function appendInline($childDomElement, $element, $style, $parentBlock);
 
 	/**
 	 * Build tree from dom tree
-	 * @param \YetiForcePDF\Render\BlockBox|null $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 * @return $this
 	 */
 	public function buildTree($parentBlock = null);

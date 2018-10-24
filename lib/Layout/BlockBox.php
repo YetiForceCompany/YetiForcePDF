@@ -3,20 +3,20 @@ declare(strict_types=1);
 /**
  * BlockBox class
  *
- * @package   YetiForcePDF\Render
+ * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render;
+namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Render\Coordinates\Coordinates;
-use \YetiForcePDF\Render\Coordinates\Offset;
-use \YetiForcePDF\Render\Dimensions\BoxDimensions;
+use \YetiForcePDF\Layout\Coordinates\Coordinates;
+use \YetiForcePDF\Layout\Coordinates\Offset;
+use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class BlockBox
@@ -25,7 +25,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 {
 
 	/**
-	 * @var \YetiForcePDF\Render\LineBox
+	 * @var \YetiForcePDF\Layout\LineBox
 	 */
 	protected $currentLineBox;
 
@@ -73,7 +73,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
 	/**
 	 * Get new line box
-	 * @return \YetiForcePDF\Render\LineBox
+	 * @return \YetiForcePDF\Layout\LineBox
 	 */
 	public function getNewLineBox()
 	{
@@ -92,9 +92,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
 	/**
 	 * Close line box
-	 * @param \YetiForcePDF\Render\LineBox|null $lineBox
+	 * @param \YetiForcePDF\Layout\LineBox|null $lineBox
 	 * @param bool                              $createNew
-	 * @return \YetiForcePDF\Render\LineBox
+	 * @return \YetiForcePDF\Layout\LineBox
 	 */
 	public function closeLine()
 	{
@@ -104,7 +104,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
 	/**
 	 * Get current linebox
-	 * @return \YetiForcePDF\Render\LineBox
+	 * @return \YetiForcePDF\Layout\LineBox
 	 */
 	public function getCurrentLineBox()
 	{

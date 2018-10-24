@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
-use \YetiForcePDF\Render\BlockBox;
+use \YetiForcePDF\Layout\BlockBox;
 
 /**
  * Class Parser
@@ -125,7 +125,7 @@ class Parser extends \YetiForcePDF\Base
 		$children = [];
 		$this->box->getAllChildren($children);
 		foreach ($children as $box) {
-			if (!$box instanceof \YetiForcePDF\Render\LineBox) {
+			if (!$box instanceof \YetiForcePDF\Layout\LineBox) {
 				$this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
 			}
 		}

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
-use YetiForcePDF\Render\Box;
-use \YetiForcePDF\Render\InlineBox;
+use YetiForcePDF\Layout\Box;
+use \YetiForcePDF\Layout\InlineBox;
 
 /**
  * Class Style

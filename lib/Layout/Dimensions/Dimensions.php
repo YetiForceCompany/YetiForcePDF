@@ -3,14 +3,14 @@ declare(strict_types=1);
 /**
  * Dimensions class
  *
- * @package   YetiForcePDF\Render\Dimensions
+ * @package   YetiForcePDF\Layout\Dimensions
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render\Dimensions;
+namespace YetiForcePDF\Layout\Dimensions;
 
 /**
  * Class Dimensions

@@ -3,18 +3,18 @@ declare(strict_types=1);
 /**
  * Box class
  *
- * @package   YetiForcePDF\Render
+ * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render;
+namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Render\Coordinates\Coordinates;
-use \YetiForcePDF\Render\Coordinates\Offset;
-use \YetiForcePDF\Render\Dimensions\BoxDimensions;
+use \YetiForcePDF\Layout\Coordinates\Coordinates;
+use \YetiForcePDF\Layout\Coordinates\Offset;
+use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use \YetiForcePDF\Html\Element;
 use YetiForcePDF\Style\Style;
 
@@ -108,7 +108,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Set parent
-	 * @param \YetiForcePDF\Render\Box|null $parent
+	 * @param \YetiForcePDF\Layout\Box|null $parent
 	 * @return $this
 	 */
 	public function setParent(Box $parent = null)
@@ -119,7 +119,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get parent
-	 * @return \YetiForcePDF\Render\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getParent()
 	{
@@ -128,7 +128,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Set next
-	 * @param \YetiForcePDF\Render\Box|null $next
+	 * @param \YetiForcePDF\Layout\Box|null $next
 	 * @return $this
 	 */
 	public function setNext(Box $next = null)
@@ -139,7 +139,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get next
-	 * @return \YetiForcePDF\Render\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getNext()
 	{
@@ -148,7 +148,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Set previous
-	 * @param \YetiForcePDF\Render\Box|null $previous
+	 * @param \YetiForcePDF\Layout\Box|null $previous
 	 * @return $this
 	 */
 	public function setPrevious(Box $previous = null)
@@ -159,7 +159,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get previous
-	 * @return \YetiForcePDF\Render\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getPrevious()
 	{
@@ -267,8 +267,8 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Insert box before other box
-	 * @param \YetiForcePDF\Render\Box $child
-	 * @param \YetiForcePDF\Render\Box $before
+	 * @param \YetiForcePDF\Layout\Box $child
+	 * @param \YetiForcePDF\Layout\Box $before
 	 * @return $this
 	 */
 	public function insertBefore(Box $child, Box $before)
@@ -320,7 +320,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get first child
-	 * @return \YetiForcePDF\Render\Box|null
+	 * @return \YetiForcePDF\Layout\Box|null
 	 */
 	public function getFirstChild()
 	{
@@ -331,7 +331,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get last child
-	 * @return \YetiForcePDF\Render\Box|null
+	 * @return \YetiForcePDF\Layout\Box|null
 	 */
 	public function getLastChild()
 	{
@@ -342,7 +342,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get closest line box
-	 * @return \YetiForcePDF\Render\LineBox
+	 * @return \YetiForcePDF\Layout\LineBox
 	 */
 	public function getClosestLineBox()
 	{
@@ -355,7 +355,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get closet box that is not a LineBox
-	 * @return \YetiForcePDF\Render\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getClosestBox()
 	{
@@ -412,7 +412,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get first child text box
-	 * @return \YetiForcePDF\Render\TextBox|null
+	 * @return \YetiForcePDF\Layout\TextBox|null
 	 */
 	public function getFirstTextBox()
 	{

@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 use YetiForcePDF\Html\Element;
-use YetiForcePDF\Render\Dimensions\Dimensions;
-use YetiForcePDF\Render\Coordinates\Coordinates;
+use YetiForcePDF\Layout\Dimensions\Dimensions;
+use YetiForcePDF\Layout\Coordinates\Coordinates;
 
 /**
  * Class Page
@@ -70,16 +70,16 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $margins;
 	/**
 	 * Page dimensions
-	 * @var \YetiForcePDF\Render\Dimensions\BoxDimensions
+	 * @var \YetiForcePDF\Layout\Dimensions\BoxDimensions
 	 */
 	protected $dimensions;
 	/**
 	 * Page outer dimensions
-	 * @var \YetiForcePDF\Render\Dimensions\BoxDimensions
+	 * @var \YetiForcePDF\Layout\Dimensions\BoxDimensions
 	 */
 	protected $outerDimensions;
 	/**
-	 * @var \YetiForcePDF\Render\Coordinates\Coordinates
+	 * @var \YetiForcePDF\Layout\Coordinates\Coordinates
 	 */
 	protected $coordinates;
 	/**
@@ -534,7 +534,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Get page coordinates - content area basing on margins
-	 * @return \YetiForcePDF\Render\Coordinates\Coordinates
+	 * @return \YetiForcePDF\Layout\Coordinates\Coordinates
 	 */
 	public function getCoordinates()
 	{
@@ -611,24 +611,24 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
 	/**
 	 * Get page dimensions
-	 * @return \YetiForcePDF\Render\Dimensions\Dimensions
+	 * @return \YetiForcePDF\Layout\Dimensions\Dimensions
 	 */
-	public function getDimensions(): \YetiForcePDF\Render\Dimensions\Dimensions
+	public function getDimensions(): \YetiForcePDF\Layout\Dimensions\Dimensions
 	{
 		return $this->dimensions;
 	}
 
 	/**
 	 * Get page dimensions
-	 * @return \YetiForcePDF\Render\Dimensions\Dimensions
+	 * @return \YetiForcePDF\Layout\Dimensions\Dimensions
 	 */
-	public function getOuterDimensions(): \YetiForcePDF\Render\Dimensions\Dimensions
+	public function getOuterDimensions(): \YetiForcePDF\Layout\Dimensions\Dimensions
 	{
 		return $this->outerDimensions;
 	}
 
 	/**
-	 * Render page resources
+	 * Layout page resources
 	 * @return string
 	 */
 	public function renderResources(): string

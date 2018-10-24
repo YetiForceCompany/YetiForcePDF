@@ -3,17 +3,17 @@ declare(strict_types=1);
 /**
  * BoxDimensions class
  *
- * @package   YetiForcePDF\Render\Dimensions
+ * @package   YetiForcePDF\Layout\Dimensions
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF\Render\Dimensions;
+namespace YetiForcePDF\Layout\Dimensions;
 
-use YetiForcePDF\Render\Box;
-use \YetiForcePDF\Render\LineBox;
+use YetiForcePDF\Layout\Box;
+use \YetiForcePDF\Layout\LineBox;
 
 /**
  * Class BoxDimensions
@@ -28,7 +28,7 @@ class BoxDimensions extends Dimensions
 
 	/**
 	 * Set box
-	 * @param \YetiForcePDF\Render\Box $box
+	 * @param \YetiForcePDF\Layout\Box $box
 	 * @return $this
 	 */
 	public function setBox(Box $box)
@@ -39,7 +39,7 @@ class BoxDimensions extends Dimensions
 
 	/**
 	 * Get box
-	 * @return \YetiForcePDF\Render\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getBox()
 	{
