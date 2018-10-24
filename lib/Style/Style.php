@@ -194,7 +194,7 @@ class Style extends \YetiForcePDF\Base
 
 	/**
 	 * Set box for this element (element is always inside box)
-	 * @param \YetiForcePDF\Html\Box $box
+	 * @param \YetiForcePDF\Layout\Box $box
 	 * @return $this
 	 */
 	public function setBox($box)
@@ -205,7 +205,7 @@ class Style extends \YetiForcePDF\Base
 
 	/**
 	 * Get box
-	 * @return \YetiForcePDF\Html\Box
+	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getBox()
 	{
