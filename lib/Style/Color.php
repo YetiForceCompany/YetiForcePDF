@@ -186,6 +186,11 @@ class Color
         return [0, 0, 0, 1];
     }
 
+    /**
+     * Convert hash color to rgba values
+     * @param string $hashColor
+     * @return int[]
+     */
     public static function fromHash(string $hashColor)
     {
         $color = substr($hashColor, 1);
@@ -213,17 +218,36 @@ class Color
         return [$r, $g, $b, $a];
     }
 
-    public static function fromRGB(string $rgbColor)
+    /**
+     * Get rgb/a values from css string
+     * @param string $rgbColor
+     * @return int[] rgb/a
+     */
+    public static function fromRGBA(string $rgbColor)
     {
-        $color = preg_match('/rgb\(([0-9]+)\,([0-9]_)\,([0-9]+)\)/', str_replace("\n\t\r ", '', $rgbColor));
-        // TODO transform rgb color to [r,g,b,a]
+        $matches = [];
+        preg_match_all('/rgb\(([0-9]+)\s?\,\s?([0-9]+)\s?\,\s?([0-9]+)\s?([0-9]+)?\s?\)/', str_replace("\n\t\r ", '', $rgbColor), $matches);
+        if (isset($matches[4]) && $matches[4][0] !== '') {
+            $alpha = $matches[4][0];
+        } else {
+            $alpha = 1;
+        }
+        return [$matches[1][0], $matches[2][0], $matches[3][0], $alpha];
     }
 
+    /**
+     * Convert css color definition to rgba values
+     * @param string $colorInput
+     * @param bool $inPDFColorSpace
+     * @return int[]
+     */
     public static function toRGBA(string $colorInput, bool $inPDFColorSpace = false)
     {
-        $colorInput = strtolower($colorInput);
+        $colorInput = trim(strtolower($colorInput));
         if ($colorInput[0] === '#') {
             $color = static::fromHash($colorInput);
+        } elseif (strncmp($colorInput, 'rgb', 3) === 0) {
+            $color = static::fromRGBA($colorInput);
         } elseif (array_key_exists($colorInput, static::$colorNames)) {
             $color = static::fromName($colorInput);
         }
@@ -234,12 +258,24 @@ class Color
         return [$r, $g, $b, $a];
     }
 
+    /**
+     * To PDF string
+     * @param string $colorInput
+     * @return string
+     */
     public static function toPdfString(string $colorInput)
     {
         $color = static::toRGBA($colorInput);
         return "{$color[0]} {$color[1]} {$color[2]} RG";
     }
 
+    /**
+     * RGB to pdf string
+     * @param int $r
+     * @param int $g
+     * @param int $b
+     * @return string
+     */
     public static function RGBtoPdfString(int $r, int $g, int $b)
     {
         $r = $r / 255;
