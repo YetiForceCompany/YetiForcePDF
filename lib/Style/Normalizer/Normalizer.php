@@ -20,41 +20,44 @@ use YetiForcePDF\Style\Style;
 class Normalizer extends \YetiForcePDF\Base
 {
 
-	/**
-	 * @var Style
-	 */
-	protected $style;
+    /**
+     * @var Style
+     */
+    protected $style;
 
-	/**
-	 * Set style
-	 * @param \YetiForcePDF\Style\Style $style
-	 * @return $this
-	 */
-	public function setStyle(Style $style)
-	{
-		$this->style = $style;
-		return $this;
-	}
+    /**
+     * Set style
+     * @param \YetiForcePDF\Style\Style $style
+     * @return $this
+     */
+    public function setStyle(Style $style)
+    {
+        $this->style = $style;
+        return $this;
+    }
 
-	/**
-	 * Get normalizer class name
-	 * @param string $ruleName
-	 * @return string
-	 */
-	public static function getNormalizerClassName(string $ruleName)
-	{
-		$ucRuleName = str_replace('-', '', ucwords($ruleName, '-'));
-		return "YetiForcePDF\\Style\\Normalizer\\$ucRuleName";
+    /**
+     * Get normalizer class name
+     * @param string $ruleName
+     * @return string
+     */
+    public static function getNormalizerClassName(string $ruleName)
+    {
+        $ucRuleName = str_replace('-', '', ucwords($ruleName, '-'));
+        $normalizerClassName = "YetiForcePDF\\Style\\Normalizer\\$ucRuleName";
+        if (class_exists($normalizerClassName)) {
+            return $normalizerClassName;
+        }
+        return "YetiForcePDF\\Style\\Normalizer\\Normalizer";
+    }
 
-	}
-
-	/**
-	 * Normalize css rule
-	 * @param mixed $ruleValue
-	 * @return array
-	 */
-	public function normalize($ruleValue)
-	{
-		return [];
-	}
+    /**
+     * Normalize css rule
+     * @param mixed $ruleValue
+     * @return array
+     */
+    public function normalize($ruleValue)
+    {
+        return [];
+    }
 }
