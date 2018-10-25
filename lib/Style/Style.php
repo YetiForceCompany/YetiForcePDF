@@ -147,48 +147,10 @@ class Style extends \YetiForcePDF\Base
      * Css rules (computed)
      * @var array
      */
-    protected $rules = [
-        'font-family' => 'NotoSerif',
-        'font-size' => '12px',
-        'font-weight' => 'normal',
-        'font-style' => 'normal',
-        'margin-left' => 0,
-        'margin-top' => 0,
-        'margin-right' => 0,
-        'margin-bottom' => 0,
-        'padding-left' => 0,
-        'padding-top' => 0,
-        'padding-right' => 0,
-        'padding-bottom' => 0,
-        'border-left-width' => 0,
-        'border-top-width' => 0,
-        'border-right-width' => 0,
-        'border-bottom-width' => 0,
-        'border-left-color' => [0, 0, 0, 0],
-        'border-top-color' => [0, 0, 0, 0],
-        'border-right-color' => [0, 0, 0, 0],
-        'border-bottom-color' => [0, 0, 0, 0],
-        'border-left-style' => 'none',
-        'border-top-style' => 'none',
-        'border-right-style' => 'none',
-        'border-bottom-style' => 'none',
-        'box-sizing' => 'border-box',
-        'display' => 'inline',
-        'width' => 'auto',
-        'height' => 'auto',
-        'overflow' => 'visible',
-        'vertical-align' => 'baseline',
-        'line-height' => '1.2',
-        'background-color' => 'transparent',
-        'color' => '#000000',
-        'word-wrap' => 'normal',
-        'max-width' => 'none',
-        'min-width' => 0,
-        'white-space' => 'normal',
-    ];
+    protected $rules = [];
 
     /**
-     * Default styles for certaint elements
+     * Default styles for certain elements
      * @var array
      */
     protected $elementDefaults = [
@@ -857,10 +819,22 @@ class Style extends \YetiForcePDF\Base
      */
     public function getMandatoryRules()
     {
-        if (!empty($this->elementDefaults[$this->elementName])) {
-            return array_merge($this->mandatoryRules, $this->elementDefaults[$this->elementName]);
-        }
         return $this->mandatoryRules;
+    }
+
+    /**
+     * Get default element rules
+     * @return array
+     */
+    public function getDefaultRules()
+    {
+        $rules = [];
+        if (!empty($this->elementDefaults[$this->elementName])) {
+            foreach ($this->elementDefaults[$this->elementName] as $ruleName => $ruleValue) {
+                $rules[$ruleName] = $ruleValue;
+            }
+        }
+        return $rules;
     }
 
     /**
@@ -869,10 +843,7 @@ class Style extends \YetiForcePDF\Base
      */
     public function parseInline()
     {
-        $parsed = [];
-        foreach ($this->getMandatoryRules() as $mandatoryName => $mandatoryValue) {
-            $parsed[$mandatoryName] = $mandatoryValue;
-        }
+        $parsed = array_merge($this->getMandatoryRules(), $this->getDefaultRules());
         if ($this->content) {
             $rules = explode(';', $this->content);
         } else {
@@ -942,6 +913,7 @@ class Style extends \YetiForcePDF\Base
         if ($parent = $this->getParent()) {
             $parsed = array_merge($parsed, $parent->getInheritedRules());
         }
+        $parsed = array_merge($parsed, $this->getDefaultRules());
         if ($this->content) {
             $rules = explode(';', $this->content);
         } else {
