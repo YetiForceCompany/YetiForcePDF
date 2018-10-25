@@ -102,8 +102,10 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] tables
 - [ ] images
 - [ ] page headers / footers
-- [ ] background watermarks
 - [ ] alpha channel support for colors (rgba) and opacity
+- [ ] background watermarks
+
+### TODO (later but important)
 - [ ] floats
 - [ ] barcode generation
 - [ ] display: list-item
