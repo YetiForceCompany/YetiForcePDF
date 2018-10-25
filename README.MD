@@ -78,7 +78,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] clear
 - [ ] table displays
 - [ ] background-image
-- [ ] rgba color
+- [x] rgb / rgba color [without alpha inside pdf for now]
 
 
 ### Available fonts
