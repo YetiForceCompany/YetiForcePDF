@@ -73,6 +73,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] word-wrap [normal]
 - [ ] max-width
 - [ ] min-width
+- [x] white-space [normal]
 - [ ] word-wrap
 - [ ] float
 - [ ] clear
