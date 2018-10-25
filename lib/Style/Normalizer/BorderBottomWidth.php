@@ -17,21 +17,11 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BorderBottomWidth extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue)) {
-			$matches = [];
-			preg_match('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1];
-			$originalUnit = $matches[2];
-			$size = $this->style->convertUnits($originalUnit, $originalSize);
-		} else {
-			// if it is number it was calculated already
-			$size = $ruleValue;
-		}
-		$normalized = [
-			'border-bottom-width' => $size,
-		];
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if (is_string($ruleValue)) {
+            return ['border-bottom-width' => $this->getNumberValues($ruleValue)[0]];
+        }
+        return ['border-bottom-width' => $ruleValue];
+    }
 }

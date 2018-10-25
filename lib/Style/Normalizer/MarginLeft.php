@@ -17,16 +17,12 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class MarginLeft extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue)) {
-			$matches = [];
-			preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1][0];
-			$originalUnit = $matches[2][0];
-			return ['margin-left' => $this->style->convertUnits($originalUnit, $originalSize)];
-		}
-		// value is already parsed
-		return ['margin-left' => $ruleValue];
-	}
+    public function normalize($ruleValue): array
+    {
+        if (is_string($ruleValue)) {
+            return ['margin-left' => $this->getNumberValues($ruleValue)[0]];
+        }
+        // value is already parsed
+        return ['margin-left' => $ruleValue];
+    }
 }

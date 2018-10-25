@@ -17,20 +17,12 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class LineHeight extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue)) {
-			$matches = [];
-			preg_match('/^([0-9\.]+)([a-z]+)?$/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1];
-			if (isset($matches[2])) {
-				$originalUnit = $matches[2];
-			} else {
-				$originalUnit = 'em';
-			}
-			return ['line-height' => $this->style->convertUnits($originalUnit, $originalSize)];
-		}
-		// value is already parsed
-		return ['line-height' => $ruleValue];
-	}
+    public function normalize($ruleValue): array
+    {
+        if (is_string($ruleValue)) {
+            return ['line-height' => $this->getNumberValues($ruleValue)[0]];
+        }
+        // value is already parsed
+        return ['line-height' => $ruleValue];
+    }
 }

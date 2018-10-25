@@ -17,16 +17,12 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class Height extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue) && $ruleValue !== 'auto') {
-			$matches = [];
-			preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-			$originalSize = (float)$matches[1][0];
-			$originalUnit = $matches[2][0];
-			return ['height' => $this->style->convertUnits($originalUnit, $originalSize)];
-		}
-		// value is already parsed
-		return ['height' => $ruleValue];
-	}
+    public function normalize($ruleValue): array
+    {
+        if (is_string($ruleValue) && $ruleValue !== 'auto') {
+            return ['height' => $this->getNumberValues($ruleValue)[0]];
+        }
+        // value is already parsed
+        return ['height' => $ruleValue];
+    }
 }

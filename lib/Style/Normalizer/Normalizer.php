@@ -52,6 +52,36 @@ class Normalizer extends \YetiForcePDF\Base
     }
 
     /**
+     * Get number value from style
+     * @param $ruleValue
+     * @return float[]
+     */
+    public function getNumberValues($ruleValue)
+    {
+        $matches = [];
+        preg_match_all('/(([0-9\.?]+)([a-z%]+)?\s?)/', $ruleValue, $matches, PREG_SET_ORDER);
+        $originalSize = (float)$matches[0][2];
+        if (isset($matches[0][3])) {
+            $originalUnit = $matches[0][3];
+        } else {
+            $originalUnit = 'em';
+        }
+        $multi = [
+            $this->style->convertUnits($originalUnit, $originalSize),
+        ];
+        if (count($matches) === 2) {
+            $multi[] = $this->style->convertUnits($matches[1][2], $matches[1][3]);
+        }
+        if (count($matches) === 3) {
+            $multi[] = $this->style->convertUnits($matches[2][2], $matches[2][3]);
+        }
+        if (count($matches) === 4) {
+            $multi[] = $this->style->convertUnits($matches[3][2], $matches[3][3]);
+        }
+        return $multi;
+    }
+
+    /**
      * Normalize css rule
      * @param mixed $ruleValue
      * @return array
@@ -59,5 +89,100 @@ class Normalizer extends \YetiForcePDF\Base
     public function normalize($ruleValue)
     {
         return [];
+    }
+
+
+    /**
+     * One value
+     * @param array $ruleNames
+     * @param array $numberValues
+     * @return array
+     */
+    protected function oneValue(array $ruleNames, array $numberValues)
+    {
+        $normalized = [];
+        $normalized[$ruleNames[0]] = $numberValues[0];
+        $normalized[$ruleNames[1]] = $numberValues[0];
+        $normalized[$ruleNames[2]] = $numberValues[0];
+        $normalized[$ruleNames[3]] = $numberValues[0];
+        return $normalized;
+    }
+
+    /**
+     * Two values
+     * @param array $ruleNames
+     * @param array $numberValues
+     * @return array
+     */
+    protected function twoValues(array $ruleNames, array $numberValues)
+    {
+        $normalized = [];
+        $normalized[$ruleNames[0]] = $numberValues[0];
+        $normalized[$ruleNames[1]] = $numberValues[0];
+        $normalized[$ruleNames[2]] = $numberValues[1];
+        $normalized[$ruleNames[3]] = $numberValues[1];
+        return $normalized;
+    }
+
+    /**
+     * Three values
+     * @param array $ruleNames
+     * @param array $numberValues
+     * @return array
+     */
+    protected function threeValues(array $ruleNames, array $numberValues)
+    {
+        $normalized = [];
+        $normalized[$ruleNames[0]] = $numberValues[0];
+        $normalized[$ruleNames[1]] = $numberValues[2];
+        $normalized[$ruleNames[2]] = $numberValues[1];
+        $normalized[$ruleNames[3]] = $numberValues[1];
+        return $normalized;
+    }
+
+    /**
+     * Four values
+     * @param array $ruleNames
+     * @param array $numberValues
+     * @return array
+     */
+    protected function fourValues(array $ruleNames, array $numberValues)
+    {
+        $normalized = [];
+        $normalized[$ruleNames[0]] = $numberValues[0];
+        $normalized[$ruleNames[1]] = $numberValues[2];
+        $normalized[$ruleNames[2]] = $numberValues[3];
+        $normalized[$ruleNames[3]] = $numberValues[1];
+        return $normalized;
+    }
+
+    /**
+     * Normalize multi number values
+     * @param string[] $ruleNames ['margin-top','margin-right','margin-bottom','margin-left']
+     * @param string $ruleValue
+     * return array
+     */
+    public function normalizeMultiValues(array $ruleNames, $ruleValue): array
+    {
+        if (is_string($ruleValue)) {
+            $numberValues = $this->getNumberValues($ruleValue);
+            switch (count($numberValues)) {
+                case 1:
+                    return $this->oneValue($ruleNames, $numberValues);
+                case 2:
+                    return $this->twoValues($ruleNames, $numberValues);
+                case 3:
+                    return $this->threeValues($ruleNames, $numberValues);
+                case 4:
+                    return $this->fourValues($ruleNames, $numberValues);
+            }
+        }
+        // if ruleValue is not a string - it was parsed already
+        return [
+            $ruleNames[0] => $ruleValue,
+            $ruleNames[1] => $ruleValue,
+            $ruleNames[2] => $ruleValue,
+            $ruleNames[3] => $ruleValue,
+        ];
     }
 }
