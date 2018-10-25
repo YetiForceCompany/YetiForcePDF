@@ -30,6 +30,8 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 
 - [x] font-family
 - [x] font-size
+- [x] font-weight
+- [x] font-style
 - [x] margin [px, em, cm, mm, pt, in]
 - [x] margin-left  [px, em, cm, mm, pt, in]
 - [x] margin-top  [px, em, cm, mm, pt, in]
@@ -81,184 +83,16 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 
 ### Available fonts
 
-- NotoSerif-SemiBoldItalic
-- NotoSans-ExtraCondensedExtraBold
-- NotoSans-CondensedExtraBold
-- NotoSans-SemiCondensedMediumItalic
-- NotoSans-SemiBoldItalic
-- NotoMono-Regular
-- NotoSans-ThinItalic
-- NotoSans-Thin
-- NotoSans-SemiCondensedThinItalic
-- NotoSans-SemiCondensedThin
-- NotoSans-SemiCondensedSemiBoldItalic
-- NotoSans-SemiCondensedSemiBold
-- NotoSans-SemiCondensedMedium
-- NotoSans-SemiCondensedLightItalic
-- NotoSans-SemiCondensedLight
-- NotoSans-SemiCondensedItalic
-- NotoSans-SemiCondensedExtraLightItalic
-- NotoSans-SemiCondensedExtraLight
-- NotoSans-SemiCondensedExtraBoldItalic
-- NotoSans-SemiCondensedExtraBold
-- NotoSans-SemiCondensedBoldItalic
-- NotoSans-SemiCondensedBold
-- NotoSans-SemiCondensedBlackItalic
-- NotoSans-SemiCondensedBlack
-- NotoSans-SemiCondensed
-- NotoSans-SemiBold
-- NotoSans-Regular
-- NotoSans-MediumItalic
-- NotoSans-Medium
-- NotoSans-LightItalic
-- NotoSans-Light
-- NotoSans-Italic
-- NotoSans-ExtraLightItalic
-- NotoSans-ExtraLight
-- NotoSans-ExtraCondensedThinItalic
-- NotoSans-ExtraCondensedThin
-- NotoSans-ExtraCondensedSemiBoldItalic
-- NotoSans-ExtraCondensedSemiBold
-- NotoSans-ExtraCondensedMediumItalic
-- NotoSans-ExtraCondensedMedium
-- NotoSans-ExtraCondensedLightItalic
-- NotoSans-ExtraCondensedLight
-- NotoSans-ExtraCondensedItalic
-- NotoSans-ExtraCondensedExtraLightItalic
-- NotoSans-ExtraCondensedExtraLight
-- NotoSans-ExtraCondensedExtraBoldItalic
-- NotoSans-ExtraCondensedBoldItalic
-- NotoSans-ExtraCondensedBold
-- NotoSans-ExtraCondensedBlackItalic
-- NotoSans-ExtraCondensedBlack
-- NotoSans-ExtraCondensed
-- NotoSans-ExtraBoldItalic
-- NotoSans-ExtraBold
-- NotoSans-CondensedThinItalic
-- NotoSans-CondensedThin
-- NotoSans-CondensedSemiBoldItalic
-- NotoSans-CondensedSemiBold
-- NotoSans-CondensedMediumItalic
-- NotoSans-CondensedMedium
-- NotoSans-CondensedLightItalic
-- NotoSans-CondensedLight
-- NotoSans-CondensedItalic
-- NotoSans-CondensedExtraLightItalic
-- NotoSans-CondensedExtraLight
-- NotoSans-CondensedExtraBoldItalic
-- NotoSans-CondensedBoldItalic
-- NotoSans-CondensedBold
-- NotoSans-CondensedBlackItalic
-- NotoSans-CondensedBlack
-- NotoSans-Condensed
-- NotoSans-BoldItalic
-- NotoSans-Bold
-- NotoSans-BlackItalic
-- NotoSans-Black
-- NotoSerif-ThinItalic
-- NotoSerif-Thin
-- NotoSerif-SemiCondensedThinItalic
-- NotoSerif-SemiCondensedThin
-- NotoSerif-SemiCondensedSemiBoldItalic
-- NotoSerif-SemiCondensedSemiBold
-- NotoSerif-SemiCondensedMediumItalic
-- NotoSerif-SemiCondensedMedium
-- NotoSerif-SemiCondensedLightItalic
-- NotoSerif-SemiCondensedLight
-- NotoSerif-SemiCondensedItalic
-- NotoSerif-SemiCondensedExtraLightItalic
-- NotoSerif-SemiCondensedExtraLight
-- NotoSerif-SemiCondensedExtraBoldItalic
-- NotoSerif-SemiCondensedExtraBold
-- NotoSerif-SemiCondensedBoldItalic
-- NotoSerif-SemiCondensedBold
-- NotoSerif-SemiCondensedBlackItalic
-- NotoSerif-SemiCondensedBlack
-- NotoSerif-SemiCondensed
-- NotoSerif-SemiBold
-- NotoSerif-Regular
-- NotoSerif-MediumItalic
-- NotoSerif-Medium
-- NotoSerif-LightItalic
-- NotoSerif-Light
-- NotoSerif-Italic
-- NotoSerif-ExtraLightItalic
-- NotoSerif-ExtraLight
-- NotoSerif-ExtraCondensedThinItalic
-- NotoSerif-ExtraCondensedThin
-- NotoSerif-ExtraCondensedSemiBoldItalic
-- NotoSerif-ExtraCondensedSemiBold
-- NotoSerif-ExtraCondensedMediumItalic
-- NotoSerif-ExtraCondensedMedium
-- NotoSerif-ExtraCondensedLightItalic
-- NotoSerif-ExtraCondensedLight
-- NotoSerif-ExtraCondensedItalic
-- NotoSerif-ExtraCondensedExtraLightItalic
-- NotoSerif-ExtraCondensedExtraLight
-- NotoSerif-ExtraCondensedExtraBoldItalic
-- NotoSerif-ExtraCondensedExtraBold
-- NotoSerif-ExtraCondensedBoldItalic
-- NotoSerif-ExtraCondensedBold
-- NotoSerif-ExtraCondensedBlackItalic
-- NotoSerif-ExtraCondensedBlack
-- NotoSerif-ExtraCondensed
-- NotoSerif-ExtraBoldItalic
-- NotoSerif-ExtraBold
-- NotoSerif-CondensedThinItalic
-- NotoSerif-CondensedThin
-- NotoSerif-CondensedSemiBoldItalic
-- NotoSerif-CondensedSemiBold
-- NotoSerif-CondensedMediumItalic
-- NotoSerif-CondensedMedium
-- NotoSerif-CondensedLightItalic
-- NotoSerif-CondensedLight
-- NotoSerif-CondensedItalic
-- NotoSerif-CondensedExtraLightItalic
-- NotoSerif-CondensedExtraLight
-- NotoSerif-CondensedExtraBoldItalic
-- NotoSerif-CondensedExtraBold
-- NotoSerif-CondensedBoldItalic
-- NotoSerif-CondensedBold
-- NotoSerif-CondensedBlackItalic
-- NotoSerif-CondensedBlack
-- NotoSerif-Condensed
-- NotoSerif-BoldItalic
-- NotoSerif-Bold
-- NotoSerif-BlackItalic
-- NotoSerif-Black
-- SourceCodePro-Bold
-- SourceSerifPro-Bold
-- SourceSerifPro-Semibold
-- SourceSerifPro-Regular
-- SourceSansPro-BlackItalic
-- SourceSansPro-Black
-- SourceSansPro-BoldItalic
-- SourceSansPro-Bold
-- SourceSansPro-SemiBoldItalic
-- SourceSansPro-SemiBold
-- SourceSansPro-Italic
-- SourceSansPro-Regular
-- SourceSansPro-LightItalic
-- SourceSansPro-Light
-- SourceSansPro-ExtraLightItalic
-- SourceSansPro-ExtraLight
-- SourceCodePro-Black
-- SourceCodePro-Semibold
-- SourceCodePro-Medium
-- SourceCodePro-Regular
-- SourceCodePro-Light
-- SourceCodePro-ExtraLight
-- PT_Serif-BoldItalic
-- PT_Serif-Bold
-- PT_Serif-Italic
-- PT_Serif-Regular
-- PT_Sans-Narrow
-- PT_Sans-Narrow
-- PT_Sans-BoldItalic
-- PT_Sans-Bold
-- PT_Sans-Italic
-- PT_Sans-Regular
-- PT_Mono
+- NotoSans
+- NotoSerif
+- NotoMono
+- SourceSansPro
+- SourceSerifPro
+- SourceCodePro
+- PT Sans
+- PT Sans Narrow
+- PT Serif
+- PT Mono
 
 
 ### TODO (crucial)
