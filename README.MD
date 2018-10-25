@@ -69,7 +69,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] vertical-align [baseline, top, bottom, middle]
 - [x] line-height [px, em, cm, mm, pt, in]
 - [x] background-color [hex, rgb]
-- [x] color [hex, rgb]
+- [x] color [hex, rgb, named]
 - [x] word-wrap [normal]
 - [ ] max-width
 - [ ] min-width
@@ -97,14 +97,14 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 
 ### TODO (crucial)
 
+- [x] ~~font-weight (font-family without specifying weight and variant)~~
+- [x] ~~basic html elements with default css rules (br, table, image, hr etc.)~~
 - [ ] tables
 - [ ] images
 - [ ] page headers / footers
 - [ ] background watermarks
-- [ ] font-weight (font-family without specifying weight and variant)
 - [ ] alpha channel support for colors (rgba) and opacity
 - [ ] floats
-- [x] ~~basic html elements with default css rules (br, table, image, hr etc.)~~
 - [ ] barcode generation
 - [ ] display: list-item
 - [ ] basic transformations (rotateXY, scaleXY, translateXY)
