@@ -255,7 +255,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
-        $this->getDimensions()->setHeight($this->getStyle()->getLineHeight());
+        $this->getDimensions()->setHeight($this->getStyle()->getLineHeight() + $this->getStyle()->getVerticalPaddingsWidth());
         $this->applyStyleHeight();
         return $this;
     }
