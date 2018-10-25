@@ -282,7 +282,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         // it only affects line margins
         $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getOuterWidth();
+            $left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth() + $previous->getStyle()->getRules('margin-right');
         } else {
             $left += $parent->getStyle()->getOffsetLeft();
         }

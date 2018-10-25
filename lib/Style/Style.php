@@ -311,10 +311,11 @@ class Style extends \YetiForcePDF\Base
             'display' => 'block',
             'margin-top' => '0.5em',
             'margin-bottom' => '0.5em',
-            'margin-left' => 'auto',
-            'margin-right' => 'auto',
-            'border-style' => 'inset',
-            'border-width' => '1px',],
+            'margin-left' => '0px',
+            'margin-right' => '0px',
+            'border-style' => 'solid',
+            'border-color' => 'lightgray',
+            'border-top-width' => '1px',],
         'html' => [
             'display' => 'block',],
         'html:focus' => [
@@ -733,6 +734,24 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Get full left space
+     * @return float
+     */
+    public function getFullLeftSpace()
+    {
+        return $this->rules['margin-left'] + $this->rules['padding-left'] + $this->rules['border-left-width'];
+    }
+
+    /**
+     * Get full right space
+     * @return float
+     */
+    public function getFullRightSpace()
+    {
+        return $this->rules['margin-right'] + $this->rules['padding-right'] + $this->rules['border-right-width'];
+    }
+
+    /**
      * Get offset top -  get top border width and top padding
      * @return float
      */
@@ -778,7 +797,7 @@ class Style extends \YetiForcePDF\Base
             case 'in':
                 return $size / 72;
             case '%':
-                return $size . '%';
+                return $size . '%'; // percent values are calculated later
             case 'em':
                 return (float)bcmul((string)$this->getFont()->getTextHeight(), (string)$size, 4);
         }
@@ -970,9 +989,10 @@ class Style extends \YetiForcePDF\Base
         $box = $this->getBox();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $dimensions->setWidth($dimensions->getWidth() - $this->rules['margin-right'] - $this->rules['border-right-width']);
+            $dimensions->setWidth($dimensions->getWidth() - $this->getFullRightSpace());
         }
         $this->rules['margin-right'] = 0;
+        $this->rules['padding-right'] = 0;
         $this->rules['border-right-width'] = 0;
         if ($this->rules['display'] === 'inline') {
             $this->rules['margin-top'] = 0;
@@ -988,19 +1008,21 @@ class Style extends \YetiForcePDF\Base
     public function clearLastInline()
     {
         $box = $this->getBox();
+        $leftSpace = $this->getFullLeftSpace();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $dimensions->setWidth($dimensions->getWidth() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+            $dimensions->setWidth($dimensions->getWidth() - $leftSpace);
         }
         $offset = $box->getOffset();
         if ($offset->getLeft()) {
-            $offset->setLeft($offset->getLeft() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+            $offset->setLeft($offset->getLeft() - $leftSpace);
         }
         $coordinates = $box->getCoordinates();
         if ($coordinates->getX()) {
-            $coordinates->setX($coordinates->getX() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+            $coordinates->setX($coordinates->getX() - $leftSpace);
         }
         $this->rules['margin-left'] = 0;
+        $this->rules['padding-left'] = 0;
         $this->rules['border-left-width'] = 0;
         if ($this->rules['display'] === 'inline') {
             $this->rules['margin-top'] = 0;
@@ -1016,20 +1038,24 @@ class Style extends \YetiForcePDF\Base
     public function clearMiddleInline()
     {
         $box = $this->getBox();
+        $leftSpace = $this->getFullLeftSpace();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $dimensions->setWidth($dimensions->getWidth() - $this->rules['margin-left'] - $this->rules['border-left-width'] - $this->rules['margin-right'] - $this->rules['border-right-width']);
+            $sub = $this->getHorizontalMarginsWidth() + $this->getHorizontalBordersWidth();
+            $dimensions->setWidth($dimensions->getWidth() - $sub);
         }
         $offset = $box->getOffset();
         if ($offset->getLeft()) {
-            $offset->setLeft($offset->getLeft() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+            $offset->setLeft($offset->getLeft() - $leftSpace);
         }
         $coordinates = $box->getCoordinates();
         if ($coordinates->getX()) {
-            $coordinates->setX($coordinates->getX() - $this->rules['margin-left'] - $this->rules['border-left-width']);
+            $coordinates->setX($coordinates->getX() - $leftSpace);
         }
         $this->rules['margin-left'] = 0;
         $this->rules['margin-right'] = 0;
+        $this->rules['padding-left'] = 0;
+        $this->rules['padding-right'] = 0;
         $this->rules['border-right-width'] = 0;
         $this->rules['border-left-width'] = 0;
         if ($this->rules['display'] === 'inline') {
