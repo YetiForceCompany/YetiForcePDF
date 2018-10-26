@@ -975,6 +975,13 @@ class Style extends \YetiForcePDF\Base
         if ($finalRules['display'] === 'inline') {
             $finalRules['margin-top'] = 0;
             $finalRules['margin-bottom'] = 0;
+        } elseif (in_array($finalRules['display'], [
+            'table-cell', 'table-row', 'table-row-group', 'table-column',
+            'table-column-group', 'table-header-group', 'table-footer-group'])) {
+            $finalRules['margin-top'] = 0;
+            $finalRules['margin-bottom'] = 0;
+            $finalRules['margin-left'] = 0;
+            $finalRules['margin-right'] = 0;
         }
         $this->rules = $finalRules;
         return $this;

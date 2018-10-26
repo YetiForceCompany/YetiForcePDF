@@ -100,7 +100,7 @@ class ElementBox extends Box
                         $this->appendBlock($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table':
-                        $this->appendTableBlock($childDomElement, $element, $style, $parentBlock);
+                        $tableWrapper = $this->appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'inline':
                         $inline = $this->appendInline($childDomElement, $element, $style, $parentBlock);

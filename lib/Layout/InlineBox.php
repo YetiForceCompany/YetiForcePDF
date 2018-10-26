@@ -25,34 +25,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 {
 
     /**
-     * Anonymous inline element is created to wrap TextBox
-     * @var bool
-     */
-    protected $anonymous = false;
-    /**
      * @var \YetiForcePDF\Layout\TextBox
      */
     protected $previousTextBox;
-
-    /**
-     * Is this box anonymous
-     * @return bool
-     */
-    public function isAnonymous()
-    {
-        return $this->anonymous;
-    }
-
-    /**
-     * Set anonymous field
-     * @param bool $anonymous
-     * @return $this
-     */
-    public function setAnonymous(bool $anonymous)
-    {
-        $this->anonymous = $anonymous;
-        return $this;
-    }
 
     /**
      * Go up to Line box and clone and wrap element
@@ -103,7 +78,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
-    public function appendTableBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock)
     {
         $box = (new TableWrapperBlockBox())
             ->setDocument($this->document)

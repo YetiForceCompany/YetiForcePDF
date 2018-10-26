@@ -35,14 +35,14 @@ interface AppendChildInterface
     public function appendBlock($childDomElement, $element, $style, $parentBlock);
 
     /**
-     * Append table block box element
+     * Append table wrapper block box element
      * @param \DOMNode $childDomElement
      * @param Element $element
      * @param Style $style
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
      * @return $this
      */
-    public function appendTableBlock($childDomElement, $element, $style, $parentBlock);
+    public function appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock);
 
     /**
      * Append inline block box element

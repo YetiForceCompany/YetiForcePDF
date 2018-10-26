@@ -24,4 +24,8 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 class TableWrapperBlockBox extends BlockBox
 {
 
+    public function appendTableBlock($childDomElement, $element, $style, $parentBlock)
+    {
+
+    }
 }
