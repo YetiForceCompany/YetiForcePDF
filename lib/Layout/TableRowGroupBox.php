@@ -23,5 +23,11 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
  */
 class TableRowGroupBox extends LineBox
 {
-
+    /**
+     * {@inheritdoc}
+     */
+    public function getInstructions(): string
+    {
+        return ''; // not renderable
+    }
 }

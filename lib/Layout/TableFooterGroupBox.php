@@ -23,5 +23,11 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
  */
 class TableFooterGroupBox extends BlockBox
 {
-
+    /**
+     * {@inheritdoc}
+     */
+    public function getInstructions(): string
+    {
+        return ''; // not renderable
+    }
 }

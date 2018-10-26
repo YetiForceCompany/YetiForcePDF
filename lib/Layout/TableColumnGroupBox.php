@@ -23,5 +23,11 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
  */
 class TableColumnGroupBox extends InlineBlockBox
 {
-
+    /**
+     * {@inheritdoc}
+     */
+    public function getInstructions(): string
+    {
+        return ''; // not renderable
+    }
 }
