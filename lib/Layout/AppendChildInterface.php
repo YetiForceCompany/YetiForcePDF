@@ -24,40 +24,50 @@ use YetiForcePDF\Style\Style;
 interface AppendChildInterface
 {
 
-	/**
-	 * Append block box element
-	 * @param \DOMNode                      $childDomElement
-	 * @param Element                       $element
-	 * @param Style                         $style
-	 * @param \YetiForcePDF\Layout\BlockBox $parentBlock
-	 * @return $this
-	 */
-	public function appendBlock($childDomElement, $element, $style, $parentBlock);
+    /**
+     * Append block box element
+     * @param \DOMNode $childDomElement
+     * @param Element $element
+     * @param Style $style
+     * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     * @return $this
+     */
+    public function appendBlock($childDomElement, $element, $style, $parentBlock);
 
-	/**
-	 * Append inline block box element
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
-	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
-	 * @return $this
-	 */
-	public function appendInlineBlock($childDomElement, $element, $style, $parentBlock);
+    /**
+     * Append table block box element
+     * @param \DOMNode $childDomElement
+     * @param Element $element
+     * @param Style $style
+     * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     * @return $this
+     */
+    public function appendTableBlock($childDomElement, $element, $style, $parentBlock);
 
-	/**
-	 * Add inline child (and split text to individual characters)
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
-	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
-	 * @return $this
-	 */
-	public function appendInline($childDomElement, $element, $style, $parentBlock);
+    /**
+     * Append inline block box element
+     * @param \DOMNode $childDomElement
+     * @param Element $element
+     * @param Style $style
+     * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+     * @return $this
+     */
+    public function appendInlineBlock($childDomElement, $element, $style, $parentBlock);
 
-	/**
-	 * Build tree from dom tree
-	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
-	 * @return $this
-	 */
-	public function buildTree($parentBlock = null);
+    /**
+     * Add inline child (and split text to individual characters)
+     * @param \DOMNode $childDomElement
+     * @param Element $element
+     * @param Style $style
+     * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+     * @return $this
+     */
+    public function appendInline($childDomElement, $element, $style, $parentBlock);
+
+    /**
+     * Build tree from dom tree
+     * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+     * @return $this
+     */
+    public function buildTree($parentBlock = null);
 }

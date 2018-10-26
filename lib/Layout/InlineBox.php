@@ -103,6 +103,29 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
+    public function appendTableBlock($childDomElement, $element, $style, $parentBlock)
+    {
+        $box = (new TableWrapperBlockBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setElement($element)
+            ->setStyle($style)
+            ->init();
+        // if we add this child to parent box we loose parent inline styles if nested
+        // so we need to wrap this box later and split lines at block element
+        if (isset($this->getChildren()[0])) {
+            $this->cloneParent($box);
+        } else {
+            $this->appendChild($box);
+        }
+        $box->getStyle()->init();
+        $box->buildTree($box);
+        return $box;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
     {
         $box = (new InlineBlockBox())

@@ -99,6 +99,10 @@ class ElementBox extends Box
                     $this->appendBlock($childDomElement, $element, $style, $parentBlock);
                     continue;
                 }
+                if ($display === 'table') {
+                    $this->appendTableBlock($childDomElement, $element, $style, $parentBlock);
+                    continue;
+                }
                 if ($display === 'inline') {
                     $inline = $this->appendInline($childDomElement, $element, $style, $parentBlock);
                     if ($childDomElement instanceof \DOMText) {
