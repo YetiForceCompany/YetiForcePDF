@@ -21,11 +21,31 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 /**
  * Class TableWrapperBlockBox
  */
-class TableWrapperBlockBox extends BlockBox
+class TableWrapperBlockBox extends InlineBlockBox
 {
 
-    public function appendTableBlock($childDomElement, $element, $style, $parentBlock)
+    /**
+     * Append table box element
+     * @param \DOMNode $childDomElement
+     * @param Element $element
+     * @param Style $style
+     * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     * @return $this
+     */
+    public function appendTableBox($childDomElement, $element, $style, $parentBlock)
     {
-
+        $cleanStyle = (new \YetiForcePDF\Style\Style())->setDocument($this->document);
+        $box = (new TableBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setElement($element)
+            ->setStyle($cleanStyle)
+            ->init();
+        $cleanStyle->setRule('display', 'block');
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        $box->buildTree($box);
+        return $box;
     }
+
 }

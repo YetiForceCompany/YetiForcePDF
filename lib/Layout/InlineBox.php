@@ -21,9 +21,8 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 /**
  * Class InlineBox
  */
-class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, AppendChildInterface, AppendTableChildInterface
+class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, AppendChildInterface
 {
-    use AppendTableTrait;
     /**
      * @var \YetiForcePDF\Layout\TextBox
      */

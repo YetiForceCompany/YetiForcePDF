@@ -21,9 +21,8 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 /**
  * Class BlockBox
  */
-class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface, AppendTableChildInterface, BuildTreeInterface
+class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface, BuildTreeInterface
 {
-    use AppendTableTrait;
 
     /**
      * @var \YetiForcePDF\Layout\LineBox
@@ -148,7 +147,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             ->init();
         $this->appendChild($box);
         $box->getStyle()->init();
-        $box->buildTree($box);
+        // we wan't to build tree from here - we will build it from TableBox
         return $box;
     }
 
