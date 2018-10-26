@@ -95,24 +95,22 @@ class ElementBox extends Box
                     ->setContent($styleStr)
                     ->parseInline();
                 $display = $style->getRules('display');
-                if ($display === 'block') {
-                    $this->appendBlock($childDomElement, $element, $style, $parentBlock);
-                    continue;
-                }
-                if ($display === 'table') {
-                    $this->appendTableBlock($childDomElement, $element, $style, $parentBlock);
-                    continue;
-                }
-                if ($display === 'inline') {
-                    $inline = $this->appendInline($childDomElement, $element, $style, $parentBlock);
-                    if ($childDomElement instanceof \DOMText) {
-                        $inline->setAnonymous(true)->appendText($childDomElement, null, null, $parentBlock);
-                        continue;
-                    }
-                    continue;
-                }
-                if ($display === 'inline-block') {
-                    $this->appendInlineBlock($childDomElement, $element, $style, $parentBlock);
+                switch ($display) {
+                    case 'block':
+                        $this->appendBlock($childDomElement, $element, $style, $parentBlock);
+                        break;
+                    case 'table':
+                        $this->appendTableBlock($childDomElement, $element, $style, $parentBlock);
+                        break;
+                    case 'inline':
+                        $inline = $this->appendInline($childDomElement, $element, $style, $parentBlock);
+                        if ($childDomElement instanceof \DOMText) {
+                            $inline->setAnonymous(true)->appendText($childDomElement, null, null, $parentBlock);
+                        }
+                        break;
+                    case 'inline-block':
+                        $this->appendInlineBlock($childDomElement, $element, $style, $parentBlock);
+                        break;
                 }
             }
         }
