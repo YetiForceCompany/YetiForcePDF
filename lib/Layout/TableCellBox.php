@@ -21,7 +21,7 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 /**
  * Class TableCellBox
  */
-class TableCellBox extends InlineBlockBox
+class TableCellBox extends BlockBox
 {
     /**
      * Measure width
