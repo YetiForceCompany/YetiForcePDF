@@ -113,7 +113,7 @@ class ElementBox extends Box
                         break;
                     case 'inline':
                         $inline = $this->appendInlineBox($childDomElement, $element, $style, $parentBlock);
-                        if ($childDomElement instanceof \DOMText) {
+                        if (isset($inline) && $childDomElement instanceof \DOMText) {
                             $inline->setAnonymous(true)->appendText($childDomElement, null, null, $parentBlock);
                         }
                         break;
