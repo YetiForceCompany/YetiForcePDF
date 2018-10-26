@@ -32,7 +32,7 @@ interface AppendChildInterface
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
      * @return $this
      */
-    public function appendBlock($childDomElement, $element, $style, $parentBlock);
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock);
 
     /**
      * Append table wrapper block box element
@@ -42,7 +42,7 @@ interface AppendChildInterface
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
      * @return $this
      */
-    public function appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock);
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock);
 
     /**
      * Append inline block box element
@@ -52,7 +52,7 @@ interface AppendChildInterface
      * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
      * @return $this
      */
-    public function appendInlineBlock($childDomElement, $element, $style, $parentBlock);
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock);
 
     /**
      * Add inline child (and split text to individual characters)
@@ -62,7 +62,7 @@ interface AppendChildInterface
      * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
      * @return $this
      */
-    public function appendInline($childDomElement, $element, $style, $parentBlock);
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock);
 
     /**
      * Build tree from dom tree

@@ -21,8 +21,9 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 /**
  * Class BlockBox
  */
-class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface, BuildTreeInterface
+class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface, AppendTableChildInterface, BuildTreeInterface
 {
+    use AppendTableTrait;
 
     /**
      * @var \YetiForcePDF\Layout\LineBox
@@ -114,7 +115,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     /**
      * {@inheritdoc}
      */
-    public function appendBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
     {
         if ($this->getCurrentLineBox()) {
             $this->closeLine();
@@ -134,7 +135,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     /**
      * {@inheritdoc}
      */
-    public function appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
     {
         if ($this->getCurrentLineBox()) {
             $this->closeLine();
@@ -154,7 +155,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     /**
      * {@inheritdoc}
      */
-    public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
     {
         if ($this->getCurrentLineBox()) {
             $currentLineBox = $this->getCurrentLineBox();
@@ -167,7 +168,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     /**
      * {@inheritdoc}
      */
-    public function appendInline($childDomElement, $element, $style, $parentBlock)
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
     {
         if ($this->getCurrentLineBox()) {
             $currentLineBox = $this->getCurrentLineBox();

@@ -97,19 +97,22 @@ class ElementBox extends Box
                 $display = $style->getRules('display');
                 switch ($display) {
                     case 'block':
-                        $this->appendBlock($childDomElement, $element, $style, $parentBlock);
+                        $this->appendBlockBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table':
-                        $tableWrapper = $this->appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock);
+                        $this->appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock);
+                        break;
+                    case 'table-row':
+                        $this->appendTableRowBlockBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'inline':
-                        $inline = $this->appendInline($childDomElement, $element, $style, $parentBlock);
+                        $inline = $this->appendInlineBox($childDomElement, $element, $style, $parentBlock);
                         if ($childDomElement instanceof \DOMText) {
                             $inline->setAnonymous(true)->appendText($childDomElement, null, null, $parentBlock);
                         }
                         break;
                     case 'inline-block':
-                        $this->appendInlineBlock($childDomElement, $element, $style, $parentBlock);
+                        $this->appendInlineBlockBox($childDomElement, $element, $style, $parentBlock);
                         break;
                 }
             }

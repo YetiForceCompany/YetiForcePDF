@@ -21,9 +21,9 @@ use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 /**
  * Class InlineBox
  */
-class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, AppendChildInterface
+class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, AppendChildInterface, AppendTableChildInterface
 {
-
+    use AppendTableTrait;
     /**
      * @var \YetiForcePDF\Layout\TextBox
      */
@@ -55,7 +55,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
-    public function appendBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
     {
         $box = (new BlockBox())
             ->setDocument($this->document)
@@ -78,7 +78,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
-    public function appendTableWrapperBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
     {
         $box = (new TableWrapperBlockBox())
             ->setDocument($this->document)
@@ -101,7 +101,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
-    public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
     {
         $box = (new InlineBlockBox())
             ->setDocument($this->document)
@@ -124,7 +124,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
-    public function appendInline($childDomElement, $element, $style, $parentBlock)
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
     {
         $box = (new InlineBox())
             ->setDocument($this->document)
