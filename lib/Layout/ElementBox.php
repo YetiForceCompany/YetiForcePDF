@@ -57,7 +57,8 @@ class ElementBox extends Box
     {
         foreach ($this->getChildren() as $child) {
             if ($child instanceof LineBox) {
-                if ($child->getTextContent() === '') {
+                $textContent = $child->getTextContent();
+                if ($textContent === '' || $textContent === ' ') {
                     $this->removeChild($child);
                 }
             } else {

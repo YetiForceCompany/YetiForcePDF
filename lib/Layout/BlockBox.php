@@ -161,7 +161,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         } else {
             $currentLineBox = $this->getNewLineBox();
         }
-        return $currentLineBox->appendInlineBlock($childDomElement, $element, $style, $parentBlock);
+        return $currentLineBox->appendInlineBlock($childDomElement, $element, $style, $this);
     }
 
     /**
@@ -174,7 +174,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         } else {
             $currentLineBox = $this->getNewLineBox();
         }
-        return $currentLineBox->appendInline($childDomElement, $element, $style, $parentBlock);
+        return $currentLineBox->appendInline($childDomElement, $element, $style, $this);
     }
 
     /**
@@ -212,7 +212,6 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         }
         $dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
         $this->applyStyleWidth();
-        $this->applyStyleWidth();
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
         }
@@ -236,6 +235,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                 $this->removeChild($child);
             }
         }
+        $this->removeEmptyLines();
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
         }

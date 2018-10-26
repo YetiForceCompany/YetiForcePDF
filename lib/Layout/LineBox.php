@@ -34,7 +34,7 @@ class LineBox extends Box implements BoxInterface
      */
     public function appendBlock($childDomElement, $element, $style, $parentBlock)
     {
-        return $this->getParent()->appendBlock($childDomElement, $element, $style, $parentBlock);
+        return $parentBlock->appendBlock($childDomElement, $element, $style, $parentBlock);
     }
 
     /**
@@ -47,7 +47,7 @@ class LineBox extends Box implements BoxInterface
      */
     public function appendTableBlock($childDomElement, $element, $style, $parentBlock)
     {
-        return $this->getParent()->appendTableBlock($childDomElement, $element, $style, $parentBlock);
+        return $parentBlock->appendTableBlock($childDomElement, $element, $style, $parentBlock);
     }
 
     /**
@@ -67,7 +67,7 @@ class LineBox extends Box implements BoxInterface
             ->init();
         $this->appendChild($box);
         $box->getStyle()->init();
-        $box->buildTree($parentBlock);
+        $box->buildTree($box);
         return $box;
     }
 
@@ -106,6 +106,28 @@ class LineBox extends Box implements BoxInterface
     }
 
     /**
+     * Remove white spaces
+     * @param $childBox
+     * @return $this
+     */
+    public function removeWhiteSpaces($childBox)
+    {
+        $previous = $childBox->getPrevious();
+        if ($previous) {
+            $previousText = $previous->getTextContent();
+            while ($previous !== null && ($previousText === '' || $previousText === ' ')) {
+                if ($previousText === ' ') {
+                    $previous->getFirstTextBox()->setText('');
+                    $previous->measureWidth();
+                }
+                $previous = $previous->getPrevious();
+                $previousText = $previous->getTextContent();
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Divide this line into more lines when objects doesn't fit
      * @return LineBox[]
      */
@@ -120,7 +142,7 @@ class LineBox extends Box implements BoxInterface
             ->init();
         $children = $this->getChildren();
         foreach ($children as $index => $childBox) {
-            $childBox->measureWidth();
+            //$childBox->measureWidth();
             if ($line->willFit($childBox)) {
                 // remove first white space
                 if ($line->getTextContent() === '') {
@@ -130,7 +152,7 @@ class LineBox extends Box implements BoxInterface
                     } else {
                         $childBox->getFirstTextBox()->setText('');
                         $line->appendChild($childBox);
-                        $childBox->measureWidth();
+                        //$childBox->measureWidth();
                     }
                 } else {
                     if ($childBox->getTextContent() === ' ') {
@@ -140,28 +162,16 @@ class LineBox extends Box implements BoxInterface
                         } else {
                             $childBox->getFirstTextBox()->setText('');
                             $line->appendChild($childBox);
-                            $childBox->measureWidth();
+                            //$childBox->measureWidth();
                         }
                     } else {
                         $line->appendChild($childBox);
                     }
                 }
             } else {
-                if ($line->getTextContent() !== '') {
-                    // remove ending white space
-                    $previous = $childBox->getPrevious();
-                    if ($previous) {
-                        $previousText = $previous->getTextContent();
-                        while ($previous !== null && ($previousText === '' || $previousText === ' ')) {
-                            if ($previousText === ' ') {
-                                $previous->getFirstTextBox()->setText('');
-                                $previous->measureWidth();
-                            }
-                            $previous = $previous->getPrevious();
-                            $previousText = $previous->getTextContent();
-                        }
-                    }
-                    $lines[] = $line;
+                $textContent = $line->getTextContent();
+                if ($textContent !== '' && $textContent !== ' ') {
+                    $lines[] = $line->removeWhiteSpaces($childBox);
                 }
                 $line = (new LineBox())
                     ->setDocument($this->document)
@@ -175,27 +185,15 @@ class LineBox extends Box implements BoxInterface
                         $text = '';
                     }
                     $firstTextBox->setText($text);
-                    $childBox->measureWidth();
+                    //$childBox->measureWidth();
                 }
                 $line->appendChild($childBox);
             }
         }
         // append last line
-        if ($line->getTextContent() !== '') {
-            // remove ending white space
-            $previous = $childBox->getPrevious();
-            if ($previous) {
-                $previousText = $previous->getTextContent();
-                while ($previous !== null && ($previousText === '' || $previousText === ' ')) {
-                    if ($previousText === ' ') {
-                        $previous->getFirstTextBox()->setText('');
-                        $previous->measureWidth();
-                    }
-                    $previous = $previous->getPrevious();
-                    $previousText = $previous->getTextContent();
-                }
-            }
-            $lines[] = $line;
+        $textContent = $line->getTextContent();
+        if ($textContent !== '' && $textContent !== ' ') {
+            $lines[] = $line->removeWhiteSpaces($childBox);
         }
         return $lines;
 
@@ -208,7 +206,6 @@ class LineBox extends Box implements BoxInterface
     public function measureWidth()
     {
         $width = 0;
-
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
             $width += $child->getDimensions()->getOuterWidth();
