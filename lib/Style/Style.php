@@ -920,6 +920,43 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Apply text style - default style for text nodes
+     * @return $this
+     */
+    public function applyTextStyle()
+    {
+        if ($this->getElement()->getDOMElement() instanceof \DOMText) {
+            $rulesParsed['display'] = 'inline';
+            $rulesParsed['line-height'] = $this->getFont()->getTextHeight();
+            // if this is text node it's mean that it was wrapped by anonymous inline element
+            // so wee need to copy vertical align property (because it is not inherited by default)
+            if ($this->getParent()) {
+                $rulesParsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Apply border spacing for table cell elements
+     * @return $this
+     */
+    public function applyBorderSpacing()
+    {
+        if ($element = $this->getElement()) {
+            if ($element->getDOMElement()->nodeName === 'td') {
+                $parentStyle = $this->getParent();
+                $padding = $this->getRules('border-spacing');
+                $parentStyle->setRule('padding-top', $padding);
+                $parentStyle->setRule('padding-right', $padding);
+                $parentStyle->setRule('padding-bottom', $padding);
+                $parentStyle->setRule('padding-left', $padding);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Parse css style
      * @return $this
      */
@@ -951,15 +988,8 @@ class Style extends \YetiForcePDF\Base
         $rulesParsed = array_merge($parsed, $rulesParsed);
         $this->parseFont($rulesParsed);
         if ($this->getElement()) {
-            if ($this->getElement()->getDOMElement() instanceof \DOMText) {
-                $rulesParsed['display'] = 'inline';
-                $rulesParsed['line-height'] = $this->getFont()->getTextHeight();
-                // if this is text node it's mean that it was wrapped by anonymous inline element
-                // so wee need to copy vertical align property (because it is not inherited by default)
-                if ($this->getParent()) {
-                    $rulesParsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
-                }
-            }
+            $this->applyTextStyle();
+            $this->applyBorderSpacing();
         }
         $finalRules = [];
         foreach ($rulesParsed as $ruleName => $ruleValue) {

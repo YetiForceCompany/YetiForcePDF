@@ -75,10 +75,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Fill missing cells - rows should have equal numbers of column so if not we will add anonymous cell to it
+     * Add missing cells - rows should have equal numbers of column so if not we will add anonymous cell to it
      * @return $this
      */
-    public function fillMissingCells()
+    public function addMissingCells()
     {
 
         return $this;
@@ -86,8 +86,7 @@ class TableBox extends BlockBox
 
 
     /**
-     * Measure width of this block
-     * @return $this
+     * {@inheritdoc}
      */
     public function measureWidth()
     {
@@ -96,11 +95,10 @@ class TableBox extends BlockBox
         $columns = $this->getColumns();
         foreach ($columns as $columnIndex => $row) {
             foreach ($row as $column) {
-                $cell = $column->getFirstChild();
                 if (!isset($maxWidths[$columnIndex])) {
                     $maxWidths[$columnIndex] = 0;
                 }
-                $maxWidths[$columnIndex] = max($maxWidths[$columnIndex], $cell->getDimensions()->getWidth());
+                $maxWidths[$columnIndex] = max($maxWidths[$columnIndex], $column->getDimensions()->getOuterWidth());
             }
         }
         $maxWidth = 0;
@@ -112,10 +110,37 @@ class TableBox extends BlockBox
             foreach ($columns[$columnIndex] as $row) {
                 $cell = $row->getFirstChild();
                 $row->getDimensions()->setWidth($width);
-                $cell->getDimensions()->setWidth($width);
+                $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
                 foreach ($cell->getChildren() as $child) {
                     $child->measureWidth();
                 }
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function measureHeight()
+    {
+        parent::measureHeight();
+        $maxHeights = [];
+        $rows = $this->getRows();
+        foreach ($rows as $rowIndex => $row) {
+            foreach ($row->getChildren() as $column) {
+                if (!isset($maxHeights[$rowIndex])) {
+                    $maxHeights[$rowIndex] = 0;
+                }
+                $maxHeights[$rowIndex] = max($maxHeights[$rowIndex], $column->getDimensions()->getOuterHeight());
+            }
+        }
+        foreach ($rows as $rowIndex => $row) {
+            $row->getDimensions()->setHeight($maxHeights[$rowIndex]);
+            foreach ($row->getChildren() as $column) {
+                $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
+                $cell = $column->getFirstChild();
+                $cell->getDimensions()->setHeight($column->getDimensions()->getInnerHeight());
             }
         }
         return $this;
