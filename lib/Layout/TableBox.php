@@ -45,4 +45,79 @@ class TableBox extends BlockBox
         return $box;
     }
 
+    /**
+     * Get all rows from all row groups
+     */
+    public function getRows()
+    {
+        $rows = [];
+        foreach ($this->getChildren() as $rowGroup) {
+            foreach ($rowGroup->getChildren() as $row) {
+                $rows[] = $row;
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * Get columns - get table cells segregated by columns
+     * @return array
+     */
+    public function getColumns()
+    {
+        $columns = [];
+        foreach ($this->getRows() as $row) {
+            foreach ($row->getChildren() as $columnIndex => $column) {
+                $columns[$columnIndex][] = $column;
+            }
+        }
+        return $columns;
+    }
+
+    /**
+     * Fill missing cells - rows should have equal numbers of column so if not we will add anonymous cell to it
+     * @return $this
+     */
+    public function fillMissingCells()
+    {
+
+        return $this;
+    }
+
+
+    /**
+     * Measure width of this block
+     * @return $this
+     */
+    public function measureWidth()
+    {
+        parent::measureWidth();
+        $maxWidths = [];
+        $columns = $this->getColumns();
+        foreach ($columns as $columnIndex => $row) {
+            foreach ($row as $column) {
+                $cell = $column->getFirstChild();
+                if (!isset($maxWidths[$columnIndex])) {
+                    $maxWidths[$columnIndex] = 0;
+                }
+                $maxWidths[$columnIndex] = max($maxWidths[$columnIndex], $cell->getDimensions()->getWidth());
+            }
+        }
+        $maxWidth = 0;
+        foreach ($maxWidths as $width) {
+            $maxWidth += $width;
+        }
+        $this->getDimensions()->setWidth($maxWidth);
+        foreach ($maxWidths as $columnIndex => $width) {
+            foreach ($columns[$columnIndex] as $row) {
+                $cell = $row->getFirstChild();
+                $row->getDimensions()->setWidth($width);
+                $cell->getDimensions()->setWidth($width);
+                foreach ($cell->getChildren() as $child) {
+                    $child->measureWidth();
+                }
+            }
+        }
+        return $this;
+    }
 }
