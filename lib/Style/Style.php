@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
-use YetiForcePDF\Layout\Box;
+use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\InlineBox;
+use \YetiForcePDF\Layout\TableBox;
 
 /**
  * Class Style
@@ -1014,6 +1015,50 @@ class Style extends \YetiForcePDF\Base
             $finalRules['margin-right'] = 0;
         }
         $this->rules = $finalRules;
+        return $this;
+    }
+
+    /**
+     * Fix tables
+     * @return $this
+     */
+    protected function fixTables()
+    {
+        $box = $this->getBox();
+        if ($box instanceof TableBox) {
+            $columns = $box->getColumns();
+            $columnsCount = count($columns);
+            if (!$columnsCount) {
+                return $this;
+            }
+            $rowsCount = count($columns[0]);
+            if (!$rowsCount) {
+                return $this;
+            }
+            foreach ($columns as $columnIndex => $column) {
+                foreach ($column as $rowIndex => $row) {
+                    if ($columnIndex + 1 < $columnsCount) {
+                        $row->getStyle()->setRule('padding-right', 0);
+                    }
+                    if ($rowIndex + 1 < $rowsCount) {
+                        $row->getStyle()->setRule('padding-bottom', 0);
+                    }
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Fix dom tree - after dom tree is parsed we must clean up or add some rules
+     * @return $this
+     */
+    public function fixDomTree()
+    {
+        foreach ($this->box->getChildren() as $childBox) {
+            $childBox->getStyle()->fixTables();
+            $childBox->getStyle()->fixDomTree();
+        }
         return $this;
     }
 

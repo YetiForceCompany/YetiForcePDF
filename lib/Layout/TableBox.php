@@ -67,8 +67,12 @@ class TableBox extends BlockBox
     {
         $columns = [];
         foreach ($this->getRows() as $row) {
-            foreach ($row->getChildren() as $columnIndex => $column) {
-                $columns[$columnIndex][] = $column;
+            $columnIndex = 0;
+            foreach ($row->getChildren() as $column) {
+                if ($column instanceof TableColumnBox) {
+                    $columns[$columnIndex][] = $column;
+                    $columnIndex++;
+                }
             }
         }
         return $columns;
