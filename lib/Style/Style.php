@@ -922,9 +922,10 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Apply text style - default style for text nodes
+     * @param array $rulesParsed
      * @return $this
      */
-    public function applyTextStyle()
+    public function applyTextStyle($rulesParsed)
     {
         if ($this->getElement()->getDOMElement() instanceof \DOMText) {
             $rulesParsed['display'] = 'inline';
@@ -935,14 +936,15 @@ class Style extends \YetiForcePDF\Base
                 $rulesParsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
             }
         }
-        return $this;
+        return $rulesParsed;
     }
 
     /**
      * Apply border spacing for table cell elements
-     * @return $this
+     * @param array $rulesParsed
+     * @return array
      */
-    public function applyBorderSpacing()
+    public function applyBorderSpacing($rulesParsed)
     {
         if ($element = $this->getElement()) {
             if ($element->getDOMElement()->nodeName === 'td') {
@@ -954,7 +956,7 @@ class Style extends \YetiForcePDF\Base
                 $parentStyle->setRule('padding-left', $padding);
             }
         }
-        return $this;
+        return $rulesParsed;
     }
 
     /**
@@ -989,8 +991,8 @@ class Style extends \YetiForcePDF\Base
         $rulesParsed = array_merge($parsed, $rulesParsed);
         $this->parseFont($rulesParsed);
         if ($this->getElement()) {
-            $this->applyTextStyle();
-            $this->applyBorderSpacing();
+            $rulesParsed = $this->applyTextStyle($rulesParsed);
+            $rulesParsed = $this->applyBorderSpacing($rulesParsed);
         }
         $finalRules = [];
         foreach ($rulesParsed as $ruleName => $ruleValue) {
