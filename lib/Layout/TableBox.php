@@ -88,37 +88,79 @@ class TableBox extends BlockBox
         return $this;
     }
 
-
     /**
-     * {@inheritdoc}
+     * Get minimal and maximal column widths
+     * @param array $columns
+     * @return array
      */
-    public function measureWidth()
+    public function getMinMaxWidths($columns)
     {
-        parent::measureWidth();
         $maxWidths = [];
-        $columns = $this->getColumns();
+        $minWidths = [];
         foreach ($columns as $columnIndex => $row) {
             foreach ($row as $column) {
                 if (!isset($maxWidths[$columnIndex])) {
                     $maxWidths[$columnIndex] = 0;
                 }
+                if (!isset($minWidths[$columnIndex])) {
+                    $minWidths[$columnIndex] = 0;
+                }
                 $maxWidths[$columnIndex] = max($maxWidths[$columnIndex], $column->getDimensions()->getOuterWidth());
+                $minWidths[$columnIndex] = max($minWidths[$columnIndex], $column->getDimensions()->getMinWidth());
             }
         }
+        return ['min' => $minWidths, 'max' => $maxWidths];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function measureWidth(bool $divideLines = true)
+    {
+        parent::measureWidth(false);
+        $columns = $this->getColumns();
+        $minMax = $this->getMinMaxWidths($columns);
+        $maxWidths = $minMax['max'];
+        $minWidths = $minMax['min'];
         $maxWidth = 0;
         foreach ($maxWidths as $width) {
             $maxWidth += $width;
         }
-        $this->getDimensions()->setWidth($maxWidth);
-        foreach ($maxWidths as $columnIndex => $width) {
-            foreach ($columns[$columnIndex] as $row) {
-                $cell = $row->getFirstChild();
-                $row->getDimensions()->setWidth($width);
-                $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
-                foreach ($cell->getChildren() as $child) {
-                    $child->measureWidth();
+        $availableSpace = $this->getDimensions()->computeAvailableSpace();
+        if ($maxWidth <= $availableSpace) {
+            $this->getDimensions()->setWidth($maxWidth);
+            foreach ($maxWidths as $columnIndex => $width) {
+                foreach ($columns[$columnIndex] as $row) {
+                    $cell = $row->getFirstChild();
+                    $row->getDimensions()->setWidth($width);
+                    $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
+                    foreach ($cell->getChildren() as $child) {
+                        $child->measureWidth();
+                    }
                 }
             }
+        } else {
+            // use min widths
+            $fullMinWidth = 0;
+            foreach ($minWidths as $min) {
+                $fullMinWidth += $min;
+            }
+            $left = $availableSpace - $fullMinWidth;
+            $width = 0;
+            foreach ($minWidths as $columnIndex => $minWidth) {
+                $maxColumnWidth = $maxWidths[$columnIndex];
+                $columnWidth = $minWidth + ($left * ($maxColumnWidth / $maxWidth));
+                foreach ($columns[$columnIndex] as $row) {
+                    $cell = $row->getFirstChild();
+                    $row->getDimensions()->setWidth($columnWidth);
+                    $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
+                    foreach ($cell->getChildren() as $child) {
+                        $child->measureWidth();
+                    }
+                }
+                $width += $columnWidth;
+            }
+            $this->getDimensions()->setWidth($width);
         }
         return $this;
     }

@@ -15,6 +15,7 @@ namespace YetiForcePDF\Layout\Dimensions;
 use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\LineBox;
 use \YetiForcePDF\Layout\InlineBox;
+use \YetiForcePDF\Layout\TextBox;
 
 /**
  * Class BoxDimensions
@@ -104,6 +105,27 @@ class BoxDimensions extends Dimensions
     {
         $rules = $this->getBox()->getStyle()->getRules();
         return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
+    }
+
+    /**
+     * Get minimum space that current box could have without overflow
+     * @return float
+     */
+    public function getMinWidth()
+    {
+        $box = $this->getBox();
+        if ($box instanceof TextBox) {
+            return $this->getOuterWidth();
+        }
+        $maxTextWidth = 0;
+        foreach ($box->getChildren() as $childBox) {
+            if ($childBox instanceof TextBox) {
+                $maxTextWidth = max($maxTextWidth, $childBox->getDimensions()->getTextWidth($childBox->getText()));
+            } else {
+                $maxTextWidth = max($maxTextWidth, $childBox->getDimensions()->getMinWidth());
+            }
+        }
+        return $maxTextWidth;
     }
 
     /**
