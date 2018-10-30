@@ -112,6 +112,9 @@ class LineBox extends Box implements BoxInterface
      */
     public function removeWhiteSpaces($childBox)
     {
+        if (!empty($childBox->getTextContent())) {
+            return $this;
+        }
         $previous = $childBox->getPrevious();
         if ($previous) {
             $previousText = $previous->getTextContent();
