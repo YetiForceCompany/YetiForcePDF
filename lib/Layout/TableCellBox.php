@@ -38,10 +38,7 @@ class TableCellBox extends BlockBox
             $child->measureWidth();
             $maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
-        $style = $this->getStyle();
-        $maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
-        $this->getDimensions()->setWidth($maxWidth);
-        $this->applyStyleWidth();
+        // do not set up width because it was set by TableBox measureWidth method
         return $this;
     }
 

@@ -115,9 +115,9 @@ class TableBox extends BlockBox
     /**
      * {@inheritdoc}
      */
-    public function measureWidth(bool $divideLines = true)
+    public function measureWidth()
     {
-        parent::measureWidth(false);
+        parent::measureWidth();
         $columns = $this->getColumns();
         $minMax = $this->getMinMaxWidths($columns);
         $maxWidths = $minMax['max'];
@@ -134,9 +134,6 @@ class TableBox extends BlockBox
                     $cell = $row->getFirstChild();
                     $row->getDimensions()->setWidth($width);
                     $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
-                    foreach ($cell->getChildren() as $child) {
-                        $child->measureWidth();
-                    }
                 }
             }
         } else {
@@ -154,9 +151,6 @@ class TableBox extends BlockBox
                     $cell = $row->getFirstChild();
                     $row->getDimensions()->setWidth($columnWidth);
                     $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
-                    foreach ($cell->getChildren() as $child) {
-                        $child->measureWidth();
-                    }
                 }
                 $width += $columnWidth;
             }

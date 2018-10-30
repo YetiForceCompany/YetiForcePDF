@@ -48,4 +48,24 @@ class TableWrapperBlockBox extends InlineBlockBox
         return $box;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function measureWidth()
+    {
+        $maxWidth = 0;
+        foreach ($this->getChildren() as $child) {
+            $child->measureWidth();
+        }
+        foreach ($this->getChildren() as $child) {
+            $child->measureWidth();
+            $maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
+        }
+        $style = $this->getStyle();
+        $maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+        $this->getDimensions()->setWidth($maxWidth);
+        $this->applyStyleWidth();
+        return $this;
+    }
+
 }

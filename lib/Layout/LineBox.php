@@ -145,7 +145,6 @@ class LineBox extends Box implements BoxInterface
             ->init();
         $children = $this->getChildren();
         foreach ($children as $index => $childBox) {
-            //$childBox->measureWidth();
             if ($line->willFit($childBox)) {
                 // remove first white space
                 if ($line->getTextContent() === '') {
@@ -155,7 +154,6 @@ class LineBox extends Box implements BoxInterface
                     } else {
                         $childBox->getFirstTextBox()->setText('');
                         $line->appendChild($childBox);
-                        //$childBox->measureWidth();
                     }
                 } else {
                     if ($childBox->getTextContent() === ' ') {
@@ -165,7 +163,6 @@ class LineBox extends Box implements BoxInterface
                         } else {
                             $childBox->getFirstTextBox()->setText('');
                             $line->appendChild($childBox);
-                            //$childBox->measureWidth();
                         }
                     } else {
                         $line->appendChild($childBox);
@@ -188,7 +185,6 @@ class LineBox extends Box implements BoxInterface
                         $text = '';
                     }
                     $firstTextBox->setText($text);
-                    //$childBox->measureWidth();
                 }
                 $line->appendChild($childBox);
             }
