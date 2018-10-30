@@ -476,7 +476,6 @@ class LineBox extends Box implements BoxInterface
      */
     public function getInstructions(): string
     {
-
         $coordinates = $this->getCoordinates();
         $pdfX = $coordinates->getPdfX();
         $pdfY = $coordinates->getPdfY();

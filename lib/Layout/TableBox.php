@@ -180,7 +180,32 @@ class TableBox extends BlockBox
             foreach ($row->getChildren() as $column) {
                 $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
                 $cell = $column->getFirstChild();
-                $cell->getDimensions()->setHeight($column->getDimensions()->getInnerHeight());
+                $height = $column->getDimensions()->getInnerHeight();
+                $cellChildrenHeight = 0;
+                foreach ($cell->getChildren() as $cellChild) {
+                    $cellChildrenHeight += $cellChild->getDimensions()->getOuterHeight();
+                }
+                // add vertical padding if needed
+                if ($cellChildrenHeight < $height) {
+                    $freeSpace = $height - $cellChildrenHeight;
+                    $style = $cell->getStyle();
+                    switch ($style->getRules('vertical-align')) {
+                        case 'top':
+                            $style->setRule('padding-bottom', $freeSpace);
+                            break;
+                        case 'bottom':
+                            $style->setRule('padding-top', $freeSpace);
+                            break;
+                        case 'baseline':
+                        case 'middle':
+                        default:
+                            $padding = $freeSpace / 2;
+                            $style->setRule('padding-top', $padding);
+                            $style->setRule('padding-bottom', $padding);
+                            break;
+                    }
+                }
+                $cell->getDimensions()->setHeight($height);
             }
         }
         return $this;

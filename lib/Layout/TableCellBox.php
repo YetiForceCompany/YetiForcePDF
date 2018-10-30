@@ -53,9 +53,10 @@ class TableCellBox extends BlockBox
             $child->measureHeight();
             $height += $child->getDimensions()->getOuterHeight();
         }
+        $dimensions = $this->getDimensions();
         $style = $this->getStyle();
         $height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
-        $this->getDimensions()->setHeight($height);
+        $dimensions->setHeight($height);
         $this->applyStyleHeight();
         return $this;
     }
