@@ -20,98 +20,100 @@ use YetiForcePDF\Layout\Box;
 class Coordinates extends \YetiForcePDF\Base
 {
 
-	/**
-	 * @var Box
-	 */
-	protected $box;
-	/**
-	 * Absolute X position inside html coordinate system
-	 * @var float
-	 */
-	protected $htmlX = 0;
-	/**
-	 * Absolute Y position inside html coordinate system
-	 * @var float
-	 */
-	protected $htmlY = 0;
+    /**
+     * @var Box
+     */
+    protected $box;
+    /**
+     * Absolute X position inside html coordinate system
+     * @var float
+     */
+    protected $htmlX = '0';
+    /**
+     * Absolute Y position inside html coordinate system
+     * @var float
+     */
+    protected $htmlY = '0';
 
-	/**
-	 * Set box
-	 * @param \YetiForcePDF\Layout\Box $box
-	 * @return $this
-	 */
-	public function setBox(Box $box)
-	{
-		$this->box = $box;
-		return $this;
-	}
+    /**
+     * Set box
+     * @param \YetiForcePDF\Layout\Box $box
+     * @return $this
+     */
+    public function setBox(Box $box)
+    {
+        $this->box = $box;
+        return $this;
+    }
 
-	/**
-	 * Get box
-	 * @return \YetiForcePDF\Layout\Box
-	 */
-	public function getBox()
-	{
-		return $this->box;
-	}
+    /**
+     * Get box
+     * @return \YetiForcePDF\Layout\Box
+     */
+    public function getBox()
+    {
+        return $this->box;
+    }
 
-	/**
-	 * Set absolute html coordinates x position
-	 * @param float $x
-	 * @return $this
-	 */
-	public function setX(float $x)
-	{
-		$this->htmlX = $x;
-		return $this;
-	}
+    /**
+     * Set absolute html coordinates x position
+     * @param float $x
+     * @return $this
+     */
+    public function setX(string $x)
+    {
+        $this->htmlX = $x;
+        return $this;
+    }
 
-	/**
-	 * Get html X
-	 * @return float
-	 */
-	public function getX()
-	{
-		return $this->htmlX;
-	}
+    /**
+     * Get html X
+     * @return string
+     */
+    public function getX()
+    {
+        return $this->htmlX;
+    }
 
-	/**
-	 * Get html Y
-	 * @return float
-	 */
-	public function getY()
-	{
-		return $this->htmlY;
-	}
+    /**
+     * Get html Y
+     * @return string
+     */
+    public function getY()
+    {
+        return $this->htmlY;
+    }
 
-	/**
-	 * Set absolute html coordinates y position
-	 * @param float $y
-	 * @return $this
-	 */
-	public function setY(float $y)
-	{
-		$this->htmlY = $y;
-		return $this;
-	}
+    /**
+     * Set absolute html coordinates y position
+     * @param string $y
+     * @return $this
+     */
+    public function setY(string $y)
+    {
+        $this->htmlY = $y;
+        return $this;
+    }
 
 
-	/**
-	 * Get pdf X coodrinates
-	 */
-	public function getPdfX()
-	{
-		return $this->htmlX;
-	}
+    /**
+     * Get pdf X coodrinates
+     * @return string
+     */
+    public function getPdfX()
+    {
+        return $this->htmlX;
+    }
 
-	/**
-	 * Convert html to pdf y
-	 */
-	public function getPdfY()
-	{
-		$height = $this->box->getDimensions()->getHeight();
-		$page = $this->document->getCurrentPage();
-		return $page->getOuterDimensions()->getHeight() - $this->htmlY - $height;
-	}
+    /**
+     * Convert html to pdf y
+     * @return string
+     */
+    public function getPdfY()
+    {
+        $height = $this->box->getDimensions()->getHeight();
+        $page = $this->document->getCurrentPage();
+        return bcsub((string)$page->getOuterDimensions()->getHeight(), bcsub((string)$this->htmlY, (string)$height, 4), 4);
+    }
 
 }

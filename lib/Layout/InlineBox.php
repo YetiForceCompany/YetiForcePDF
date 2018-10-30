@@ -231,13 +231,13 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
      */
     public function measureWidth()
     {
-        $width = 0;
+        $width = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $width += $child->getDimensions()->getOuterWidth();
+            $width = bcadd($width, (string)$child->getDimensions()->getOuterWidth(), 4);
         }
         $style = $this->getStyle();
-        $width += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
+        $width = bcadd($width, bcadd((string)$style->getHorizontalBordersWidth(), (string)$style->getHorizontalPaddingsWidth(), 4), 4);
         $this->getDimensions()->setWidth($width);
         $this->applyStyleWidth();
         return $this;
@@ -252,7 +252,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
-        $this->getDimensions()->setHeight($this->getStyle()->getLineHeight() + $this->getStyle()->getVerticalPaddingsWidth());
+        $this->getDimensions()->setHeight(bcadd((string)$this->getStyle()->getLineHeight(), (string)$this->getStyle()->getVerticalPaddingsWidth(), 4));
         $this->applyStyleHeight();
         return $this;
     }
@@ -277,13 +277,13 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         }
         // margin top inside inline and inline block doesn't affect relative to line top position
         // it only affects line margins
-        $left = $rules['margin-left'];
+        $left = (string)$rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth() + $previous->getStyle()->getRules('margin-right');
+            $left = bcadd($left, bcadd(bcadd((string)$previous->getOffset()->getLeft(), (string)$previous->getDimensions()->getWidth(), 4), (string)$previous->getStyle()->getRules('margin-right'), 4));
         } else {
-            $left += $parent->getStyle()->getOffsetLeft();
+            $left = bcadd($left, (string)$parent->getStyle()->getOffsetLeft());
         }
-        $this->getOffset()->setLeft($left);
+        $this->getOffset()->setLeft((float)$left);
         $this->getOffset()->setTop($top);
         foreach ($this->getChildren() as $child) {
             $child->measureOffset();
@@ -317,100 +317,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         $this->children = [];
     }
 
-    /**
-     * Add border instructions
-     * @param array $element
-     * @param float $pdfX
-     * @param float $pdfY
-     * @param float $width
-     * @param float $height
-     * @return array
-     */
-    protected function addBorderInstructions(array $element, float $pdfX, float $pdfY, float $width, float $height)
-    {
-        $rules = $this->style->getRules();
-        $x1 = 0;
-        $x2 = $width;
-        $y1 = $height;
-        $y2 = 0;
-        $element[] = '% start border';
-        if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
-            $path = implode(" l\n", [
-                implode(' ', [$x2, $y1]),
-                implode(' ', [$x2 - $rules['border-right-width'], $y1 - $rules['border-top-width']]),
-                implode(' ', [$x1 + $rules['border-left-width'], $y1 - $rules['border-top-width']]),
-                implode(' ', [$x1, $y1])
-            ]);
-            $borderTop = [
-                'q',
-                "{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
-                "1 0 0 1 $pdfX $pdfY cm",
-                "$x1 $y1 m", // move to start point
-                $path . ' l h',
-                'f',
-                'Q'
-            ];
-            $element = array_merge($element, $borderTop);
-        }
-        if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
-            $path = implode(" l\n", [
-                implode(' ', [$x2, $y2]),
-                implode(' ', [$x2 - $rules['border-right-width'], $y2 + $rules['border-bottom-width']]),
-                implode(' ', [$x2 - $rules['border-right-width'], $y1 - $rules['border-top-width']]),
-                implode(' ', [$x2, $y1]),
-            ]);
-            $borderTop = [
-                'q',
-                "1 0 0 1 $pdfX $pdfY cm",
-                "{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
-                "$x2 $y1 m",
-                $path . ' l h',
-                'f',
-                'Q'
-            ];
-            $element = array_merge($element, $borderTop);
-        }
-        if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
-            $path = implode(" l\n", [
-                implode(' ', [$x2, $y2]),
-                implode(' ', [$x2 - $rules['border-right-width'], $y2 + $rules['border-bottom-width']]),
-                implode(' ', [$x1 + $rules['border-left-width'], $y2 + $rules['border-bottom-width']]),
-                implode(' ', [$x1, $y2]),
-            ]);
-            $borderTop = [
-                'q',
-                "1 0 0 1 $pdfX $pdfY cm",
-                "{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
-                "$x1 $y2 m",
-                $path . ' l h',
-                'f',
-                'Q'
-            ];
-            $element = array_merge($element, $borderTop);
-        }
-        if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
-            $path = implode(" l\n", [
-                implode(' ', [$x1 + $rules['border-left-width'], $y1 - $rules['border-top-width']]),
-                implode(' ', [$x1 + $rules['border-left-width'], $y2 + $rules['border-bottom-width']]),
-                implode(' ', [$x1, $y2]),
-                implode(' ', [$x1, $y1]),
-            ]);
-            $borderTop = [
-                'q',
-                "1 0 0 1 $pdfX $pdfY cm",
-                "{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
-                "$x1 $y1 m",
-                $path . ' l h',
-                'f',
-                'Q'
-            ];
-            $element = array_merge($element, $borderTop);
-        }
-        $element[] = '% end border';
-        return $element;
-    }
 
-    public function addBackgroundColorInstructions(array $element, float $pdfX, float $pdfY, float $width, float $height)
+
+    public function addBackgroundColorInstructions(array $element, $pdfX, $pdfY, $width, $height)
     {
         $rules = $this->style->getRules();
         if ($rules['background-color'] !== 'transparent') {

@@ -19,9 +19,9 @@ class BorderTopWidth extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['border-top-width' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['border-top-width' => $this->getNumberValues($ruleValue)[0]];
         }
-        return ['border-top-width' => $ruleValue];
+        return $this->normalized;
     }
 }

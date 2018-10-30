@@ -19,79 +19,79 @@ use YetiForcePDF\Layout\Box;
  */
 class Offset extends \YetiForcePDF\Base
 {
-	/**
-	 * @var Box
-	 */
-	protected $box;
-	/**
-	 * Offset top
-	 * @var float
-	 */
-	protected $top;
-	/**
-	 * Offset left
-	 * @var int
-	 */
-	protected $left = 0;
+    /**
+     * @var Box
+     */
+    protected $box;
+    /**
+     * Offset top
+     * @var float
+     */
+    protected $top;
+    /**
+     * Offset left
+     * @var int
+     */
+    protected $left = '0';
 
-	/**
-	 * Get offset top
-	 * @return float
-	 */
-	public function getTop()
-	{
-		return $this->top;
-	}
+    /**
+     * Get offset top
+     * @return string
+     */
+    public function getTop()
+    {
+        return $this->top;
+    }
 
-	/**
-	 * Set offset top
-	 * @param float $top
-	 * @return $this
-	 */
-	public function setTop(float $top)
-	{
-		$this->top = $top;
-		return $this;
-	}
+    /**
+     * Set offset top
+     * @param string $top
+     * @return $this
+     */
+    public function setTop(string $top)
+    {
+        $this->top = $top;
+        return $this;
+    }
 
-	/**
-	 * Get offset left
-	 * @return float
-	 */
-	public function getLeft()
-	{
-		return $this->left;
-	}
+    /**
+     * Get offset left
+     * @return string
+     */
+    public function getLeft()
+    {
+        return $this->left;
+    }
 
-	/**
-	 * Set offset left
-	 * @param float $left
-	 * @return $this
-	 */
-	public function setLeft(float $left)
-	{
-		$this->left = $left;
-		return $this;
-	}
+    /**
+     * Set offset left
+     * @param string $left
+     * @return $this
+     */
+    public function setLeft(string $left)
+    {
+        $this->left = $left;
+        return $this;
+    }
 
-	/**
-	 * Set box
-	 * @param \YetiForcePDF\Layout\Box $box
-	 * @return $this
-	 */
-	public function setBox(Box $box)
-	{
-		$this->box = $box;
-		return $this;
-	}
+    /**
+     * Set box
+     * @param \YetiForcePDF\Layout\Box $box
+     * @return $this
+     */
+    public function setBox(Box $box)
+    {
+        $this->box = $box;
+        return $this;
+    }
 
-	/**
-	 * Get box
-	 * @return \YetiForcePDF\Layout\Box
-	 */
-	public function getBox()
-	{
-		return $this->box;
-	}
+    /**
+     * Get box
+     * @return \YetiForcePDF\Layout\Box
+     */
+    public function getBox()
+    {
+        return $this->box;
+    }
 
 }

@@ -50,30 +50,30 @@ class BoxDimensions extends Dimensions
 
     /**
      * Get innerWidth
-     * @return float
+     * @return string
      */
-    public function getInnerWidth(): float
+    public function getInnerWidth(): string
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return $this->getWidth() - $style->getHorizontalBordersWidth() - $style->getHorizontalPaddingsWidth();
+        return bcsub(bcsub((string)$this->getWidth(), (string)$style->getHorizontalBordersWidth(), 4), (string)$style->getHorizontalPaddingsWidth(), 4);
     }
 
     /**
      * Get innerHeight
-     * @return float
+     * @return string
      */
-    public function getInnerHeight(): float
+    public function getInnerHeight(): string
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return $this->getHeight() - $style->getVerticalBordersWidth() - $style->getVerticalPaddingsWidth();
+        return bcsub(bcsub((string)$this->getHeight(), (string)$style->getVerticalBordersWidth(), 4), (string)$style->getVerticalPaddingsWidth(), 4);
     }
 
 
     /**
      * Get width with margins
-     * @return float
+     * @return string
      */
     public function getOuterWidth()
     {
@@ -84,14 +84,15 @@ class BoxDimensions extends Dimensions
             $box = $this->getBox();
             if ($box instanceof InlineBox) {
                 foreach ($box->getChildren() as $child) {
-                    $childrenWidth += $child->getDimensions()->getOuterWidth();
+                    $childrenWidth = bcadd((string)$childrenWidth, (string)$child->getDimensions()->getOuterWidth(), 4);
                 }
             } else {
                 foreach ($box->getChildren() as $child) {
-                    $childrenWidth = max($childrenWidth, $child->getDimensions()->getOuterWidth());
+                    $childrenWidth = bccomp((string)$childrenWidth, (string)$child->getDimensions()->getOuterWidth(), 4) > 0 ? $childrenWidth : $child->getDimensions()->getOuterWidth();
                 }
             }
-            return max($this->getWidth() + $rules['margin-left'] + $rules['margin-right'], $childrenWidth);
+            $width = bcadd(bcadd((string)$this->getWidth(), (string)$rules['margin-left'], 4), (string)$rules['margin-right'], 4);
+            return bccomp((string)$width, (string)$childrenWidth, 4) > 0 ? $width : $childrenWidth;
         } else {
             return $this->getBox()->getChildrenWidth();
         }
@@ -99,12 +100,12 @@ class BoxDimensions extends Dimensions
 
     /**
      * Get height with margins
-     * @return float
+     * @return string
      */
     public function getOuterHeight()
     {
         $rules = $this->getBox()->getStyle()->getRules();
-        return $this->getHeight() + $rules['margin-top'] + $rules['margin-bottom'];
+        return bcadd(bcadd((string)$this->getHeight(), (string)$rules['margin-top'], 4), (string)$rules['margin-bottom'], 4);
     }
 
     /**
@@ -115,14 +116,14 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         if ($box instanceof TextBox) {
-            return $this->getOuterWidth();
+            return $this->getTextWidth($this->getBox()->getText());
         }
         $maxTextWidth = 0;
         foreach ($box->getChildren() as $childBox) {
             if ($childBox instanceof TextBox) {
-                $maxTextWidth = max($maxTextWidth, $childBox->getDimensions()->getTextWidth($childBox->getText()));
+                $maxTextWidth = bccomp((string)$maxTextWidth, (string)$childBox->getDimensions()->getTextWidth($childBox->getText()), 4) > 0 ? $maxTextWidth : $childBox->getDimensions()->getTextWidth($childBox->getText());
             } else {
-                $maxTextWidth = max($maxTextWidth, $childBox->getDimensions()->getMinWidth());
+                $maxTextWidth = bccomp((string)$maxTextWidth, (string)$childBox->getDimensions()->getMinWidth(), 4) > 0 ? $maxTextWidth : $childBox->getDimensions()->getMinWidth();
             }
         }
         return $maxTextWidth;
@@ -159,7 +160,7 @@ class BoxDimensions extends Dimensions
         if ($parent = $this->getBox()->getParent()) {
             $parentStyle = $parent->getStyle();
             if ($parent->getDimensions()->getWidth() === null) {
-                return $this->getBox()->getParent()->getDimensions()->computeAvailableSpace() - $parentStyle->getHorizontalBordersWidth() - $parentStyle->getHorizontalPaddingsWidth();
+                return bcsub(bcsub((string)$this->getBox()->getParent()->getDimensions()->computeAvailableSpace(), (string)$parentStyle->getHorizontalBordersWidth(), 4), (string)$parentStyle->getHorizontalPaddingsWidth(), 4);
             } else {
                 return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
             }

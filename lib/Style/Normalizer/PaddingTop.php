@@ -19,10 +19,9 @@ class PaddingTop extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['padding-top' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['padding-top' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['padding-top' => $ruleValue];
+        return $this->normalized;
     }
 }

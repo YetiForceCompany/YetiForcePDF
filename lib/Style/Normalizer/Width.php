@@ -19,10 +19,12 @@ class Width extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue) && $ruleValue !== 'auto') {
-            return ['width' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null && $ruleValue !== 'auto') {
+            return $this->normalized = ['width' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['width' => $ruleValue];
+        if ($ruleValue === 'auto') {
+            return $this->normalized = ['width' => 'auto'];
+        }
+        return $this->normalized;
     }
 }

@@ -17,9 +17,14 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class TextAlign extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		$normalized = ['text-align' => $ruleValue];
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized === null) {
+            if (in_array($ruleValue, ['left', 'right', 'center'])) {
+                return $this->normalized = ['text-align' => $ruleValue];
+            }
+            return $this->normalized = ['text-align' => 'left'];
+        }
+        return $this->normalized;
+    }
 }

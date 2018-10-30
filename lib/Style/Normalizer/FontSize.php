@@ -19,10 +19,9 @@ class FontSize extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['font-size' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['font-size' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['font-size' => $ruleValue];
+        return $this->normalized;
     }
 }

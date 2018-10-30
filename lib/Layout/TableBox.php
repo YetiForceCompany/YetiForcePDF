@@ -122,9 +122,9 @@ class TableBox extends BlockBox
         $minMax = $this->getMinMaxWidths($columns);
         $maxWidths = $minMax['max'];
         $minWidths = $minMax['min'];
-        $maxWidth = 0;
+        $maxWidth = '0';
         foreach ($maxWidths as $width) {
-            $maxWidth += $width;
+            $maxWidth = bcadd($maxWidth, (string)$width, 4);
         }
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
         if ($maxWidth <= $availableSpace) {
@@ -138,15 +138,15 @@ class TableBox extends BlockBox
             }
         } else {
             // use min widths
-            $fullMinWidth = 0;
+            $fullMinWidth = '0';
             foreach ($minWidths as $min) {
-                $fullMinWidth += $min;
+                $fullMinWidth = bcadd($fullMinWidth, $min, 4);
             }
-            $left = $availableSpace - $fullMinWidth;
+            $left = bcsub($availableSpace, $fullMinWidth, 4);
             $width = 0;
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
-                $columnWidth = $minWidth + ($left * ($maxColumnWidth / $maxWidth));
+                $columnWidth = bcadd($minWidth, bcmul($left, bcdiv($maxColumnWidth, (string)$maxWidth, 4), 4), 4);
                 foreach ($columns[$columnIndex] as $row) {
                     $cell = $row->getFirstChild();
                     $row->getDimensions()->setWidth($columnWidth);
@@ -181,13 +181,13 @@ class TableBox extends BlockBox
                 $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
                 $cell = $column->getFirstChild();
                 $height = $column->getDimensions()->getInnerHeight();
-                $cellChildrenHeight = 0;
+                $cellChildrenHeight = '0';
                 foreach ($cell->getChildren() as $cellChild) {
-                    $cellChildrenHeight += $cellChild->getDimensions()->getOuterHeight();
+                    $cellChildrenHeight = bcadd($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
                 }
                 // add vertical padding if needed
                 if ($cellChildrenHeight < $height) {
-                    $freeSpace = $height - $cellChildrenHeight;
+                    $freeSpace = bcsub($height, $cellChildrenHeight);
                     $style = $cell->getStyle();
                     switch ($style->getRules('vertical-align')) {
                         case 'top':
@@ -199,7 +199,7 @@ class TableBox extends BlockBox
                         case 'baseline':
                         case 'middle':
                         default:
-                            $padding = $freeSpace / 2;
+                            $padding = bcdiv($freeSpace, '2', 4);
                             $style->setRule('padding-top', $padding);
                             $style->setRule('padding-bottom', $padding);
                             break;

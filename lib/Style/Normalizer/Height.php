@@ -19,10 +19,12 @@ class Height extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue) && $ruleValue !== 'auto') {
+        if ($this->normalized === null && $ruleValue !== 'auto') {
             return ['height' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['height' => $ruleValue];
+        if ($ruleValue === 'auto') {
+            return $this->normalized = ['height' => 'auto'];
+        }
+        return $this->normalized;
     }
 }

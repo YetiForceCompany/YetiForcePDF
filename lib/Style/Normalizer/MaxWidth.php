@@ -19,10 +19,12 @@ class MaxWidth extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue) && $ruleValue !== 'none') {
-            return ['max-width' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null && $ruleValue !== 'none') {
+            return $this->normalized = ['max-width' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['max-width' => $ruleValue];
+        if ($ruleValue === 'none') {
+            return $this->normalized = ['max-width' => 'none'];
+        }
+        return $this->normalized;
     }
 }

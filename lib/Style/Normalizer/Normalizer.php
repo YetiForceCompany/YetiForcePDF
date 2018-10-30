@@ -24,6 +24,10 @@ class Normalizer extends \YetiForcePDF\Base
      * @var Style
      */
     protected $style;
+    /**
+     * @var array|null normalized value
+     */
+    protected $normalized;
 
     /**
      * Set style
@@ -54,13 +58,13 @@ class Normalizer extends \YetiForcePDF\Base
     /**
      * Get number value from style
      * @param $ruleValue
-     * @return float[]
+     * @return string[]
      */
     public function getNumberValues($ruleValue)
     {
         $matches = [];
         preg_match_all('/(([0-9\.?]+)([a-z%]+)?\s?)/', $ruleValue, $matches, PREG_SET_ORDER);
-        $originalSize = (float)$matches[0][2];
+        $originalSize = $matches[0][2];
         if (isset($matches[0][3])) {
             $originalUnit = $matches[0][3];
         } else {

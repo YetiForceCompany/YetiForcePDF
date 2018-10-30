@@ -19,10 +19,9 @@ class MinWidth extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['max-width' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['min-width' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['max-width' => $ruleValue];
+        return $this->normalized;
     }
 }

@@ -17,11 +17,14 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class Overflow extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (in_array($ruleValue, ['visible', 'hidden'])) {
-			return ['overflow' => $ruleValue];
-		}
-		return ['overflow' => 'visible'];
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        if (in_array($ruleValue, ['visible', 'hidden'])) {
+            return $this->normalized = ['overflow' => $ruleValue];
+        }
+        return $this->normalized = ['overflow' => 'visible'];
+    }
 }

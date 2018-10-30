@@ -868,10 +868,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 
     /**
      * Set Font size
-     * @param float $size
+     * @param string $size
      * @return $this
      */
-    public function setSize(float $size)
+    public function setSize(string $size)
     {
         $this->size = $size;
         return $this;
@@ -879,7 +879,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 
     /**
      * Get font size
-     * @return float
+     * @return string
      */
     public function getSize(): float
     {
@@ -889,45 +889,45 @@ class Font extends \YetiForcePDF\Objects\Resource
     /**
      * Get text width
      * @param string $text
-     * @return float
+     * @return string
      */
-    public function getTextWidth(string $text): float
+    public function getTextWidth(string $text): string
     {
-        $width = 0;
+        $width = '0';
         for ($i = 0, $len = mb_strlen($text); $i < $len; $i++) {
             $char = mb_substr($text, $i, 1);
-            $width += (float)$this->widths[mb_ord($char)];
+            $width = bcadd($width, (string)$this->widths[mb_ord($char)], 4);
         }
-        return ($this->size * $width) / 1000;
+
+        return bcdiv(bcmul((string)$this->size, $width, 4), '1000', 4);
     }
 
     /**
      * Get text height
      * @param string|null $text
-     * @return float
+     * @return string
      */
-    public function getTextHeight(string $text = null): float
+    public function getTextHeight(string $text = null): string
     {
-        $height = $this->size * $this->height / $this->unitsPerEm;
-        return $height;
+        return bcdiv(bcmul((string)$this->size, (string)$this->height, 4), (string)$this->unitsPerEm, 4);
     }
 
     /**
      * Get ascender (from baseline to top of the bounding box)
-     * @return float
+     * @return string
      */
-    public function getAscender(): float
+    public function getAscender(): string
     {
-        return $this->size * $this->ascender / $this->unitsPerEm;
+        return bcdiv(bcmul((string)$this->size, (string)$this->ascender, 4), (string)$this->unitsPerEm, 4);
     }
 
     /**
      * Get descender (from baseline to bottom of the bounding box)
-     * @return float
+     * @return string
      */
-    public function getDescender(): float
+    public function getDescender(): string
     {
-        return $this->size * $this->descender / $this->unitsPerEm;
+        return bcdiv(bcmul((string)$this->size, (string)$this->descender, 4), (string)$this->unitsPerEm, 4);
     }
 
     /**

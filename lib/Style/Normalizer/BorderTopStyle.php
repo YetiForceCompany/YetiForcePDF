@@ -17,21 +17,16 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BorderTopStyle extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue)) {
-			if (in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {
-				$style = $ruleValue;
-			} else {
-				$style = 'none';
-			}
-		} else {
-			// if it is number - it was converted already
-			$style = $ruleValue;
-		}
-		$normalized = [
-			'border-top-style' => $style,
-		];
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized === null) {
+            if (in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {
+                $style = $ruleValue;
+            } else {
+                $style = 'none';
+            }
+            return $this->normalized = ['border-top-style' => $style];
+        }
+        return $this->normalized;
+    }
 }

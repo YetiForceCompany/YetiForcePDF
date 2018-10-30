@@ -20,6 +20,9 @@ class Padding extends Normalizer
 
     public function normalize($ruleValue): array
     {
-        return $this->normalizeMultiValues(['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], $ruleValue);
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        return $this->normalized = $this->normalizeMultiValues(['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], $ruleValue);
     }
 }

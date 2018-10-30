@@ -22,7 +22,10 @@ class BorderWidth extends Normalizer
      */
     public function normalize($ruleValue): array
     {
-        return $this->normalizeMultiValues([
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        return $this->normalized = $this->normalizeMultiValues([
             'border-top-width',
             'border-right-width',
             'border-bottom-width',

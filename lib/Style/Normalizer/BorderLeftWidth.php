@@ -19,9 +19,9 @@ class BorderLeftWidth extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['border-left-width' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['border-left-width' => $this->getNumberValues($ruleValue)[0]];
         }
-        return ['border-left-width' => $ruleValue];
+        return $this->normalized;
     }
 }

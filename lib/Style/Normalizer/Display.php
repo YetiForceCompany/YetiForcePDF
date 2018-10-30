@@ -17,12 +17,15 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class Display extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		$normalized = ['display' => $ruleValue];
-		if ($this->element && $this->element->isTextNode()) {
-			$normalized = ['display' => 'inline'];
-		}
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        $normalized = ['display' => $ruleValue];
+        if ($this->element && $this->element->isTextNode()) {
+            $normalized = ['display' => 'inline'];
+        }
+        return $this->normalized = $normalized;
+    }
 }

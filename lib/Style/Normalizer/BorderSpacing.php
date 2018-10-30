@@ -20,10 +20,9 @@ class BorderSpacing extends Normalizer
 
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue) && $ruleValue !== 'auto') {
-            return ['border-spacing' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['border-spacing' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['border-spacing' => $ruleValue];
+        return $this->normalized;
     }
 }

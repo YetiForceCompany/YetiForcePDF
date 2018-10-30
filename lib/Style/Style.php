@@ -105,22 +105,22 @@ class Style extends \YetiForcePDF\Base
         'font-size' => '12px',
         'font-weight' => 'normal',
         'font-style' => 'normal',
-        'margin-left' => 0,
-        'margin-top' => 0,
-        'margin-right' => 0,
-        'margin-bottom' => 0,
-        'padding-left' => 0,
-        'padding-top' => 0,
-        'padding-right' => 0,
-        'padding-bottom' => 0,
-        'border-left-width' => 0,
-        'border-top-width' => 0,
-        'border-right-width' => 0,
-        'border-bottom-width' => 0,
-        'border-left-color' => [0, 0, 0, 0],
-        'border-top-color' => [0, 0, 0, 0],
-        'border-right-color' => [0, 0, 0, 0],
-        'border-bottom-color' => [0, 0, 0, 0],
+        'margin-left' => '0',
+        'margin-top' => '0',
+        'margin-right' => '0',
+        'margin-bottom' => '0',
+        'padding-left' => '0',
+        'padding-top' => '0',
+        'padding-right' => '0',
+        'padding-bottom' => '0',
+        'border-left-width' => '0',
+        'border-top-width' => '0',
+        'border-right-width' => '0',
+        'border-bottom-width' => '0',
+        'border-left-color' => '#000000',
+        'border-top-color' => '#000000',
+        'border-right-color' => '#000000',
+        'border-bottom-color' => '#000000',
         'border-left-style' => 'none',
         'border-top-style' => 'none',
         'border-right-style' => 'none',
@@ -136,7 +136,7 @@ class Style extends \YetiForcePDF\Base
         'color' => '#000000',
         'word-wrap' => 'normal',
         'max-width' => 'none',
-        'min-width' => 0,
+        'min-width' => '0',
         'white-space' => 'normal',
     ];
     /**
@@ -682,38 +682,38 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Get horizontal borders width
-     * @return float
+     * @return string
      */
     public function getHorizontalBordersWidth()
     {
-        return $this->rules['border-left-width'] + $this->rules['border-right-width'];
+        return bcadd($this->rules['border-left-width'], $this->rules['border-right-width'], 4);
     }
 
     /**
      * Get vertical borders width
-     * @return float
+     * @return string
      */
     public function getVerticalBordersWidth()
     {
-        return $this->rules['border-top-width'] + $this->rules['border-bottom-width'];
+        return bcadd($this->rules['border-top-width'], $this->rules['border-bottom-width'], 4);
     }
 
     /**
      * Get horizontal paddings width
-     * @return float
+     * @return string
      */
     public function getHorizontalPaddingsWidth()
     {
-        return $this->rules['padding-left'] + $this->rules['padding-right'];
+        return bcadd($this->rules['padding-left'], $this->rules['padding-right'], 4);
     }
 
     /**
      * Get vertical paddings width
-     * @return float
+     * @return string
      */
     public function getVerticalPaddingsWidth()
     {
-        return $this->rules['padding-top'] + $this->rules['padding-bottom'];
+        return bcadd($this->rules['padding-top'], $this->rules['padding-bottom'], 4);
     }
 
     /**
@@ -722,43 +722,43 @@ class Style extends \YetiForcePDF\Base
      */
     public function getHorizontalMarginsWidth()
     {
-        return $this->rules['margin-left'] + $this->rules['margin-right'];
+        return bcadd($this->rules['margin-left'], $this->rules['margin-right'], 4);
     }
 
     /**
      * Get vertical paddings width
-     * @return float
+     * @return string
      */
     public function getVerticalMarginsWidth()
     {
-        return $this->rules['margin-top'] + $this->rules['margin-bottom'];
+        return bcadd($this->rules['margin-top'], $this->rules['margin-bottom'], 4);
     }
 
     /**
      * Get full left space
-     * @return float
+     * @return string
      */
     public function getFullLeftSpace()
     {
-        return $this->rules['margin-left'] + $this->rules['padding-left'] + $this->rules['border-left-width'];
+        return bcadd($this->rules['margin-left'], bcadd($this->rules['padding-left'], $this->rules['border-left-width'], 4), 4);
     }
 
     /**
      * Get full right space
-     * @return float
+     * @return string
      */
     public function getFullRightSpace()
     {
-        return $this->rules['margin-right'] + $this->rules['padding-right'] + $this->rules['border-right-width'];
+        return bcadd(bcadd((string)$this->rules['margin-right'], (string)$this->rules['padding-right'], 4), (string)$this->rules['border-right-width'], 4);
     }
 
     /**
      * Get offset top -  get top border width and top padding
-     * @return float
+     * @return string
      */
     public function getOffsetTop()
     {
-        return $this->rules['border-top-width'] + $this->rules['padding-top'];
+        return bcadd($this->rules['border-top-width'], $this->rules['padding-top'], 4);
     }
 
     /**
@@ -767,7 +767,7 @@ class Style extends \YetiForcePDF\Base
      */
     public function getOffsetLeft()
     {
-        return $this->rules['border-left-width'] + $this->rules['padding-left'];
+        return bcadd($this->rules['border-left-width'], $this->rules['padding-left'], 4);
     }
 
     /**
@@ -783,51 +783,51 @@ class Style extends \YetiForcePDF\Base
      * Convert units from unit to pdf document units
      * @param string $unit
      * @param float $size
-     * @return float
+     * @return string
      */
-    public function convertUnits(string $unit, float $size)
+    public function convertUnits(string $unit, string $size)
     {
         switch ($unit) {
             case 'px':
             case 'pt':
                 return $size;
             case 'mm':
-                return $size / (72 / 25.4);
+                return bcdiv($size, bcdiv('72', '25.4', 4), 4);
             case 'cm':
-                return $size / (72 / 2.54);
+                return bcdiv($size, bcdiv('72', '2.54', 4), 4);
             case 'in':
-                return $size / 72;
+                return bcdiv($size, '72', 4);
             case '%':
                 return $size . '%'; // percent values are calculated later
             case 'em':
-                return (float)bcmul((string)$this->getFont()->getTextHeight(), (string)$size, 4);
+                return bcmul($this->getFont()->getTextHeight(), $size, 4);
         }
     }
 
     /**
      * Get line height
-     * @return float
+     * @return string
      */
     public function getLineHeight()
     {
         if ($this->getBox() instanceof InlineBox) {
             return $this->rules['line-height'];
         }
-        return $this->rules['line-height'] + $this->getVerticalPaddingsWidth() + $this->getVerticalBordersWidth();
+        return bcadd($this->rules['line-height'], bcadd($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth(), 4), 4);
     }
 
     /**
      * Get line height
-     * @return float
+     * @return string
      */
     public function getMaxLineHeight()
     {
         $lineHeight = $this->rules['line-height'];
         if (!$this->getBox() instanceof InlineBox) {
-            $lineHeight += $this->getVerticalPaddingsWidth() + $this->getVerticalBordersWidth();
+            $lineHeight = bcadd($lineHeight, bcadd($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth(), 4), 4);
         }
         foreach ($this->getBox()->getChildren() as $child) {
-            $lineHeight = max($lineHeight, $child->getStyle()->getMaxLineHeight());
+            $lineHeight = bccomp((string)$lineHeight, (string)$child->getStyle()->getMaxLineHeight(), 4) > 0 ? $lineHeight : $child->getStyle()->getMaxLineHeight();
         }
         return $lineHeight;
     }
@@ -923,7 +923,7 @@ class Style extends \YetiForcePDF\Base
     /**
      * Apply text style - default style for text nodes
      * @param array $rulesParsed
-     * @return $this
+     * @return array
      */
     public function applyTextStyle($rulesParsed)
     {
@@ -1098,7 +1098,7 @@ class Style extends \YetiForcePDF\Base
         $box = $this->getBox();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $dimensions->setWidth($dimensions->getWidth() - $this->getFullRightSpace());
+            $dimensions->setWidth(bcsub($dimensions->getWidth(), $this->getFullRightSpace()), 4);
         }
         $this->rules['margin-right'] = 0;
         $this->rules['padding-right'] = 0;
@@ -1120,15 +1120,15 @@ class Style extends \YetiForcePDF\Base
         $leftSpace = $this->getFullLeftSpace();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $dimensions->setWidth($dimensions->getWidth() - $leftSpace);
+            $dimensions->setWidth(bcsub($dimensions->getWidth(), $leftSpace, 4));
         }
         $offset = $box->getOffset();
         if ($offset->getLeft()) {
-            $offset->setLeft($offset->getLeft() - $leftSpace);
+            $offset->setLeft(bcsub($offset->getLeft(), $leftSpace, 4));
         }
         $coordinates = $box->getCoordinates();
         if ($coordinates->getX()) {
-            $coordinates->setX($coordinates->getX() - $leftSpace);
+            $coordinates->setX(bcsub($coordinates->getX(), $leftSpace, 4));
         }
         $this->rules['margin-left'] = 0;
         $this->rules['padding-left'] = 0;
@@ -1150,16 +1150,16 @@ class Style extends \YetiForcePDF\Base
         $leftSpace = $this->getFullLeftSpace();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $sub = $this->getHorizontalMarginsWidth() + $this->getHorizontalBordersWidth();
-            $dimensions->setWidth($dimensions->getWidth() - $sub);
+            $sub = bcadd($this->getHorizontalMarginsWidth(), $this->getHorizontalBordersWidth(), 4);
+            $dimensions->setWidth(bcsub($dimensions->getWidth(), $sub, 4));
         }
         $offset = $box->getOffset();
         if ($offset->getLeft()) {
-            $offset->setLeft($offset->getLeft() - $leftSpace);
+            $offset->setLeft(bcsub($offset->getLeft(), $leftSpace, 4));
         }
         $coordinates = $box->getCoordinates();
         if ($coordinates->getX()) {
-            $coordinates->setX($coordinates->getX() - $leftSpace);
+            $coordinates->setX(bcsub($coordinates->getX(), $leftSpace, 4));
         }
         $this->rules['margin-left'] = 0;
         $this->rules['margin-right'] = 0;

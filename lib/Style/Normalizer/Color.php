@@ -17,14 +17,14 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class Color extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue) && $ruleValue !== 'transparent') {
-			$color = \YetiForcePDF\Style\Color::toRGBA($ruleValue, true);
-		} else {
-			// if it is number - it was normalized already
-			$color = $ruleValue;
-		}
-		return ['color' => $color];
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized === null && $ruleValue !== 'transparent') {
+            return $this->normalized = ['color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
+        }
+        if ($ruleValue === 'trasparent') {
+            return $this->normalized = ['color' => 'transparent'];
+        }
+        return $this->normalized;
+    }
 }

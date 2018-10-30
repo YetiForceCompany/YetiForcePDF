@@ -19,10 +19,9 @@ class PaddingLeft extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['padding-left' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['padding-left' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['padding-left' => $ruleValue];
+        return $this->normalized;
     }
 }

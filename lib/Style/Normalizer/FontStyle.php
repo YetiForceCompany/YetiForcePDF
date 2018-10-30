@@ -17,12 +17,15 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class FontStyle extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		$ruleValue = strtolower($ruleValue);
-		if (!in_array($ruleValue, ['normal', 'italic'])) {
-			$ruleValue = 'normal';
-		}
-		return ['font-style' => $ruleValue];
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        $ruleValue = strtolower($ruleValue);
+        if (!in_array($ruleValue, ['normal', 'italic'])) {
+            $ruleValue = 'normal';
+        }
+        return $this->normalized = ['font-style' => $ruleValue];
+    }
 }

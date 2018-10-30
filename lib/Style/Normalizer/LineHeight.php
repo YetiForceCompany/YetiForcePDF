@@ -19,10 +19,9 @@ class LineHeight extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['line-height' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['line-height' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['line-height' => $ruleValue];
+        return $this->normalized;
     }
 }

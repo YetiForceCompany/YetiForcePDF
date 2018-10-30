@@ -17,13 +17,16 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class VerticalAlign extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (in_array($ruleValue, ['top', 'bottom', 'middle', 'baseline'])) {
-			$normalized = ['vertical-align' => $ruleValue];
-		} else {
-			$normalized = ['vertical-align' => 'baseline'];
-		}
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        if (in_array($ruleValue, ['top', 'bottom', 'middle', 'baseline'])) {
+            $normalized = ['vertical-align' => $ruleValue];
+        } else {
+            $normalized = ['vertical-align' => 'baseline'];
+        }
+        return $this->normalized = $normalized;
+    }
 }

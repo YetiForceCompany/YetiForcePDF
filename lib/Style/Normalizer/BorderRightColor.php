@@ -17,17 +17,11 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BorderRightColor extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (is_string($ruleValue)) {
-			$color = \YetiForcePDF\Style\Color::toRGBA($ruleValue, true);
-		} else {
-			// if it is number - it was normalized already
-			$color = $ruleValue;
-		}
-		$normalized = [
-			'border-right-color' => $color,
-		];
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized === null) {
+            return $this->normalized = ['border-right-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
+        }
+        return $this->normalized;
+    }
 }

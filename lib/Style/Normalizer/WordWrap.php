@@ -17,13 +17,16 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class WordWrap extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (in_array($ruleValue, ['normal', 'break-word'])) {
-			$normalized = ['word-wrap' => $ruleValue];
-		} else {
-			$normalized = ['word-wrap' => 'normal'];
-		}
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        if (in_array($ruleValue, ['normal', 'break-word'])) {
+            $normalized = ['word-wrap' => $ruleValue];
+        } else {
+            $normalized = ['word-wrap' => 'normal'];
+        }
+        return $this->normalized = $normalized;
+    }
 }

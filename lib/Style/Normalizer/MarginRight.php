@@ -19,10 +19,9 @@ class MarginRight extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['margin-right' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['margin-right' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['margin-right' => $ruleValue];
+        return $this->normalized;
     }
 }

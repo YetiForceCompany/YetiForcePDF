@@ -126,4 +126,97 @@ class ElementBox extends Box
         $this->removeEmptyLines();
         return $this;
     }
+
+    /**
+     * Add border instructions
+     * @param array $element
+     * @param string $pdfX
+     * @param string $pdfY
+     * @param string $width
+     * @param string $height
+     * @return array
+     */
+    protected function addBorderInstructions(array $element, $pdfX, $pdfY, $width, $height)
+    {
+        $rules = $this->style->getRules();
+        $x1 = '0';
+        $x2 = $width;
+        $y1 = $height;
+        $y2 = '0';
+        $element[] = '% start border';
+        if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
+            $path = implode(" l\n", [
+                implode(' ', [$x2, $y1]),
+                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcsub((string)$y1, $rules['border-top-width'], 4)]),
+                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcsub((string)$y1, $rules['border-top-width'], 4)]),
+                implode(' ', [$x1, $y1])
+            ]);
+            $borderTop = [
+                'q',
+                "{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
+                "1 0 0 1 $pdfX $pdfY cm",
+                "$x1 $y1 m", // move to start point
+                $path . ' l h',
+                'f',
+                'Q'
+            ];
+            $element = array_merge($element, $borderTop);
+        }
+        if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
+            $path = implode(" l\n", [
+                implode(' ', [$x2, $y2]),
+                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcadd((string)$y2, $rules['border-bottom-width'], 4)]),
+                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcsub((string)$y1, $rules['border-top-width'], 4)]),
+                implode(' ', [$x2, $y1]),
+            ]);
+            $borderTop = [
+                'q',
+                "1 0 0 1 $pdfX $pdfY cm",
+                "{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
+                "$x2 $y1 m",
+                $path . ' l h',
+                'f',
+                'Q'
+            ];
+            $element = array_merge($element, $borderTop);
+        }
+        if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
+            $path = implode(" l\n", [
+                implode(' ', [$x2, $y2]),
+                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
+                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
+                implode(' ', [$x1, $y2]),
+            ]);
+            $borderTop = [
+                'q',
+                "1 0 0 1 $pdfX $pdfY cm",
+                "{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
+                "$x1 $y2 m",
+                $path . ' l h',
+                'f',
+                'Q'
+            ];
+            $element = array_merge($element, $borderTop);
+        }
+        if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
+            $path = implode(" l\n", [
+                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcsub($y1, $rules['border-top-width'], 4)]),
+                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
+                implode(' ', [$x1, $y2]),
+                implode(' ', [$x1, $y1]),
+            ]);
+            $borderTop = [
+                'q',
+                "1 0 0 1 $pdfX $pdfY cm",
+                "{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
+                "$x1 $y1 m",
+                $path . ' l h',
+                'f',
+                'Q'
+            ];
+            $element = array_merge($element, $borderTop);
+        }
+        $element[] = '% end border';
+        return $element;
+    }
 }

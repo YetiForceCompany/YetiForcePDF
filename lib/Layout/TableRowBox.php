@@ -104,13 +104,14 @@ class TableRowBox extends BlockBox
             foreach ($this->getChildren() as $child) {
                 $child->measureWidth();
             }
-            $maxWidth = 0;
+            $maxWidth = '0';
             foreach ($this->getChildren() as $child) {
-                $maxWidth += $child->getDimensions()->getOuterWidth();
+                $maxWidth = bcadd($maxWidth, (string)$child->getDimensions()->getOuterWidth(), 4);
             }
             $style = $this->getStyle();
-            $maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
-            $maxWidth -= $style->getHorizontalMarginsWidth();
+            $maxWidth = bcadd($maxWidth, bcadd((string)$style->getHorizontalBordersWidth(), (string)$style->getHorizontalPaddingsWidth(), 4), 4);
+            $maxWidth = bcsub($maxWidth, (string)$style->getHorizontalMarginsWidth());
+            $maxWidth = (float)$maxWidth;
             $dimensions->setWidth($maxWidth);
             $this->applyStyleWidth();
             return $this;
@@ -134,12 +135,12 @@ class TableRowBox extends BlockBox
         }
         $height = 0;
         foreach ($this->getChildren() as $child) {
-            $height = max($height, $child->getDimensions()->getOuterHeight());
+            $height = bccomp((string)$height, (string)$child->getDimensions()->getOuterHeight(),4) >0 ? $height : $child->getDimensions()->getOuterHeight();
         }
         $rules = $this->getStyle()->getRules();
-        $height += $rules['border-top-width'] + $rules['padding-top'];
-        $height += $rules['border-bottom-width'] + $rules['padding-bottom'];
-        $this->getDimensions()->setHeight($height);
+        $height = bcadd((string)$height, bcadd((string)$rules['border-top-width'], (string)$rules['padding-top'], 4), 4);
+        $height = bcadd($height, bcadd((string)$rules['border-bottom-width'], (string)$rules['padding-bottom'], 4), 4);
+        $this->getDimensions()->setHeight((float)$height);
         $this->applyStyleHeight();
         return $this;
     }
@@ -158,16 +159,16 @@ class TableRowBox extends BlockBox
             $top = $parentStyle->getOffsetTop();
             $left = $parentStyle->getOffsetLeft();
             if ($previous = $this->getPrevious()) {
-                $top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight();
+                $top = bcadd((string)$previous->getOffset()->getTop(), (string)$previous->getDimensions()->getHeight(), 4);
                 if ($previous->getStyle()->getRules('display') === 'block') {
-                    $marginTop = max($marginTop, $previous->getStyle()->getRules('margin-bottom'));
+                    $marginTop = bccomp((string)$marginTop, (string)$previous->getStyle()->getRules('margin-bottom'),4) >0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
                 } elseif (!$previous instanceof LineBox) {
-                    $marginTop += $previous->getStyle()->getRules('margin-bottom');
+                    $marginTop = (float)bcadd((string)$marginTop, (string)$previous->getStyle()->getRules('margin-bottom'), 4);
                 }
             }
         }
-        $top += $marginTop;
-        $left += $this->getStyle()->getRules('margin-left');
+        $top = (float)bcadd((string)$top, (string)$marginTop, 4);
+        $left = (float)bcadd((string)$left, (string)$this->getStyle()->getRules('margin-left'), 4);
         $this->getOffset()->setTop($top);
         $this->getOffset()->setLeft($left);
         foreach ($this->getChildren() as $child) {
@@ -185,8 +186,8 @@ class TableRowBox extends BlockBox
         $x = $this->document->getCurrentPage()->getCoordinates()->getX();
         $y = $this->document->getCurrentPage()->getCoordinates()->getY();
         if ($parent = $this->getParent()) {
-            $x = $parent->getCoordinates()->getX() + $this->getOffset()->getLeft();
-            $y = $parent->getCoordinates()->getY() + $this->getOffset()->getTop();
+            $x = (float)bcadd((string)$parent->getCoordinates()->getX(), (string)$this->getOffset()->getLeft(), 4);
+            $y = (float)bcadd((string)$parent->getCoordinates()->getY(), (string)$this->getOffset()->getTop(), 4);
         }
         $this->getCoordinates()->setX($x);
         $this->getCoordinates()->setY($y);

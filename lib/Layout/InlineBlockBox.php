@@ -37,11 +37,11 @@ class InlineBlockBox extends BlockBox
         $maxWidth = 0;
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = max($maxWidth, $child->getDimensions()->getOuterWidth());
+            $maxWidth = bccomp((string)$maxWidth, (string)$child->getDimensions()->getOuterWidth(),4) >0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
         }
         $style = $this->getStyle();
-        $maxWidth += $style->getHorizontalBordersWidth() + $style->getHorizontalPaddingsWidth();
-        $this->getDimensions()->setWidth($maxWidth);
+        $maxWidth = bcadd((string)$maxWidth, bcadd((string)$style->getHorizontalBordersWidth(), (string)$style->getHorizontalPaddingsWidth(), 4), 4);
+        $this->getDimensions()->setWidth((float)$maxWidth);
         $this->applyStyleWidth();
         return $this;
     }
@@ -52,14 +52,14 @@ class InlineBlockBox extends BlockBox
      */
     public function measureHeight()
     {
-        $height = 0;
+        $height = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
-            $height += $child->getDimensions()->getOuterHeight();
+            $height = bcadd($height, (string)$child->getDimensions()->getOuterHeight(), 4);
         }
         $style = $this->getStyle();
-        $height += $style->getVerticalBordersWidth() + $style->getVerticalPaddingsWidth();
-        $this->getDimensions()->setHeight($height);
+        $height = bcadd($height, bcadd((string)$style->getVerticalBordersWidth(), (string)$style->getVerticalPaddingsWidth(), 4), 4);
+        $this->getDimensions()->setHeight((float)$height);
         $this->applyStyleHeight();
         return $this;
     }
@@ -75,13 +75,13 @@ class InlineBlockBox extends BlockBox
         $top = $parent->getStyle()->getOffsetTop();
         // margin top inside inline and inline block doesn't affect relative to line top position
         // it only affects line margins
-        $left = $rules['margin-left'];
+        $left = (string)$rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left += $previous->getOffset()->getLeft() + $previous->getDimensions()->getWidth() + $previous->getStyle()->getRules('margin-right');
+            $left = bcadd($left, bcadd((string)$previous->getOffset()->getLeft(), bcadd((string)$previous->getDimensions()->getWidth(), (string)$previous->getStyle()->getRules('margin-right'), 4), 4), 4);
         } else {
-            $left += $parent->getStyle()->getOffsetLeft();
+            $left = bcadd($left, (string)$parent->getStyle()->getOffsetLeft(), 4);
         }
-        $this->getOffset()->setLeft($left);
+        $this->getOffset()->setLeft((float)$left);
         $this->getOffset()->setTop($top);
         foreach ($this->getChildren() as $child) {
             $child->measureOffset();
@@ -96,9 +96,9 @@ class InlineBlockBox extends BlockBox
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
+        $this->getCoordinates()->setX((float)bcadd((string)$parent->getCoordinates()->getX(), (string)$this->getOffset()->getLeft(), 4));
         if (!$parent instanceof InlineBox) {
-            $this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+            $this->getCoordinates()->setY((float)bcadd((string)$parent->getCoordinates()->getY(), (string)$this->getOffset()->getTop()), 4);
         } else {
             $this->getCoordinates()->setY($this->getClosestLineBox()->getCoordinates()->getY());
         }

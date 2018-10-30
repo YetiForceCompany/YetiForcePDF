@@ -19,10 +19,9 @@ class MarginBottom extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['margin-bottom' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['margin-bottom' => $this->getNumberValues($ruleValue)[0]];
         }
-        // value is already parsed
-        return ['margin-bottom' => $ruleValue];
+        return $this->normalized;
     }
 }

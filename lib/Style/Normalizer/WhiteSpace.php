@@ -17,13 +17,16 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class WhiteSpace extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (in_array($ruleValue, ['normal', 'pre', 'nowrap'])) {
-			$normalized = ['white-space' => $ruleValue];
-		} else {
-			$normalized = ['white-space' => 'normal'];
-		}
-		return $normalized;
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        if (in_array($ruleValue, ['normal', 'pre', 'nowrap'])) {
+            $normalized = ['white-space' => $ruleValue];
+        } else {
+            $normalized = ['white-space' => 'normal'];
+        }
+        return $this->normalized = $normalized;
+    }
 }

@@ -17,61 +17,61 @@ namespace YetiForcePDF\Layout\Dimensions;
  */
 class Dimensions extends \YetiForcePDF\Base
 {
-	/**
-	 * @var float
-	 */
-	protected $width;
-	/**
-	 * Height initially must be null to figure out it was calculated already or not
-	 * @var float|null
-	 */
-	protected $height;
+    /**
+     * @var float
+     */
+    protected $width;
+    /**
+     * Height initially must be null to figure out it was calculated already or not
+     * @var float|null
+     */
+    protected $height;
 
-	/**
-	 * Get width
-	 * @return float
-	 */
-	public function getWidth()
-	{
-		return $this->width;
-	}
+    /**
+     * Get width
+     * @return float
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
 
-	/**
-	 * Get height
-	 * @return float|null
-	 */
-	public function getHeight()
-	{
-		return $this->height;
-	}
+    /**
+     * Get height
+     * @return float|null
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
 
-	/**
-	 * Set width
-	 * @param float $width
-	 * @return $this
-	 */
-	public function setWidth(float $width)
-	{
-		$this->width = $width;
-		return $this;
-	}
+    /**
+     * Set width
+     * @param float $width
+     * @return $this
+     */
+    public function setWidth(string $width)
+    {
+        $this->width = $width;
+        return $this;
+    }
 
-	/**
-	 * Set height
-	 * @param float $height
-	 * @return $this
-	 */
-	public function setHeight(float $height)
-	{
-		$this->height = $height;
-		return $this;
-	}
+    /**
+     * Set height
+     * @param float $height
+     * @return $this
+     */
+    public function setHeight(string $height)
+    {
+        $this->height = $height;
+        return $this;
+    }
 
-	public function __clone()
-	{
-		$this->width = null;
-		$this->height = null;
-	}
+    public function __clone()
+    {
+        $this->width = null;
+        $this->height = null;
+    }
 
 
 }

@@ -17,11 +17,15 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BoxSizing extends Normalizer
 {
-	public function normalize($ruleValue): array
-	{
-		if (in_array($ruleValue, ['border-box', 'content-box'])) {
-			return ['box-sizing' => $ruleValue];
-		}
-		return ['box-sizing' => 'border-box'];
-	}
+    public function normalize($ruleValue): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        $normalized = ['box-sizing' => 'border-box'];
+        if (in_array($ruleValue, ['border-box', 'content-box'])) {
+            $normalized = ['box-sizing' => $ruleValue];
+        }
+        return $this->normalized = $normalized;
+    }
 }

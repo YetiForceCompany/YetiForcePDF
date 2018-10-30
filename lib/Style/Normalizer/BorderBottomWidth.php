@@ -19,9 +19,9 @@ class BorderBottomWidth extends Normalizer
 {
     public function normalize($ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            return ['border-bottom-width' => $this->getNumberValues($ruleValue)[0]];
+        if ($this->normalized === null) {
+            return $this->normalized = ['border-bottom-width' => $this->getNumberValues($ruleValue)[0]];
         }
-        return ['border-bottom-width' => $ruleValue];
+        return $this->normalized;
     }
 }
