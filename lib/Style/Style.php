@@ -960,6 +960,22 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Get parent original value - traverse tree to first occurence
+     * @param string $ruleName
+     * @return string|null
+     */
+    public function getParentOriginalValue(string $ruleName)
+    {
+        if ($parent = $this->getParent()) {
+            $parentValue = $parent->getOriginalRules($ruleName);
+            if ($parentValue !== null) {
+                return $parentValue;
+            }
+            return $parent->getParentOriginalValue($ruleName);
+        }
+    }
+
+    /**
      * Parse css style
      * @return $this
      */
@@ -996,6 +1012,15 @@ class Style extends \YetiForcePDF\Base
         }
         $finalRules = [];
         foreach ($rulesParsed as $ruleName => $ruleValue) {
+            if (is_string($ruleValue)) {
+                if (strtolower($ruleValue) === 'inherit') {
+                    $parentValue = $this->getParentOriginalValue($ruleName);
+                    if ($parentValue !== null) {
+                        $ruleValue = $parentValue;
+                    }
+                }
+                $this->originalRules[$ruleName] = $ruleValue;
+            }
             $normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
             $normalizer = (new $normalizerName())
                 ->setDocument($this->document)
