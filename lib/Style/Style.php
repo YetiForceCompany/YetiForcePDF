@@ -754,7 +754,7 @@ class Style extends \YetiForcePDF\Base
      */
     public function getFullRightSpace()
     {
-        return bcadd(bcadd((string)$this->rules['margin-right'], (string)$this->rules['padding-right'], 4), (string)$this->rules['border-right-width'], 4);
+        return bcadd(bcadd($this->rules['margin-right'], $this->rules['padding-right'], 4), $this->rules['border-right-width'], 4);
     }
 
     /**
@@ -1008,9 +1008,9 @@ class Style extends \YetiForcePDF\Base
         $defaultRules = $this->getDefaultRules();
         $inherited = array_diff_key($inherited, $defaultRules);
         $parsed = array_merge($parsed, $defaultRules);
-        /*if ($this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
+        if ($this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
             $this->content = 'border:1px solid red;';
-        }*/
+        }
         if ($this->content) {
             $rules = explode(';', $this->content);
         } else {
@@ -1126,7 +1126,7 @@ class Style extends \YetiForcePDF\Base
         $box = $this->getBox();
         $dimensions = $box->getDimensions();
         if ($dimensions->getWidth()) {
-            $dimensions->setWidth(bcsub($dimensions->getWidth(), $this->getFullRightSpace()), 4);
+            $dimensions->setWidth(bcsub($dimensions->getWidth(), $this->getFullRightSpace(), 4));
         }
         $this->setRule('margin-right', '0');
         $this->setRule('padding-right', '0');

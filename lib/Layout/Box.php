@@ -491,7 +491,7 @@ class Box extends \YetiForcePDF\Base
             $heightInPercent = substr($height, 0, $percentPos);
             $parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
             if ($parentHeight) {
-                $calculatedHeight = bcmul(bcdiv((string)$parentHeight, '100'), $heightInPercent);
+                $calculatedHeight = bcmul(bcdiv($parentHeight, '100', 4), $heightInPercent, 4);
                 $this->getDimensions()->setHeight($calculatedHeight);
                 return $this;
             }

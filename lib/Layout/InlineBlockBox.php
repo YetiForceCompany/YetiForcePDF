@@ -98,7 +98,7 @@ class InlineBlockBox extends BlockBox
         $parent = $this->getParent();
         $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
         if (!$parent instanceof InlineBox) {
-            $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop()), 4);
+            $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
         } else {
             $this->getCoordinates()->setY($this->getClosestLineBox()->getCoordinates()->getY());
         }

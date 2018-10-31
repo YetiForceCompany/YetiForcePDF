@@ -228,14 +228,13 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         foreach ($this->getChildren() as $child) {
             if ($child instanceof LineBox) {
                 $lines = $child->divide();
-                $changed = !!$lines;
                 foreach ($lines as $line) {
                     $this->insertBefore($line, $child);
                     $line->getStyle()->init();
                     $line->measureWidth();
                 }
                 $this->removeChild($child);
-                if ($changed) {
+                if (isset($lines[1])) {
                     $child->measureWidth();
                 }
             }
