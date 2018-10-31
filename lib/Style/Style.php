@@ -106,7 +106,7 @@ class Style extends \YetiForcePDF\Base
      * @var array
      */
     protected $mandatoryRules = [
-        'font-family' => 'NotoSerif',
+        'font-family' => 'Noto Serif',
         'font-size' => '12px',
         'font-weight' => 'normal',
         'font-style' => 'normal',
@@ -1005,7 +1005,9 @@ class Style extends \YetiForcePDF\Base
             $inherited = $parent->getInheritedRules();
             $parsed = array_merge($parsed, $inherited);
         }
-        $parsed = array_merge($parsed, $this->getDefaultRules());
+        $defaultRules = $this->getDefaultRules();
+        $inherited = array_diff_key($inherited, $defaultRules);
+        $parsed = array_merge($parsed, $defaultRules);
         /*if ($this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
             $this->content = 'border:1px solid red;';
         }*/

@@ -19,7 +19,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 {
     protected $fontFiles = [
 
-        'NotoSansCondensed' => [
+        'Noto Sans Condensed' => [
             '100' => [
                 'normal' => 'NotoSans-CondensedThin.ttf',
                 'italic' => 'NotoSans-CondensedThinItalic.ttf',
@@ -57,7 +57,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoSans-CondensedBlackItalic.ttf',
             ],
         ],
-        'NotoSansSemiCondensed' => [
+        'Noto Sans SemiCondensed' => [
             '100' => [
                 'normal' => 'NotoSans-SemiCondensedThin.ttf',
                 'italic' => 'NotoSans-SemiCondensedThinItalic.ttf',
@@ -95,7 +95,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoSans-SemiCondensedBlackItalic.ttf',
             ],
         ],
-        'NotoSansExtraCondensed' => [
+        'Noto Sans ExtraCondensed' => [
             '100' => [
                 'normal' => 'NotoSans-ExtraCondensedThin.ttf',
                 'italic' => 'NotoSans-ExtraCondensedThinItalic.ttf',
@@ -133,7 +133,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoSans-ExtraCondensedBlackItalic.ttf',
             ],
         ],
-        'NotoMono' => [
+        'Noto Mono' => [
             '100' => [
                 'normal' => 'NotoMono-Regular.ttf',
                 'italic' => 'NotoMono-Regular.ttf',
@@ -171,7 +171,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoMono-Regular.ttf',
             ],
         ],
-        'NotoSans' => [
+        'Noto Sans' => [
             '100' => [
                 'normal' => 'NotoSans-Thin.ttf',
                 'italic' => 'NotoSans-ThinItalic.ttf',
@@ -210,7 +210,7 @@ class Font extends \YetiForcePDF\Objects\Resource
             ],
         ],
 
-        'NotoSerifSemiCondensed' => [
+        'Noto Serif SemiCondensed' => [
             '100' => [
                 'normal' => 'NotoSerif-SemiCondensedThin.ttf',
                 'italic' => 'NotoSerif-SemiCondensedThinItalic.ttf',
@@ -248,7 +248,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoSerif-SemiCondensedBlackItalic.ttf',
             ],
         ],
-        'NotoSerifExtraCondensed' => [
+        'Noto Serif ExtraCondensed' => [
             '100' => [
                 'normal' => 'NotoSerif-ExtraCondensedThin.ttf',
                 'italic' => 'NotoSerif-ExtraCondensedThinItalic.ttf',
@@ -286,7 +286,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoSerif-ExtraCondensedBlackItalic.ttf',
             ],
         ],
-        'NotoSerifCondensed' => [
+        'Noto Serif Condensed' => [
             '100' => [
                 'normal' => 'NotoSerif-CondensedThin.ttf',
                 'italic' => 'NotoSerif-CondensedThinItalic.ttf',
@@ -324,7 +324,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'NotoSerif-CondensedBlackItalic.ttf',
             ],
         ],
-        'NotoSerif' => [
+        'Noto Serif' => [
             '100' => [
                 'normal' => 'NotoSerif-Thin.ttf',
                 'italic' => 'NotoSerif-ThinItalic.ttf',
@@ -363,7 +363,7 @@ class Font extends \YetiForcePDF\Objects\Resource
             ],
         ],
 
-        'SourceCodePro' => [
+        'Source Code Pro' => [
             '100' => [
                 'normal' => 'SourceCodePro-ExtraLight.ttf',
                 'italic' => 'SourceCodePro-ExtraLight.ttf',
@@ -401,7 +401,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'SourceCodePro-Black.ttf',
             ],
         ],
-        'SourceSerifPro' => [
+        'Source Serif Pro' => [
             '100' => [
                 'normal' => 'SourceSerifPro-Regular.ttf',
                 'italic' => 'SourceSerifPro-Regular.ttf',
@@ -439,7 +439,7 @@ class Font extends \YetiForcePDF\Objects\Resource
                 'italic' => 'SourceSerifPro-Bold.ttf',
             ],
         ],
-        'SourceSansPro' => [
+        'Source Sans Pro' => [
             '100' => [
                 'normal' => 'SourceSansPro-ExtraLight.ttf',
                 'italic' => 'SourceSansPro-ExtraLightItalic.ttf',
@@ -594,7 +594,7 @@ class Font extends \YetiForcePDF\Objects\Resource
             ],
         ],
 
-        'PT_Mono' => [
+        'PT Mono' => [
             '100' => [
                 'normal' => 'PT_Mono.ttf',
                 'italic' => 'PT_Mono.ttf'
@@ -651,7 +651,7 @@ class Font extends \YetiForcePDF\Objects\Resource
      * Base font type aka font family
      * @var string
      */
-    protected $family = 'NotoSerif';
+    protected $family = 'Noto Serif';
     /**
      * Font weight
      * @var string
