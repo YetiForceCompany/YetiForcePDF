@@ -145,7 +145,7 @@ class TextBox extends ElementBox implements BoxInterface
         $htmlX = $coordinates->getX();
         $htmlY = $coordinates->getY();
         $baseLine = $style->getFont()->getDescender();
-        $baseLineY = $pdfY - $baseLine;
+        $baseLineY = bcsub($pdfY, $baseLine, 4);
         $textWidth = $style->getFont()->getTextWidth($this->getText());
         $textHeight = $style->getFont()->getTextHeight();
         $textContent = '(' . $this->filterText($this->getText()) . ')';

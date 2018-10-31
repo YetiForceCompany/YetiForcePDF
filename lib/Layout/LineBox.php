@@ -63,6 +63,7 @@ class LineBox extends Box implements BoxInterface
         $box = (new InlineBlockBox())
             ->setDocument($this->document)
             ->setElement($element)
+            ->setParent($this)
             ->setStyle($style)
             ->init();
         $this->appendChild($box);
@@ -84,6 +85,7 @@ class LineBox extends Box implements BoxInterface
         $box = (new InlineBox())
             ->setDocument($this->document)
             ->setElement($element)
+            ->setParent($this)
             ->setStyle($style)
             ->init();
         $this->appendChild($box);
@@ -363,7 +365,6 @@ class LineBox extends Box implements BoxInterface
         $height = $dimensions->getHeight();
         $element = [];
         $element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
-
         return implode("\n", $element);
     }
 }

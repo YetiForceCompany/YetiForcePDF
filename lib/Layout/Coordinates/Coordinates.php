@@ -113,7 +113,7 @@ class Coordinates extends \YetiForcePDF\Base
     {
         $height = $this->box->getDimensions()->getHeight();
         $page = $this->document->getCurrentPage();
-        return bcsub((string)$page->getOuterDimensions()->getHeight(), bcsub((string)$this->htmlY, (string)$height, 4), 4);
+        return bcsub($page->getOuterDimensions()->getHeight(), bcadd($this->htmlY, $height, 4), 4);
     }
 
 }

@@ -1018,6 +1018,7 @@ class Style extends \YetiForcePDF\Base
                 $rulesParsed[$ruleName] = $ruleValue;
             }
         }
+        $inherited = array_diff_key($inherited, $rulesParsed);
         $rulesParsed = array_merge($parsed, $rulesParsed);
         $this->parseFont($rulesParsed, $inherited);
         if ($this->getElement()) {
