@@ -234,10 +234,10 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         $width = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $width = bcadd($width, (string)$child->getDimensions()->getOuterWidth(), 4);
+            $width = bcadd($width, $child->getDimensions()->getOuterWidth(), 4);
         }
         $style = $this->getStyle();
-        $width = bcadd($width, bcadd((string)$style->getHorizontalBordersWidth(), (string)$style->getHorizontalPaddingsWidth(), 4), 4);
+        $width = bcadd($width, bcadd($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth(), 4), 4);
         $this->getDimensions()->setWidth($width);
         $this->applyStyleWidth();
         return $this;
@@ -252,7 +252,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
-        $this->getDimensions()->setHeight(bcadd((string)$this->getStyle()->getLineHeight(), (string)$this->getStyle()->getVerticalPaddingsWidth(), 4));
+        $this->getDimensions()->setHeight(bcadd($this->getStyle()->getLineHeight(), $this->getStyle()->getVerticalPaddingsWidth(), 4));
         $this->applyStyleHeight();
         return $this;
     }
@@ -268,22 +268,22 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         $top = $parent->getStyle()->getOffsetTop();
         $lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
         if ($rules['vertical-align'] === 'bottom') {
-            $top = $lineHeight - $this->getDimensions()->getHeight();
+            $top = bcsub($lineHeight, $this->getDimensions()->getHeight(), 4);
         } elseif ($rules['vertical-align'] === 'top') {
-            $top = 0;
+            $top = '0';
         } elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
             $height = $this->getDimensions()->getHeight();
-            $top = (float)bcsub(bcdiv((string)$lineHeight, '2', 4), bcdiv((string)$height, '2', 4), 4);
+            $top = bcsub(bcdiv($lineHeight, '2', 4), bcdiv($height, '2', 4), 4);
         }
         // margin top inside inline and inline block doesn't affect relative to line top position
         // it only affects line margins
-        $left = (string)$rules['margin-left'];
+        $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = bcadd($left, bcadd(bcadd((string)$previous->getOffset()->getLeft(), (string)$previous->getDimensions()->getWidth(), 4), (string)$previous->getStyle()->getRules('margin-right'), 4));
+            $left = bcadd($left, bcadd(bcadd($previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth(), 4), $previous->getStyle()->getRules('margin-right'), 4));
         } else {
-            $left = bcadd($left, (string)$parent->getStyle()->getOffsetLeft());
+            $left = bcadd($left, $parent->getStyle()->getOffsetLeft());
         }
-        $this->getOffset()->setLeft((float)$left);
+        $this->getOffset()->setLeft($left);
         $this->getOffset()->setTop($top);
         foreach ($this->getChildren() as $child) {
             $child->measureOffset();
@@ -298,9 +298,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
+        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
         $parent = $this->getClosestLineBox();
-        $this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+        $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
         foreach ($this->getChildren() as $child) {
             $child->measurePosition();
         }
@@ -316,7 +316,6 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         $this->coordinates = clone $this->coordinates;
         $this->children = [];
     }
-
 
 
     public function addBackgroundColorInstructions(array $element, $pdfX, $pdfY, $width, $height)

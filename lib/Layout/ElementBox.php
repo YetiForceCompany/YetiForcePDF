@@ -136,7 +136,7 @@ class ElementBox extends Box
      * @param string $height
      * @return array
      */
-    protected function addBorderInstructions(array $element, $pdfX, $pdfY, $width, $height)
+    protected function addBorderInstructions(array $element, string $pdfX, string $pdfY, string $width, string $height)
     {
         $rules = $this->style->getRules();
         $x1 = '0';

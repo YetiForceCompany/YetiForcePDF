@@ -462,16 +462,12 @@ class Box extends \YetiForcePDF\Base
         if ($width === 'auto') {
             return $this;
         }
-        if (!is_string($width)) {
-            $this->getDimensions()->setWidth((float)$width);
-            return $this;
-        }
         $percentPos = strpos($width, '%');
         if ($percentPos !== false) {
             $widthInPercent = substr($width, 0, $percentPos);
             $parentWidth = $this->getClosestBox()->getDimensions()->getInnerWidth();
             if ($parentWidth) {
-                $calculatedWidth = (float)bcmul(bcdiv((string)$parentWidth, '100', 4), $widthInPercent, 4);
+                $calculatedWidth = bcmul(bcdiv($parentWidth, '100', 4), $widthInPercent, 4);
                 $this->getDimensions()->setWidth($calculatedWidth);
                 return $this;
             }
@@ -490,16 +486,12 @@ class Box extends \YetiForcePDF\Base
         if ($height === 'auto') {
             return $this;
         }
-        if (!is_string($height)) {
-            $this->getDimensions()->setHeight((float)$height);
-            return $this;
-        }
         $percentPos = strpos($height, '%');
         if ($percentPos !== false) {
             $heightInPercent = substr($height, 0, $percentPos);
             $parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
             if ($parentHeight) {
-                $calculatedHeight = (float)bcmul(bcdiv((string)$parentHeight, '100'), $heightInPercent);
+                $calculatedHeight = bcmul(bcdiv((string)$parentHeight, '100'), $heightInPercent);
                 $this->getDimensions()->setHeight($calculatedHeight);
                 return $this;
             }
@@ -517,14 +509,14 @@ class Box extends \YetiForcePDF\Base
         if ($this instanceof LineBox) {
             $textAlign = $this->getParent()->getStyle()->getRules('text-align');
             if ($textAlign === 'right') {
-                $offset = $this->getDimensions()->computeAvailableSpace() - $this->getChildrenWidth();
+                $offset = bcsub($this->getDimensions()->computeAvailableSpace(), $this->getChildrenWidth(), 4);
                 foreach ($this->getChildren() as $childBox) {
-                    $childBox->getOffset()->setLeft($childBox->getOffset()->getLeft() + $offset);
+                    $childBox->getOffset()->setLeft(bcsub($childBox->getOffset()->getLeft(), $offset, 4));
                 }
             } elseif ($textAlign === 'center') {
-                $offset = $this->getDimensions()->computeAvailableSpace() / 2 - $this->getChildrenWidth() / 2;
+                $offset = bcsub(bcdiv($this->getDimensions()->computeAvailableSpace(), '2', 4), bcdiv($this->getChildrenWidth(), '2', 4), 4);
                 foreach ($this->getChildren() as $childBox) {
-                    $childBox->getOffset()->setLeft($childBox->getOffset()->getLeft() + $offset);
+                    $childBox->getOffset()->setLeft(bcadd($childBox->getOffset()->getLeft(), $offset, 4));
                 }
             }
         } else {

@@ -20,7 +20,7 @@ class BorderBottomColor extends Normalizer
     public function normalize($ruleValue): array
     {
         if ($this->normalized === null) {
-            return $this->normalized = \YetiForcePDF\Style\Color::toRGBA($ruleValue, true);
+            return $this->normalized = ['border-bottom-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
         }
         return $this->normalized;
     }

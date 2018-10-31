@@ -90,7 +90,7 @@ class Normalizer extends \YetiForcePDF\Base
      * @param mixed $ruleValue
      * @return array
      */
-    public function normalize($ruleValue)
+    public function normalize(string $ruleValue): array
     {
         return [];
     }
@@ -168,25 +168,16 @@ class Normalizer extends \YetiForcePDF\Base
      */
     public function normalizeMultiValues(array $ruleNames, $ruleValue): array
     {
-        if (is_string($ruleValue)) {
-            $numberValues = $this->getNumberValues($ruleValue);
-            switch (count($numberValues)) {
-                case 1:
-                    return $this->oneValue($ruleNames, $numberValues);
-                case 2:
-                    return $this->twoValues($ruleNames, $numberValues);
-                case 3:
-                    return $this->threeValues($ruleNames, $numberValues);
-                case 4:
-                    return $this->fourValues($ruleNames, $numberValues);
-            }
+        $numberValues = $this->getNumberValues($ruleValue);
+        switch (count($numberValues)) {
+            case 1:
+                return $this->oneValue($ruleNames, $numberValues);
+            case 2:
+                return $this->twoValues($ruleNames, $numberValues);
+            case 3:
+                return $this->threeValues($ruleNames, $numberValues);
+            case 4:
+                return $this->fourValues($ruleNames, $numberValues);
         }
-        // if ruleValue is not a string - it was parsed already
-        return [
-            $ruleNames[0] => $ruleValue,
-            $ruleNames[1] => $ruleValue,
-            $ruleNames[2] => $ruleValue,
-            $ruleNames[3] => $ruleValue,
-        ];
     }
 }

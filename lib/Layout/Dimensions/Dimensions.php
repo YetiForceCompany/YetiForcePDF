@@ -18,18 +18,18 @@ namespace YetiForcePDF\Layout\Dimensions;
 class Dimensions extends \YetiForcePDF\Base
 {
     /**
-     * @var float
+     * @var string
      */
     protected $width;
     /**
      * Height initially must be null to figure out it was calculated already or not
-     * @var float|null
+     * @var string|null
      */
     protected $height;
 
     /**
      * Get width
-     * @return float
+     * @return string
      */
     public function getWidth()
     {
@@ -38,7 +38,7 @@ class Dimensions extends \YetiForcePDF\Base
 
     /**
      * Get height
-     * @return float|null
+     * @return string|null
      */
     public function getHeight()
     {
@@ -47,7 +47,7 @@ class Dimensions extends \YetiForcePDF\Base
 
     /**
      * Set width
-     * @param float $width
+     * @param string $width
      * @return $this
      */
     public function setWidth(string $width)
@@ -58,7 +58,7 @@ class Dimensions extends \YetiForcePDF\Base
 
     /**
      * Set height
-     * @param float $height
+     * @param string $height
      * @return $this
      */
     public function setHeight(string $height)

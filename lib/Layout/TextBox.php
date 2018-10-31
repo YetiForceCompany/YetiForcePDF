@@ -88,8 +88,8 @@ class TextBox extends ElementBox implements BoxInterface
      */
     public function measureOffset()
     {
-        $this->getOffset()->setLeft(0);
-        $this->getOffset()->setTop(0);
+        $this->getOffset()->setLeft('0');
+        $this->getOffset()->setTop('0');
         return $this;
     }
 
@@ -100,8 +100,8 @@ class TextBox extends ElementBox implements BoxInterface
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
-        $this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
+        $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
         return $this;
     }
 

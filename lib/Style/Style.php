@@ -14,6 +14,7 @@ namespace YetiForcePDF\Style;
 
 use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\InlineBox;
+use \YetiForcePDF\Layout\TextBox;
 use \YetiForcePDF\Layout\TableBox;
 
 /**
@@ -42,6 +43,10 @@ class Style extends \YetiForcePDF\Base
      * @var Box
      */
     protected $box;
+    /**
+     * @var bool
+     */
+    protected $parsed = false;
     /*
      * @var string $elementName (nodeName)
      */
@@ -546,13 +551,13 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Set margins
-     * @param float|null $top
-     * @param float|null $right
-     * @param float|null $bottom
-     * @param float|null $left
+     * @param string $top
+     * @param string $right
+     * @param string $bottom
+     * @param string $left
      * @return $this
      */
-    public function setMargins(float $top = null, float $right = null, float $bottom = null, float $left = null)
+    public function setMargins(string $top = null, string $right = null, string $bottom = null, string $left = null)
     {
         if ($top !== null) {
             $this->rules['margin-top'] = $top;
@@ -630,7 +635,7 @@ class Style extends \YetiForcePDF\Base
     /**
      * Get rules (or concrete rule if specified)
      * @param string|null $ruleName
-     * @return array|mixed
+     * @return array|string
      */
     public function getRules(string $ruleName = null)
     {
@@ -656,10 +661,10 @@ class Style extends \YetiForcePDF\Base
     /**
      * Set rule
      * @param string $ruleName
-     * @param        $ruleValue
+     * @param string $ruleValue
      * @return $this
      */
-    public function setRule(string $ruleName, $ruleValue)
+    public function setRule(string $ruleName, string $ruleValue)
     {
         $this->rules[$ruleName] = $ruleValue;
         return $this;
@@ -763,7 +768,7 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Get offset left - get left border width and left padding
-     * @return float
+     * @return string
      */
     public function getOffsetLeft()
     {
@@ -810,7 +815,8 @@ class Style extends \YetiForcePDF\Base
      */
     public function getLineHeight()
     {
-        if ($this->getBox() instanceof InlineBox) {
+        $box = $this->getBox();
+        if ($box instanceof InlineBox) {
             return $this->rules['line-height'];
         }
         return bcadd($this->rules['line-height'], bcadd($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth(), 4), 4);
@@ -827,7 +833,7 @@ class Style extends \YetiForcePDF\Base
             $lineHeight = bcadd($lineHeight, bcadd($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth(), 4), 4);
         }
         foreach ($this->getBox()->getChildren() as $child) {
-            $lineHeight = bccomp((string)$lineHeight, (string)$child->getStyle()->getMaxLineHeight(), 4) > 0 ? $lineHeight : $child->getStyle()->getMaxLineHeight();
+            $lineHeight = bccomp($lineHeight, $child->getStyle()->getMaxLineHeight(), 4) > 0 ? $lineHeight : $child->getStyle()->getMaxLineHeight();
         }
         return $lineHeight;
     }
@@ -894,11 +900,11 @@ class Style extends \YetiForcePDF\Base
      * @param array $ruleParsed
      * @return $this
      */
-    protected function parseFont(array $ruleParsed)
+    protected function parseFont(array $ruleParsed, array $inherited)
     {
         $finalRules = [];
         foreach ($ruleParsed as $ruleName => $ruleValue) {
-            if (substr($ruleName, 0, 4) === 'font') {
+            if (substr($ruleName, 0, 4) === 'font' && !array_key_exists($ruleName, $inherited)) {
                 $normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
                 $normalizer = (new $normalizerName())
                     ->setDocument($this->document)
@@ -907,6 +913,9 @@ class Style extends \YetiForcePDF\Base
                 foreach ($normalizer->normalize($ruleValue) as $name => $value) {
                     $finalRules[$name] = $value;
                 }
+            }
+            if (array_key_exists($ruleName, $inherited)) {
+                $finalRules[$ruleName] = $inherited[$ruleName];
             }
         }
         $this->font = (new \YetiForcePDF\Objects\Font())
@@ -981,12 +990,17 @@ class Style extends \YetiForcePDF\Base
      */
     protected function parse()
     {
+        if ($this->parsed) {
+            return $this;
+        }
         $parsed = [];
         foreach ($this->getMandatoryRules() as $mandatoryName => $mandatoryValue) {
             $parsed[$mandatoryName] = $mandatoryValue;
         }
+        $inherited = [];
         if ($parent = $this->getParent()) {
-            $parsed = array_merge($parsed, $parent->getInheritedRules());
+            $inherited = $parent->getInheritedRules();
+            $parsed = array_merge($parsed, $inherited);
         }
         $parsed = array_merge($parsed, $this->getDefaultRules());
         if ($this->content) {
@@ -1005,7 +1019,7 @@ class Style extends \YetiForcePDF\Base
             }
         }
         $rulesParsed = array_merge($parsed, $rulesParsed);
-        $this->parseFont($rulesParsed);
+        $this->parseFont($rulesParsed, $inherited);
         if ($this->getElement()) {
             $rulesParsed = $this->applyTextStyle($rulesParsed);
             $rulesParsed = $this->applyBorderSpacing($rulesParsed);
@@ -1019,29 +1033,34 @@ class Style extends \YetiForcePDF\Base
                         $ruleValue = $parentValue;
                     }
                 }
-                $this->originalRules[$ruleName] = $ruleValue;
             }
-            $normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
-            $normalizer = (new $normalizerName())
-                ->setDocument($this->document)
-                ->setStyle($this)
-                ->init();
-            foreach ($normalizer->normalize($ruleValue) as $name => $value) {
-                $finalRules[$name] = $value;
+            $this->originalRules[$ruleName] = $ruleValue;
+            if (!array_key_exists($ruleName, $inherited)) {
+                $normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
+                $normalizer = (new $normalizerName())
+                    ->setDocument($this->document)
+                    ->setStyle($this)
+                    ->init();
+                foreach ($normalizer->normalize($ruleValue) as $name => $value) {
+                    $finalRules[$name] = $value;
+                }
+            } else {
+                $finalRules[$ruleName] = $inherited[$ruleName];
             }
         }
         if ($finalRules['display'] === 'inline') {
-            $finalRules['margin-top'] = 0;
-            $finalRules['margin-bottom'] = 0;
+            $finalRules['margin-top'] = '0';
+            $finalRules['margin-bottom'] = '0';
         } elseif (in_array($finalRules['display'], [
             'table-cell', 'table-row', 'table-row-group', 'table-column',
             'table-column-group', 'table-header-group', 'table-footer-group'])) {
-            $finalRules['margin-top'] = 0;
-            $finalRules['margin-bottom'] = 0;
-            $finalRules['margin-left'] = 0;
-            $finalRules['margin-right'] = 0;
+            $finalRules['margin-top'] = '0';
+            $finalRules['margin-bottom'] = '0';
+            $finalRules['margin-left'] = '0';
+            $finalRules['margin-right'] = '0';
         }
         $this->rules = $finalRules;
+        $this->parsed = true;
         return $this;
     }
 
@@ -1065,10 +1084,10 @@ class Style extends \YetiForcePDF\Base
             foreach ($columns as $columnIndex => $column) {
                 foreach ($column as $rowIndex => $row) {
                     if ($columnIndex + 1 < $columnsCount) {
-                        $row->getStyle()->setRule('padding-right', 0);
+                        $row->getStyle()->setRule('padding-right', '0');
                     }
                     if ($rowIndex + 1 < $rowsCount) {
-                        $row->getStyle()->setRule('padding-bottom', 0);
+                        $row->getStyle()->setRule('padding-bottom', '0');
                     }
                 }
             }
@@ -1100,12 +1119,12 @@ class Style extends \YetiForcePDF\Base
         if ($dimensions->getWidth()) {
             $dimensions->setWidth(bcsub($dimensions->getWidth(), $this->getFullRightSpace()), 4);
         }
-        $this->rules['margin-right'] = 0;
-        $this->rules['padding-right'] = 0;
-        $this->rules['border-right-width'] = 0;
+        $this->setRule('margin-right', '0');
+        $this->setRule('padding-right', '0');
+        $this->setRule('border-right-width', '0');
         if ($this->rules['display'] === 'inline') {
-            $this->rules['margin-top'] = 0;
-            $this->rules['margin-bottom'] = 0;
+            $this->setRule('margin-top', '0');
+            $this->setRule('margin-bottom', '0');
         }
         return $this;
     }
@@ -1130,12 +1149,12 @@ class Style extends \YetiForcePDF\Base
         if ($coordinates->getX()) {
             $coordinates->setX(bcsub($coordinates->getX(), $leftSpace, 4));
         }
-        $this->rules['margin-left'] = 0;
-        $this->rules['padding-left'] = 0;
-        $this->rules['border-left-width'] = 0;
+        $this->setRule('margin-left', '0');
+        $this->setRule('padding-left', '0');
+        $this->setRule('border-left-width', '0');
         if ($this->rules['display'] === 'inline') {
-            $this->rules['margin-top'] = 0;
-            $this->rules['margin-bottom'] = 0;
+            $this->setRule('margin-top', '0');
+            $this->setRule('margin-bottom', '0');
         }
         return $this;
     }
@@ -1161,15 +1180,15 @@ class Style extends \YetiForcePDF\Base
         if ($coordinates->getX()) {
             $coordinates->setX(bcsub($coordinates->getX(), $leftSpace, 4));
         }
-        $this->rules['margin-left'] = 0;
-        $this->rules['margin-right'] = 0;
-        $this->rules['padding-left'] = 0;
-        $this->rules['padding-right'] = 0;
-        $this->rules['border-right-width'] = 0;
-        $this->rules['border-left-width'] = 0;
+        $this->setRule('margin-left', '0');
+        $this->setRule('margin-right', '0');
+        $this->setRule('padding-left', '0');
+        $this->setRule('padding-right', '0');
+        $this->setRule('border-right-width', '0');
+        $this->setRule('border-left-width', '0');
         if ($this->rules['display'] === 'inline') {
-            $this->rules['margin-top'] = 0;
-            $this->rules['margin-bottom'] = 0;
+            $this->setRule('margin-top', '0');
+            $this->setRule('margin-bottom', '0');
         }
         return $this;
     }

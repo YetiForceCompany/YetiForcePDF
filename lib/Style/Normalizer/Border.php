@@ -36,16 +36,15 @@ class Border extends Normalizer
         } else {
             $color = '#000000';
         }
-        $color = \YetiForcePDF\Style\Color::toRGBA($color, true);
         $normalized = [
-            'border-width' => $this->style->convertUnits($originalUnit, $originalSize),
+            'border-width' => $originalSize . $originalUnit,
             'border-color' => $color,
             'border-style' => $style,
         ];
         $normalizedAgain = [];
         foreach ($normalized as $normalizedName => $normalizedValue) {
             $normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($normalizedName);
-            $normalizer = (new $normalizerName())->setDocument($this->document)->init();
+            $normalizer = (new $normalizerName())->setDocument($this->document)->setStyle($this->style)->init();
             foreach ($normalizer->normalize($normalizedValue) as $name => $value) {
                 $normalizedAgain[$name] = $value;
             }

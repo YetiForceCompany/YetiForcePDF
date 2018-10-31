@@ -79,20 +79,20 @@ class BoxDimensions extends Dimensions
     {
         if (!$this->getBox() instanceof LineBox) {
             $rules = $this->getBox()->getStyle()->getRules();
-            $childrenWidth = 0;
+            $childrenWidth = '0';
             // if some of the children overflows
             $box = $this->getBox();
             if ($box instanceof InlineBox) {
                 foreach ($box->getChildren() as $child) {
-                    $childrenWidth = bcadd((string)$childrenWidth, (string)$child->getDimensions()->getOuterWidth(), 4);
+                    $childrenWidth = bcadd($childrenWidth, $child->getDimensions()->getOuterWidth(), 4);
                 }
             } else {
                 foreach ($box->getChildren() as $child) {
-                    $childrenWidth = bccomp((string)$childrenWidth, (string)$child->getDimensions()->getOuterWidth(), 4) > 0 ? $childrenWidth : $child->getDimensions()->getOuterWidth();
+                    $childrenWidth = bccomp($childrenWidth, $child->getDimensions()->getOuterWidth(), 4) > 0 ? $childrenWidth : $child->getDimensions()->getOuterWidth();
                 }
             }
-            $width = bcadd(bcadd((string)$this->getWidth(), (string)$rules['margin-left'], 4), (string)$rules['margin-right'], 4);
-            return bccomp((string)$width, (string)$childrenWidth, 4) > 0 ? $width : $childrenWidth;
+            $width = bcadd(bcadd($this->getWidth(), $rules['margin-left'], 4), $rules['margin-right'], 4);
+            return bccomp($width, $childrenWidth, 4) > 0 ? $width : $childrenWidth;
         } else {
             return $this->getBox()->getChildrenWidth();
         }

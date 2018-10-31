@@ -102,7 +102,7 @@ class LineBox extends Box implements BoxInterface
         $childrenWidth = $this->getChildrenWidth();
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
         $boxOuterWidth = $box->getDimensions()->getOuterWidth();
-        return bccomp((string)($availableSpace - $childrenWidth), (string)$boxOuterWidth) >= 0;
+        return bccomp(bcsub($availableSpace, $childrenWidth, 4), $boxOuterWidth, 4) >= 0;
     }
 
     /**
@@ -207,7 +207,7 @@ class LineBox extends Box implements BoxInterface
         $width = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $width = bcadd($width, (string)$child->getDimensions()->getOuterWidth(), 4);
+            $width = bcadd($width, $child->getDimensions()->getOuterWidth(), 4);
         }
         $this->getDimensions()->setWidth($width);
         return $this;
@@ -244,12 +244,12 @@ class LineBox extends Box implements BoxInterface
         $allChildren = array_reverse($allChildren);
         array_pop($allChildren);
         $allChildren = array_reverse($allChildren);
-        $marginTop = 0;
-        $marginBottom = 0;
+        $marginTop = '0';
+        $marginBottom = '0';
         foreach ($allChildren as $child) {
             if (!$child instanceof InlineBox) {
-                $marginTop = bccomp((string)$marginTop, (string)$child->getStyle()->getRules('margin-top'), 4) > 0 ? $marginTop : $child->getStyle()->getRules('margin-top');
-                $marginBottom = bccomp((string)$marginBottom, (string)$child->getStyle()->getRules('margin-bottom'), 4) > 0 ? $marginBottom : $child->getStyle()->getRules('margin-bottom');
+                $marginTop = bccomp($marginTop, $child->getStyle()->getRules('margin-top'), 4) > 0 ? $marginTop : $child->getStyle()->getRules('margin-top');
+                $marginBottom = bccomp($marginBottom, $child->getStyle()->getRules('margin-bottom'), 4) > 0 ? $marginBottom : $child->getStyle()->getRules('margin-bottom');
             }
         }
         $style = $this->getStyle();
@@ -269,9 +269,9 @@ class LineBox extends Box implements BoxInterface
         $top = $parentStyle->getOffsetTop();
         $left = $parentStyle->getOffsetLeft();
         if ($previous = $this->getPrevious()) {
-            $top = $previous->getOffset()->getTop() + $previous->getDimensions()->getHeight() + $previous->getStyle()->getRules('margin-bottom');
+            $top = bcadd($previous->getOffset()->getTop(), bcadd($previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'), 4), 4);
         }
-        $top += $this->getStyle()->getRules('margin-top');
+        $top = bcadd($top, $this->getStyle()->getRules('margin-top'), 4);
         $this->getOffset()->setTop($top);
         $this->getOffset()->setLeft($left);
         foreach ($this->getChildren() as $child) {
@@ -287,8 +287,8 @@ class LineBox extends Box implements BoxInterface
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX($parent->getCoordinates()->getX() + $this->getOffset()->getLeft());
-        $this->getCoordinates()->setY($parent->getCoordinates()->getY() + $this->getOffset()->getTop());
+        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
+        $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
         foreach ($this->getChildren() as $child) {
             $child->measurePosition();
         }
@@ -302,11 +302,11 @@ class LineBox extends Box implements BoxInterface
     public function clearStyles()
     {
         $allNestedChildren = [];
-        $maxLevel = 0;
+        $maxLevel = '0';
         foreach ($this->getChildren() as $child) {
             $allChildren = [];
             $child->getAllChildren($allChildren);
-            $maxLevel = bccomp((string)$maxLevel, (string)count($allChildren), 4) > 0 ? $maxLevel : count($allChildren);
+            $maxLevel = bccomp($maxLevel, (string)count($allChildren), 4) > 0 ? $maxLevel : (string)count($allChildren);
             $allNestedChildren[] = $allChildren;
         }
         $clones = [];

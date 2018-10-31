@@ -183,7 +183,7 @@ class Color
         if (isset(static::$colorNames[$colorName])) {
             return static::fromHash(static::$colorNames[$colorName]);
         }
-        return [0, 0, 0, 1];
+        return ['0', '0', '0', '1'];
     }
 
     /**
@@ -211,10 +211,10 @@ class Color
         if (strlen($color) === 6) {
             $color .= 'FF';
         }
-        $r = hexdec(substr($color, 0, 2));
-        $g = hexdec(substr($color, 2, 2));
-        $b = hexdec(substr($color, 4, 2));
-        $a = hexdec(substr($color, 6, 2));
+        $r = (string)hexdec(substr($color, 0, 2));
+        $g = (string)hexdec(substr($color, 2, 2));
+        $b = (string)hexdec(substr($color, 4, 2));
+        $a = (string)hexdec(substr($color, 6, 2));
         return [$r, $g, $b, $a];
     }
 
@@ -230,7 +230,7 @@ class Color
         if (isset($matches[4]) && $matches[4][0] !== '') {
             $alpha = $matches[4][0];
         } else {
-            $alpha = 1;
+            $alpha = '1';
         }
         return [$matches[1][0], $matches[2][0], $matches[3][0], $alpha];
     }
@@ -251,10 +251,10 @@ class Color
         } elseif (array_key_exists($colorInput, static::$colorNames)) {
             $color = static::fromName($colorInput);
         }
-        $r = $inPDFColorSpace ? $color[0] / 255 : $color[0];
-        $g = $inPDFColorSpace ? $color[1] / 255 : $color[1];
-        $b = $inPDFColorSpace ? $color[2] / 255 : $color[2];
-        $a = $inPDFColorSpace ? $color[3] / 255 : $color[3];
+        $r = $inPDFColorSpace ? bcdiv($color[0], '255', 4) : $color[0];
+        $g = $inPDFColorSpace ? bcdiv($color[1], '255', 4) : $color[1];
+        $b = $inPDFColorSpace ? bcdiv($color[2], '255', 4) : $color[2];
+        $a = $inPDFColorSpace ? bcdiv($color[3], '255', 4) : $color[3];
         return [$r, $g, $b, $a];
     }
 
