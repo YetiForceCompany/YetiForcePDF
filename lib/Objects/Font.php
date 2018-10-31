@@ -678,6 +678,11 @@ class Font extends \YetiForcePDF\Objects\Resource
      */
     protected $height = '0';
     /**
+     * Text height with ascender and descender
+     * @var string|null
+     */
+    protected $textHeight;
+    /**
      * Font data
      * @var \FontLib\Font
      */
@@ -911,7 +916,10 @@ class Font extends \YetiForcePDF\Objects\Resource
      */
     public function getTextHeight(string $text = null): string
     {
-        return bcdiv(bcmul($this->size, $this->height, 4), $this->unitsPerEm, 4);
+        if ($this->textHeight === null) {
+            $this->textHeight = bcdiv(bcmul($this->size, $this->height, 4), $this->unitsPerEm, 4);
+        }
+        return $this->textHeight;
     }
 
     /**

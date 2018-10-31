@@ -817,7 +817,7 @@ class Style extends \YetiForcePDF\Base
     {
         $box = $this->getBox();
         if ($box instanceof InlineBox) {
-            return $this->rules['line-height'];
+            return bcadd($this->rules['line-height'], $this->getVerticalBordersWidth(), 4);
         }
         return bcadd($this->rules['line-height'], bcadd($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth(), 4), 4);
     }
@@ -833,7 +833,8 @@ class Style extends \YetiForcePDF\Base
             $lineHeight = bcadd($lineHeight, bcadd($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth(), 4), 4);
         }
         foreach ($this->getBox()->getChildren() as $child) {
-            $lineHeight = bccomp($lineHeight, $child->getStyle()->getMaxLineHeight(), 4) > 0 ? $lineHeight : $child->getStyle()->getMaxLineHeight();
+            $maxLineHeight = $child->getStyle()->getMaxLineHeight();
+            $lineHeight = bccomp($lineHeight, $maxLineHeight, 4) > 0 ? $lineHeight : $maxLineHeight;
         }
         return $lineHeight;
     }
@@ -932,13 +933,15 @@ class Style extends \YetiForcePDF\Base
     /**
      * Apply text style - default style for text nodes
      * @param array $rulesParsed
+     * @param &array $inherited
      * @return array
      */
-    public function applyTextStyle($rulesParsed)
+    public function applyTextStyle($rulesParsed, &$inherited)
     {
         if ($this->getElement()->getDOMElement() instanceof \DOMText) {
             $rulesParsed['display'] = 'inline';
-            $rulesParsed['line-height'] = $this->getFont()->getTextHeight();
+            $rulesParsed['line-height'] = '1';
+            unset($inherited['line-height']);
             // if this is text node it's mean that it was wrapped by anonymous inline element
             // so wee need to copy vertical align property (because it is not inherited by default)
             if ($this->getParent()) {
@@ -1003,6 +1006,9 @@ class Style extends \YetiForcePDF\Base
             $parsed = array_merge($parsed, $inherited);
         }
         $parsed = array_merge($parsed, $this->getDefaultRules());
+        /*if ($this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
+            $this->content = 'border:1px solid red;';
+        }*/
         if ($this->content) {
             $rules = explode(';', $this->content);
         } else {
@@ -1022,7 +1028,7 @@ class Style extends \YetiForcePDF\Base
         $rulesParsed = array_merge($parsed, $rulesParsed);
         $this->parseFont($rulesParsed, $inherited);
         if ($this->getElement()) {
-            $rulesParsed = $this->applyTextStyle($rulesParsed);
+            $rulesParsed = $this->applyTextStyle($rulesParsed, $inherited);
             $rulesParsed = $this->applyBorderSpacing($rulesParsed);
         }
         $finalRules = [];
