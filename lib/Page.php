@@ -478,7 +478,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->dimensions = (new Dimensions())
             ->setDocument($this->document)
             ->init();
-        $this->dimensions->setWidth(bcsub((string)$dimensions[0], bcsub((string)$this->margins['left'], (string)$this->margins['right'], 4), 4))
+        $this->dimensions->setWidth(bcsub((string)$dimensions[0], bcadd((string)$this->margins['left'], (string)$this->margins['right'], 4), 4))
             ->setHeight(bcsub((string)$dimensions[1], bcsub((string)$this->margins['top'], (string)$this->margins['bottom'], 4), 4));
         $this->outerDimensions = (new Dimensions())
             ->setDocument($this->document)
