@@ -511,7 +511,7 @@ class Box extends \YetiForcePDF\Base
             if ($textAlign === 'right') {
                 $offset = bcsub($this->getDimensions()->computeAvailableSpace(), $this->getChildrenWidth(), 4);
                 foreach ($this->getChildren() as $childBox) {
-                    $childBox->getOffset()->setLeft(bcsub($childBox->getOffset()->getLeft(), $offset, 4));
+                    $childBox->getOffset()->setLeft(bcadd($childBox->getOffset()->getLeft(), $offset, 4));
                 }
             } elseif ($textAlign === 'center') {
                 $offset = bcsub(bcdiv($this->getDimensions()->computeAvailableSpace(), '2', 4), bcdiv($this->getChildrenWidth(), '2', 4), 4);
