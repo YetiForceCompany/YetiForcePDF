@@ -93,4 +93,20 @@ class Math
     {
         return bccomp($left, $right, static::$scale);
     }
+
+    /**
+     * Get max number
+     * @param string ...$numbers
+     * @return string
+     */
+    public static function max(string ...$numbers)
+    {
+        $numbers = array_reverse($numbers);
+        $result = array_pop($numbers);
+        $numbers = array_reverse($numbers);
+        foreach ($numbers as $number) {
+            $result = max((float)$result, (float)$number);
+        }
+        return (string)$result;
+    }
 }
