@@ -830,12 +830,12 @@ class Style extends \YetiForcePDF\Base
     public function getMaxLineHeight()
     {
         $lineHeight = $this->rules['line-height'];
-        if (!$this->getBox() instanceof InlineBox) {
-            $lineHeight = Math::add($lineHeight, Math::add($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth()));
+        if (!$this->getRules('display') !== 'inline') {
+            $lineHeight = Math::add($lineHeight, $this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth());
         }
         foreach ($this->getBox()->getChildren() as $child) {
             $maxLineHeight = $child->getStyle()->getMaxLineHeight();
-            $lineHeight = Math::comp($lineHeight, $maxLineHeight) > 0 ? $lineHeight : $maxLineHeight;
+            $lineHeight = Math::max($lineHeight, $maxLineHeight, $child->getDimensions()->getHeight());
         }
         return $lineHeight;
     }
