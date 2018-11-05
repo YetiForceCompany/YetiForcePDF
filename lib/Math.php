@@ -21,7 +21,7 @@ class Math
 
     /**
      * Add two numbers
-     * @params string ...$numbers
+     * @params string[] $numbers
      * @return string
      */
     public static function add(string ...$numbers)
@@ -37,7 +37,7 @@ class Math
 
     /**
      * Subtract two numbers
-     * @params string ...$numbers
+     * @params string[] $numbers
      * @return string
      */
     public static function sub(string ...$numbers)
@@ -53,7 +53,7 @@ class Math
 
     /**
      * Multiply numbers
-     * @param string ...$numbers
+     * @param string[] $numbers
      * @return mixed|string
      */
     public static function mul(string ...$numbers)
@@ -69,7 +69,7 @@ class Math
 
     /**
      * Divide two numbers
-     * @params string ...$numbers
+     * @params string[] $numbers
      * @return string
      */
     public static function div(string ...$numbers)
