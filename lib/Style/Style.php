@@ -962,7 +962,7 @@ class Style extends \YetiForcePDF\Base
         if ($element = $this->getElement()) {
             if ($element->getDOMElement()->nodeName === 'td') {
                 $parentStyle = $this->getParent();
-                $padding = $this->getRules('border-spacing');
+                $padding = $parentStyle->getRules('border-spacing');
                 $parentStyle->setRule('padding-top', $padding);
                 $parentStyle->setRule('padding-right', $padding);
                 $parentStyle->setRule('padding-bottom', $padding);
