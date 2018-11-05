@@ -21,11 +21,10 @@ class Math
 
     /**
      * Add two numbers
-     * @param string $left
-     * @param string $right
+     * @params string ...$numbers
      * @return string
      */
-    public static function add(...$numbers)
+    public static function add(string ...$numbers)
     {
         $numbers = array_reverse($numbers);
         $result = array_pop($numbers);
@@ -38,11 +37,10 @@ class Math
 
     /**
      * Subtract two numbers
-     * @param string $left
-     * @param string $right
+     * @params string ...$numbers
      * @return string
      */
-    public static function sub(...$numbers)
+    public static function sub(string ...$numbers)
     {
         $numbers = array_reverse($numbers);
         $result = array_pop($numbers);
@@ -54,12 +52,11 @@ class Math
     }
 
     /**
-     * Multiply two numbers
-     * @param string $left
-     * @param string $right
-     * @return string
+     * Multiply numbers
+     * @param string ...$numbers
+     * @return mixed|string
      */
-    public static function mul(...$numbers)
+    public static function mul(string ...$numbers)
     {
         $numbers = array_reverse($numbers);
         $result = array_pop($numbers);
@@ -72,11 +69,10 @@ class Math
 
     /**
      * Divide two numbers
-     * @param string $left
-     * @param string $right
+     * @params string ...$numbers
      * @return string
      */
-    public static function div(...$numbers)
+    public static function div(string ...$numbers)
     {
         $numbers = array_reverse($numbers);
         $result = array_pop($numbers);
