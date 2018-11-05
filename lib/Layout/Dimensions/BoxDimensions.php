@@ -92,8 +92,12 @@ class BoxDimensions extends Dimensions
                     $childrenWidth = Math::max($childrenWidth, $outerWidth);
                 }
             }
-            $width = Math::add($this->getWidth(), Math::add($rules['margin-left'], $rules['margin-right']));
-            return Math::comp($width, $childrenWidth) > 0 ? $width : $childrenWidth;
+            if ($this->getWidth() !== null) {
+                $width = Math::add($this->getWidth(), Math::add($rules['margin-left'], $rules['margin-right']));
+                return Math::max($width, $childrenWidth);
+            } else {
+                return $childrenWidth;
+            }
         } else {
             return $this->getBox()->getChildrenWidth();
         }
