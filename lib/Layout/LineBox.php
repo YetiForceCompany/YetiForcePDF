@@ -222,10 +222,10 @@ class LineBox extends Box implements BoxInterface
      */
     public function measureHeight()
     {
-        /*if ($this->getDimensions()->getWidth() === '0') {
+        if ($this->getDimensions()->getWidth() === '0') {
             $this->getDimensions()->setHeight('0');
             return $this;
-        }*/
+        }
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
@@ -272,7 +272,7 @@ class LineBox extends Box implements BoxInterface
         $top = $parentStyle->getOffsetTop();
         $left = $parentStyle->getOffsetLeft();
         if ($previous = $this->getPrevious()) {
-            $top = Math::add($previous->getOffset()->getTop(), Math::add($previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom')));
+            $top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'));
         }
         $top = Math::add($top, $this->getStyle()->getRules('margin-top'));
         $this->getOffset()->setTop($top);

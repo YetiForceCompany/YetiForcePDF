@@ -25,12 +25,12 @@ class Offset extends \YetiForcePDF\Base
     protected $box;
     /**
      * Offset top
-     * @var float
+     * @var string|null
      */
     protected $top;
     /**
      * Offset left
-     * @var int
+     * @var string
      */
     protected $left = '0';
 

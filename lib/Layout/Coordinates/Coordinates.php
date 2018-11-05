@@ -27,12 +27,12 @@ class Coordinates extends \YetiForcePDF\Base
     protected $box;
     /**
      * Absolute X position inside html coordinate system
-     * @var float
+     * @var string
      */
     protected $htmlX = '0';
     /**
      * Absolute Y position inside html coordinate system
-     * @var float
+     * @var string
      */
     protected $htmlY = '0';
 

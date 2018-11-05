@@ -56,7 +56,7 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return Math::sub(Math::sub($this->getWidth(), $style->getHorizontalBordersWidth()), $style->getHorizontalPaddingsWidth());
+        return Math::sub($this->getWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
     }
 
     /**
@@ -67,7 +67,7 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return Math::sub(Math::sub($this->getHeight(), $style->getVerticalBordersWidth()), $style->getVerticalPaddingsWidth());
+        return Math::sub($this->getHeight(), $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
     }
 
 
@@ -89,7 +89,7 @@ class BoxDimensions extends Dimensions
             } else {
                 foreach ($box->getChildren() as $child) {
                     $outerWidth = $child->getDimensions()->getOuterWidth();
-                    $childrenWidth = Math::comp($childrenWidth, $outerWidth) > 0 ? $childrenWidth : $outerWidth;
+                    $childrenWidth = Math::max($childrenWidth, $outerWidth);
                 }
             }
             $width = Math::add($this->getWidth(), Math::add($rules['margin-left'], $rules['margin-right']));
@@ -106,7 +106,7 @@ class BoxDimensions extends Dimensions
     public function getOuterHeight()
     {
         $rules = $this->getBox()->getStyle()->getRules();
-        return Math::add($this->getHeight(), Math::add($rules['margin-top'], $rules['margin-bottom']));
+        return Math::add($this->getHeight(), $rules['margin-top'], $rules['margin-bottom']);
     }
 
     /**
@@ -123,10 +123,10 @@ class BoxDimensions extends Dimensions
         foreach ($box->getChildren() as $childBox) {
             if ($childBox instanceof TextBox) {
                 $textWidth = $childBox->getDimensions()->getTextWidth($childBox->getText());
-                $maxTextWidth = Math::comp($maxTextWidth, $textWidth) > 0 ? $maxTextWidth : $textWidth;
+                $maxTextWidth = Math::max($maxTextWidth, $textWidth);
             } else {
                 $minWidth = $childBox->getDimensions()->getMinWidth();
-                $maxTextWidth = Math::comp($maxTextWidth, $minWidth) > 0 ? $maxTextWidth : $minWidth;
+                $maxTextWidth = Math::max($maxTextWidth, $minWidth);
             }
         }
         return $maxTextWidth;
@@ -163,7 +163,7 @@ class BoxDimensions extends Dimensions
         if ($parent = $this->getBox()->getParent()) {
             $parentStyle = $parent->getStyle();
             if ($parent->getDimensions()->getWidth() === null) {
-                return Math::sub(Math::sub($this->getBox()->getParent()->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth()), $parentStyle->getHorizontalPaddingsWidth());
+                return Math::sub($this->getBox()->getParent()->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
             } else {
                 return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
             }

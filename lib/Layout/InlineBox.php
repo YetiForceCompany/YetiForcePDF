@@ -15,9 +15,6 @@ namespace YetiForcePDF\Layout;
 use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class InlineBox
@@ -238,7 +235,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
             $width = Math::add($width, $child->getDimensions()->getOuterWidth());
         }
         $style = $this->getStyle();
-        $width = Math::add($width, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+        $width = Math::add($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
         $this->getDimensions()->setWidth($width);
         $this->applyStyleWidth();
         return $this;
@@ -280,7 +277,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         // it only affects line margins
         $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = Math::add($left, Math::add(Math::add($previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth()), $previous->getStyle()->getRules('margin-right')));
+            $left = Math::add($left, $previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'));
         } else {
             $left = Math::add($left, $parent->getStyle()->getOffsetLeft());
         }

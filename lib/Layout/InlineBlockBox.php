@@ -39,10 +39,10 @@ class InlineBlockBox extends BlockBox
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
             $outerWidth = $child->getDimensions()->getOuterWidth();
-            $maxWidth = Math::comp($maxWidth, $outerWidth) > 0 ? $maxWidth : $outerWidth;
+            $maxWidth = Math::max($maxWidth, $outerWidth);
         }
         $style = $this->getStyle();
-        $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+        $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
         $this->getDimensions()->setWidth($maxWidth);
         $this->applyStyleWidth();
         return $this;
@@ -60,7 +60,7 @@ class InlineBlockBox extends BlockBox
             $height = Math::add($height, $child->getDimensions()->getOuterHeight());
         }
         $style = $this->getStyle();
-        $height = Math::add($height, Math::add($style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
+        $height = Math::add($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
         $this->getDimensions()->setHeight($height);
         $this->applyStyleHeight();
         return $this;
@@ -79,7 +79,7 @@ class InlineBlockBox extends BlockBox
         // it only affects line margins
         $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = Math::add($left, Math::add($previous->getOffset()->getLeft(), Math::add($previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'))));
+            $left = Math::add($left, $previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'));
         } else {
             $left = Math::add($left, $parent->getStyle()->getOffsetLeft());
         }
