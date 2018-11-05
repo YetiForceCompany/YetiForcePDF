@@ -105,8 +105,8 @@ class Math
         $result = array_pop($numbers);
         $numbers = array_reverse($numbers);
         foreach ($numbers as $number) {
-            $result = max((float)$result, (float)$number);
+            $result = static::comp($result, $number) > 0 ? $result : $number;
         }
-        return (string)$result;
+        return $result;
     }
 }
