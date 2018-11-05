@@ -251,8 +251,8 @@ class LineBox extends Box implements BoxInterface
         $marginBottom = '0';
         foreach ($allChildren as $child) {
             if (!$child instanceof InlineBox) {
-                $marginTop = Math::comp($marginTop, $child->getStyle()->getRules('margin-top')) > 0 ? $marginTop : $child->getStyle()->getRules('margin-top');
-                $marginBottom = Math::comp($marginBottom, $child->getStyle()->getRules('margin-bottom')) > 0 ? $marginBottom : $child->getStyle()->getRules('margin-bottom');
+                $marginTop = Math::max($marginTop, $child->getStyle()->getRules('margin-top'));
+                $marginBottom = Math::max($marginBottom, $child->getStyle()->getRules('margin-bottom'));
             }
         }
         $style = $this->getStyle();
@@ -309,7 +309,7 @@ class LineBox extends Box implements BoxInterface
         foreach ($this->getChildren() as $child) {
             $allChildren = [];
             $child->getAllChildren($allChildren);
-            $maxLevel = Math::comp($maxLevel, (string)count($allChildren)) > 0 ? $maxLevel : (string)count($allChildren);
+            $maxLevel = Math::max($maxLevel, (string)count($allChildren));
             $allNestedChildren[] = $allChildren;
         }
         $clones = [];
