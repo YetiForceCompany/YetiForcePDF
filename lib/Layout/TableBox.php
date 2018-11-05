@@ -140,11 +140,11 @@ class TableBox extends BlockBox
             foreach ($minWidths as $min) {
                 $fullMinWidth = Math::add($fullMinWidth, $min);
             }
-            $left = Math::sub($availableSpace, $fullMinWidth);
+            $left = Math::sub($maxWidth, $availableSpace);
             $width = '0';
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
-                $columnWidth = Math::add($minWidth, Math::mul($left, Math::div($maxColumnWidth, $maxWidth)));
+                $columnWidth = Math::sub($maxColumnWidth, Math::mul($left, Math::div($maxColumnWidth, $maxWidth)));
                 foreach ($columns[$columnIndex] as $row) {
                     $cell = $row->getFirstChild();
                     $row->getDimensions()->setWidth($columnWidth);
