@@ -25,9 +25,15 @@ class Math
      * @param string $right
      * @return string
      */
-    public static function add(string $left, string $right)
+    public static function add(...$numbers)
     {
-        return bcadd($left, $right, static::$scale);
+        $numbers = array_reverse($numbers);
+        $result = array_pop($numbers);
+        $numbers = array_reverse($numbers);
+        foreach ($numbers as $number) {
+            $result = bcadd($result, $number, static::$scale);
+        }
+        return $result;
     }
 
     /**
@@ -36,9 +42,15 @@ class Math
      * @param string $right
      * @return string
      */
-    public static function sub(string $left, string $right)
+    public static function sub(...$numbers)
     {
-        return bcsub($left, $right, static::$scale);
+        $numbers = array_reverse($numbers);
+        $result = array_pop($numbers);
+        $numbers = array_reverse($numbers);
+        foreach ($numbers as $number) {
+            $result = bcsub($result, $number, static::$scale);
+        }
+        return $result;
     }
 
     /**
@@ -47,9 +59,15 @@ class Math
      * @param string $right
      * @return string
      */
-    public static function mul(string $left, string $right)
+    public static function mul(...$numbers)
     {
-        return bcmul($left, $right, static::$scale);
+        $numbers = array_reverse($numbers);
+        $result = array_pop($numbers);
+        $numbers = array_reverse($numbers);
+        foreach ($numbers as $number) {
+            $result = bcmul($result, $number, static::$scale);
+        }
+        return $result;
     }
 
     /**
@@ -58,9 +76,15 @@ class Math
      * @param string $right
      * @return string
      */
-    public static function div(string $left, string $right)
+    public static function div(...$numbers)
     {
-        return bcdiv($left, $right, static::$scale);
+        $numbers = array_reverse($numbers);
+        $result = array_pop($numbers);
+        $numbers = array_reverse($numbers);
+        foreach ($numbers as $number) {
+            $result = bcdiv($result, $number, static::$scale);
+        }
+        return $result;
     }
 
     /**
