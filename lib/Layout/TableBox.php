@@ -98,10 +98,10 @@ class TableBox extends BlockBox
         foreach ($columns as $columnIndex => $row) {
             foreach ($row as $column) {
                 if (!isset($maxWidths[$columnIndex])) {
-                    $maxWidths[$columnIndex] = 0;
+                    $maxWidths[$columnIndex] = '0';
                 }
                 if (!isset($minWidths[$columnIndex])) {
-                    $minWidths[$columnIndex] = 0;
+                    $minWidths[$columnIndex] = '0';
                 }
                 $maxWidths[$columnIndex] = Math::max($maxWidths[$columnIndex], $column->getDimensions()->getOuterWidth());
                 $minWidths[$columnIndex] = Math::max($minWidths[$columnIndex], $column->getDimensions()->getMinWidth());
@@ -141,7 +141,7 @@ class TableBox extends BlockBox
                 $fullMinWidth = Math::add($fullMinWidth, $min);
             }
             $left = Math::sub($availableSpace, $fullMinWidth);
-            $width = 0;
+            $width = '0';
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
                 $columnWidth = Math::add($minWidth, Math::mul($left, Math::div($maxColumnWidth, $maxWidth)));
@@ -150,7 +150,7 @@ class TableBox extends BlockBox
                     $row->getDimensions()->setWidth($columnWidth);
                     $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
                 }
-                $width += $columnWidth;
+                $width = Math::add($width, $columnWidth);
             }
             $this->getDimensions()->setWidth($width);
         }
@@ -168,7 +168,7 @@ class TableBox extends BlockBox
         foreach ($rows as $rowIndex => $row) {
             foreach ($row->getChildren() as $column) {
                 if (!isset($maxHeights[$rowIndex])) {
-                    $maxHeights[$rowIndex] = 0;
+                    $maxHeights[$rowIndex] = '0';
                 }
                 $maxHeights[$rowIndex] = Math::max($maxHeights[$rowIndex], $column->getDimensions()->getOuterHeight());
             }
