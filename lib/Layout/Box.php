@@ -466,11 +466,14 @@ class Box extends \YetiForcePDF\Base
         $percentPos = strpos($width, '%');
         if ($percentPos !== false) {
             $widthInPercent = substr($width, 0, $percentPos);
-            $parentWidth = $this->getClosestBox()->getDimensions()->getInnerWidth();
-            if ($parentWidth) {
-                $calculatedWidth = Math::mul(Math::div($parentWidth, '100'), $widthInPercent);
-                $this->getDimensions()->setWidth($calculatedWidth);
-                return $this;
+            $closestBoxDimensions = $this->getClosestBox()->getDimensions();
+            if ($closestBoxDimensions->getWidth() !== null) {
+                $parentWidth = $closestBoxDimensions->getInnerWidth();
+                if ($parentWidth) {
+                    $calculatedWidth = Math::mul(Math::div($parentWidth, '100'), $widthInPercent);
+                    $this->getDimensions()->setWidth($calculatedWidth);
+                    return $this;
+                }
             }
             return $this;
         }
@@ -490,11 +493,14 @@ class Box extends \YetiForcePDF\Base
         $percentPos = strpos($height, '%');
         if ($percentPos !== false) {
             $heightInPercent = substr($height, 0, $percentPos);
-            $parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
-            if ($parentHeight) {
-                $calculatedHeight = Math::mul(Math::div($parentHeight, '100'), $heightInPercent);
-                $this->getDimensions()->setHeight($calculatedHeight);
-                return $this;
+            $parentDimensions = $this->getParent()->getDimensions();
+            if ($parentDimensions->getHeight() !== null) {
+                $parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
+                if ($parentHeight) {
+                    $calculatedHeight = Math::mul(Math::div($parentHeight, '100'), $heightInPercent);
+                    $this->getDimensions()->setHeight($calculatedHeight);
+                    return $this;
+                }
             }
             return $this;
         }
