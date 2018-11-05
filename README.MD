@@ -84,12 +84,12 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 
 ### Available fonts
 
-- NotoSans
-- NotoSerif
-- NotoMono
-- SourceSansPro
-- SourceSerifPro
-- SourceCodePro
+- Noto Sans
+- Noto Serif
+- Noto Mono
+- Source Sans Pro
+- Source Serif Pro
+- Source Code Pro
 - PT Sans
 - PT Sans Narrow
 - PT Serif
