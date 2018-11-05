@@ -1009,7 +1009,7 @@ class Style extends \YetiForcePDF\Base
         $defaultRules = $this->getDefaultRules();
         $inherited = array_diff_key($inherited, $defaultRules);
         $parsed = array_merge($parsed, $defaultRules);
-        if ($this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
+        if ($this->document->inDebugMode() && $this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
             $this->content = 'border:1px solid red;';
         }
         if ($this->content) {
