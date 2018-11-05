@@ -15,9 +15,6 @@ namespace YetiForcePDF\Layout;
 use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class TableBox
@@ -106,8 +103,8 @@ class TableBox extends BlockBox
                 if (!isset($minWidths[$columnIndex])) {
                     $minWidths[$columnIndex] = 0;
                 }
-                $maxWidths[$columnIndex] = max($maxWidths[$columnIndex], $column->getDimensions()->getOuterWidth());
-                $minWidths[$columnIndex] = max($minWidths[$columnIndex], $column->getDimensions()->getMinWidth());
+                $maxWidths[$columnIndex] = Math::max($maxWidths[$columnIndex], $column->getDimensions()->getOuterWidth());
+                $minWidths[$columnIndex] = Math::max($minWidths[$columnIndex], $column->getDimensions()->getMinWidth());
             }
         }
         return ['min' => $minWidths, 'max' => $maxWidths];
@@ -125,7 +122,7 @@ class TableBox extends BlockBox
         $minWidths = $minMax['min'];
         $maxWidth = '0';
         foreach ($maxWidths as $width) {
-            $maxWidth = Math::add($maxWidth, (string)$width);
+            $maxWidth = Math::add($maxWidth, $width);
         }
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
         if ($maxWidth <= $availableSpace) {
@@ -173,7 +170,7 @@ class TableBox extends BlockBox
                 if (!isset($maxHeights[$rowIndex])) {
                     $maxHeights[$rowIndex] = 0;
                 }
-                $maxHeights[$rowIndex] = max($maxHeights[$rowIndex], $column->getDimensions()->getOuterHeight());
+                $maxHeights[$rowIndex] = Math::max($maxHeights[$rowIndex], $column->getDimensions()->getOuterHeight());
             }
         }
         foreach ($rows as $rowIndex => $row) {

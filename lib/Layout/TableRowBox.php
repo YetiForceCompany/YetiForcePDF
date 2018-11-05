@@ -15,9 +15,6 @@ namespace YetiForcePDF\Layout;
 use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class TableRowBox
@@ -95,7 +92,7 @@ class TableRowBox extends BlockBox
         $parent = $this->getParent();
         if ($parent) {
             if ($parent->getDimensions()->getWidth() !== null) {
-                $dimensions->setWidth($parent->getDimensions()->getInnerWidth() - $this->getStyle()->getHorizontalMarginsWidth());
+                $dimensions->setWidth(Math::sub($parent->getDimensions()->getInnerWidth(), $this->getStyle()->getHorizontalMarginsWidth()));
                 $this->applyStyleWidth();
                 foreach ($this->getChildren() as $child) {
                     $child->measureWidth();
@@ -135,11 +132,11 @@ class TableRowBox extends BlockBox
         }
         $height = '0';
         foreach ($this->getChildren() as $child) {
-            $height = Math::comp($height, $child->getDimensions()->getOuterHeight()) > 0 ? $height : $child->getDimensions()->getOuterHeight();
+            $height = Math::max($height, $child->getDimensions()->getOuterHeight());
         }
         $rules = $this->getStyle()->getRules();
-        $height = Math::add($height, Math::add($rules['border-top-width'], $rules['padding-top']));
-        $height = Math::add($height, Math::add($rules['border-bottom-width'], $rules['padding-bottom']));
+        $height = Math::add($height, $rules['border-top-width'], $rules['padding-top']);
+        $height = Math::add($height, $rules['border-bottom-width'], $rules['padding-bottom']);
         $this->getDimensions()->setHeight($height);
         $this->applyStyleHeight();
         return $this;
@@ -161,7 +158,7 @@ class TableRowBox extends BlockBox
             if ($previous = $this->getPrevious()) {
                 $top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight());
                 if ($previous->getStyle()->getRules('display') === 'block') {
-                    $marginTop = Math::comp($marginTop, $previous->getStyle()->getRules('margin-bottom')) > 0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
+                    $marginTop = Math::max($marginTop, $previous->getStyle()->getRules('margin-bottom'));
                 } elseif (!$previous instanceof LineBox) {
                     $marginTop = Math::add($marginTop, $previous->getStyle()->getRules('margin-bottom'));
                 }

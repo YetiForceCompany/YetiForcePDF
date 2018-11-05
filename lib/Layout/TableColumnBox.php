@@ -13,11 +13,6 @@ declare(strict_types=1);
 namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Math;
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class TableColumnBox
@@ -41,13 +36,13 @@ class TableColumnBox extends InlineBlockBox
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
         }
-        $maxWidth = 0;
+        $maxWidth = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = Math::comp((string)$maxWidth, (string)$child->getDimensions()->getOuterWidth()) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
         $style = $this->getStyle();
-        $maxWidth = (float)Math::add((string)$maxWidth, Math::add((string)$style->getHorizontalBordersWidth(), (string)$style->getHorizontalPaddingsWidth()));
+        $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
         $this->getDimensions()->setWidth($maxWidth);
         $this->applyStyleWidth();
         return $this;

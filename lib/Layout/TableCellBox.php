@@ -13,11 +13,6 @@ declare(strict_types=1);
 namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Math;
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 
 /**
  * Class TableCellBox
@@ -34,10 +29,10 @@ class TableCellBox extends BlockBox
             $child->measureWidth();
         }
         $this->divideLines();
-        $maxWidth = 0;
+        $maxWidth = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = Math::comp((string)$maxWidth, (string)$child->getDimensions()->getOuterWidth()) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
         // do not set up width because it was set by TableBox measureWidth method
         return $this;
@@ -52,11 +47,11 @@ class TableCellBox extends BlockBox
         $height = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
-            $height = Math::add($height, (string)$child->getDimensions()->getOuterHeight());
+            $height = Math::add($height, $child->getDimensions()->getOuterHeight());
         }
         $dimensions = $this->getDimensions();
         $style = $this->getStyle();
-        $height = (float)Math::add($height, Math::add((string)$style->getVerticalBordersWidth(), (string)$style->getVerticalPaddingsWidth()));
+        $height = Math::add($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
         $dimensions->setHeight($height);
         $this->applyStyleHeight();
         return $this;
@@ -73,11 +68,11 @@ class TableCellBox extends BlockBox
         $top = $parent->getStyle()->getOffsetTop();
         // margin top inside inline and inline block doesn't affect relative to line top position
         // it only affects line margins
-        $left = (string)$rules['margin-left'];
+        $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = Math::add($left, Math::add($previous->getOffset()->getLeft(), Math::add($previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'))));
+            $left = Math::add($left, $previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'));
         } else {
-            $left = Math::add($left, (string)$parent->getStyle()->getOffsetLeft());
+            $left = Math::add($left, $parent->getStyle()->getOffsetLeft());
         }
         $this->getOffset()->setLeft($left);
         $this->getOffset()->setTop($top);
