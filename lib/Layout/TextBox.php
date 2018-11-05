@@ -12,11 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
+use \YetiForcePDF\Math;
+
 
 /**
  * Class TextBox
@@ -100,8 +97,8 @@ class TextBox extends ElementBox implements BoxInterface
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
-        $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
+        $this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
+        $this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
         return $this;
     }
 
@@ -145,7 +142,7 @@ class TextBox extends ElementBox implements BoxInterface
         $htmlX = $coordinates->getX();
         $htmlY = $coordinates->getY();
         $baseLine = $style->getFont()->getDescender();
-        $baseLineY = bcsub($pdfY, $baseLine, 4);
+        $baseLineY = Math::sub($pdfY, $baseLine);
         $textWidth = $style->getFont()->getTextWidth($this->getText());
         $textHeight = $style->getFont()->getTextHeight();
         $textContent = '(' . $this->filterText($this->getText()) . ')';

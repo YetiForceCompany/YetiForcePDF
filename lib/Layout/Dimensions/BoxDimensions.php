@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout\Dimensions;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\LineBox;
-use \YetiForcePDF\Layout\InlineBox;
 use \YetiForcePDF\Layout\TextBox;
 
 /**
@@ -56,7 +56,7 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return bcsub(bcsub($this->getWidth(), $style->getHorizontalBordersWidth(), 4), $style->getHorizontalPaddingsWidth(), 4);
+        return Math::sub(Math::sub($this->getWidth(), $style->getHorizontalBordersWidth()), $style->getHorizontalPaddingsWidth());
     }
 
     /**
@@ -67,7 +67,7 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return bcsub(bcsub($this->getHeight(), $style->getVerticalBordersWidth(), 4), $style->getVerticalPaddingsWidth(), 4);
+        return Math::sub(Math::sub($this->getHeight(), $style->getVerticalBordersWidth()), $style->getVerticalPaddingsWidth());
     }
 
 
@@ -84,16 +84,16 @@ class BoxDimensions extends Dimensions
             // if some of the children overflows
             if ($box->getStyle()->getRules('display') === 'inline') {
                 foreach ($box->getChildren() as $child) {
-                    $childrenWidth = bcadd($childrenWidth, $child->getDimensions()->getOuterWidth(), 4);
+                    $childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
                 }
             } else {
                 foreach ($box->getChildren() as $child) {
                     $outerWidth = $child->getDimensions()->getOuterWidth();
-                    $childrenWidth = bccomp($childrenWidth, $outerWidth, 4) > 0 ? $childrenWidth : $outerWidth;
+                    $childrenWidth = Math::comp($childrenWidth, $outerWidth) > 0 ? $childrenWidth : $outerWidth;
                 }
             }
-            $width = bcadd($this->getWidth(), bcadd($rules['margin-left'], $rules['margin-right'], 4), 4);
-            return bccomp($width, $childrenWidth, 4) > 0 ? $width : $childrenWidth;
+            $width = Math::add($this->getWidth(), Math::add($rules['margin-left'], $rules['margin-right']));
+            return Math::comp($width, $childrenWidth) > 0 ? $width : $childrenWidth;
         } else {
             return $this->getBox()->getChildrenWidth();
         }
@@ -106,12 +106,12 @@ class BoxDimensions extends Dimensions
     public function getOuterHeight()
     {
         $rules = $this->getBox()->getStyle()->getRules();
-        return bcadd($this->getHeight(), bcadd($rules['margin-top'], $rules['margin-bottom'], 4), 4);
+        return Math::add($this->getHeight(), Math::add($rules['margin-top'], $rules['margin-bottom']));
     }
 
     /**
      * Get minimum space that current box could have without overflow
-     * @return float
+     * @return string
      */
     public function getMinWidth()
     {
@@ -123,10 +123,10 @@ class BoxDimensions extends Dimensions
         foreach ($box->getChildren() as $childBox) {
             if ($childBox instanceof TextBox) {
                 $textWidth = $childBox->getDimensions()->getTextWidth($childBox->getText());
-                $maxTextWidth = bccomp($maxTextWidth, $textWidth, 4) > 0 ? $maxTextWidth : $textWidth;
+                $maxTextWidth = Math::comp($maxTextWidth, $textWidth) > 0 ? $maxTextWidth : $textWidth;
             } else {
                 $minWidth = $childBox->getDimensions()->getMinWidth();
-                $maxTextWidth = bccomp($maxTextWidth, $minWidth, 4) > 0 ? $maxTextWidth : $minWidth;
+                $maxTextWidth = Math::comp($maxTextWidth, $minWidth) > 0 ? $maxTextWidth : $minWidth;
             }
         }
         return $maxTextWidth;
@@ -135,7 +135,7 @@ class BoxDimensions extends Dimensions
     /**
      * Get text width
      * @param string $text
-     * @return float
+     * @return string
      */
     public function getTextWidth($text)
     {
@@ -146,7 +146,7 @@ class BoxDimensions extends Dimensions
     /**
      * Get text height
      * @param string $text
-     * @return float
+     * @return string
      */
     public function getTextHeight($text)
     {
@@ -156,14 +156,14 @@ class BoxDimensions extends Dimensions
 
     /**
      * Compute available space (basing on parent available space and parent border and padding)
-     * @return float
+     * @return string
      */
     public function computeAvailableSpace()
     {
         if ($parent = $this->getBox()->getParent()) {
             $parentStyle = $parent->getStyle();
             if ($parent->getDimensions()->getWidth() === null) {
-                return bcsub(bcsub($this->getBox()->getParent()->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth(), 4), $parentStyle->getHorizontalPaddingsWidth(), 4);
+                return Math::sub(Math::sub($this->getBox()->getParent()->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth()), $parentStyle->getHorizontalPaddingsWidth());
             } else {
                 return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
             }

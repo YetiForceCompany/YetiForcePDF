@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Objects;
 
+use \YetiForcePDF\Math;
+
 /**
  * Class Font
  */
@@ -674,7 +676,7 @@ class Font extends \YetiForcePDF\Objects\Resource
     protected $size = '12px';
     /**
      * Font height
-     * @var float
+     * @var string
      */
     protected $height = '0';
     /**
@@ -701,7 +703,7 @@ class Font extends \YetiForcePDF\Objects\Resource
      */
     protected $outputInfo = [];
     /**
-     * @var float
+     * @var string
      */
     protected $unitsPerEm = '1000';
     /**
@@ -736,12 +738,12 @@ class Font extends \YetiForcePDF\Objects\Resource
     protected $fontType0;
     /**
      * From baseline to top of the font
-     * @var float
+     * @var string
      */
     protected $ascender = '0';
     /**
      * From baseline to bottom (with jyg chars that are bellow baseline)
-     * @var float
+     * @var string
      */
     protected $descender = '0';
     /**
@@ -904,9 +906,9 @@ class Font extends \YetiForcePDF\Objects\Resource
         $width = '0';
         for ($i = 0, $len = mb_strlen($text); $i < $len; $i++) {
             $char = mb_substr($text, $i, 1);
-            $width = bcadd($width, (string)$this->widths[mb_ord($char)], 4);
+            $width = Math::add($width, (string)$this->widths[mb_ord($char)]);
         }
-        return bcdiv(bcmul($this->size, $width, 4), '1000', 4);
+        return Math::div(Math::mul($this->size, $width), '1000');
     }
 
     /**
@@ -917,7 +919,7 @@ class Font extends \YetiForcePDF\Objects\Resource
     public function getTextHeight(string $text = null): string
     {
         if ($this->textHeight === null) {
-            $this->textHeight = bcdiv(bcmul($this->size, $this->height, 4), $this->unitsPerEm, 4);
+            $this->textHeight = Math::div(Math::mul($this->size, $this->height), $this->unitsPerEm);
         }
         return $this->textHeight;
     }
@@ -928,7 +930,7 @@ class Font extends \YetiForcePDF\Objects\Resource
      */
     public function getAscender(): string
     {
-        return bcdiv(bcmul($this->size, $this->ascender, 4), $this->unitsPerEm, 4);
+        return Math::div(Math::mul($this->size, $this->ascender), $this->unitsPerEm);
     }
 
     /**
@@ -937,7 +939,7 @@ class Font extends \YetiForcePDF\Objects\Resource
      */
     public function getDescender(): string
     {
-        return bcdiv(bcmul($this->size, $this->descender, 4), $this->unitsPerEm, 4);
+        return Math::div(Math::mul($this->size, $this->descender), $this->unitsPerEm);
     }
 
     /**
@@ -969,7 +971,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 
     public function normalizeUnit(string $value, string $base = '1000')
     {
-        return bcmul($value, bcdiv($base, $this->unitsPerEm, 4), 0);
+        return bcmul($value, Math::div($base, $this->unitsPerEm), 0);
     }
 
     protected function setUpUnicode($charMapUnicode)
@@ -1085,9 +1087,9 @@ class Font extends \YetiForcePDF\Objects\Resource
         $this->outputInfo['font']['Widths'] = $widths;
         $this->outputInfo['font']['FirstChar'] = 0;
         $this->outputInfo['font']['LastChar'] = count($widths) - 1;
-        $this->height = bcsub((string)$hhea['ascent'], (string)$hhea['descent'], 4);
+        $this->height = Math::sub((string)$hhea['ascent'], (string)$hhea['descent']);
         if (isset($os2['typoLineGap'])) {
-            $this->height = bcadd($this->height, (string)$os2['typoLineGap'], 4);
+            $this->height = Math::add($this->height, (string)$os2['typoLineGap']);
         }
         $this->fontType0 = (new \YetiForcePDF\Objects\Basic\DictionaryObject())
             ->setDocument($this->document)

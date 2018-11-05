@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -104,7 +105,7 @@ class LineBox extends Box implements BoxInterface
         $childrenWidth = $this->getChildrenWidth();
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
         $boxOuterWidth = $box->getDimensions()->getOuterWidth();
-        return bccomp(bcsub($availableSpace, $childrenWidth, 4), $boxOuterWidth, 4) >= 0;
+        return Math::comp(Math::sub($availableSpace, $childrenWidth), $boxOuterWidth) >= 0;
     }
 
     /**
@@ -139,7 +140,6 @@ class LineBox extends Box implements BoxInterface
     public function divide()
     {
         $lines = [];
-        $this->clearStyles();
         $line = (new LineBox())
             ->setDocument($this->document)
             ->setParent($this->getParent())
@@ -206,10 +206,11 @@ class LineBox extends Box implements BoxInterface
      */
     public function measureWidth()
     {
+        $this->clearStyles();
         $width = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $width = bcadd($width, $child->getDimensions()->getOuterWidth(), 4);
+            $width = Math::add($width, $child->getDimensions()->getOuterWidth());
         }
         $this->getDimensions()->setWidth($width);
         return $this;
@@ -221,10 +222,10 @@ class LineBox extends Box implements BoxInterface
      */
     public function measureHeight()
     {
-        if ($this->getDimensions()->getWidth() === '0') {
+        /*if ($this->getDimensions()->getWidth() === '0') {
             $this->getDimensions()->setHeight('0');
             return $this;
-        }
+        }*/
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
@@ -250,8 +251,8 @@ class LineBox extends Box implements BoxInterface
         $marginBottom = '0';
         foreach ($allChildren as $child) {
             if (!$child instanceof InlineBox) {
-                $marginTop = bccomp($marginTop, $child->getStyle()->getRules('margin-top'), 4) > 0 ? $marginTop : $child->getStyle()->getRules('margin-top');
-                $marginBottom = bccomp($marginBottom, $child->getStyle()->getRules('margin-bottom'), 4) > 0 ? $marginBottom : $child->getStyle()->getRules('margin-bottom');
+                $marginTop = Math::comp($marginTop, $child->getStyle()->getRules('margin-top')) > 0 ? $marginTop : $child->getStyle()->getRules('margin-top');
+                $marginBottom = Math::comp($marginBottom, $child->getStyle()->getRules('margin-bottom')) > 0 ? $marginBottom : $child->getStyle()->getRules('margin-bottom');
             }
         }
         $style = $this->getStyle();
@@ -271,9 +272,9 @@ class LineBox extends Box implements BoxInterface
         $top = $parentStyle->getOffsetTop();
         $left = $parentStyle->getOffsetLeft();
         if ($previous = $this->getPrevious()) {
-            $top = bcadd($previous->getOffset()->getTop(), bcadd($previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'), 4), 4);
+            $top = Math::add($previous->getOffset()->getTop(), Math::add($previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom')));
         }
-        $top = bcadd($top, $this->getStyle()->getRules('margin-top'), 4);
+        $top = Math::add($top, $this->getStyle()->getRules('margin-top'));
         $this->getOffset()->setTop($top);
         $this->getOffset()->setLeft($left);
         foreach ($this->getChildren() as $child) {
@@ -289,8 +290,8 @@ class LineBox extends Box implements BoxInterface
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
-        $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
+        $this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
+        $this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
         foreach ($this->getChildren() as $child) {
             $child->measurePosition();
         }
@@ -308,7 +309,7 @@ class LineBox extends Box implements BoxInterface
         foreach ($this->getChildren() as $child) {
             $allChildren = [];
             $child->getAllChildren($allChildren);
-            $maxLevel = bccomp($maxLevel, (string)count($allChildren), 4) > 0 ? $maxLevel : (string)count($allChildren);
+            $maxLevel = Math::comp($maxLevel, (string)count($allChildren)) > 0 ? $maxLevel : (string)count($allChildren);
             $allNestedChildren[] = $allChildren;
         }
         $clones = [];
@@ -345,7 +346,7 @@ class LineBox extends Box implements BoxInterface
     {
         $width = '0';
         foreach ($this->getChildren() as $childBox) {
-            $width = bcadd($width, $childBox->getDimensions()->getOuterWidth(), 4);
+            $width = Math::add($width, $childBox->getDimensions()->getOuterWidth());
         }
         return $width;
     }

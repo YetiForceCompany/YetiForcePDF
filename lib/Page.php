@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
-use YetiForcePDF\Html\Element;
 use YetiForcePDF\Layout\Dimensions\Dimensions;
 use YetiForcePDF\Layout\Coordinates\Coordinates;
 
@@ -478,8 +477,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->dimensions = (new Dimensions())
             ->setDocument($this->document)
             ->init();
-        $this->dimensions->setWidth(bcsub((string)$dimensions[0], bcadd((string)$this->margins['left'], (string)$this->margins['right'], 4), 4))
-            ->setHeight(bcsub((string)$dimensions[1], bcsub((string)$this->margins['top'], (string)$this->margins['bottom'], 4), 4));
+        $this->dimensions->setWidth(Math::sub((string)$dimensions[0], Math::add((string)$this->margins['left'], (string)$this->margins['right'])))
+            ->setHeight(Math::sub((string)$dimensions[1], Math::sub((string)$this->margins['top'], (string)$this->margins['bottom'])));
         $this->outerDimensions = (new Dimensions())
             ->setDocument($this->document)
             ->init();

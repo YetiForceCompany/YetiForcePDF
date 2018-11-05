@@ -17,6 +17,7 @@ use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
 use \YetiForcePDF\Layout\Coordinates\Offset;
 use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
+use \YetiForcePDF\Math;
 
 /**
  * Class BlockBox
@@ -187,7 +188,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         $parent = $this->getParent();
         if ($parent) {
             if ($parent->getDimensions()->getWidth() !== null) {
-                $dimensions->setWidth(bcsub($parent->getDimensions()->getInnerWidth(), $this->getStyle()->getHorizontalMarginsWidth(), 4));
+                $dimensions->setWidth(Math::sub($parent->getDimensions()->getInnerWidth(), $this->getStyle()->getHorizontalMarginsWidth()));
                 $this->applyStyleWidth();
                 foreach ($this->getChildren() as $child) {
                     $child->measureWidth();
@@ -201,11 +202,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             $this->divideLines();
             $maxWidth = '0';
             foreach ($this->getChildren() as $child) {
-                $maxWidth = bccomp($maxWidth, $child->getDimensions()->getOuterWidth(), 4) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+                $maxWidth = Math::comp($maxWidth, $child->getDimensions()->getOuterWidth()) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
             }
             $style = $this->getStyle();
-            $maxWidth = bcadd($maxWidth, bcadd($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth(), 4), 4);
-            $maxWidth = bcsub($maxWidth, $style->getHorizontalMarginsWidth(), 4);
+            $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+            $maxWidth = Math::sub($maxWidth, $style->getHorizontalMarginsWidth());
             $dimensions->setWidth($maxWidth);
             $this->applyStyleWidth();
             return $this;
@@ -234,9 +235,6 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                     $line->measureWidth();
                 }
                 $this->removeChild($child);
-                if (isset($lines[1])) {
-                    $child->measureWidth();
-                }
             }
         }
         $this->removeEmptyLines();
@@ -254,11 +252,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         }
         $height = '0';
         foreach ($this->getChildren() as $child) {
-            $height = bcadd($height, $child->getDimensions()->getOuterHeight(), 4);
+            $height = Math::add($height, $child->getDimensions()->getOuterHeight());
         }
         $rules = $this->getStyle()->getRules();
-        $height = bcadd($height, bcadd($rules['border-top-width'], $rules['padding-top'], 4), 4);
-        $height = bcadd($height, bcadd($rules['border-bottom-width'], $rules['padding-bottom'], 4), 4);
+        $height = Math::add($height, Math::add($rules['border-top-width'], $rules['padding-top']));
+        $height = Math::add($height, Math::add($rules['border-bottom-width'], $rules['padding-bottom']));
         $this->getDimensions()->setHeight($height);
         $this->applyStyleHeight();
         return $this;
@@ -278,16 +276,16 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             $top = $parentStyle->getOffsetTop();
             $left = $parentStyle->getOffsetLeft();
             if ($previous = $this->getPrevious()) {
-                $top = bcadd($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight(), 4);
+                $top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight());
                 if ($previous->getStyle()->getRules('display') === 'block') {
-                    $marginTop = bccomp($marginTop, $previous->getStyle()->getRules('margin-bottom'), 4) > 0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
+                    $marginTop = Math::comp($marginTop, $previous->getStyle()->getRules('margin-bottom')) > 0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
                 } elseif (!$previous instanceof LineBox) {
-                    $marginTop = bcadd($marginTop, $previous->getStyle()->getRules('margin-bottom'), 4);
+                    $marginTop = Math::add($marginTop, $previous->getStyle()->getRules('margin-bottom'));
                 }
             }
         }
-        $top = bcadd($top, $marginTop, 4);
-        $left = bcadd($left, $this->getStyle()->getRules('margin-left'), 4);
+        $top = Math::add($top, $marginTop);
+        $left = Math::add($left, $this->getStyle()->getRules('margin-left'));
         $this->getOffset()->setTop($top);
         $this->getOffset()->setLeft($left);
         foreach ($this->getChildren() as $child) {
@@ -305,8 +303,8 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         $x = $this->document->getCurrentPage()->getCoordinates()->getX();
         $y = $this->document->getCurrentPage()->getCoordinates()->getY();
         if ($parent = $this->getParent()) {
-            $x = bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4);
-            $y = bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4);
+            $x = Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft());
+            $y = Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop());
         }
         $this->getCoordinates()->setX($x);
         $this->getCoordinates()->setY($y);

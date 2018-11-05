@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -124,7 +125,7 @@ class TableBox extends BlockBox
         $minWidths = $minMax['min'];
         $maxWidth = '0';
         foreach ($maxWidths as $width) {
-            $maxWidth = bcadd($maxWidth, (string)$width, 4);
+            $maxWidth = Math::add($maxWidth, (string)$width);
         }
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
         if ($maxWidth <= $availableSpace) {
@@ -140,13 +141,13 @@ class TableBox extends BlockBox
             // use min widths
             $fullMinWidth = '0';
             foreach ($minWidths as $min) {
-                $fullMinWidth = bcadd($fullMinWidth, $min, 4);
+                $fullMinWidth = Math::add($fullMinWidth, $min);
             }
-            $left = bcsub($availableSpace, $fullMinWidth, 4);
+            $left = Math::sub($availableSpace, $fullMinWidth);
             $width = 0;
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
-                $columnWidth = bcadd($minWidth, bcmul($left, bcdiv($maxColumnWidth, (string)$maxWidth, 4), 4), 4);
+                $columnWidth = Math::add($minWidth, Math::mul($left, Math::div($maxColumnWidth, $maxWidth)));
                 foreach ($columns[$columnIndex] as $row) {
                     $cell = $row->getFirstChild();
                     $row->getDimensions()->setWidth($columnWidth);
@@ -183,11 +184,11 @@ class TableBox extends BlockBox
                 $height = $column->getDimensions()->getInnerHeight();
                 $cellChildrenHeight = '0';
                 foreach ($cell->getChildren() as $cellChild) {
-                    $cellChildrenHeight = bcadd($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
+                    $cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
                 }
                 // add vertical padding if needed
                 if ($cellChildrenHeight < $height) {
-                    $freeSpace = bcsub($height, $cellChildrenHeight);
+                    $freeSpace = Math::sub($height, $cellChildrenHeight);
                     $style = $cell->getStyle();
                     switch ($style->getRules('vertical-align')) {
                         case 'top':
@@ -199,7 +200,7 @@ class TableBox extends BlockBox
                         case 'baseline':
                         case 'middle':
                         default:
-                            $padding = bcdiv($freeSpace, '2', 4);
+                            $padding = Math::div($freeSpace, '2');
                             $style->setRule('padding-top', $padding);
                             $style->setRule('padding-bottom', $padding);
                             break;

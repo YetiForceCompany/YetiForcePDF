@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -36,7 +37,7 @@ class TableCellBox extends BlockBox
         $maxWidth = 0;
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = bccomp((string)$maxWidth, (string)$child->getDimensions()->getOuterWidth(),4) >0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+            $maxWidth = Math::comp((string)$maxWidth, (string)$child->getDimensions()->getOuterWidth()) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
         }
         // do not set up width because it was set by TableBox measureWidth method
         return $this;
@@ -51,11 +52,11 @@ class TableCellBox extends BlockBox
         $height = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
-            $height = bcadd($height, (string)$child->getDimensions()->getOuterHeight(), 4);
+            $height = Math::add($height, (string)$child->getDimensions()->getOuterHeight());
         }
         $dimensions = $this->getDimensions();
         $style = $this->getStyle();
-        $height = (float)bcadd($height, bcadd((string)$style->getVerticalBordersWidth(), (string)$style->getVerticalPaddingsWidth(), 4), 4);
+        $height = (float)Math::add($height, Math::add((string)$style->getVerticalBordersWidth(), (string)$style->getVerticalPaddingsWidth()));
         $dimensions->setHeight($height);
         $this->applyStyleHeight();
         return $this;
@@ -74,11 +75,11 @@ class TableCellBox extends BlockBox
         // it only affects line margins
         $left = (string)$rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = bcadd($left, bcadd((string)$previous->getOffset()->getLeft(), bcadd((string)$previous->getDimensions()->getWidth(), (string)$previous->getStyle()->getRules('margin-right'), 4), 4), 4);
+            $left = Math::add($left, Math::add($previous->getOffset()->getLeft(), Math::add($previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'))));
         } else {
-            $left = bcadd($left, (string)$parent->getStyle()->getOffsetLeft(), 4);
+            $left = Math::add($left, (string)$parent->getStyle()->getOffsetLeft());
         }
-        $this->getOffset()->setLeft((floaT)$left);
+        $this->getOffset()->setLeft($left);
         $this->getOffset()->setTop($top);
         foreach ($this->getChildren() as $child) {
             $child->measureOffset();
@@ -93,9 +94,9 @@ class TableCellBox extends BlockBox
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX((float)bcadd((string)$parent->getCoordinates()->getX(), (string)$this->getOffset()->getLeft(), 4));
+        $this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
         if (!$parent instanceof InlineBox) {
-            $this->getCoordinates()->setY((float)bcadd((string)$parent->getCoordinates()->getY(), (string)$this->getOffset()->getTop(), 4));
+            $this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
         } else {
             $this->getCoordinates()->setY($this->getClosestLineBox()->getCoordinates()->getY());
         }

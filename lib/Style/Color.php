@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
+use \YetiForcePDF\Math;
+
 /**
  * Class Color
  */
@@ -175,7 +177,7 @@ class Color
     /**
      * Get rgba array from color name
      * @param string $colorName
-     * @return array
+     * @return string[]
      */
     public static function fromName(string $colorName)
     {
@@ -189,7 +191,7 @@ class Color
     /**
      * Convert hash color to rgba values
      * @param string $hashColor
-     * @return int[]
+     * @return string[]
      */
     public static function fromHash(string $hashColor)
     {
@@ -221,7 +223,7 @@ class Color
     /**
      * Get rgb/a values from css string
      * @param string $rgbColor
-     * @return int[] rgb/a
+     * @return string[] rgb/a
      */
     public static function fromRGBA(string $rgbColor)
     {
@@ -251,10 +253,10 @@ class Color
         } elseif (array_key_exists($colorInput, static::$colorNames)) {
             $color = static::fromName($colorInput);
         }
-        $r = $inPDFColorSpace ? bcdiv($color[0], '255', 4) : $color[0];
-        $g = $inPDFColorSpace ? bcdiv($color[1], '255', 4) : $color[1];
-        $b = $inPDFColorSpace ? bcdiv($color[2], '255', 4) : $color[2];
-        $a = $inPDFColorSpace ? bcdiv($color[3], '255', 4) : $color[3];
+        $r = $inPDFColorSpace ? Math::div($color[0], '255') : $color[0];
+        $g = $inPDFColorSpace ? Math::div($color[1], '255') : $color[1];
+        $b = $inPDFColorSpace ? Math::div($color[2], '255') : $color[2];
+        $a = $inPDFColorSpace ? Math::div($color[3], '255') : $color[3];
         return [$r, $g, $b, $a];
     }
 
@@ -267,21 +269,6 @@ class Color
     {
         $color = static::toRGBA($colorInput);
         return "{$color[0]} {$color[1]} {$color[2]} RG";
-    }
-
-    /**
-     * RGB to pdf string
-     * @param int $r
-     * @param int $g
-     * @param int $b
-     * @return string
-     */
-    public static function RGBtoPdfString(int $r, int $g, int $b)
-    {
-        $r = $r / 255;
-        $g = $g / 255;
-        $b = $b / 255;
-        return "$r $g $b RG";
     }
 
 }

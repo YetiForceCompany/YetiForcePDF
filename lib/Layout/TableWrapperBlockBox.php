@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -59,10 +60,10 @@ class TableWrapperBlockBox extends InlineBlockBox
         }
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = bccomp($maxWidth, (string)$child->getDimensions()->getOuterWidth(), 4) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+            $maxWidth = Math::comp($maxWidth, (string)$child->getDimensions()->getOuterWidth()) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
         }
         $style = $this->getStyle();
-        $maxWidth = bcadd($maxWidth, bcadd($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth(), 4), 4);
+        $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
         $this->getDimensions()->setWidth($maxWidth);
         $this->applyStyleWidth();
         return $this;

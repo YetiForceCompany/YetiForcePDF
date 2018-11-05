@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -234,10 +235,10 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         $width = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $width = bcadd($width, $child->getDimensions()->getOuterWidth(), 4);
+            $width = Math::add($width, $child->getDimensions()->getOuterWidth());
         }
         $style = $this->getStyle();
-        $width = bcadd($width, bcadd($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth(), 4), 4);
+        $width = Math::add($width, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
         $this->getDimensions()->setWidth($width);
         $this->applyStyleWidth();
         return $this;
@@ -252,7 +253,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
-        $this->getDimensions()->setHeight(bcadd($this->getStyle()->getLineHeight(), $this->getStyle()->getVerticalPaddingsWidth(), 4));
+        $this->getDimensions()->setHeight(Math::add($this->getStyle()->getLineHeight(), $this->getStyle()->getVerticalPaddingsWidth()));
         $this->applyStyleHeight();
         return $this;
     }
@@ -268,20 +269,20 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
         $top = $parent->getStyle()->getOffsetTop();
         $lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
         if ($rules['vertical-align'] === 'bottom') {
-            $top = bcsub($lineHeight, $this->getDimensions()->getHeight(), 4);
+            $top = Math::sub($lineHeight, $this->getDimensions()->getHeight());
         } elseif ($rules['vertical-align'] === 'top') {
             $top = '0';
         } elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
             $height = $this->getDimensions()->getHeight();
-            $top = bcsub(bcdiv($lineHeight, '2', 4), bcdiv($height, '2', 4), 4);
+            $top = Math::sub(Math::div($lineHeight, '2'), Math::div($height, '2'));
         }
         // margin top inside inline and inline block doesn't affect relative to line top position
         // it only affects line margins
         $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = bcadd($left, bcadd(bcadd($previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth(), 4), $previous->getStyle()->getRules('margin-right'), 4), 4);
+            $left = Math::add($left, Math::add(Math::add($previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth()), $previous->getStyle()->getRules('margin-right')));
         } else {
-            $left = bcadd($left, $parent->getStyle()->getOffsetLeft(), 4);
+            $left = Math::add($left, $parent->getStyle()->getOffsetLeft());
         }
         $this->getOffset()->setLeft($left);
         $this->getOffset()->setTop($top);
@@ -298,9 +299,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
+        $this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
         $parent = $this->getClosestLineBox();
-        $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
+        $this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
         foreach ($this->getChildren() as $child) {
             $child->measurePosition();
         }

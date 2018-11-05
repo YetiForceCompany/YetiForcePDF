@@ -17,6 +17,7 @@ use \YetiForcePDF\Layout\Coordinates\Offset;
 use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use \YetiForcePDF\Html\Element;
 use YetiForcePDF\Style\Style;
+use \YetiForcePDF\Math;
 
 /**
  * Class Box
@@ -467,7 +468,7 @@ class Box extends \YetiForcePDF\Base
             $widthInPercent = substr($width, 0, $percentPos);
             $parentWidth = $this->getClosestBox()->getDimensions()->getInnerWidth();
             if ($parentWidth) {
-                $calculatedWidth = bcmul(bcdiv($parentWidth, '100', 4), $widthInPercent, 4);
+                $calculatedWidth = Math::mul(Math::div($parentWidth, '100'), $widthInPercent);
                 $this->getDimensions()->setWidth($calculatedWidth);
                 return $this;
             }
@@ -491,7 +492,7 @@ class Box extends \YetiForcePDF\Base
             $heightInPercent = substr($height, 0, $percentPos);
             $parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
             if ($parentHeight) {
-                $calculatedHeight = bcmul(bcdiv($parentHeight, '100', 4), $heightInPercent, 4);
+                $calculatedHeight = Math::mul(Math::div($parentHeight, '100'), $heightInPercent);
                 $this->getDimensions()->setHeight($calculatedHeight);
                 return $this;
             }
@@ -509,14 +510,14 @@ class Box extends \YetiForcePDF\Base
         if ($this instanceof LineBox) {
             $textAlign = $this->getParent()->getStyle()->getRules('text-align');
             if ($textAlign === 'right') {
-                $offset = bcsub($this->getDimensions()->computeAvailableSpace(), $this->getChildrenWidth(), 4);
+                $offset = Math::sub($this->getDimensions()->computeAvailableSpace(), $this->getChildrenWidth());
                 foreach ($this->getChildren() as $childBox) {
-                    $childBox->getOffset()->setLeft(bcadd($childBox->getOffset()->getLeft(), $offset, 4));
+                    $childBox->getOffset()->setLeft(Math::add($childBox->getOffset()->getLeft(), $offset));
                 }
             } elseif ($textAlign === 'center') {
-                $offset = bcsub(bcdiv($this->getDimensions()->computeAvailableSpace(), '2', 4), bcdiv($this->getChildrenWidth(), '2', 4), 4);
+                $offset = Math::sub(Math::div($this->getDimensions()->computeAvailableSpace(), '2'), Math::div($this->getChildrenWidth(), '2'));
                 foreach ($this->getChildren() as $childBox) {
-                    $childBox->getOffset()->setLeft(bcadd($childBox->getOffset()->getLeft(), $offset, 4));
+                    $childBox->getOffset()->setLeft(Math::add($childBox->getOffset()->getLeft(), $offset));
                 }
             }
         } else {
@@ -547,8 +548,8 @@ class Box extends \YetiForcePDF\Base
         if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
             $path = implode(" l\n", [
                 implode(' ', [$x2, $y1]),
-                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcsub($y1, $rules['border-top-width'], 4)]),
-                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcsub($y1, $rules['border-top-width'], 4)]),
+                implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::sub($y1, $rules['border-top-width'])]),
+                implode(' ', [Math::add($x1, $rules['border-left-width']), Math::sub($y1, $rules['border-top-width'])]),
                 implode(' ', [$x1, $y1])
             ]);
             $borderTop = [
@@ -565,8 +566,8 @@ class Box extends \YetiForcePDF\Base
         if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
             $path = implode(" l\n", [
                 implode(' ', [$x2, $y2]),
-                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
-                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcsub($y1, $rules['border-top-width'], 4)]),
+                implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::add($y2, $rules['border-bottom-width'])]),
+                implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::sub($y1, $rules['border-top-width'])]),
                 implode(' ', [$x2, $y1]),
             ]);
             $borderTop = [
@@ -583,8 +584,8 @@ class Box extends \YetiForcePDF\Base
         if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
             $path = implode(" l\n", [
                 implode(' ', [$x2, $y2]),
-                implode(' ', [bcsub($x2, $rules['border-right-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
-                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
+                implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::add($y2, $rules['border-bottom-width'])]),
+                implode(' ', [Math::add($x1, $rules['border-left-width']), Math::add($y2, $rules['border-bottom-width'])]),
                 implode(' ', [$x1, $y2]),
             ]);
             $borderTop = [
@@ -600,8 +601,8 @@ class Box extends \YetiForcePDF\Base
         }
         if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
             $path = implode(" l\n", [
-                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcsub($y1, $rules['border-top-width'], 4)]),
-                implode(' ', [bcadd($x1, $rules['border-left-width'], 4), bcadd($y2, $rules['border-bottom-width'], 4)]),
+                implode(' ', [Math::add($x1, $rules['border-left-width']), Math::sub($y1, $rules['border-top-width'])]),
+                implode(' ', [Math::add($x1, $rules['border-left-width']), Math::add($y2, $rules['border-bottom-width'])]),
                 implode(' ', [$x1, $y2]),
                 implode(' ', [$x1, $y1]),
             ]);

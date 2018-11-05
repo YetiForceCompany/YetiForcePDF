@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -106,12 +107,11 @@ class TableRowBox extends BlockBox
             }
             $maxWidth = '0';
             foreach ($this->getChildren() as $child) {
-                $maxWidth = bcadd($maxWidth, (string)$child->getDimensions()->getOuterWidth(), 4);
+                $maxWidth = Math::add($maxWidth, $child->getDimensions()->getOuterWidth());
             }
             $style = $this->getStyle();
-            $maxWidth = bcadd($maxWidth, bcadd((string)$style->getHorizontalBordersWidth(), (string)$style->getHorizontalPaddingsWidth(), 4), 4);
-            $maxWidth = bcsub($maxWidth, (string)$style->getHorizontalMarginsWidth());
-            $maxWidth = (float)$maxWidth;
+            $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+            $maxWidth = Math::sub($maxWidth, $style->getHorizontalMarginsWidth());
             $dimensions->setWidth($maxWidth);
             $this->applyStyleWidth();
             return $this;
@@ -133,14 +133,14 @@ class TableRowBox extends BlockBox
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
-        $height = 0;
+        $height = '0';
         foreach ($this->getChildren() as $child) {
-            $height = bccomp((string)$height, (string)$child->getDimensions()->getOuterHeight(),4) >0 ? $height : $child->getDimensions()->getOuterHeight();
+            $height = Math::comp($height, $child->getDimensions()->getOuterHeight()) > 0 ? $height : $child->getDimensions()->getOuterHeight();
         }
         $rules = $this->getStyle()->getRules();
-        $height = bcadd((string)$height, bcadd((string)$rules['border-top-width'], (string)$rules['padding-top'], 4), 4);
-        $height = bcadd($height, bcadd((string)$rules['border-bottom-width'], (string)$rules['padding-bottom'], 4), 4);
-        $this->getDimensions()->setHeight((float)$height);
+        $height = Math::add($height, Math::add($rules['border-top-width'], $rules['padding-top']));
+        $height = Math::add($height, Math::add($rules['border-bottom-width'], $rules['padding-bottom']));
+        $this->getDimensions()->setHeight($height);
         $this->applyStyleHeight();
         return $this;
     }
@@ -159,16 +159,16 @@ class TableRowBox extends BlockBox
             $top = $parentStyle->getOffsetTop();
             $left = $parentStyle->getOffsetLeft();
             if ($previous = $this->getPrevious()) {
-                $top = bcadd((string)$previous->getOffset()->getTop(), (string)$previous->getDimensions()->getHeight(), 4);
+                $top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight());
                 if ($previous->getStyle()->getRules('display') === 'block') {
-                    $marginTop = bccomp((string)$marginTop, (string)$previous->getStyle()->getRules('margin-bottom'),4) >0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
+                    $marginTop = Math::comp($marginTop, $previous->getStyle()->getRules('margin-bottom')) > 0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
                 } elseif (!$previous instanceof LineBox) {
-                    $marginTop = (float)bcadd((string)$marginTop, (string)$previous->getStyle()->getRules('margin-bottom'), 4);
+                    $marginTop = Math::add($marginTop, $previous->getStyle()->getRules('margin-bottom'));
                 }
             }
         }
-        $top = (float)bcadd((string)$top, (string)$marginTop, 4);
-        $left = (float)bcadd((string)$left, (string)$this->getStyle()->getRules('margin-left'), 4);
+        $top = Math::add($top, $marginTop);
+        $left = Math::add($left, $this->getStyle()->getRules('margin-left'));
         $this->getOffset()->setTop($top);
         $this->getOffset()->setLeft($left);
         foreach ($this->getChildren() as $child) {
@@ -186,8 +186,8 @@ class TableRowBox extends BlockBox
         $x = $this->document->getCurrentPage()->getCoordinates()->getX();
         $y = $this->document->getCurrentPage()->getCoordinates()->getY();
         if ($parent = $this->getParent()) {
-            $x = (float)bcadd((string)$parent->getCoordinates()->getX(), (string)$this->getOffset()->getLeft(), 4);
-            $y = (float)bcadd((string)$parent->getCoordinates()->getY(), (string)$this->getOffset()->getTop(), 4);
+            $x = Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft());
+            $y = Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop());
         }
         $this->getCoordinates()->setX($x);
         $this->getCoordinates()->setY($y);

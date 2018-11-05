@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Layout\Coordinates;
 
 use YetiForcePDF\Layout\Box;
+use \YetiForcePDF\Math;
 
 /**
  * Class Coordinates
@@ -113,7 +114,7 @@ class Coordinates extends \YetiForcePDF\Base
     {
         $height = $this->box->getDimensions()->getHeight();
         $page = $this->document->getCurrentPage();
-        return bcsub($page->getOuterDimensions()->getHeight(), bcadd($this->htmlY, $height, 4), 4);
+        return Math::sub($page->getOuterDimensions()->getHeight(), Math::add($this->htmlY, $height));
     }
 
 }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
+use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Layout\Coordinates\Coordinates;
@@ -37,10 +38,11 @@ class InlineBlockBox extends BlockBox
         $maxWidth = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = bccomp($maxWidth, $child->getDimensions()->getOuterWidth(), 4) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+            $outerWidth = $child->getDimensions()->getOuterWidth();
+            $maxWidth = Math::comp($maxWidth, $outerWidth) > 0 ? $maxWidth : $outerWidth;
         }
         $style = $this->getStyle();
-        $maxWidth = bcadd($maxWidth, bcadd($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth(), 4), 4);
+        $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
         $this->getDimensions()->setWidth($maxWidth);
         $this->applyStyleWidth();
         return $this;
@@ -55,10 +57,10 @@ class InlineBlockBox extends BlockBox
         $height = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
-            $height = bcadd($height, $child->getDimensions()->getOuterHeight(), 4);
+            $height = Math::add($height, $child->getDimensions()->getOuterHeight());
         }
         $style = $this->getStyle();
-        $height = bcadd($height, bcadd($style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth(), 4), 4);
+        $height = Math::add($height, Math::add($style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
         $this->getDimensions()->setHeight($height);
         $this->applyStyleHeight();
         return $this;
@@ -75,11 +77,11 @@ class InlineBlockBox extends BlockBox
         $top = $parent->getStyle()->getOffsetTop();
         // margin top inside inline and inline block doesn't affect relative to line top position
         // it only affects line margins
-        $left = (string)$rules['margin-left'];
+        $left = $rules['margin-left'];
         if ($previous = $this->getPrevious()) {
-            $left = bcadd($left, bcadd($previous->getOffset()->getLeft(), bcadd($previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'), 4), 4), 4);
+            $left = Math::add($left, Math::add($previous->getOffset()->getLeft(), Math::add($previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'))));
         } else {
-            $left = bcadd($left, $parent->getStyle()->getOffsetLeft(), 4);
+            $left = Math::add($left, $parent->getStyle()->getOffsetLeft());
         }
         $this->getOffset()->setLeft($left);
         $this->getOffset()->setTop($top);
@@ -96,9 +98,9 @@ class InlineBlockBox extends BlockBox
     public function measurePosition()
     {
         $parent = $this->getParent();
-        $this->getCoordinates()->setX(bcadd($parent->getCoordinates()->getX(), $this->getOffset()->getLeft(), 4));
+        $this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
         if (!$parent instanceof InlineBox) {
-            $this->getCoordinates()->setY(bcadd($parent->getCoordinates()->getY(), $this->getOffset()->getTop(), 4));
+            $this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
         } else {
             $this->getCoordinates()->setY($this->getClosestLineBox()->getCoordinates()->getY());
         }
