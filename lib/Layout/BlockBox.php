@@ -74,15 +74,20 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
     /**
      * Get new line box
+     * @param Box $before [optional]
      * @return \YetiForcePDF\Layout\LineBox
      */
-    public function getNewLineBox()
+    public function getNewLineBox($before = null)
     {
         $this->currentLineBox = (new LineBox())
             ->setDocument($this->document)
             ->setParent($this)
             ->init();
-        $this->appendChild($this->currentLineBox);
+        if ($before !== null) {
+            $this->insertBefore($this->currentLineBox, $before);
+        } else {
+            $this->appendChild($this->currentLineBox);
+        }
         $style = (new Style())
             ->setDocument($this->document)
             ->setBox($this->currentLineBox);
@@ -248,13 +253,16 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     {
         $lines = [];
         foreach ($lineGroups as $index => $lines) {
-            $curentLine = $this->getNewLineBox();
-            foreach ($lines as $line) {
-                foreach ($line->getChildren() as $child) {
-                    $curentLine->appendChild($line->removeChild($child));
+            if (isset($lines[0])) {
+                $currentLine = $this->getNewLineBox($lines[0]);
+                foreach ($lines as $line) {
+                    foreach ($line->getChildren() as $child) {
+                        $currentLine->appendChild($line->removeChild($child));
+                    }
+                    $this->removeChild($line);
                 }
+                $lines[] = $currentLine;
             }
-            $lines[] = $curentLine;
         }
         return $lines;
     }
