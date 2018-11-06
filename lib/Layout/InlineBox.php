@@ -91,7 +91,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
             $this->appendChild($box);
         }
         $box->getStyle()->init();
-        $box->buildTree($box);
+        // we don't want to build tree from here - we will build it from TableBox
         return $box;
     }
 
