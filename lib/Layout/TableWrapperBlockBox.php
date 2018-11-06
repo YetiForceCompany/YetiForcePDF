@@ -20,7 +20,7 @@ use \YetiForcePDF\Html\Element;
 /**
  * Class TableWrapperBlockBox
  */
-class TableWrapperBlockBox extends InlineBlockBox
+class TableWrapperBlockBox extends BlockBox
 {
 
     /**
