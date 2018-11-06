@@ -16,6 +16,7 @@ use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 
+
 /**
  * Class TableWrapperBlockBox
  */
@@ -57,7 +58,7 @@ class TableWrapperBlockBox extends InlineBlockBox
         }
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = Math::max($maxWidth, (string)$child->getDimensions()->getOuterWidth());
+            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
         $style = $this->getStyle();
         $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));

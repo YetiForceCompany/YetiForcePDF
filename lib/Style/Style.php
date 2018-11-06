@@ -14,9 +14,9 @@ namespace YetiForcePDF\Style;
 
 use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\InlineBox;
-use \YetiForcePDF\Layout\TextBox;
 use \YetiForcePDF\Layout\TableBox;
 use \YetiForcePDF\Math;
+use \YetiForcePDF\Layout\Dimensions\NoBorderDimensions;
 
 /**
  * Class Style
@@ -131,6 +131,8 @@ class Style extends \YetiForcePDF\Base
         'border-top-style' => 'none',
         'border-right-style' => 'none',
         'border-bottom-style' => 'none',
+        'border-collapse' => 'separate',
+        'border-spacing' => '2px',
         'box-sizing' => 'border-box',
         'display' => 'inline',
         'width' => 'auto',
@@ -760,6 +762,7 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Get offset top -  get top border width and top padding
+     * @param bool $withBorders
      * @return string
      */
     public function getOffsetTop()
@@ -769,6 +772,7 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Get offset left - get left border width and left padding
+     * @param bool $withBorders
      * @return string
      */
     public function getOffsetLeft()
@@ -962,11 +966,13 @@ class Style extends \YetiForcePDF\Base
         if ($element = $this->getElement()) {
             if ($element->getDOMElement()->nodeName === 'td') {
                 $parentStyle = $this->getParent();
-                $padding = $parentStyle->getRules('border-spacing');
-                $parentStyle->setRule('padding-top', $padding);
-                $parentStyle->setRule('padding-right', $padding);
-                $parentStyle->setRule('padding-bottom', $padding);
-                $parentStyle->setRule('padding-left', $padding);
+                if ($parentStyle->getRules('border-collapse') !== 'collapse') {
+                    $padding = $parentStyle->getRules('border-spacing');
+                    $parentStyle->setRule('padding-top', $padding);
+                    $parentStyle->setRule('padding-right', $padding);
+                    $parentStyle->setRule('padding-bottom', $padding);
+                    $parentStyle->setRule('padding-left', $padding);
+                }
             }
         }
         return $rulesParsed;
@@ -1082,22 +1088,62 @@ class Style extends \YetiForcePDF\Base
     {
         $box = $this->getBox();
         if ($box instanceof TableBox) {
-            $columns = $box->getColumns();
-            $columnsCount = count($columns);
+            $columnsGrouped = $box->getColumns();
+            $columnsCount = count($columnsGrouped);
             if (!$columnsCount) {
                 return $this;
             }
-            $rowsCount = count($columns[0]);
+            $rowsCount = count($columnsGrouped[0]);
             if (!$rowsCount) {
                 return $this;
             }
-            foreach ($columns as $columnIndex => $column) {
-                foreach ($column as $rowIndex => $row) {
+            // max cell borders widths top,right,bottom,left
+            $cellBorders = ['0', '0', '0', '0'];
+            foreach ($columnsGrouped as $columnIndex => $columns) {
+                foreach ($columns as $rowIndex => $column) {
+                    $rowStyle = $column->getParent()->getStyle();
+                    $columnStyle = $column->getStyle();
                     if ($columnIndex + 1 < $columnsCount) {
-                        $row->getStyle()->setRule('padding-right', '0');
+                        $columnStyle->setRule('padding-right', '0');
                     }
                     if ($rowIndex + 1 < $rowsCount) {
-                        $row->getStyle()->setRule('padding-bottom', '0');
+                        $columnStyle->setRule('padding-bottom', '0');
+                    }
+                    $cellBorders = [
+                        Math::max($cellBorders[0], $rowStyle->getRules('border-top-width')),
+                        Math::max($cellBorders[1], $rowStyle->getRules('border-right-width')),
+                        Math::max($cellBorders[2], $rowStyle->getRules('border-bottom-width')),
+                        Math::max($cellBorders[3], $rowStyle->getRules('border-left-width')),
+                    ];
+                    if ($columnStyle->getRules('border-collapse') === 'collapse') {
+                        $cellStyle = $column->getFirstChild()->getStyle();
+                        $cellBorders = [
+                            Math::max($cellBorders[0], $cellStyle->getRules('border-top-width')),
+                            Math::max($cellBorders[1], $cellStyle->getRules('border-right-width')),
+                            Math::max($cellBorders[2], $cellStyle->getRules('border-bottom-width')),
+                            Math::max($cellBorders[3], $cellStyle->getRules('border-left-width')),
+                        ];
+                        if ($rowIndex + 1 < $rowsCount) {
+                            $cellStyle->setRule('border-bottom-width', '0');
+                        }
+                        if ($columnIndex + 1 < $columnsCount) {
+                            $cellStyle->setRule('border-right-width', '0');
+                        }
+                    }
+                }
+                if ($this->getRules('border-collapse') === 'collapse') {
+                    $parentStyle = $box->getParent()->getStyle();
+                    if (Math::comp($cellBorders[0], $this->getRules('border-top-width')) >= 0) {
+                        $parentStyle->setRule('border-top-width', '0');
+                    }
+                    if (Math::comp($cellBorders[1], $this->getRules('border-right-width')) >= 0) {
+                        $parentStyle->setRule('border-right-width', '0');
+                    }
+                    if (Math::comp($cellBorders[2], $this->getRules('border-bottom-width')) >= 0) {
+                        $parentStyle->setRule('border-bottom-width', '0');
+                    }
+                    if (Math::comp($cellBorders[3], $this->getRules('border-left-width')) >= 0) {
+                        $parentStyle->setRule('border-left-width', '0');
                     }
                 }
             }

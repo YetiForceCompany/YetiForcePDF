@@ -16,11 +16,13 @@ use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 
+
 /**
  * Class TableBox
  */
 class TableBox extends BlockBox
 {
+
     /**
      * Append table row group box element
      * @param \DOMNode $childDomElement

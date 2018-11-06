@@ -21,6 +21,7 @@ use \YetiForcePDF\Html\Element;
  */
 class TableRowGroupBox extends BlockBox
 {
+
     /**
      * Append table row box element
      * @param \DOMNode $childDomElement

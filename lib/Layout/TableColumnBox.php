@@ -14,11 +14,13 @@ namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Math;
 
+
 /**
  * Class TableColumnBox
  */
 class TableColumnBox extends InlineBlockBox
 {
+
     /**
      * {@inheritdoc}
      */
