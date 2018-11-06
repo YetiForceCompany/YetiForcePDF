@@ -1133,16 +1133,16 @@ class Style extends \YetiForcePDF\Base
                 }
                 if ($this->getRules('border-collapse') === 'collapse') {
                     $parentStyle = $box->getParent()->getStyle();
-                    if (Math::comp($cellBorders[0], $this->getRules('border-top-width')) >= 0) {
+                    if (Math::comp($cellBorders[0], $parentStyle->getRules('border-top-width')) >= 0) {
                         $parentStyle->setRule('border-top-width', '0');
                     }
-                    if (Math::comp($cellBorders[1], $this->getRules('border-right-width')) >= 0) {
+                    if (Math::comp($cellBorders[1], $parentStyle->getRules('border-right-width')) >= 0) {
                         $parentStyle->setRule('border-right-width', '0');
                     }
-                    if (Math::comp($cellBorders[2], $this->getRules('border-bottom-width')) >= 0) {
+                    if (Math::comp($cellBorders[2], $parentStyle->getRules('border-bottom-width')) >= 0) {
                         $parentStyle->setRule('border-bottom-width', '0');
                     }
-                    if (Math::comp($cellBorders[3], $this->getRules('border-left-width')) >= 0) {
+                    if (Math::comp($cellBorders[3], $parentStyle->getRules('border-left-width')) >= 0) {
                         $parentStyle->setRule('border-left-width', '0');
                     }
                 }
