@@ -221,11 +221,51 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     }
 
     /**
+     * Group sibling line boxes into two dimensional array
+     * @return array
+     */
+    public function groupLines()
+    {
+        $lineGroups = [];
+        $currentGroup = 0;
+        foreach ($this->getChildren() as $child) {
+            if ($child instanceof LineBox) {
+                $lineGroups[$currentGroup][] = $child;
+            } else {
+                if (isset($lineGroups[$currentGroup])) {
+                    $currentGroup++;
+                }
+            }
+        }
+        return $lineGroups;
+    }
+
+    /**
+     * Merge line groups into one line (reverse divide - reorganize)
+     * @return LineBox[]
+     */
+    public function mergeLineGroups(array $lineGroups)
+    {
+        $lines = [];
+        foreach ($lineGroups as $index => $lines) {
+            $curentLine = $this->getNewLineBox();
+            foreach ($lines as $line) {
+                foreach ($line->getChildren() as $child) {
+                    $curentLine->appendChild($line->removeChild($child));
+                }
+            }
+            $lines[] = $curentLine;
+        }
+        return $lines;
+    }
+
+    /**
      * Divide lines
      * @return $this
      */
     public function divideLines()
     {
+        $this->mergeLineGroups($this->groupLines());
         foreach ($this->getChildren() as $child) {
             if ($child instanceof LineBox) {
                 $lines = $child->divide();
