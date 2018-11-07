@@ -109,4 +109,16 @@ class Math
         }
         return $result;
     }
+
+    /**
+     * Get percent from value
+     * @param string $percent
+     * @param string $from
+     * @return mixed|string
+     */
+    public static function percent(string $percent, string $from)
+    {
+        $percent = trim($percent, '%');
+        return static::mul(static::div($from, '100'), $percent);
+    }
 }
