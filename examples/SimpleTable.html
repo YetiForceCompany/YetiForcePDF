@@ -90,7 +90,7 @@ border-collapse:separate
 </table>
 -->
 
-<table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid black;border-collapse:collapse;">
+<table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid black;border-collapse:separate;">
     <tr>
         <td style="border:1px solid red;">
             This-is-table-cell
@@ -98,6 +98,13 @@ border-collapse:separate
                 <tr>
                     <td>
                         table-inside parent table as child
+                        <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:collapse;">
+                            <tr>
+                                <td>
+                                    table-inside parent table as child
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>
