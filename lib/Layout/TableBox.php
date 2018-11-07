@@ -177,10 +177,11 @@ class TableBox extends BlockBox
                 }
                 $rowWidth = Math::add($rowWidth, $column->getDimensions()->getOuterWidth());
             }
-            $row = $column->getParent();
-            $row->getDimensions()->setWidth($rowWidth);
-            $rowGroup = $row->getParent();
-            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+            foreach ($this->getRows() as $row) {
+                $row->getDimensions()->setWidth($rowWidth);
+                $rowGroup = $row->getParent();
+                $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+            }
             $style = $this->getStyle();
             $width = $rowGroup->getDimensions()->getOuterWidth();
             $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
@@ -203,10 +204,11 @@ class TableBox extends BlockBox
                 }
                 $rowWidth = Math::add($rowWidth, $columnWidth);
             }
-            $row = $column->getParent();
-            $row->getDimensions()->setWidth($rowWidth);
-            $rowGroup = $row->getParent();
-            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+            foreach ($this->getRows() as $row) {
+                $row->getDimensions()->setWidth($rowWidth);
+                $rowGroup = $row->getParent();
+                $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+            }
             $style = $this->getStyle();
             $width = $rowGroup->getDimensions()->getOuterWidth();
             $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
