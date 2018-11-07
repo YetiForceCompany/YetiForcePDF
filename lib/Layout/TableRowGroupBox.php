@@ -21,6 +21,33 @@ use \YetiForcePDF\Html\Element;
  */
 class TableRowGroupBox extends BlockBox
 {
+    /**
+     * We shouldn't append block box here
+     */
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append table wrapper here
+     */
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline block box here
+     */
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline box here
+     */
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
 
     /**
      * Append table row box element

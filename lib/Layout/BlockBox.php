@@ -201,16 +201,17 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                 $this->divideLines();
                 return $this;
             }
+            // if parent doesn't have a width specified
             foreach ($this->getChildren() as $child) {
                 $child->measureWidth();
             }
             $this->divideLines();
             $maxWidth = '0';
             foreach ($this->getChildren() as $child) {
-                $maxWidth = Math::comp($maxWidth, $child->getDimensions()->getOuterWidth()) > 0 ? $maxWidth : $child->getDimensions()->getOuterWidth();
+                $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
             }
             $style = $this->getStyle();
-            $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+            $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
             $maxWidth = Math::sub($maxWidth, $style->getHorizontalMarginsWidth());
             $dimensions->setWidth($maxWidth);
             $this->applyStyleWidth();
@@ -302,9 +303,8 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         foreach ($this->getChildren() as $child) {
             $height = Math::add($height, $child->getDimensions()->getOuterHeight());
         }
-        $rules = $this->getStyle()->getRules();
-        $height = Math::add($height, Math::add($rules['border-top-width'], $rules['padding-top']));
-        $height = Math::add($height, Math::add($rules['border-bottom-width'], $rules['padding-bottom']));
+        $style = $this->getStyle();
+        $height = Math::add($height, $style->getVerticalPaddingsWidth(), $style->getVerticalBordersWidth());
         $this->getDimensions()->setHeight($height);
         $this->applyStyleHeight();
         return $this;

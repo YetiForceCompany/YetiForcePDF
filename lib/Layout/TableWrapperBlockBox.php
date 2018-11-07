@@ -22,6 +22,33 @@ use \YetiForcePDF\Html\Element;
  */
 class TableWrapperBlockBox extends BlockBox
 {
+    /**
+     * We shouldn't append block box here
+     */
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append table wrapper here
+     */
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline block box here
+     */
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline box here
+     */
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
 
     /**
      * Append table box element
@@ -53,18 +80,38 @@ class TableWrapperBlockBox extends BlockBox
     public function measureWidth()
     {
         $maxWidth = '0';
+        /*
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-        }
+        }*/
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
             $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
         $style = $this->getStyle();
-        $maxWidth = Math::add($maxWidth, Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+        $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
         $this->getDimensions()->setWidth($maxWidth);
         $this->applyStyleWidth();
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function measureHeight()
+    {
+        $maxHeight = '0';
+        foreach ($this->getChildren() as $child) {
+            $child->measureHeight();
+        }
+        foreach ($this->getChildren() as $child) {
+            $child->measureHeight();
+            $maxHeight = Math::max($maxHeight, $child->getDimensions()->getOuterHeight());
+        }
+        $style = $this->getStyle();
+        $maxHeight = Math::add($maxHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
+        $this->getDimensions()->setHeight($maxHeight);
+        $this->applyStyleWidth();
+        return $this;
+    }
 }

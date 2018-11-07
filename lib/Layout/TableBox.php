@@ -24,6 +24,34 @@ class TableBox extends BlockBox
 {
 
     /**
+     * We shouldn't append block box here
+     */
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append table wrapper here
+     */
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline block box here
+     */
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline box here
+     */
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
      * Append table row group box element
      * @param \DOMNode $childDomElement
      * @param Element $element
@@ -47,13 +75,16 @@ class TableBox extends BlockBox
 
     /**
      * Get all rows from all row groups
+     * @return array of LineBoxes and TableRowBoxes
      */
     public function getRows()
     {
         $rows = [];
         foreach ($this->getChildren() as $rowGroup) {
-            foreach ($rowGroup->getChildren() as $row) {
-                $rows[] = $row;
+            if ($rowGroup instanceof TableRowGroupBox) {
+                foreach ($rowGroup->getChildren() as $row) {
+                    $rows[] = $row;
+                }
             }
         }
         return $rows;
@@ -79,13 +110,18 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Add missing cells - rows should have equal numbers of column so if not we will add anonymous cell to it
-     * @return $this
+     * Get cells
+     * @return array
      */
-    public function addMissingCells()
+    public function getCells()
     {
-
-        return $this;
+        $cells = [];
+        foreach ($this->getColumns() as $columnIndex => $row) {
+            foreach ($row as $column) {
+                $cells[] = $column->getFirstChild();
+            }
+        }
+        return $cells;
     }
 
     /**
@@ -117,9 +153,11 @@ class TableBox extends BlockBox
      */
     public function measureWidth()
     {
-        parent::measureWidth();
-        $columns = $this->getColumns();
-        $minMax = $this->getMinMaxWidths($columns);
+        foreach ($this->getCells() as $cell) {
+            $cell->measureWidth();
+        }
+        $columnGroups = $this->getColumns();
+        $minMax = $this->getMinMaxWidths($columnGroups);
         $maxWidths = $minMax['max'];
         $minWidths = $minMax['min'];
         $maxWidth = '0';
@@ -127,13 +165,18 @@ class TableBox extends BlockBox
             $maxWidth = Math::add($maxWidth, $width);
         }
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
-        if ($maxWidth <= $availableSpace) {
+        if (Math::comp($maxWidth, $availableSpace) <= 0) {
             $this->getDimensions()->setWidth($maxWidth);
             foreach ($maxWidths as $columnIndex => $width) {
-                foreach ($columns[$columnIndex] as $row) {
-                    $cell = $row->getFirstChild();
-                    $row->getDimensions()->setWidth($width);
-                    $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
+                foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
+                    $cell = $column->getFirstChild();
+                    $column->getDimensions()->setWidth($width);
+                    $row = $column->getParent();
+                    $row->getDimensions()->setWidth($column->getDimensions()->getOuterWidth());
+                    $rowGroup = $row->getParent();
+                    $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+                    $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
+                    $cell->measureWidth();
                 }
             }
         } else {
@@ -147,14 +190,20 @@ class TableBox extends BlockBox
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
                 $columnWidth = Math::sub($maxColumnWidth, Math::mul($left, Math::div($maxColumnWidth, $maxWidth)));
-                foreach ($columns[$columnIndex] as $row) {
-                    $cell = $row->getFirstChild();
-                    $row->getDimensions()->setWidth($columnWidth);
-                    $cell->getDimensions()->setWidth($row->getDimensions()->getInnerWidth());
+                foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
+                    $cell = $column->getFirstChild();
+                    $column->getDimensions()->setWidth($columnWidth);
+                    $row = $column->getParent();
+                    $row->getDimensions()->setWidth($column->getDimensions()->getOuterWidth());
+                    $rowGroup = $row->getParent();
+                    $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+                    $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
+                    $cell->measureWidth();
                 }
                 $width = Math::add($width, $columnWidth);
             }
-            $this->getDimensions()->setWidth($width);
+            $style = $this->getStyle();
+            $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
         }
         return $this;
     }
@@ -164,19 +213,28 @@ class TableBox extends BlockBox
      */
     public function measureHeight()
     {
-        parent::measureHeight();
-        $maxHeights = [];
+        foreach ($this->getCells() as $cell) {
+            $cell->measureHeight();
+        }
+        $style = $this->getStyle();
+        $maxRowHeights = [];
         $rows = $this->getRows();
         foreach ($rows as $rowIndex => $row) {
             foreach ($row->getChildren() as $column) {
-                if (!isset($maxHeights[$rowIndex])) {
-                    $maxHeights[$rowIndex] = '0';
+                $cell = $column->getFirstChild();
+                if (!isset($maxRowHeights[$rowIndex])) {
+                    $maxRowHeights[$rowIndex] = '0';
                 }
-                $maxHeights[$rowIndex] = Math::max($maxHeights[$rowIndex], $column->getDimensions()->getOuterHeight());
+                $columnStyle = $column->getStyle();
+                $columnVerticalSize = Math::add($columnStyle->getVerticalMarginsWidth(), $columnStyle->getVerticalPaddingsWidth(), $columnStyle->getVerticalBordersWidth());
+                $columnHeight = Math::add($cell->getDimensions()->getOuterHeight(), $columnVerticalSize);
+                $maxRowHeights[$rowIndex] = Math::max($maxRowHeights[$rowIndex], $columnHeight);
             }
         }
+        $tableHeight = '0';
         foreach ($rows as $rowIndex => $row) {
-            $row->getDimensions()->setHeight($maxHeights[$rowIndex]);
+            $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
+            $row->getParent()->getDimensions()->setHeight($row->getDimensions()->getOuterHeight());
             foreach ($row->getChildren() as $column) {
                 $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
                 $cell = $column->getFirstChild();
@@ -185,29 +243,34 @@ class TableBox extends BlockBox
                 foreach ($cell->getChildren() as $cellChild) {
                     $cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
                 }
+                $cellStyle = $cell->getStyle();
+                $cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
+                $cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
                 // add vertical padding if needed
-                if ($cellChildrenHeight < $height) {
+                if (Math::comp($height, $cellChildrenHeight) > 0) {
                     $freeSpace = Math::sub($height, $cellChildrenHeight);
-                    $style = $cell->getStyle();
-                    switch ($style->getRules('vertical-align')) {
+                    $cellStyle = $cell->getStyle();
+                    switch ($cellStyle->getRules('vertical-align')) {
                         case 'top':
-                            $style->setRule('padding-bottom', $freeSpace);
+                            $cellStyle->setRule('padding-bottom', $freeSpace);
                             break;
                         case 'bottom':
-                            $style->setRule('padding-top', $freeSpace);
+                            $cellStyle->setRule('padding-top', $freeSpace);
                             break;
                         case 'baseline':
                         case 'middle':
                         default:
                             $padding = Math::div($freeSpace, '2');
-                            $style->setRule('padding-top', $padding);
-                            $style->setRule('padding-bottom', $padding);
+                            $cellStyle->setRule('padding-top', $padding);
+                            $cellStyle->setRule('padding-bottom', $padding);
                             break;
                     }
                 }
-                $cell->getDimensions()->setHeight($height);
+                $cell->getDimensions()->setHeight(Math::max($height, $cellChildrenHeight));
             }
+            $tableHeight = Math::add($tableHeight, $row->getParent()->getDimensions()->getOuterHeight());
         }
+        $this->getDimensions()->setHeight(Math::add($tableHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
         return $this;
     }
 }

@@ -20,6 +20,33 @@ use \YetiForcePDF\Math;
  */
 class TableColumnBox extends InlineBlockBox
 {
+    /**
+     * We shouldn't append block box here
+     */
+    public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append table wrapper here
+     */
+    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline block box here
+     */
+    public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
+
+    /**
+     * We shouldn't append inline box here
+     */
+    public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
+    {
+    }
 
     /**
      * {@inheritdoc}
@@ -29,24 +56,5 @@ class TableColumnBox extends InlineBlockBox
         return ''; // not renderable
     }
 
-    /**
-     * Measure width
-     * @return $this
-     */
-    public function measureWidth()
-    {
-        foreach ($this->getChildren() as $child) {
-            $child->measureWidth();
-        }
-        $maxWidth = '0';
-        foreach ($this->getChildren() as $child) {
-            $child->measureWidth();
-            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
-        }
-        $style = $this->getStyle();
-        $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
-        $this->getDimensions()->setWidth($maxWidth);
-        $this->applyStyleWidth();
-        return $this;
-    }
+
 }

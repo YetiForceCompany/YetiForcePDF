@@ -79,7 +79,8 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         if (!$box instanceof LineBox) {
-            $rules = $this->getBox()->getStyle()->getRules();
+            $style = $this->getBox()->getStyle();
+            $rules = $style->getRules();
             $childrenWidth = '0';
             // if some of the children overflows
             if ($box->getStyle()->getRules('display') === 'inline') {
@@ -88,15 +89,14 @@ class BoxDimensions extends Dimensions
                 }
             } else {
                 foreach ($box->getChildren() as $child) {
-                    $outerWidth = $child->getDimensions()->getOuterWidth();
-                    $childrenWidth = Math::max($childrenWidth, $outerWidth);
+                    $childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
                 }
             }
             if ($this->getWidth() !== null) {
-                $width = Math::add($this->getWidth(), Math::add($rules['margin-left'], $rules['margin-right']));
+                $width = Math::add($this->getWidth(), $style->getHorizontalMarginsWidth());
                 return Math::max($width, $childrenWidth);
             } else {
-                return $childrenWidth;
+                return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
             }
         } else {
             return $this->getBox()->getChildrenWidth();
@@ -109,8 +109,29 @@ class BoxDimensions extends Dimensions
      */
     public function getOuterHeight()
     {
-        $rules = $this->getBox()->getStyle()->getRules();
-        return Math::add($this->getHeight(), $rules['margin-top'], $rules['margin-bottom']);
+        $box = $this->getBox();
+        $style = $this->getBox()->getStyle();
+        if (!$box instanceof LineBox) {
+            $childrenHeight = '0';
+            // if some of the children overflows
+            if ($box->getStyle()->getRules('display') === 'inline') {
+                foreach ($box->getChildren() as $child) {
+                    $childrenHeight = Math::add($childrenHeight, $child->getDimensions()->getOuterHeight());
+                }
+            } else {
+                foreach ($box->getChildren() as $child) {
+                    $childrenHeight = Math::max($childrenHeight, $child->getDimensions()->getOuterHeight());
+                }
+            }
+            if ($this->getHeight() !== null) {
+                $height = Math::add($this->getHeight(), $style->getVerticalMarginsWidth());
+                return Math::max($height, $childrenHeight);
+            } else {
+                return Math::add($childrenHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
+            }
+        } else {
+            return Math::add($this->getHeight(), $style->getHorizontalMarginsWidth());
+        }
     }
 
     /**
@@ -133,7 +154,8 @@ class BoxDimensions extends Dimensions
                 $maxTextWidth = Math::max($maxTextWidth, $minWidth);
             }
         }
-        return $maxTextWidth;
+        $style = $this->getBox()->getStyle();
+        return Math::add($maxTextWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth(), $style->getHorizontalMarginsWidth());
     }
 
     /**

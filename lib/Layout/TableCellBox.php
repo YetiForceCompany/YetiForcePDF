@@ -29,10 +29,8 @@ class TableCellBox extends BlockBox
             $child->measureWidth();
         }
         $this->divideLines();
-        $maxWidth = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
         // do not set up width because it was set by TableBox measureWidth method
         return $this;
@@ -44,16 +42,9 @@ class TableCellBox extends BlockBox
      */
     public function measureHeight()
     {
-        $height = '0';
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
-            $height = Math::add($height, $child->getDimensions()->getOuterHeight());
         }
-        $dimensions = $this->getDimensions();
-        $style = $this->getStyle();
-        $height = Math::add($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
-        $dimensions->setHeight($height);
-        $this->applyStyleHeight();
         return $this;
     }
 
