@@ -95,7 +95,6 @@ class TableWrapperBlockBox extends BlockBox
         $this->applyStyleWidth();
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
-            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
         return $this;
     }
