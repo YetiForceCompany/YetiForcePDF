@@ -56,5 +56,4 @@ class TableColumnBox extends InlineBlockBox
         return ''; // not renderable
     }
 
-
 }

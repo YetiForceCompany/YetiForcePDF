@@ -39,6 +39,7 @@ class TableCellBox extends BlockBox
      */
     public function measureHeight()
     {
+        $this->applyStyleWidth();
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }

@@ -1130,6 +1130,12 @@ class Style extends \YetiForcePDF\Base
                             $cellStyle->setRule('border-right-width', '0');
                         }
                     }
+                    // move specified css width to proper elements
+                    $cellStyle = $column->getFirstChild()->getStyle();
+                    if ($cellStyle->getRules('width') !== 'auto') {
+                        $columnStyle->setRule('width', $cellStyle->getRules('width'));
+                        $cellStyle->setRule('width', 'auto');
+                    }
                 }
                 if ($this->getRules('border-collapse') === 'collapse') {
                     $parentStyle = $box->getParent()->getStyle();

@@ -153,6 +153,10 @@ class TableBox extends BlockBox
      */
     public function measureWidth()
     {
+        if ($this->getParent()->getDimensions()->getWidth() !== null) {
+            $this->getDimensions()->setWidth($this->getParent()->getDimensions()->getInnerWidth());
+            $this->applyStyleWidth();
+        }
         foreach ($this->getCells() as $cell) {
             $cell->measureWidth();
         }
@@ -160,27 +164,51 @@ class TableBox extends BlockBox
         $minMax = $this->getMinMaxWidths($columnGroups);
         $maxWidths = $minMax['max'];
         $minWidths = $minMax['min'];
-        $maxWidth = '0';
+        $preferredRowWidth = '0';
         foreach ($maxWidths as $width) {
-            $maxWidth = Math::add($maxWidth, $width);
+            $preferredRowWidth = Math::add($preferredRowWidth, $width);
         }
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
-        if (Math::comp($maxWidth, $availableSpace) <= 0) {
-            $this->getDimensions()->setWidth($maxWidth);
-            $rowWidth = '0';
+        if (Math::comp($preferredRowWidth, $availableSpace) <= 0) {
+            // use preferred widths
+            if ($this->getDimensions()->getWidth() === null) {
+                $this->getDimensions()->setWidth($preferredRowWidth);
+                $this->applyStyleWidth();
+            }
+            $columnWidths = '0';
+            $columnsMeasured = 0;
+            foreach ($this->getRows() as $row) {
+                $rowGroup = $row->getParent();
+                $rowGroup->getDimensions()->setWidth($this->getDimensions()->getInnerWidth());
+                $rowGroup->applyStyleWidth();
+                $row->getDimensions()->setWidth($rowGroup->getDimensions()->getInnerWidth());
+                $row->applyStyleWidth();
+                foreach ($row->getChildren() as $column) {
+                    if ($column->getStyle()->getRules('width') !== 'auto') {
+                        $column->applyStyleWidth();
+                        $columnWidths = Math::add($columnWidths, $column->getDimensions()->getOuterWidth());
+                        $columnsMeasured++;
+                    }
+                }
+            }
+            $spaceLeft = Math::sub($row->getDimensions()->getInnerWidth(), $columnWidths);
+            if ($spaceLeft !== '0') {
+                $columnWidth = Math::div($spaceLeft, Math::sub((string)count($columnGroups), (string)$columnsMeasured));
+            }
             foreach ($maxWidths as $columnIndex => $width) {
                 foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
                     $cell = $column->getFirstChild();
-                    $column->getDimensions()->setWidth($width);
+                    if ($column->getStyle()->getRules('width') === 'auto') {
+                        if ($columnWidths === '0') {
+                            $column->getDimensions()->setWidth($width);
+                        } else {
+                            $column->getDimensions()->setWidth($columnWidth);
+                        }
+                    }
+                    $column->applyStyleWidth();
                     $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
                     $cell->measureWidth();
                 }
-                $rowWidth = Math::add($rowWidth, $column->getDimensions()->getOuterWidth());
-            }
-            foreach ($this->getRows() as $row) {
-                $row->getDimensions()->setWidth($rowWidth);
-                $rowGroup = $row->getParent();
-                $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
             }
             $style = $this->getStyle();
             $width = $rowGroup->getDimensions()->getOuterWidth();
@@ -191,14 +219,15 @@ class TableBox extends BlockBox
             foreach ($minWidths as $min) {
                 $fullMinWidth = Math::add($fullMinWidth, $min);
             }
-            $spaceLeft = Math::sub($maxWidth, $availableSpace);
+            $spaceLeft = Math::sub($preferredRowWidth, $availableSpace);
             $rowWidth = '0';
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
-                $columnWidth = Math::sub($maxColumnWidth, Math::mul($spaceLeft, Math::div($maxColumnWidth, $maxWidth)));
+                $columnWidth = Math::sub($maxColumnWidth, Math::mul($spaceLeft, Math::div($maxColumnWidth, $preferredRowWidth)));
                 foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
                     $cell = $column->getFirstChild();
                     $column->getDimensions()->setWidth($columnWidth);
+                    $column->applyStyleWidth();
                     $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
                     $cell->measureWidth();
                 }
@@ -206,6 +235,7 @@ class TableBox extends BlockBox
             }
             foreach ($this->getRows() as $row) {
                 $row->getDimensions()->setWidth($rowWidth);
+                $row->applyStyleWidth();
                 $rowGroup = $row->getParent();
                 $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
             }
