@@ -167,42 +167,48 @@ class TableBox extends BlockBox
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
         if (Math::comp($maxWidth, $availableSpace) <= 0) {
             $this->getDimensions()->setWidth($maxWidth);
+            $rowWidth = '0';
             foreach ($maxWidths as $columnIndex => $width) {
                 foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
                     $cell = $column->getFirstChild();
                     $column->getDimensions()->setWidth($width);
-                    $row = $column->getParent();
-                    $row->getDimensions()->setWidth($column->getDimensions()->getOuterWidth());
-                    $rowGroup = $row->getParent();
-                    $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
                     $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
                     $cell->measureWidth();
                 }
+                $rowWidth = Math::add($rowWidth, $column->getDimensions()->getOuterWidth());
             }
+            $row = $column->getParent();
+            $row->getDimensions()->setWidth($rowWidth);
+            $rowGroup = $row->getParent();
+            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+            $style = $this->getStyle();
+            $width = $rowGroup->getDimensions()->getOuterWidth();
+            $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
         } else {
             // use min widths
             $fullMinWidth = '0';
             foreach ($minWidths as $min) {
                 $fullMinWidth = Math::add($fullMinWidth, $min);
             }
-            $left = Math::sub($maxWidth, $availableSpace);
-            $width = '0';
+            $spaceLeft = Math::sub($maxWidth, $availableSpace);
+            $rowWidth = '0';
             foreach ($minWidths as $columnIndex => $minWidth) {
                 $maxColumnWidth = $maxWidths[$columnIndex];
-                $columnWidth = Math::sub($maxColumnWidth, Math::mul($left, Math::div($maxColumnWidth, $maxWidth)));
+                $columnWidth = Math::sub($maxColumnWidth, Math::mul($spaceLeft, Math::div($maxColumnWidth, $maxWidth)));
                 foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
                     $cell = $column->getFirstChild();
                     $column->getDimensions()->setWidth($columnWidth);
-                    $row = $column->getParent();
-                    $row->getDimensions()->setWidth($column->getDimensions()->getOuterWidth());
-                    $rowGroup = $row->getParent();
-                    $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
                     $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
                     $cell->measureWidth();
                 }
-                $width = Math::add($width, $columnWidth);
+                $rowWidth = Math::add($rowWidth, $columnWidth);
             }
+            $row = $column->getParent();
+            $row->getDimensions()->setWidth($rowWidth);
+            $rowGroup = $row->getParent();
+            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
             $style = $this->getStyle();
+            $width = $rowGroup->getDimensions()->getOuterWidth();
             $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
         }
         return $this;

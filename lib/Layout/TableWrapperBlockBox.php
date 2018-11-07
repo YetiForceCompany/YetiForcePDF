@@ -80,18 +80,23 @@ class TableWrapperBlockBox extends BlockBox
     public function measureWidth()
     {
         $maxWidth = '0';
-        /*
-        foreach ($this->getChildren() as $child) {
-            $child->measureWidth();
-        }*/
         foreach ($this->getChildren() as $child) {
             $child->measureWidth();
             $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
         }
-        $style = $this->getStyle();
-        $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
+        $availableSpace = $this->getDimensions()->computeAvailableSpace();
+        if (Math::comp($maxWidth, $availableSpace) === 1) {
+            $maxWidth = $availableSpace;
+        } else {
+            $style = $this->getStyle();
+            $maxWidth = Math::add($maxWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
+        }
         $this->getDimensions()->setWidth($maxWidth);
         $this->applyStyleWidth();
+        foreach ($this->getChildren() as $child) {
+            $child->measureWidth();
+            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
+        }
         return $this;
     }
 

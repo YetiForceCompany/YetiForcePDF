@@ -29,9 +29,6 @@ class TableCellBox extends BlockBox
             $child->measureWidth();
         }
         $this->divideLines();
-        foreach ($this->getChildren() as $child) {
-            $child->measureWidth();
-        }
         // do not set up width because it was set by TableBox measureWidth method
         return $this;
     }

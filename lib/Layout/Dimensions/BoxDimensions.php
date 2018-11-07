@@ -189,7 +189,7 @@ class BoxDimensions extends Dimensions
         if ($parent = $this->getBox()->getParent()) {
             $parentStyle = $parent->getStyle();
             if ($parent->getDimensions()->getWidth() === null) {
-                return Math::sub($this->getBox()->getParent()->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
+                return Math::sub($parent->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
             } else {
                 return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
             }
