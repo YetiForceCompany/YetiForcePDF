@@ -21,30 +21,6 @@ use \YetiForcePDF\Math;
 class TableColumnBox extends InlineBlockBox
 {
 
-    /**
-     * @var string
-     */
-    protected $intrinsicPercentage = '0';
-
-    /**
-     * Get intrinsic percentage
-     * @return string
-     */
-    public function getIntrinsicPercentage()
-    {
-        return $this->intrinsicPercentage;
-    }
-
-    /**
-     * Set intrinsic percentage
-     * @para string $percentage
-     * @return $this
-     */
-    public function setIntrinsicPercentage(string $percentage)
-    {
-        $this->intrinsicPercentage = $percentage;
-        return $this;
-    }
 
     /**
      * We shouldn't append block box here
