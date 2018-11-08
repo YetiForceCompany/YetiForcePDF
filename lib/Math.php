@@ -111,6 +111,22 @@ class Math
     }
 
     /**
+     * Get min number
+     * @param string ...$numbers
+     * @return string
+     */
+    public static function min(string ...$numbers)
+    {
+        $numbers = array_reverse($numbers);
+        $result = array_pop($numbers);
+        $numbers = array_reverse($numbers);
+        foreach ($numbers as $number) {
+            $result = static::comp($result, $number) > 0 ? $number : $result;
+        }
+        return $result;
+    }
+
+    /**
      * Get percent from value
      * @param string $percent
      * @param string $from
