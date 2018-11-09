@@ -459,23 +459,9 @@ class Box extends \YetiForcePDF\Base
      */
     public function applyStyleWidth()
     {
-        $width = $this->getStyle()->getRules('width');
-        if ($width === 'auto') {
-            return $this;
-        }
-        $percentPos = strpos($width, '%');
-        if ($percentPos !== false) {
-            $widthInPercent = substr($width, 0, $percentPos);
-            $closestBoxDimensions = $this->getClosestBox()->getDimensions();
-            if ($closestBoxDimensions->getWidth() !== null) {
-                $parentWidth = $closestBoxDimensions->getInnerWidth();
-                if ($parentWidth) {
-                    $calculatedWidth = Math::mul(Math::div($parentWidth, '100'), $widthInPercent);
-                    $this->getDimensions()->setWidth($calculatedWidth);
-                    return $this;
-                }
-            }
-            return $this;
+        $styleWidth = $this->getDimensions()->getStyleWidth();
+        if ($styleWidth !== null) {
+            $this->getDimensions()->setWidth($styleWidth);
         }
         return $this;
     }

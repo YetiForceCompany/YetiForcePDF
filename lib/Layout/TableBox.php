@@ -23,6 +23,21 @@ use \YetiForcePDF\Html\Element;
 class TableBox extends BlockBox
 {
 
+    protected $minWidths = [];
+    protected $preferredWidths = [];
+    protected $contentWidths = [];
+    protected $minWidth = '0';
+    protected $preferredWidth = '0';
+    protected $contentWidth = '0';
+    protected $gridMin = '0';
+    protected $gridMax = '0';
+    protected $intrinsicPercentages = [];
+    protected $intrinsicSum = '0';
+    protected $cellSpacingWidth = '0';
+    protected $borderWidth = '0';
+    protected $usedWidth = '0';
+    protected $assignableWidth = '0';
+
     /**
      * We shouldn't append block box here
      */
@@ -126,26 +141,276 @@ class TableBox extends BlockBox
 
     /**
      * Get minimal and maximal column widths
-     * @param array $columns
+     * @param array $columnGroups
      * @return array
      */
-    public function getMinMaxWidths($columns)
+    public function setUpWidths($columnGroups)
     {
-        $maxWidths = [];
-        $minWidths = [];
-        foreach ($columns as $columnIndex => $row) {
-            foreach ($row as $column) {
-                if (!isset($maxWidths[$columnIndex])) {
-                    $maxWidths[$columnIndex] = '0';
+        foreach ($columnGroups as $columnIndex => $columns) {
+            foreach ($columns as $column) {
+                if (!isset($this->preferredWidths[$columnIndex])) {
+                    $this->preferredWidths[$columnIndex] = '0';
                 }
-                if (!isset($minWidths[$columnIndex])) {
-                    $minWidths[$columnIndex] = '0';
+                if (!isset($this->minWidths[$columnIndex])) {
+                    $this->minWidths[$columnIndex] = '0';
                 }
-                $maxWidths[$columnIndex] = Math::max($maxWidths[$columnIndex], $column->getDimensions()->getOuterWidth());
-                $minWidths[$columnIndex] = Math::max($minWidths[$columnIndex], $column->getDimensions()->getMinWidth());
+                if (!isset($this->contentWidths[$columnIndex])) {
+                    $this->contentWidths[$columnIndex] = '0';
+                }
+                if (!isset($this->intrinsicPercentages[$columnIndex])) {
+                    $this->intrinsicPercentages[$columnIndex] = '0';
+                }
+                $columnWidth = $column->getDimensions()->getOuterWidth();
+                $styleWidth = $column->getStyle()->getRules('width');
+                if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === -1) {
+                    $preferred = $styleWidth;
+                } elseif (strpos($styleWidth, '%') > 0) {
+                    $preferred = $styleWidth;
+                    $this->intrinsicPercentages[$columnIndex] = Math::max($this->intrinsicPercentages[$columnIndex], trim($styleWidth, '%'));
+                } else {
+                    $preferred = Math::max($this->preferredWidths[$columnIndex], $columnWidth);
+                }
+                $content = $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex], $columnWidth);
+                $this->contentWidth = Math::add($this->contentWidth, $content);
+                $min = Math::max($this->minWidths[$columnIndex], $column->getDimensions()->getMinWidth());
+                $this->minWidths[$columnIndex] = $min;
+                $this->minWidth = Math::add($this->minWidth, $min);
+                $this->preferredWidths[$columnIndex] = $preferred;
+                $this->preferredWidth = Math::add($this->preferredWidth, $preferred);
+                $this->borderWidth = Math::add($this->borderWidth, $column->getStyle()->getVerticalBordersWidth());
             }
         }
-        return ['min' => $minWidths, 'max' => $maxWidths];
+        if ($this->getStyle()->getRules('border-collapse') !== 'collapse') {
+            $this->cellSpacingWidth = Math::mul($this->getStyle()->getRules('border-spacing'), (string)count($columns));
+        }
+        $this->gridMin = Math::add($this->minWidth, $this->cellSpacingWidth, $this->borderWidth);
+        $this->gridMax = Math::add($this->preferredWidth, $this->cellSpacingWidth, $this->borderWidth);
+        $this->usedWidth = Math::max(Math::min($this->gridMax, $this->getParent()->getParent()->getDimensions()->getWidth()), $this->gridMin);
+        $this->assignableWidth = Math::sub($this->usedWidth, $this->cellSpacingWidth);
+        $style = $this->getStyle();
+        $this->getDimensions()->setWidth(Math::add($this->preferredWidth, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
+    }
+
+    /**
+     * Minimal content percentage guess
+     * @param array $columnGroups
+     * @param string $availableSpace
+     * @return $this
+     */
+    protected function minContentPercentageGuess(array $columnGroups, string $availableSpace)
+    {
+        $rowWidth = '0';
+        $columnsWidths = [];
+        foreach ($this->minWidths as $columnIndex => $minWidth) {
+            foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
+                $columnStyle = $column->getStyle();
+                if (!isset($columnsWidths[$columnIndex])) {
+                    $columnsWidths[$columnIndex] = '0';
+                }
+                if (strpos($columnStyle->getRules('width'), '%') > 0) {
+                    $percentWidth = Math::percent($columnStyle->getRules('width'), $this->minWidth);
+                    $columnsWidths[$columnIndex] = Math::max($columnsWidths[$columnIndex], $percentWidth, $minWidth);
+                } else {
+                    $columnsWidths[$columnIndex] = Math::max($columnsWidths[$columnIndex], $minWidth);
+                }
+            }
+        }
+        foreach ($this->minWidths as $columnIndex => $minWidth) {
+            foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
+                $cell = $column->getFirstChild();
+                $column->getDimensions()->setWidth($columnsWidths[$columnIndex]);
+                $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
+            }
+            $rowWidth = Math::add($rowWidth, $column->getDimensions()->getWidth());
+        }
+        foreach ($this->getRows() as $row) {
+            $row->getDimensions()->setWidth($rowWidth);
+            $rowGroup = $row->getParent();
+            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getWidth());
+        }
+        $style = $this->getStyle();
+        $width = $rowGroup->getDimensions()->getWidth();
+        $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
+        return $this;
+    }
+
+    /**
+     * Minimal content specified guess
+     * @param array $rows
+     * @return $this
+     */
+    protected function minContentSpecifiedGuess(array $rows)
+    {
+        $columnsWidths = [];
+        foreach ($rows as $row) {
+            foreach ($row->getChildren() as $columnIndex => $column) {
+                if (!isset($columnsWidths[$columnIndex])) {
+                    $columnsWidths[$columnIndex] = '0';
+                }
+                $columnStyle = $column->getStyle();
+                $columnStyleWidth = $columnStyle->getRules('width');
+                if (strpos($columnStyleWidth, '%') > 0) {
+                    $percentWidth = Math::percent($columnStyleWidth, $this->getDimensions()->getWidth());
+                    $columnsWidths[$columnIndex] = Math::max($columnsWidths[$columnIndex], $percentWidth, $column->getDimensions()->getWidth());
+                } elseif ($columnStyle->getRules('width') !== 'auto') {
+                    $columnsWidths[$columnIndex] = Math::max($columnStyle->getRules('width'), $column->getDimensions()->getWidth());
+                } else {
+                    $columnsWidths[$columnIndex] = Math::max($columnsWidths[$columnIndex], $this->minWidths[$columnIndex]);
+                }
+            }
+        }
+        foreach ($rows as $row) {
+            $rowWidth = '0';
+            foreach ($row->getChildren() as $columnIndex => $column) {
+                $cell = $column->getFirstChild();
+                $column->getDimensions()->setWidth($columnsWidths[$columnIndex]);
+                $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
+                $rowWidth = Math::add($rowWidth, $column->getDimensions()->getWidth());
+            }
+            $row->getDimensions()->setWidth($rowWidth);
+            $rowGroup = $row->getParent();
+            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getWidth());
+        }
+        $style = $this->getStyle();
+        $width = $rowGroup->getDimensions()->getWidth();
+        $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
+        return $this;
+    }
+
+    /**
+     * Maximal content guess
+     * @param array $rows
+     * @return $this
+     */
+    protected function maxContentGuess(array $rows)
+    {
+
+        $columnsWidths = [];
+        foreach ($rows as $rowIndex => $row) {
+            foreach ($row->getChildren() as $columnIndex => $column) {
+                if (!isset($columnsWidths[$columnIndex])) {
+                    $columnsWidths[$columnIndex] = '0';
+                }
+                $columnStyle = $column->getStyle();
+                if (strpos($columnStyle->getRules('width'), '%') > 0) {
+                    $percentWidth = Math::percent($columnStyle->getRules('width'), $this->getDimensions()->getWidth());
+                    $columnsWidths[$columnIndex] = Math::max($columnsWidths[$columnIndex], $percentWidth, $column->getDimensions()->getWidth());
+                } elseif ($columnStyle->getRules('width') === 'auto') {
+                    $columnsWidths[$columnIndex] = $this->preferredWidths[$columnIndex];
+                }
+            }
+        }
+        foreach ($rows as $row) {
+            $rowWidth = '0';
+            foreach ($row->getChildren() as $columnIndex => $column) {
+                $cell = $column->getFirstChild();
+                $column->getDimensions()->setWidth($columnsWidths[$columnIndex]);
+                $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
+                $rowWidth = Math::add($rowWidth, $column->getDimensions()->getWidth());
+            }
+            $row->getDimensions()->setWidth($rowWidth);
+            $rowGroup = $row->getParent();
+            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getWidth());
+        }
+        $style = $this->getStyle();
+        $width = $rowGroup->getDimensions()->getOuterWidth();
+        $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
+        return $this;
+    }
+
+    /**
+     * Redistribute space that is available or exceed assignable width
+     * @param string $availableSpace
+     * @param array $rows
+     * @return $this
+     */
+    protected function redistributeSpace(string $availableSpace, array $rows)
+    {
+        $tableWidth = $this->getDimensions()->getInnerWidth();
+        if (Math::comp($availableSpace, $tableWidth) > 0) {
+            $steps = [[], [], []];
+            foreach ($rows as $row) {
+                foreach ($row->getChildren() as $columnIndex => $column) {
+                    $columnStyleWidth = $column->getStyle()->getRules('width');
+                    if ($this->intrinsicPercentages[$columnIndex] === '0') {
+                        // non constrained first
+                        if ($columnStyleWidth === 'auto') {
+                            if (Math::comp($this->contentWidths[$columnIndex], '0') > 0) {
+                                $steps[0][$columnIndex] = $column;//proportional auto
+                            } else {
+                                $steps[1][$columnIndex] = $column;//equal auto
+                            }
+                        } else {
+                            // constrained px
+                            $steps[2][$columnIndex] = $column; // proportional constrained
+                        }
+                    } else {
+                        $steps[3][$columnIndex] = $column; // percent %
+                    }
+                }
+            }
+            $freeSpace = Math::sub($availableSpace, $tableWidth);
+            if ($freeSpace === '0') {
+                return $this;
+            }
+            if (count($steps[0])) {
+                $fullMaxWidths = '0';
+                foreach ($steps[0] as $columnIndex => $column) {
+                    $fullMaxWidths = Math::add($fullMaxWidths, $this->contentWidths[$columnIndex]);
+                }
+                foreach ($steps[0] as $columnIndex => $column) { //proportional auto
+                    $proportion = Math::div($this->contentWidths[$columnIndex], $fullMaxWidths);
+                    $add = Math::mul($freeSpace, $proportion);
+                    $columnDimensions = $column->getDimensions();
+                    $currentWidth = $columnDimensions->getWidth();
+                    $columnDimensions->setWidth(Math::add($currentWidth, $add));
+                    $column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
+                }
+            } elseif (count($steps[1])) {
+                foreach ($steps[1] as $column) { //equal auto
+                    $add = Math::div($freeSpace, (string)count($steps[1]));
+                    $columnDimensions = $column->getDimensions();
+                    $currentWidth = $columnDimensions->getWidth();
+                    $columnDimensions->setWidth(Math::add($currentWidth, $add));
+                    $column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
+                }
+            } elseif (count($steps[2])) {
+                $fullMaxWidths = '0';
+                foreach ($steps[2] as $columnIndex => $column) {
+                    $fullMaxWidths = Math::add($fullMaxWidths, $this->contentWidths[$columnIndex]);
+                }
+                foreach ($steps[2] as $column) { //proportional px
+                    $proportion = Math::div($this->contentWidths[$columnIndex], $fullMaxWidths);
+                    $add = Math::mul($freeSpace, $proportion);
+                    $columnDimensions = $column->getDimensions();
+                    $currentWidth = $columnDimensions->getWidth();
+                    $columnDimensions->setWidth(Math::add($currentWidth, $add));
+                    $column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
+                }
+            } else {
+                foreach ($steps[3] as $column) { // percent
+                    $percent = trim($column->getStyle()->getRules('width'), '%');
+                    $add = Math::percent($percent, $freeSpace);
+                    $columnDimensions = $column->getDimensions();
+                    $currentWidth = $columnDimensions->getWidth();
+                    $columnDimensions->setWidth(Math::add($currentWidth, $add));
+                    $column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
+                }
+            }
+        }
+        foreach ($rows as $row) {
+            $rowWidth = '0';
+            foreach ($row->getChildren() as $column) {
+                $rowWidth = Math::add($rowWidth, $column->getDimensions()->getOuterWidth());
+            }
+            $row->getDimensions()->setWidth($rowWidth);
+            $rowGroup = $row->getParent();
+            $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
+        }
+        $style = $this->getStyle();
+        $width = $rowGroup->getDimensions()->getOuterWidth();
+        $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
+        return $this;
     }
 
     /**
@@ -153,95 +418,19 @@ class TableBox extends BlockBox
      */
     public function measureWidth()
     {
-        if ($this->getParent()->getDimensions()->getWidth() !== null) {
-            $this->getDimensions()->setWidth($this->getParent()->getDimensions()->getInnerWidth());
-            $this->applyStyleWidth();
-        }
         foreach ($this->getCells() as $cell) {
             $cell->measureWidth();
         }
         $columnGroups = $this->getColumns();
-        $minMax = $this->getMinMaxWidths($columnGroups);
-        $maxWidths = $minMax['max'];
-        $minWidths = $minMax['min'];
-        $preferredRowWidth = '0';
-        foreach ($maxWidths as $width) {
-            $preferredRowWidth = Math::add($preferredRowWidth, $width);
-        }
+        $this->setUpWidths($columnGroups);
         $availableSpace = $this->getDimensions()->computeAvailableSpace();
-        if (Math::comp($preferredRowWidth, $availableSpace) <= 0) {
-            // use preferred widths
-            if ($this->getDimensions()->getWidth() === null) {
-                $this->getDimensions()->setWidth($preferredRowWidth);
-                $this->applyStyleWidth();
-            }
-            $columnWidths = '0';
-            $columnsMeasured = 0;
-            foreach ($this->getRows() as $row) {
-                $rowGroup = $row->getParent();
-                $rowGroup->getDimensions()->setWidth($this->getDimensions()->getInnerWidth());
-                $rowGroup->applyStyleWidth();
-                $row->getDimensions()->setWidth($rowGroup->getDimensions()->getInnerWidth());
-                $row->applyStyleWidth();
-                foreach ($row->getChildren() as $column) {
-                    if ($column->getStyle()->getRules('width') !== 'auto') {
-                        $column->applyStyleWidth();
-                        $columnWidths = Math::add($columnWidths, $column->getDimensions()->getOuterWidth());
-                        $columnsMeasured++;
-                    }
-                }
-            }
-            $spaceLeft = Math::sub($row->getDimensions()->getInnerWidth(), $columnWidths);
-            if ($spaceLeft !== '0') {
-                $columnWidth = Math::div($spaceLeft, Math::sub((string)count($columnGroups), (string)$columnsMeasured));
-            }
-            foreach ($maxWidths as $columnIndex => $width) {
-                foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
-                    $cell = $column->getFirstChild();
-                    if ($column->getStyle()->getRules('width') === 'auto') {
-                        if ($columnWidths === '0') {
-                            $column->getDimensions()->setWidth($width);
-                        } else {
-                            $column->getDimensions()->setWidth($columnWidth);
-                        }
-                    }
-                    $column->applyStyleWidth();
-                    $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
-                    $cell->measureWidth();
-                }
-            }
-            $style = $this->getStyle();
-            $width = $rowGroup->getDimensions()->getOuterWidth();
-            $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
-        } else {
-            // use min widths
-            $fullMinWidth = '0';
-            foreach ($minWidths as $min) {
-                $fullMinWidth = Math::add($fullMinWidth, $min);
-            }
-            $spaceLeft = Math::sub($preferredRowWidth, $availableSpace);
-            $rowWidth = '0';
-            foreach ($minWidths as $columnIndex => $minWidth) {
-                $maxColumnWidth = $maxWidths[$columnIndex];
-                $columnWidth = Math::sub($maxColumnWidth, Math::mul($spaceLeft, Math::div($maxColumnWidth, $preferredRowWidth)));
-                foreach ($columnGroups[$columnIndex] as $rowIndex => $column) {
-                    $cell = $column->getFirstChild();
-                    $column->getDimensions()->setWidth($columnWidth);
-                    $column->applyStyleWidth();
-                    $cell->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
-                    $cell->measureWidth();
-                }
-                $rowWidth = Math::add($rowWidth, $columnWidth);
-            }
-            foreach ($this->getRows() as $row) {
-                $row->getDimensions()->setWidth($rowWidth);
-                $row->applyStyleWidth();
-                $rowGroup = $row->getParent();
-                $rowGroup->getDimensions()->setWidth($row->getDimensions()->getOuterWidth());
-            }
-            $style = $this->getStyle();
-            $width = $rowGroup->getDimensions()->getOuterWidth();
-            $this->getDimensions()->setWidth(Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getVerticalBordersWidth()));
+        $this->minContentPercentageGuess($columnGroups, $availableSpace);
+        $rows = $this->getRows();
+        $this->minContentSpecifiedGuess($rows);
+        $this->maxContentGuess($rows);
+        $this->redistributeSpace($availableSpace, $rows);
+        foreach ($this->getCells() as $cell) {
+            $cell->measureWidth();
         }
         return $this;
     }
