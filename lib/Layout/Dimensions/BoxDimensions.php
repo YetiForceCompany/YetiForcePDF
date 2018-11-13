@@ -80,7 +80,6 @@ class BoxDimensions extends Dimensions
         $box = $this->getBox();
         if (!$box instanceof LineBox) {
             $style = $this->getBox()->getStyle();
-            $rules = $style->getRules();
             $childrenWidth = '0';
             // if some of the children overflows
             if ($box->getStyle()->getRules('display') === 'inline') {
@@ -93,6 +92,7 @@ class BoxDimensions extends Dimensions
                 }
             }
             if ($this->getWidth() !== null) {
+                $childrenWidth = Math::add($childrenWidth, $style->getHorizontalMarginsWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
                 $width = Math::add($this->getWidth(), $style->getHorizontalMarginsWidth());
                 return Math::max($width, $childrenWidth);
             } else {
