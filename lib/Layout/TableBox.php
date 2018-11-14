@@ -543,6 +543,10 @@ class TableBox extends BlockBox
         $columnGroups = $this->getColumns();
         $this->setUpSizingTypes($columnGroups);
         $availableSpace = $this->getParent()->getDimensions()->computeAvailableSpace();
+        if ($this->getParent()->getStyle()->getRules('width') !== 'auto') {
+            $this->getParent()->applyStyleWidth();
+            $availableSpace = Math::min($availableSpace, $this->getParent()->getDimensions()->getWidth());
+        }
         $this->setUpWidths($columnGroups, $availableSpace);
         $rows = $this->getRows();
         $this->minContentGuess($rows);
@@ -567,7 +571,7 @@ class TableBox extends BlockBox
         } else {
             $step = 3;
         }
-        $this->finish();
+        $this->redistributeSpace($availableSpace, $rows, $step);
         return $this;
     }
 
