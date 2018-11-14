@@ -571,9 +571,6 @@ class TableBox extends BlockBox
         } else {
             $step = 3;
         }
-        /*if (Math::comp($this->preferredWidth, $this->getDimensions()->getWidth()) > 0 && Math::comp($availableSpace, $this->preferredWidth) > 0) {
-            $this->redistributeSpace($this->preferredWidth, $rows, $step);
-        }*/
         return $this;
     }
 
