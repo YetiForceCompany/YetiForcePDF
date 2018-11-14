@@ -74,6 +74,11 @@ class Math
      */
     public static function div(string ...$numbers)
     {
+        foreach ($numbers as $number) {
+            if (static::comp($number, '0') === 0) {
+                return '0';
+            }
+        }
         $numbers = array_reverse($numbers);
         $result = array_pop($numbers);
         $numbers = array_reverse($numbers);
