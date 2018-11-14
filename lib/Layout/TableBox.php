@@ -151,9 +151,10 @@ class TableBox extends BlockBox
     /**
      * Get minimal and maximal column widths
      * @param array $columnGroups
+     * @param string $availableSpace
      * @return array
      */
-    public function setUpWidths($columnGroups)
+    public function setUpWidths(array $columnGroups, string $availableSpace)
     {
         foreach ($columnGroups as $columnIndex => $columns) {
             foreach ($columns as $column) {
@@ -198,14 +199,14 @@ class TableBox extends BlockBox
             $spacing = $this->getStyle()->getRules('border-spacing');
             $this->cellSpacingWidth = Math::mul((string)(count($columnGroups) + 1), $spacing);
         }
-        //$this->preferredWidth = Math::add($this->preferredWidth, $this->borderWidth, $this->cellSpacingWidth);
+        $parentStyle = $this->getParent()->getStyle();
+        $availableSpace = Math::sub($availableSpace, $parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
         $this->gridMin = Math::add($this->minWidth, $this->cellSpacingWidth);
         $this->gridMax = Math::add($this->preferredWidth, $this->borderWidth, $this->cellSpacingWidth);
-        $this->usedWidth = Math::max(Math::min($this->gridMax, $this->getParent()->getParent()->getDimensions()->getInnerWidth()), $this->gridMin);
+        $this->usedWidth = Math::max(Math::min($this->gridMax, $availableSpace), $this->gridMin);
         $this->assignableWidth = Math::sub($this->usedWidth, $this->cellSpacingWidth);
         $this->setRowsWidth($this->preferredWidth);
         $this->getDimensions()->setWidth($this->usedWidth);
-        $parentStyle = $this->getParent()->getStyle();
         $this->getParent()->getDimensions()->setWidth(Math::add($this->usedWidth, $parentStyle->getHorizontalPaddingsWidth(), $parentStyle->getHorizontalBordersWidth()));
     }
 
@@ -247,7 +248,7 @@ class TableBox extends BlockBox
             $row->getDimensions()->setWidth($width);
             $row->getParent()->getDimensions()->setWidth($width);
         }
-        $style = $this->getStyle();
+        $style = $this->getParent()->getStyle();
         $spacing = Math::add($style->getHorizontalPaddingsWidth(), $style->getHorizontalBordersWidth());
         $this->getDimensions()->setWidth(Math::add($width, $spacing));
         return $this;
@@ -541,8 +542,8 @@ class TableBox extends BlockBox
         $step = 0;
         $columnGroups = $this->getColumns();
         $this->setUpSizingTypes($columnGroups);
-        $this->setUpWidths($columnGroups);
         $availableSpace = $this->getParent()->getDimensions()->computeAvailableSpace();
+        $this->setUpWidths($columnGroups, $availableSpace);
         $rows = $this->getRows();
         $this->minContentGuess($rows);
         $this->minContentPercentageGuess($rows);
