@@ -20,7 +20,30 @@ use \YetiForcePDF\Math;
  */
 class TableColumnBox extends InlineBlockBox
 {
+    /**
+     * @var int
+     */
+    protected $colSpan = 1;
 
+    /**
+     * Get column span
+     * @return int
+     */
+    public function getColSpan()
+    {
+        return $this->colSpan;
+    }
+
+    /**
+     * Set column span
+     * @param int $colSpan
+     * @return $this
+     */
+    public function setColSpan(int $colSpan)
+    {
+        $this->colSpan = $colSpan;
+        return $this;
+    }
 
     /**
      * We shouldn't append block box here
