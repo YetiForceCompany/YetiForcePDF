@@ -52,7 +52,7 @@ class TableRowBox extends BlockBox
 
     /**
      * Append table cell box element
-     * @param \DOMNode $childDomElement
+     * @param \DOMElement $childDomElement
      * @param Element $element
      * @param Style $style
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
@@ -60,6 +60,11 @@ class TableRowBox extends BlockBox
      */
     public function appendTableCellBox($childDomElement, $element, $style, $parentBlock)
     {
+        $colSpan = 1;
+        $attributeColSpan = $childDomElement->getAttribute('colspan');
+        if ($attributeColSpan) {
+            $colSpan = (int)$attributeColSpan;
+        }
         $clearStyle = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
             ->parseInline();
@@ -68,6 +73,7 @@ class TableRowBox extends BlockBox
             ->setParent($this)
             ->setStyle($clearStyle)
             ->init();
+        $column->setColSpan($colSpan);
         $this->appendChild($column);
         $column->getStyle()->init();
         $box = (new TableCellBox())
