@@ -434,11 +434,11 @@ class TableBox extends BlockBox
     {
         $full = '0';
         foreach ($this->autoColumns as $columnIndex => $columns) {
-            $full = Math::add($full, $columns[0]->getDimensions()->getWidth());
+            $full = Math::add($full, $this->contentWidths[$columnIndex]);
         }
         $additionalFullWidth = '0';
         foreach ($this->autoColumns as $columnIndex => $columns) {
-            $percent = Math::div($columns[0]->getDimensions()->getWidth(), $full);
+            $percent = Math::div($this->contentWidths[$columnIndex], $full);
             $additionalWidth = Math::mul($spaceLeft, $percent);
             $additionalFullWidth = Math::add($additionalFullWidth, $additionalWidth);
             foreach ($columns as $column) {
