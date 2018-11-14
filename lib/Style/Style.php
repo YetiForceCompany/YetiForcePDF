@@ -435,7 +435,8 @@ class Style extends \YetiForcePDF\Base
             'border-color' => 'inherit',],
         'td' => [
             'display' => 'table-cell',
-            'vertical-align' => 'inherit',],
+            'vertical-align' => 'inherit',
+            'padding' => '1px',],
         'tfoot' => [
             'display' => 'table-footer-group',
             'vertical-align' => 'middle',
