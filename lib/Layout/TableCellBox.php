@@ -19,6 +19,7 @@ use \YetiForcePDF\Math;
  */
 class TableCellBox extends BlockBox
 {
+
     /**
      * Measure width
      * @return $this
