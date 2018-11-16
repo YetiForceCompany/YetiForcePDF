@@ -55,6 +55,36 @@ border-collapse:separate
     </tr>
 </table>
 -->
+<table style="border:1px solid red;width:50%;font-size:12px;line-height:1.2;font-family:'PT Sans';">
+    <tr>
+        <td style="border:1px solid blue;">Another table inside!!!</td>
+        <td style="border:1px solid green;">test</td>
+    </tr>
+</table>
+<table style="border:1px solid red;font-family:'PT Sans';font-size:12px;line-height:1.2;border-collapse:separate;">
+    <tr>
+        <td style="border:1px solid green;">
+            <table style="border:1px solid red;font-family:'PT Sans';font-size:12px;line-height:1.2;border-collapse:separate;">
+                <tr>
+                    <td style="border:1px solid green;">
+                        <table style="border:1px solid red;font-family:'PT Sans';font-size:12px;line-height:1.2;border-collapse:separate;">
+                            <tr>
+                                <td style="border:1px solid green;">
+                                    <table style="border:1px solid red;font-family:'PT Sans';font-size:12px;line-height:1.2;border-collapse:separate;">
+                                        <tr>
+                                            <td style="border:1px solid green;">cell</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
 <table style="border:1px solid red;font-family:'PT Sans';font-size:12px;line-height:1.2;border-collapse:collapse;">
     <tr>
         <td style="border:1px solid green;">cell</td>
@@ -90,7 +120,8 @@ border-collapse:separate
                 </tr>
                 <tr>
                     <td style="border:1px solid yellow;">and</td>
-                    <td style="border:1px solid gray;">oieto
+                    <td style="border:1px solid gray;">
+                        oieto
                         <table style="border:1px solid red;">
                             <tr>
                                 <td style="border:1px solid blue;">Another table inside!!!</td>
@@ -108,11 +139,11 @@ border-collapse:separate
     <tr>
         <td style="border:1px solid red;">
             This-is-table-cell
-            <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:collapse;">
+            <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:separate;">
                 <tr>
                     <td>
                         table-inside parent table as child
-                        <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:collapse;">
+                        <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:separate;">
                             <tr>
                                 <td>
                                     table-inside parent table as child
@@ -129,7 +160,7 @@ border-collapse:separate
         </td>
         <td style="border:1px solid red;">
             This-is-table-cell
-            <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:collapse;">
+            <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:separate;">
                 <tr>
                     <td>
                         table-inside parent table as child eeeee
@@ -140,7 +171,7 @@ border-collapse:separate
         </td>
         <td style="border:1px solid red;">
             This-is-table-cell
-            <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:collapse;">
+            <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid blue;border-collapse:separate;">
                 <tr>
                     <td>
                         table-inside parent table as child
@@ -173,6 +204,7 @@ border-collapse:separate
         </td>
     </tr>
 </table>
+
 <table style="font-family:'PT Sans';font-size:12px;line-height:1.2;border:1px solid black;border-collapse:collapse;">
     <tr>
         <td style="border:1px solid red;">
