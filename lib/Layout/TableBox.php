@@ -713,8 +713,8 @@ class TableBox extends BlockBox
         // if 25% = $currentPercentsWidth
         $onePercent = Math::div($currentPercentsWidth, $totalPercentages);
         $restMustHave = Math::mul($leftPercent, $onePercent);
-        // we must add inverted ratio (leftRatio) * leftSpace to fulfill percentages
-        $leftSpace = Math::min($leftSpace, $restMustHave);
+        $restHave = $this->getCurrentOthersWidth();
+        $leftSpace = Math::min($leftSpace, Math::sub($restMustHave, $restHave));
         if (Math::comp($leftSpace, '0') === 0) {
             return $this->setRowsWidth();
         }
