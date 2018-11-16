@@ -366,8 +366,22 @@ class TableBox extends BlockBox
                     $this->minWidths[$columnIndex] = Math::sub($colWidth, $spacing);
                 }
             }
-        } else {
+        } elseif ($count = count($this->pixelColumns)) {
             // next redistribute left space to pixel columns if there where no auto columns
+            $add = Math::div($leftSpace, (string)$count);
+            foreach ($this->pixelColumns as $columnIndex => $columns) {
+                $colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
+                foreach ($columns as $column) {
+                    $colDmns = $column->getDimensions();
+                    $colDmns->setWidth($colWidth);
+                    $column->getFirstChild()->getDimensions()->setWidth($colDmns->getInnerWidth());
+                }
+                if (!$withPreferred) {
+                    // if not to preferred it means that we adding to min widths
+                    $spacing = $column->getStyle()->getHorizontalPaddingsWidth();
+                    $this->minWidths[$columnIndex] = Math::sub($colWidth, $spacing);
+                }
+            }
         }
         return $this;
     }
