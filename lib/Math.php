@@ -110,7 +110,7 @@ class Math
         $result = array_pop($numbers);
         $numbers = array_reverse($numbers);
         foreach ($numbers as $number) {
-            $result = static::comp($result, $number) > 0 ? $result : $number;
+            $result = static::comp($number, $result) >= 0 ? $number : $result;
         }
         return $result;
     }
