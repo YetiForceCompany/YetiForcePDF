@@ -64,7 +64,7 @@ class TableWrapperBlockBox extends BlockBox
         $box = (new TableBox())
             ->setDocument($this->document)
             ->setParent($this)
-            ->setElement($element)
+            //->setElement($element)
             ->setStyle($cleanStyle)
             ->init();
         $cleanStyle->setRule('display', 'block');

@@ -50,6 +50,26 @@ class TableRowGroupBox extends BlockBox
     }
 
     /**
+     * Create row box
+     * return TableRowBox
+     */
+    public function createRowBox()
+    {
+        $style = (new \YetiForcePDF\Style\Style())
+            ->setDocument($this->document)
+            ->setContent('')
+            ->parseInline();
+        $box = (new TableRowBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setStyle($style)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        return $box;
+    }
+
+    /**
      * Append table row box element
      * @param \DOMNode $childDomElement
      * @param Element $element

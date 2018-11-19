@@ -74,6 +74,27 @@ class TableColumnBox extends InlineBlockBox
     }
 
     /**
+     * Create cell box
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function createCellBox()
+    {
+        $style = (new \YetiForcePDF\Style\Style())
+            ->setDocument($this->document)
+            ->setContent('')
+            ->parseInline();
+        $box = (new TableCellBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setStyle($style)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        return $box;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getInstructions(): string

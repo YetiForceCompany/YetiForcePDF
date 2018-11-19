@@ -51,6 +51,27 @@ class TableRowBox extends BlockBox
     }
 
     /**
+     * Create column box
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function createColumnBox()
+    {
+        $style = (new \YetiForcePDF\Style\Style())
+            ->setDocument($this->document)
+            ->setContent('')
+            ->parseInline();
+        $box = (new TableColumnBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setStyle($style)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        return $box;
+    }
+
+    /**
      * Append table cell box element
      * @param \DOMElement $childDomElement
      * @param Element $element

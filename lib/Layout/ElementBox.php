@@ -69,13 +69,74 @@ class ElementBox extends Box
     }
 
     /**
+     * Get boxes by tag name
+     * @param string $tagName
+     * @return array
+     */
+    public function getBoxesByTagName(string $tagName)
+    {
+        $boxes = [];
+        $allChildren = [];
+        $this->getAllChildren($allChildren);
+        foreach ($allChildren as $child) {
+            if ($child instanceof ElementBox && $child->getElement() && $child->getElement()->getDOMElement()) {
+                $elementTagName = $child->getElement()->getDOMElement()->tagName;
+                if ($elementTagName && strtolower($elementTagName) === strtolower($tagName)) {
+                    $boxes[] = $child;
+                }
+            }
+        }
+        return $boxes;
+    }
+
+    /**
+     * Fix tables - iterate through cells and insert missing one
+     * @return $this
+     */
+    protected function fixTables()
+    {
+        $tables = $this->getBoxesByTagName('table');
+        foreach ($tables as $tableBox) {
+            $rowGroups = $tableBox->getChildren();
+            if (!isset($rowGroups[0])) {
+                $rowGroup = $tableBox->createRowGroup();
+                $row = $rowGroup->createRow();
+                $column = $row->createColumn();
+                $column->createCell();
+            } else {
+                $columnsCount = 0;
+                foreach ($rowGroups as $rowGroup) {
+                    foreach ($rowGroup->getChildren() as $row) {
+                        $columns = $row->getChildren();
+                        $columnsCount = max($columnsCount, count($columns));
+                    }
+                    foreach ($rowGroup->getChildren() as $row) {
+                        $columns = $row->getChildren();
+                        $missing = $columnsCount - count($columns);
+                        for ($i = 0; $i < $missing; $i++) {
+                            $column = $row->createColumn();
+                            $column->createCell();
+                        }
+                    }
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Build tree
      * @param $parentBlock
      * @return $this
      */
     public function buildTree($parentBlock = null)
     {
-        $domElement = $this->getElement()->getDOMElement();
+        if ($this->getElement()) {
+            $domElement = $this->getElement()->getDOMElement();
+        } else {
+            // tablebox doesn't have element so we can get it from table wrapper (parent box)
+            $domElement = $this->getParent()->getElement()->getDOMElement();
+        }
         if ($domElement->hasChildNodes()) {
             foreach ($domElement->childNodes as $childDomElement) {
                 if ($childDomElement instanceof \DOMComment) {
@@ -124,6 +185,7 @@ class ElementBox extends Box
             }
         }
         $this->removeEmptyLines();
+        $this->fixTables();
         return $this;
     }
 
