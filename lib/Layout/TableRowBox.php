@@ -96,13 +96,17 @@ class TableRowBox extends BlockBox
             $spannedWidth = '0';
             foreach ($columns as $column) {
                 $spannedWidth = Math::add($spannedWidth, $column->getDimensions()->getWidth());
-                $column->getParent()->removeChild($column);
             }
-            if ($column->getStyle()->getRules('border-collapse') === 'separate') {
-                $spannedWidth = Math::add($spannedWidth, Math::mul((string)(count($columns) - 1), $column->getStyle()->getRules('border-spacing')));
-                if ($column->getNext() === null) {
-                    $spannedWidth = Math::add($spannedWidth, $column->getStyle()->getRules('border-spacing'));
-                }
+            $tableAuto = $this->getParent()->getParent()->getParent()->getStyle()->getRules('width') === 'auto';
+            $separate = $column->getStyle()->getRules('border-collapse') === 'separate';
+            if ($separate && $tableAuto) {
+                $spannedWidth = Math::add($spannedWidth, Math::mul((string)(count($columns)), $column->getStyle()->getRules('border-spacing')));
+            }
+            if ($separate && $column->getNext() === null && !$tableAuto) {
+                $spannedWidth = Math::sub($spannedWidth, $column->getStyle()->getRules('border-spacing'));
+            }
+            foreach ($columns as $column) {
+                $column->getParent()->removeChild($column);
             }
             if ($source->getNext() === null) {
                 $cell = $source->getFirstChild();
