@@ -59,7 +59,6 @@ class TableRowBox extends BlockBox
     {
         $style = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
-            ->setContent('')
             ->parseInline();
         $box = (new TableColumnBox())
             ->setDocument($this->document)
@@ -69,6 +68,45 @@ class TableRowBox extends BlockBox
         $this->appendChild($box);
         $box->getStyle()->init();
         return $box;
+    }
+
+    /**
+     * Span columns
+     * @return $this
+     */
+    public function spanColumns()
+    {
+        $colSpans = [];
+        foreach ($this->getChildren() as $columnIndex => $column) {
+            if ($column->getColSpan() > 1) {
+                $spanCount = $column->getColSpan() - 1;
+                $spans = [$column];
+                $currentColumn = $column;
+                for ($i = 0; $i < $spanCount; $i++) {
+                    $currentColumn = $currentColumn->getNext();
+                    $spans[] = $currentColumn;
+                }
+                $colSpans[] = $spans;
+            }
+        }
+        foreach ($colSpans as $columns) {
+            $columns = array_reverse($columns);
+            $source = array_pop($columns);
+            $columns = array_reverse($columns);
+            $spannedWidth = '0';
+            foreach ($columns as $column) {
+                $spannedWidth = Math::add($spannedWidth, $column->getDimensions()->getWidth());
+            }
+            $spannedWidth = Math::add($spannedWidth, Math::mul((string)(count($columns) - 1), $column->getStyle()->getRules('border-spacing')));
+            if ($column->getNext() === null) {
+                $spannedWidth = Math::add($spannedWidth, $column->getStyle()->getRules('border-spacing'));
+            }
+            $sourceDmns = $source->getDimensions();
+            $sourceDmns->setWidth(Math::add($sourceDmns->getWidth(), $spannedWidth));
+            $cell = $source->getFirstChild();
+            $cell->getDimensions()->setWidth($sourceDmns->getInnerWidth());
+        }
+        return $this;
     }
 
     /**

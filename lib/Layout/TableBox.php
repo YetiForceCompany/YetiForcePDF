@@ -579,6 +579,9 @@ class TableBox extends BlockBox
      */
     protected function finish()
     {
+        foreach ($this->rows as $row) {
+            $row->spanColumns();
+        }
         $style = $this->getStyle();
         $width = $this->rows[0]->getDimensions()->getWidth();
         $width = Math::add($width, $style->getHorizontalPaddingsWidth(), $style->getHorizontalBordersWidth());

@@ -30,14 +30,6 @@ class TableCellBox extends BlockBox
             $child->measureWidth();
         }
         $this->divideLines();
-        /*$maxWidth = '0';
-        foreach ($this->getChildren() as $child) {
-            $maxWidth = Math::max($maxWidth, $child->getDimensions()->getOuterWidth());
-        }
-        $this->getDimensions()->setWidth($maxWidth);
-        $parentStyle = $this->getParent()->getstyle();
-        $spacing = Math::add($parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
-        $this->getParent()->getDimensions()->setWidth(Math::add($maxWidth, $spacing));*/
         // do not set up width because it was set by TableBox measureWidth method
         return $this;
     }

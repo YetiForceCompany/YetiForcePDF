@@ -93,11 +93,11 @@ class ElementBox extends Box
      * Fix tables - iterate through cells and insert missing one
      * @return $this
      */
-    protected function fixTables()
+    public function fixTables()
     {
         $tables = $this->getBoxesByTagName('table');
         foreach ($tables as $tableBox) {
-            $rowGroups = $tableBox->getChildren();
+            $rowGroups = $tableBox->getChildren()[0]->getChildren();
             if (!isset($rowGroups[0])) {
                 $rowGroup = $tableBox->createRowGroup();
                 $row = $rowGroup->createRow();
@@ -114,8 +114,8 @@ class ElementBox extends Box
                         $columns = $row->getChildren();
                         $missing = $columnsCount - count($columns);
                         for ($i = 0; $i < $missing; $i++) {
-                            $column = $row->createColumn();
-                            $column->createCell();
+                            $column = $row->createColumnBox();
+                            $column->createCellBox();
                         }
                     }
                 }
@@ -185,7 +185,6 @@ class ElementBox extends Box
             }
         }
         $this->removeEmptyLines();
-        $this->fixTables();
         return $this;
     }
 
