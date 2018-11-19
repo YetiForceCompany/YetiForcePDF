@@ -632,7 +632,6 @@ class TableBox extends BlockBox
         $parentSpacing = Math::add($parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
         $availableSpace = Math::sub($availableSpace, $this->cellSpacingWidth, $parentSpacing);
         $currentWidth = Math::sub($this->getRowInnerWidth(), $this->cellSpacingWidth);
-        //$currentWidth = $this->getRowInnerWidth();
         $toRemoveTotal = Math::sub($currentWidth, $availableSpace);
         $totalPercentages = '0';
         foreach ($this->percentages as $percentage) {
@@ -695,7 +694,9 @@ class TableBox extends BlockBox
                     $columnWidth = Math::mul($toAutoDisposition, $ratio);
                     foreach ($columns as $column) {
                         $columnDimensions = $column->getDimensions();
-                        $columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth()));
+                        $cell = $column->getFirstChild();
+                        $cellStyle = $cell->getStyle();
+                        $columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth(), $cellStyle->getHorizontalBordersWidth()));
                         $column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
                     }
                 }
