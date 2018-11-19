@@ -1259,6 +1259,9 @@ class Style extends \YetiForcePDF\Base
     public function __clone()
     {
         $this->font = clone $this->font;
+        if ($this->element) {
+            $this->elemet = clone $this->element;
+        }
     }
 
 }

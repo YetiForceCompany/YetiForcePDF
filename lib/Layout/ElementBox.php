@@ -105,10 +105,32 @@ class ElementBox extends Box
                 $column->createCell();
             } else {
                 $columnsCount = 0;
-                foreach ($rowGroups as $rowGroup) {
+                foreach ($rowGroups as $rowIndex => $rowGroup) {
                     foreach ($rowGroup->getChildren() as $row) {
                         $columns = $row->getChildren();
                         $columnsCount = max($columnsCount, count($columns));
+                        foreach ($columns as $columnIndex => $column) {
+                            if ($column->getRowSpan() > 1) {
+                                $rowSpans = $column->getRowSpan();
+                                for ($i = 1; $i < $rowSpans; $i++) {
+                                    $nextRowGroup = $rowGroup->getParent()->getChildren()[$rowIndex + $i];
+                                    $nextRow = $nextRowGroup->getFirstChild();
+                                    $rowChildren = $nextRow->getChildren();
+                                    $insertColumn = $nextRow->removeChild($nextRow->createColumnBox());
+                                    if (isset($rowChildren[$columnIndex])) {
+                                        $before = $rowChildren[$columnIndex];
+                                        $nextRow->insertBefore($insertColumn, $before);
+                                    } else {
+                                        $nextRow->appendChild($insertColumn);
+                                    }
+                                    $insertColumn->setStyle(clone $column->getStyle());
+                                    $insertColumn->getStyle()->setBox($insertColumn);
+                                    $insertCell = $insertColumn->createCellBox();
+                                    $insertCell->setStyle(clone $column->getFirstChild()->getStyle());
+                                    $insertCell->getStyle()->setBox($insertCell);
+                                }
+                            }
+                        }
                     }
                     foreach ($rowGroup->getChildren() as $row) {
                         $columns = $row->getChildren();
@@ -122,6 +144,14 @@ class ElementBox extends Box
             }
         }
         return $this;
+    }
+
+    public function spanRows()
+    {
+        $tables = $this->getBoxesByTagName('table');
+        foreach ($tables as $tableBox) {
+            $tableBox->getFirstChild()->spanRows();
+        }
     }
 
     /**

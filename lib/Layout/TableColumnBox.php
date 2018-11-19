@@ -26,6 +26,31 @@ class TableColumnBox extends InlineBlockBox
     protected $colSpan = 1;
 
     /**
+     * @var int row span
+     */
+    protected $rowSpan = 1;
+
+    /**
+     * Set row span
+     * @param int $rowSpan
+     * @return $this
+     */
+    public function setRowSpan(int $rowSpan)
+    {
+        $this->rowSpan = $rowSpan;
+        return $this;
+    }
+
+    /**
+     * Get row span
+     * @return int
+     */
+    public function getRowSpan()
+    {
+        return $this->rowSpan;
+    }
+
+    /**
      * Get column span
      * @return int
      */

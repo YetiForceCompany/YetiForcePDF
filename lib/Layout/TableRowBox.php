@@ -136,6 +136,11 @@ class TableRowBox extends BlockBox
         if ($attributeColSpan) {
             $colSpan = (int)$attributeColSpan;
         }
+        $rowSpan = 1;
+        $attributeRowSpan = $childDomElement->getAttribute('rowspan');
+        if ($attributeRowSpan) {
+            $rowSpan = (int)$attributeRowSpan;
+        }
         $clearStyle = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
             ->parseInline();
@@ -144,7 +149,7 @@ class TableRowBox extends BlockBox
             ->setParent($this)
             ->setStyle($clearStyle)
             ->init();
-        $column->setColSpan($colSpan);
+        $column->setColSpan($colSpan)->setRowSpan($rowSpan);
         $this->appendChild($column);
         $column->getStyle()->init();
         $box = (new TableCellBox())

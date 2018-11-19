@@ -583,6 +583,51 @@ class TableBox extends BlockBox
     }
 
     /**
+     * Span rows
+     * @return $this
+     */
+    public function spanRows()
+    {
+        $toRemove = [];
+        foreach ($this->rows as $rowIndex => $row) {
+            foreach ($row->getChildren() as $columnIndex => $column) {
+                if ($column->getRowSpan() > 1) {
+                    $rowSpans = $column->getRowSpan();
+                    $spanHeight = '0';
+                    for ($i = 1; $i < $rowSpans; $i++) {
+                        $nextRowGroup = $row->getParent()->getParent()->getChildren()[$rowIndex + $i];
+                        $spanColumn = $nextRowGroup->getFirstChild()->getChildren()[$columnIndex];
+                        $spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
+                        $toRemove[] = $spanColumn;
+                    }
+                    $colDmns = $column->getDimensions();
+                    $colDmns->setHeight(Math::add($colDmns->getHeight(), $spanHeight));
+                    $cell = $column->getFirstChild();
+                    $colInnerHeight = $colDmns->getInnerHeight();
+                    $cell->getDimensions()->setHeight($colInnerHeight);
+                    $cellHeight = '0';
+                    foreach ($cell->getChildren() as $cellChild) {
+                        $cellHeight = Math::add($cellHeight, $cellChild->getDimensions()->getHeight());
+                    }
+                    $columnStyle = $column->getStyle();
+                    switch ($columnStyle->getRules('vertical-align')) {
+                        case 'baseline':
+                        case 'middle':
+                            $margin = Math::div(Math::sub($colInnerHeight, $cellHeight), '2');
+                            $columnStyle->setRule('padding-top', $margin);
+                            $columnStyle->setRule('padding-bottom', $margin);
+                            break;
+                    }
+                }
+            }
+        }
+        foreach ($toRemove as $remove) {
+            $remove->getParent()->removeChild($remove);
+        }
+        return $this;
+    }
+
+    /**
      * Finish table width calculations
      * @return $this
      */

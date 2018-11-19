@@ -112,7 +112,9 @@ class InlineBlockBox extends BlockBox
 
     public function __clone()
     {
-        $this->element = clone $this->element;
+        if ($this->element) {
+            $this->element = clone $this->element;
+        }
         $this->style = clone $this->style;
         $this->offset = clone $this->offset;
         $this->dimensions = clone $this->dimensions;
