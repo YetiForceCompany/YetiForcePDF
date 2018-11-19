@@ -245,9 +245,9 @@ class TableBox extends BlockBox
         $spacing = Math::add($style->getHorizontalPaddingsWidth(), $style->getHorizontalBordersWidth());
         $width = Math::add($width, $spacing);
         $this->getDimensions()->setWidth($width);
-        $parentStyle = $this->getParent()->getStyle();
-        $parentSpacing = Math::add($parentStyle->getHorizontalPaddingsWidth(), $parentStyle->getHorizontalBordersWidth());
-        $width = Math::add($width, $parentSpacing);
+        //$parentStyle = $this->getParent()->getStyle();
+        //$parentSpacing = Math::add($parentStyle->getHorizontalPaddingsWidth(), $parentStyle->getHorizontalBordersWidth());
+        //$width = Math::add($width, $parentSpacing);
         //$this->getParent()->getDimensions()->setWidth($width);
         return $this;
     }
@@ -565,9 +565,11 @@ class TableBox extends BlockBox
         $this->getDimensions()->setWidth($width);
         $parent = $this->getParent();
         $parentStyle = $parent->getStyle();
-        $parentSpacing = Math::add($parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
-        $width = Math::add($width, $parentSpacing);
-        $parent->getDimensions()->setWidth($width);
+        if ($parentStyle->getRules('width') === 'auto') {
+            $parentSpacing = Math::add($parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
+            $width = Math::add($width, $parentSpacing);
+            $parent->getDimensions()->setWidth($width);
+        }
         foreach ($this->getCells() as $cell) {
             $cell->measureWidth();
         }
