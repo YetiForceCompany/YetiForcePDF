@@ -19,6 +19,30 @@ use \YetiForcePDF\Math;
  */
 class TableCellBox extends BlockBox
 {
+    /**
+     * @var bool is column spanned?
+     */
+    protected $spanned = false;
+
+    /**
+     * Set column spanned
+     * @param bool $spanned
+     * @return $this
+     */
+    public function setSpanned(bool $spanned)
+    {
+        $this->spanned = $spanned;
+        return $this;
+    }
+
+    /**
+     * Is column spanned with others?
+     * @return bool
+     */
+    public function isSpanned()
+    {
+        return $this->spanned;
+    }
 
     /**
      * Measure width

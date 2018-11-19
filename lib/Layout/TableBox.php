@@ -188,13 +188,22 @@ class TableBox extends BlockBox
                 $cellStyle = $cell->getStyle();
                 $columnStyle = $column->getStyle();
                 $columnOuterWidth = $column->getDimensions()->getOuterWidth();
+                if ($column->getColSpan() > 1) {
+                    $columnOuterWidth = Math::div($columnOuterWidth, (string)$column->getColSpan());
+                }
                 $columnSpacing = Math::add($columnStyle->getHorizontalBordersWidth(), $columnStyle->getHorizontalPaddingsWidth());
                 $columnInnerWidth = Math::sub($columnOuterWidth, $columnSpacing);
                 $styleWidth = $columnStyle->getRules('width');
                 $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex], $columnInnerWidth);
                 $minColumnWidth = $cell->getDimensions()->getMinWidth();
+                if ($column->getColSpan() > 1) {
+                    $minColumnWidth = Math::div($minColumnWidth, (string)$column->getColSpan());
+                }
                 $this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex], $minColumnWidth);
                 if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === false) {
+                    if ($column->getColSpan() > 1) {
+                        $styleWidth = Math::div($styleWidth, (string)$column->getColSpan());
+                    }
                     $preferred = Math::max($styleWidth, $minColumnWidth);
                     $this->minWidths[$columnIndex] = $preferred;
                 } elseif (strpos($styleWidth, '%') > 0) {
@@ -717,9 +726,7 @@ class TableBox extends BlockBox
                     $columnWidth = Math::mul($toAutoDisposition, $ratio);
                     foreach ($columns as $column) {
                         $columnDimensions = $column->getDimensions();
-                        $cell = $column->getFirstChild();
-                        $cellStyle = $cell->getStyle();
-                        $columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth(), $cellStyle->getHorizontalBordersWidth()));
+                        $columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth()));
                         $column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
                     }
                 }

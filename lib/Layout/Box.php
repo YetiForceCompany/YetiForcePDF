@@ -531,6 +531,9 @@ class Box extends \YetiForcePDF\Base
      */
     protected function addBorderInstructions(array $element, string $pdfX, string $pdfY, string $width, string $height)
     {
+        if ($this->getStyle()->getRules('display') === 'none') {
+            return $element;
+        }
         $rules = $this->style->getRules();
         $x1 = '0';
         $x2 = $width;

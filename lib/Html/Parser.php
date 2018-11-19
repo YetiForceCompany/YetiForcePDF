@@ -119,13 +119,13 @@ class Parser extends \YetiForcePDF\Base
         $this->box->setElement($this->rootElement);
         $this->box->setStyle($this->rootElement->parseStyle());
         $this->box->buildTree();
-        $this->box->fixTables();
         $this->box->getStyle()->fixDomTree();
+        $this->box->fixTables();
         $this->box->layout();
         $children = [];
         $this->box->getAllChildren($children);
         foreach ($children as $box) {
-            if (!$box instanceof \YetiForcePDF\Layout\LineBox) {
+            if (!$box instanceof \YetiForcePDF\Layout\LineBox && $box->getStyle()->getRules('display') !== 'none') {
                 $this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
             }
         }

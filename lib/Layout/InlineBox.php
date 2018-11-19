@@ -318,6 +318,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 
     public function addBackgroundColorInstructions(array $element, $pdfX, $pdfY, $width, $height)
     {
+        if ($this->getStyle()->getRules('display') === 'none') {
+            return $element;
+        }
         $rules = $this->style->getRules();
         if ($rules['background-color'] !== 'transparent') {
             $bgColor = [

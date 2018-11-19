@@ -96,10 +96,18 @@ class TableRowBox extends BlockBox
             $spannedWidth = '0';
             foreach ($columns as $column) {
                 $spannedWidth = Math::add($spannedWidth, $column->getDimensions()->getWidth());
+                $column->getParent()->removeChild($column);
             }
-            $spannedWidth = Math::add($spannedWidth, Math::mul((string)(count($columns) - 1), $column->getStyle()->getRules('border-spacing')));
-            if ($column->getNext() === null) {
-                $spannedWidth = Math::add($spannedWidth, $column->getStyle()->getRules('border-spacing'));
+            if ($column->getStyle()->getRules('border-collapse') === 'separate') {
+                $spannedWidth = Math::add($spannedWidth, Math::mul((string)(count($columns) - 1), $column->getStyle()->getRules('border-spacing')));
+                if ($column->getNext() === null) {
+                    $spannedWidth = Math::add($spannedWidth, $column->getStyle()->getRules('border-spacing'));
+                }
+            }
+            if ($source->getNext() === null) {
+                $cell = $source->getFirstChild();
+                $cellStyle = $cell->getStyle();
+                $cellStyle->setRule('border-right-width', $cellStyle->getRules('border-left-width'));
             }
             $sourceDmns = $source->getDimensions();
             $sourceDmns->setWidth(Math::add($sourceDmns->getWidth(), $spannedWidth));
@@ -143,6 +151,28 @@ class TableRowBox extends BlockBox
             ->init();
         $column->appendChild($box);
         $box->getStyle()->init();
+        $colSpan--;
+        for ($i = 0; $i < $colSpan; $i++) {
+            $clearStyle = (new \YetiForcePDF\Style\Style())
+                ->setDocument($this->document)
+                ->parseInline();
+            $column = (new TableColumnBox())
+                ->setDocument($this->document)
+                ->setParent($this)
+                ->setStyle($clearStyle)
+                ->init();
+            $column->setColSpan(-1);
+            $this->appendChild($column);
+            $column->getStyle()->init();
+            $spanBox = (new TableCellBox())
+                ->setDocument($this->document)
+                ->setParent($column)
+                ->setStyle(clone $style)
+                ->setElement(clone $element)
+                ->setSpanned(true)
+                ->init();
+            $column->appendChild($spanBox);
+        }
         $box->buildTree($box);
         return $box;
     }

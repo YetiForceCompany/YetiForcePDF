@@ -387,6 +387,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      */
     public function addBackgroundColorInstructions(array $element, $pdfX, $pdfY, $width, $height)
     {
+        if ($this->getStyle()->getRules('display') === 'none') {
+            return $element;
+        }
         $rules = $this->style->getRules();
         if ($rules['background-color'] !== 'transparent') {
             $x1 = '0';
@@ -412,6 +415,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      */
     public function getInstructions(): string
     {
+        if ($this->getStyle()->getRules('display') === 'none') {
+            return '';
+        }
         $coordinates = $this->getCoordinates();
         $pdfX = $coordinates->getPdfX();
         $pdfY = $coordinates->getPdfY();
