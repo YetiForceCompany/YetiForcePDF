@@ -146,7 +146,7 @@ class ElementBox extends Box
         return $this;
     }
 
-    public function spanRows()
+    public function spanAllRows()
     {
         $tables = $this->getBoxesByTagName('table');
         foreach ($tables as $tableBox) {

@@ -600,6 +600,9 @@ class TableBox extends BlockBox
                         $spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
                         $toRemove[] = $spanColumn;
                     }
+                    if ($rowIndex + $i === count($this->getChildren()) && $column->getStyle()->getRules('border-collapse') === 'separate') {
+                        $spanHeight = Math::sub($spanHeight, $column->getStyle()->getRules('border-spacing'));
+                    }
                     $colDmns = $column->getDimensions();
                     $colDmns->setHeight(Math::add($colDmns->getHeight(), $spanHeight));
                     $cell = $column->getFirstChild();
@@ -610,14 +613,22 @@ class TableBox extends BlockBox
                         $cellHeight = Math::add($cellHeight, $cellChild->getDimensions()->getHeight());
                     }
                     $columnStyle = $column->getStyle();
+                    $cellStyle = $column->getFirstChild()->getStyle();
+                    if ($columnStyle->getRules('border-collapse') === 'collapse') {
+                        $cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
+                    }
                     switch ($columnStyle->getRules('vertical-align')) {
                         case 'baseline':
                         case 'middle':
                             $margin = Math::div(Math::sub($colInnerHeight, $cellHeight), '2');
-                            $columnStyle->setRule('padding-top', $margin);
-                            $columnStyle->setRule('padding-bottom', $margin);
+                            $cellStyle->setRule('padding-top', $margin);
+                            $cellStyle->setRule('padding-bottom', $margin);
                             break;
                     }
+                    $cell->measureWidth();
+                    $cell->measureHeight();
+                    $cell->measureOffset();
+                    $cell->measurePosition();
                 }
             }
         }
@@ -909,6 +920,7 @@ class TableBox extends BlockBox
                 $columnStyle = $column->getStyle();
                 $columnVerticalSize = Math::add($columnStyle->getVerticalMarginsWidth(), $columnStyle->getVerticalPaddingsWidth(), $columnStyle->getVerticalBordersWidth());
                 $columnHeight = Math::add($cell->getDimensions()->getOuterHeight(), $columnVerticalSize);
+                $columnHeight = Math::div($columnHeight, (string)$column->getRowSpan());
                 $maxRowHeights[$rowIndex] = Math::max($maxRowHeights[$rowIndex], $columnHeight);
             }
         }
@@ -920,6 +932,7 @@ class TableBox extends BlockBox
                 $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
                 $cell = $column->getFirstChild();
                 $height = $column->getDimensions()->getInnerHeight();
+                $height = Math::div($height, (string)$column->getRowSpan());
                 $cellChildrenHeight = '0';
                 foreach ($cell->getChildren() as $cellChild) {
                     $cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
@@ -927,6 +940,7 @@ class TableBox extends BlockBox
                 $cellStyle = $cell->getStyle();
                 $cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
                 $cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
+                $cellChildrenHeight = Math::div($cellChildrenHeight, (string)$column->getRowSpan());
                 // add vertical padding if needed
                 if (Math::comp($height, $cellChildrenHeight) > 0) {
                     $freeSpace = Math::sub($height, $cellChildrenHeight);
