@@ -77,7 +77,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] word-wrap
 - [ ] float
 - [ ] clear
-- [ ] table displays
+- [x] table displays
 - [ ] background-image
 - [x] rgb / rgba color [without alpha inside pdf for now]
 
@@ -100,7 +100,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 
 - [x] ~~font-weight (font-family without specifying weight and variant)~~
 - [x] ~~basic html elements with default css rules (br, table, image, hr etc.)~~
-- [ ] tables
+- [x] tables
 - [ ] images
 - [ ] page headers / footers
 - [ ] alpha channel support for colors (rgba) and opacity
