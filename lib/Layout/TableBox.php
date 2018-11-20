@@ -678,7 +678,7 @@ class TableBox extends BlockBox
                     $cell->getDimensions()->setHeight($colInnerHeight);
                     $cellHeight = '0';
                     foreach ($cell->getChildren() as $cellChild) {
-                        $cellHeight = Math::add($cellHeight, $cellChild->getDimensions()->getHeight());
+                        $cellHeight = Math::add($cellHeight, $cellChild->getDimensions()->getOuterHeight());
                     }
                     $columnStyle = $column->getStyle();
                     $cellStyle = $column->getFirstChild()->getStyle();
@@ -686,7 +686,7 @@ class TableBox extends BlockBox
                         $cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
                     }
                     $toDisposition = Math::sub($colInnerHeight, $cellHeight);
-                    switch ($columnStyle->getRules('vertical-align')) {
+                    switch ($cellStyle->getRules('vertical-align')) {
                         case 'baseline':
                         case 'middle':
                             $padding = Math::div($toDisposition, '2');
