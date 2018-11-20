@@ -16,7 +16,7 @@ use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\InlineBox;
 use \YetiForcePDF\Layout\TableBox;
 use \YetiForcePDF\Math;
-use \YetiForcePDF\Layout\Dimensions\NoBorderDimensions;
+use \YetiForcePDF\Objects\ImageStream;
 
 /**
  * Class Style
@@ -52,6 +52,10 @@ class Style extends \YetiForcePDF\Base
      * @var string $elementName (nodeName)
      */
     protected $elementName = '';
+    /**
+     * @var ImageStream
+     */
+    protected $backgroundImage;
     /**
      * Css properties that are inherited by default
      * @var array
@@ -692,6 +696,15 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Get background image stream
+     * @return ImageStream
+     */
+    public function getBackgroundImageStream()
+    {
+        return $this->backgroundImage;
+    }
+
+    /**
      * Get horizontal borders width
      * @return string
      */
@@ -939,6 +952,30 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Parse and load image file
+     * @param array $ruleParsed
+     * @return $this
+     */
+    protected function parseImage(array $ruleParsed)
+    {
+        if (!isset($ruleParsed['background-image'])) {
+            return $this;
+        }
+        $src = $ruleParsed['background-image'];
+        if (substr($src, 0, 3) !== 'url') {
+            return $this;
+        }
+        $src = trim(substr($src, 3), ';)(\'\"');
+        $this->backgroundImage = (new ImageStream())
+            ->setDocument($this->document)
+            ->init();
+        $this->backgroundImage->loadImage($src);
+        $imageName = $this->backgroundImage->getImageName();
+        $this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
+        return $this;
+    }
+
+    /**
      * Apply text style - default style for text nodes
      * @param array $rulesParsed
      * @param &array $inherited
@@ -1043,6 +1080,7 @@ class Style extends \YetiForcePDF\Base
             $rulesParsed = $this->applyTextStyle($rulesParsed, $inherited);
             $rulesParsed = $this->applyBorderSpacing($rulesParsed);
         }
+        $this->parseImage($rulesParsed);
         $finalRules = [];
         foreach ($rulesParsed as $ruleName => $ruleValue) {
             if (is_string($ruleValue)) {

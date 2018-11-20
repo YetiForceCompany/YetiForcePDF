@@ -296,6 +296,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      */
     public function measureHeight()
     {
+        $this->applyStyleHeight();
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }
@@ -392,10 +393,6 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         }
         $rules = $this->style->getRules();
         if ($rules['background-color'] !== 'transparent') {
-            $x1 = '0';
-            $y1 = $height;
-            $x2 = $width;
-            $y2 = '0';
             $bgColor = [
                 'q',
                 "1 0 0 1 $pdfX $pdfY cm",
@@ -403,6 +400,34 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                 "0 0 $width $height re",
                 'f',
                 'Q'
+            ];
+            $element = array_merge($element, $bgColor);
+        }
+        return $element;
+    }
+
+    /**
+     * Add background color instructions
+     * @param array $element
+     * @param $pdfX
+     * @param $pdfY
+     * @param $width
+     * @param $height
+     * @return array
+     */
+    public function addBackgroundImageInstructions(array $element, $pdfX, $pdfY, $width, $height)
+    {
+        if ($this->getStyle()->getBackgroundImageStream() === null) {
+            return $element;
+        }
+        $rules = $this->style->getRules();
+        if ($rules['background-image'] !== 'transparent') {
+            $bgColor = [
+                'q',
+                "1 0 0 1 $pdfX $pdfY cm",
+                "$width 0 0 $height 0 0 cm",
+                '/' . $this->getStyle()->getBackgroundImageStream()->getImageName() . ' Do',
+                'Q',
             ];
             $element = array_merge($element, $bgColor);
         }
@@ -426,6 +451,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         $height = $dimensions->getHeight();
         $element = [];
         $element = $this->addBackgroundColorInstructions($element, $pdfX, $pdfY, $width, $height);
+        $element = $this->addBackgroundImageInstructions($element, $pdfX, $pdfY, $width, $height);
         $element = $this->addBorderInstructions($element, $pdfX, $pdfY, $width, $height);
         return implode("\n", $element);
     }

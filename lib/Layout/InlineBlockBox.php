@@ -13,11 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Layout;
 
 use \YetiForcePDF\Math;
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
+
 
 /**
  * Class InlineBlockBox

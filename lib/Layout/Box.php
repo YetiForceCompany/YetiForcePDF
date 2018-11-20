@@ -490,6 +490,7 @@ class Box extends \YetiForcePDF\Base
             }
             return $this;
         }
+        $this->getDimensions()->setHeight($height);
         return $this;
     }
 
