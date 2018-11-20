@@ -109,6 +109,25 @@ class LineBox extends Box implements BoxInterface
     }
 
     /**
+     * Is this line empty?
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        $textContent = $this->getTextContent();
+        $width = '0';
+        $height = '0';
+        foreach ($this->getChildren() as $child) {
+            $width = Math::max($width, $child->getDimensions()->getStyleWidth() ?? '0');
+            $height = Math::max($height, $child->getDimensions()->getStyleHeight() ?? '0');
+        }
+        if (trim($textContent) === '' && Math::comp($width, '0') === 0 && Math::comp($height, '0') === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Remove white spaces
      * @param $childBox
      * @return $this
@@ -127,8 +146,9 @@ class LineBox extends Box implements BoxInterface
                     $previous->getFirstTextBox()->setText('');
                     $previous->measureWidth();
                 }
-                $previous = $previous->getPrevious();
-                $previousText = $previous->getTextContent();
+                if ($previous = $previous->getPrevious()) {
+                    $previousText = $previous->getTextContent();
+                }
             }
         }
         $last = $this->getLastChild();
@@ -176,8 +196,7 @@ class LineBox extends Box implements BoxInterface
                     }
                 }
             } else {
-                $textContent = $line->getTextContent();
-                if ($textContent !== '' && $textContent !== ' ') {
+                if (!$line->isEmpty()) {
                     $lines[] = $line->removeWhiteSpaces($childBox);
                 }
                 $line = (new LineBox())
@@ -197,8 +216,7 @@ class LineBox extends Box implements BoxInterface
             }
         }
         // append last line
-        $textContent = $line->getTextContent();
-        if ($textContent !== '' && $textContent !== ' ') {
+        if (!$line->isEmpty()) {
             $lines[] = $line->removeWhiteSpaces($childBox);
         }
         return $lines;

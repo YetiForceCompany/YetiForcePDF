@@ -731,7 +731,7 @@ class TableBox extends BlockBox
     protected function finish()
     {
         foreach ($this->rows as $row) {
-            $row->spanColumns();
+            //$row->spanColumns();
         }
         $style = $this->getStyle();
         $width = $this->rows[0]->getDimensions()->getWidth();
@@ -1068,17 +1068,21 @@ class TableBox extends BlockBox
                     $cellStyle = $cell->getStyle();
                     switch ($cellStyle->getRules('vertical-align')) {
                         case 'top':
+                            $freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-bottom'));
                             $cellStyle->setRule('padding-bottom', $freeSpace);
                             break;
                         case 'bottom':
+                            $freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-top'));
                             $cellStyle->setRule('padding-top', $freeSpace);
                             break;
                         case 'baseline':
                         case 'middle':
                         default:
-                            $padding = Math::div($freeSpace, '2');
-                            $cellStyle->setRule('padding-top', $padding);
-                            $cellStyle->setRule('padding-bottom', $padding);
+                            $disposition = Math::div($freeSpace, '2');
+                            $paddingTop = Math::add($cellStyle->getRules('padding-top'), $disposition);
+                            $paddingBottom = Math::add($cellStyle->getRules('padding-bottom'), $disposition);
+                            $cellStyle->setRule('padding-top', $paddingTop);
+                            $cellStyle->setRule('padding-bottom', $paddingBottom);
                             break;
                     }
                 }

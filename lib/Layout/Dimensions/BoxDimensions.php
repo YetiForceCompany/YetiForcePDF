@@ -218,8 +218,34 @@ class BoxDimensions extends Dimensions
                     return Math::percent($widthInPercent, $parentWidth);
                 }
             }
-        }else {
+        } else {
             return $width;
+        }
+        return null;
+    }
+
+    /**
+     * Calculate height from style width:10%
+     * @return mixed|null|string
+     */
+    public function getStyleHeight()
+    {
+        $height = $this->getBox()->getStyle()->getRules('height');
+        if ($height === 'auto') {
+            return null;
+        }
+        $percentPos = strpos($height, '%');
+        if ($percentPos !== false) {
+            $widthInPercent = substr($height, 0, $percentPos);
+            $closestBoxDimensions = $this->getBox()->getClosestBox()->getDimensions();
+            if ($closestBoxDimensions->getHeight() !== null) {
+                $parentHeight = $closestBoxDimensions->getInnerHeight();
+                if ($parentHeight) {
+                    return Math::percent($widthInPercent, $parentHeight);
+                }
+            }
+        } else {
+            return $height;
         }
         return null;
     }

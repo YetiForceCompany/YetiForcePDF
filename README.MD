@@ -78,7 +78,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] float
 - [ ] clear
 - [x] table displays
-- [ ] background-image
+- [x] background-image
 - [x] rgb / rgba color [without alpha inside pdf for now]
 
 

@@ -954,10 +954,17 @@ class Style extends \YetiForcePDF\Base
     /**
      * Parse and load image file
      * @param array $ruleParsed
-     * @return $this
+     * @return array
      */
     protected function parseImage(array $ruleParsed)
     {
+        if ($element = $this->getElement()) {
+            if ($domElement = $element->getDOMElement()) {
+                if ($domElement->tagName === 'img' && $domElement->getAttribute('src')) {
+                    $ruleParsed['background-image'] = 'url(' . $domElement->getAttribute('src') . ');';
+                }
+            }
+        }
         if (!isset($ruleParsed['background-image'])) {
             return $this;
         }
@@ -972,7 +979,13 @@ class Style extends \YetiForcePDF\Base
         $this->backgroundImage->loadImage($src);
         $imageName = $this->backgroundImage->getImageName();
         $this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
-        return $this;
+        if (!isset($ruleParsed['width']) || $ruleParsed['width'] === 'auto') {
+            $ruleParsed['width'] = $this->backgroundImage->getWidth();
+        }
+        if (!isset($ruleParsed['height']) || $ruleParsed['height'] === 'auto') {
+            $ruleParsed['height'] = $this->backgroundImage->getHeight();
+        }
+        return $ruleParsed;
     }
 
     /**
