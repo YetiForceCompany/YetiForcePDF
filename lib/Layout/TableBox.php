@@ -200,11 +200,6 @@ class TableBox extends BlockBox
         return $cells;
     }
 
-    protected function getPercentWidth()
-    {
-
-    }
-
     /**
      * Get minimal and maximal column widths
      * @param array $columnGroups
