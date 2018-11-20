@@ -306,7 +306,7 @@ class TableBox extends BlockBox
             $rowStyle = $row->getStyle();
             if ($this->getStyle()->getRules('border-collapse') === 'separate') {
                 $rowSpacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
-                $width = Math::sub($width, $rowSpacing);
+                $width = Math::add($width, $rowSpacing);
             }
             $row->getDimensions()->setWidth($width);
             $row->getParent()->getDimensions()->setWidth($width);
@@ -550,6 +550,11 @@ class TableBox extends BlockBox
             }
         } else {
             $currentRowWidth = $this->getParent()->getDimensions()->getInnerWidth();
+            if ($this->getStyle()->getRules('border-collapse') === 'separate') {
+                $rowStyle = $this->getRows()[0]->getStyle();
+                $spacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
+                $currentRowWidth = Math::sub($currentRowWidth, $spacing);
+            }
         }
         $mustExpand = false;
         foreach ($this->percentColumns as $columnIndex => $columns) {
