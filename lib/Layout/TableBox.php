@@ -538,8 +538,12 @@ class TableBox extends BlockBox
     protected function applyPercentage()
     {
         $currentRowWidth = '0';
-        foreach ($this->getRows()[0]->getChildren() as $columnIndex => $column) {
-            $currentRowWidth = Math::add($currentRowWidth, $column->getDimensions()->getInnerWidth());
+        if ($this->getParent()->getStyle()->getRules('width') === 'auto') {
+            foreach ($this->getRows()[0]->getChildren() as $columnIndex => $column) {
+                $currentRowWidth = Math::add($currentRowWidth, $column->getDimensions()->getInnerWidth());
+            }
+        } else {
+            $currentRowWidth = $this->getParent()->getDimensions()->getInnerWidth();
         }
         $mustExpand = false;
         foreach ($this->percentColumns as $columnIndex => $columns) {
@@ -681,12 +685,19 @@ class TableBox extends BlockBox
                     if ($columnStyle->getRules('border-collapse') === 'collapse' && $rowIndex + $i === count($this->getChildren())) {
                         $cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
                     }
+                    $toDisposition = Math::sub($colInnerHeight, $cellHeight);
                     switch ($columnStyle->getRules('vertical-align')) {
                         case 'baseline':
                         case 'middle':
-                            $margin = Math::div(Math::sub($colInnerHeight, $cellHeight), '2');
-                            $cellStyle->setRule('padding-top', $margin);
-                            $cellStyle->setRule('padding-bottom', $margin);
+                            $padding = Math::div($toDisposition, '2');
+                            $cellStyle->setRule('padding-top', $padding);
+                            $cellStyle->setRule('padding-bottom', $padding);
+                            break;
+                        case 'top':
+                            $cellStyle->setRule('padding-bottom', $toDisposition);
+                            break;
+                        case 'bottom':
+                            $cellStyle->setRule('padding-top', $toDisposition);
                             break;
                     }
                     $cell->measureWidth();
@@ -917,8 +928,16 @@ class TableBox extends BlockBox
         $currentPercentsWidth = '0';
         $addToPercents = Math::min($neededTotal, $forPercentages);
         foreach ($this->percentColumns as $columnIndex => $columns) {
-            $ratio = Math::div($this->percentages[$columnIndex], $totalPercentages);
-            $add = Math::mul($ratio, $addToPercents);
+            if (Math::comp($addToPercents, $neededTotal) < 0) {
+                $ratio = Math::div($this->percentages[$columnIndex], $totalPercentages);
+                $add = Math::mul($ratio, $addToPercents);
+            } else {
+                if (isset($needed[$columnIndex])) {
+                    $add = $needed[$columnIndex];
+                } else {
+                    $add = '0';
+                }
+            }
             foreach ($columns as $column) {
                 $colDmns = $column->getDimensions();
                 $colDmns->setWidth(Math::add($colDmns->getWidth(), $add));
