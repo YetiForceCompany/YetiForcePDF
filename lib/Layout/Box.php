@@ -540,7 +540,7 @@ class Box extends \YetiForcePDF\Base
         $y1 = $height;
         $y2 = '0';
         $element[] = '% start border';
-        if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none') {
+        if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none' && $rules['border-top-color'] !== 'transparent') {
             $path = implode(" l\n", [
                 implode(' ', [$x2, $y1]),
                 implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::sub($y1, $rules['border-top-width'])]),
@@ -558,7 +558,7 @@ class Box extends \YetiForcePDF\Base
             ];
             $element = array_merge($element, $borderTop);
         }
-        if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none') {
+        if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none' && $rules['border-right-color'] !== 'transparent') {
             $path = implode(" l\n", [
                 implode(' ', [$x2, $y2]),
                 implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::add($y2, $rules['border-bottom-width'])]),
@@ -576,7 +576,7 @@ class Box extends \YetiForcePDF\Base
             ];
             $element = array_merge($element, $borderTop);
         }
-        if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none') {
+        if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none' && $rules['border-bottom-color'] !== 'transparent') {
             $path = implode(" l\n", [
                 implode(' ', [$x2, $y2]),
                 implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::add($y2, $rules['border-bottom-width'])]),
@@ -594,7 +594,7 @@ class Box extends \YetiForcePDF\Base
             ];
             $element = array_merge($element, $borderTop);
         }
-        if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none') {
+        if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none' && $rules['border-left-color'] !== 'transparent') {
             $path = implode(" l\n", [
                 implode(' ', [Math::add($x1, $rules['border-left-width']), Math::sub($y1, $rules['border-top-width'])]),
                 implode(' ', [Math::add($x1, $rules['border-left-width']), Math::add($y2, $rules['border-bottom-width'])]),

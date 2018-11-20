@@ -445,7 +445,9 @@ class Style extends \YetiForcePDF\Base
             'display' => 'table-cell',
             'vertical-align' => 'inherit',
             'font-weight' => 'bold',
-            'text-align' => 'center',],
+            'text-align' => 'center',
+            'padding' => '1px',
+        ],
         'thead' => [
             'display' => 'table-header-group',
             'vertical-align' => 'middle',
@@ -1152,6 +1154,22 @@ class Style extends \YetiForcePDF\Base
                     if (Math::comp($cellBorders[3], $parentStyle->getRules('border-left-width')) >= 0) {
                         $parentStyle->setRule('border-left-width', '0');
                     }
+                }
+            }
+            $rows = $box->getRows();
+            if ($this->getRules('border-collapse') === 'collapse') {
+                $rowsCount = count($rows);
+                foreach ($rows as $rowIndex => $row) {
+                    if ($rowIndex < $rowsCount) {
+                        $row->getStyle()->setRule('border-bottom-width', '0');
+                    }
+                }
+            } else {
+                foreach ($rows as $row) {
+                    $row->getStyle()->setRule('border-top-width', '0');
+                    $row->getStyle()->setRule('border-right-width', '0');
+                    $row->getStyle()->setRule('border-bottom-width', '0');
+                    $row->getStyle()->setRule('border-left-width', '0');
                 }
             }
         }

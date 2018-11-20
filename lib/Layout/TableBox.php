@@ -137,11 +137,15 @@ class TableBox extends BlockBox
      */
     public function appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock)
     {
+        $cleanStyle = (new \YetiForcePDF\Style\Style())
+            ->setDocument($this->document)
+            ->setContent('')
+            ->parseInline();
         $box = (new TableRowGroupBox())
             ->setDocument($this->document)
             ->setParent($this)
             ->setElement($element)
-            ->setStyle($style)
+            ->setStyle($cleanStyle)
             ->init();
         $this->appendChild($box);
         $box->getStyle()->init();
@@ -300,8 +304,10 @@ class TableBox extends BlockBox
         }
         foreach ($this->getRows() as $row) {
             $rowStyle = $row->getStyle();
-            $rowSpacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
-            $width = Math::add($width, $rowSpacing);
+            if ($this->getStyle()->getRules('border-collapse') === 'separate') {
+                $rowSpacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
+                $width = Math::sub($width, $rowSpacing);
+            }
             $row->getDimensions()->setWidth($width);
             $row->getParent()->getDimensions()->setWidth($width);
         }
