@@ -218,6 +218,8 @@ class BoxDimensions extends Dimensions
                     return Math::percent($widthInPercent, $parentWidth);
                 }
             }
+        }else {
+            return $width;
         }
         return null;
     }
