@@ -74,6 +74,24 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
     }
 
     /**
+     * Get image width
+     * @return string
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * Get image height
+     * @return string
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function render(): string
