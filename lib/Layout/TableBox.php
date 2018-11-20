@@ -22,21 +22,61 @@ use \YetiForcePDF\Html\Element;
  */
 class TableBox extends BlockBox
 {
-
+    /**
+     * @var array minimal widths
+     */
     protected $minWidths = [];
+    /**
+     * @var array preferred widths
+     */
     protected $preferredWidths = [];
+    /**
+     * @var array maximal widths
+     */
     protected $contentWidths = [];
+    /**
+     * @var string total min width
+     */
     protected $minWidth = '0';
+    /**
+     * @var string total preferred width
+     */
     protected $preferredWidth = '0';
+    /**
+     * @var string total max width
+     */
     protected $contentWidth = '0';
+    /**
+     * @var array percentages for each percentage column
+     */
     protected $percentages = [];
-    protected $intrinsicSum = '0';
+    /**
+     * @var string cell spacing total width
+     */
     protected $cellSpacingWidth = '0';
+    /**
+     * @var string total border width
+     */
     protected $borderWidth = '0';
+    /**
+     * @var array percentage columns
+     */
     protected $percentColumns = [];
+    /**
+     * @var array pixel columns
+     */
     protected $pixelColumns = [];
+    /**
+     * @var array auto width columns
+     */
     protected $autoColumns = [];
+    /**
+     * @var array saving state
+     */
     protected $beforeWidths = [];
+    /**
+     * @var array rows
+     */
     protected $rows = [];
 
     /**
@@ -274,10 +314,6 @@ class TableBox extends BlockBox
         $spacing = Math::add($style->getHorizontalPaddingsWidth(), $style->getHorizontalBordersWidth());
         $width = Math::add($width, $spacing);
         $this->getDimensions()->setWidth($width);
-        //$parentStyle = $this->getParent()->getStyle();
-        //$parentSpacing = Math::add($parentStyle->getHorizontalPaddingsWidth(), $parentStyle->getHorizontalBordersWidth());
-        //$width = Math::add($width, $parentSpacing);
-        //$this->getParent()->getDimensions()->setWidth($width);
         return $this;
     }
 
@@ -297,6 +333,11 @@ class TableBox extends BlockBox
         return $this;
     }
 
+    /**
+     * Add to preferred others (add left space to preferred width of auto/pixel columns)
+     * @param string $leftSpace
+     * @return string
+     */
     protected function addToPreferredOthers(string $leftSpace)
     {
         $autoNeededTotal = '0';
@@ -356,6 +397,12 @@ class TableBox extends BlockBox
         return $leftSpace;
     }
 
+    /**
+     * Add to others (left space to auto/pixel columns)
+     * @param string $leftSpace
+     * @param bool $withPreferred
+     * @return $this
+     */
     protected function addToOthers(string $leftSpace, bool $withPreferred = false)
     {
         // first of all try to redistribute space to columns that need it most (width is under preferred)
@@ -405,6 +452,10 @@ class TableBox extends BlockBox
         return $this;
     }
 
+    /**
+     * Get current others width (auto, pixel columns)
+     * @return string
+     */
     protected function getCurrentOthersWidth()
     {
         $currentOthersWidth = '0';
@@ -417,6 +468,10 @@ class TableBox extends BlockBox
         return $currentOthersWidth;
     }
 
+    /**
+     * Get total percentage
+     * @return string
+     */
     protected function getTotalPercentage()
     {
         $totalPercentageSpecified = '0';
@@ -426,6 +481,10 @@ class TableBox extends BlockBox
         return $totalPercentageSpecified;
     }
 
+    /**
+     * Get total percentages width
+     * @return string
+     */
     protected function getTotalPercentageWidth()
     {
         $totalPercentageColumnsWidth = '0';
@@ -435,6 +494,10 @@ class TableBox extends BlockBox
         return $totalPercentageColumnsWidth;
     }
 
+    /**
+     * Expand percents to min width
+     * @return $this
+     */
     protected function expandPercentsToMin()
     {
         $totalPercentageSpecified = $this->getTotalPercentage();
@@ -470,6 +533,7 @@ class TableBox extends BlockBox
         $currentOthersWidth = $this->getCurrentOthersWidth();
         $leftSpace = Math::sub($othersWidth, $currentOthersWidth);
         $this->addToOthers($leftSpace);
+        return $this;
     }
 
     /**
@@ -555,6 +619,11 @@ class TableBox extends BlockBox
         return $this;
     }
 
+    /**
+     * Set column width
+     * @param $column
+     * @param string $width
+     */
     protected function setColumnWidth($column, string $width)
     {
         $columnStyle = $column->getStyle();
@@ -614,7 +683,7 @@ class TableBox extends BlockBox
                     }
                     $columnStyle = $column->getStyle();
                     $cellStyle = $column->getFirstChild()->getStyle();
-                    if ($columnStyle->getRules('border-collapse') === 'collapse') {
+                    if ($columnStyle->getRules('border-collapse') === 'collapse' && $rowIndex + $i === count($this->getChildren())) {
                         $cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
                     }
                     switch ($columnStyle->getRules('vertical-align')) {
@@ -677,6 +746,10 @@ class TableBox extends BlockBox
         return Math::comp($availableSpace, $width) >= 0;
     }
 
+    /**
+     * Get row inner width
+     * @return string
+     */
     protected function getRowInnerWidth()
     {
         $width = '0';
@@ -686,6 +759,10 @@ class TableBox extends BlockBox
         return $width;
     }
 
+    /**
+     * Get auto columns max width
+     * @return string
+     */
     protected function getAutoColumnsMaxWidth()
     {
         $autoColumnsMaxWidth = '0';
@@ -695,6 +772,10 @@ class TableBox extends BlockBox
         return $autoColumnsMaxWidth;
     }
 
+    /**
+     * Get auto columns min width
+     * @return string
+     */
     protected function getAutoColumnsMinWidth()
     {
         $autoColumnsMinWidth = '0';
@@ -704,6 +785,10 @@ class TableBox extends BlockBox
         return $autoColumnsMinWidth;
     }
 
+    /**
+     * Get auto columns width
+     * @return string
+     */
     protected function getAutoColumnsWidth()
     {
         $autoColumnsWidth = '0';
@@ -713,7 +798,12 @@ class TableBox extends BlockBox
         return $autoColumnsWidth;
     }
 
-
+    /**
+     * Shrink to fit
+     * @param string $availableSpace
+     * @param int $step
+     * @return TableBox
+     */
     protected function shrinkToFit(string $availableSpace, int $step)
     {
         $parentStyle = $this->getParent()->getStyle();
@@ -799,6 +889,12 @@ class TableBox extends BlockBox
         return $this->finish();
     }
 
+    /**
+     * Try preferred width
+     * @param string $leftSpace
+     * @param bool $outerWidthSet
+     * @return $this|TableBox
+     */
     protected function tryPreferred(string $leftSpace, bool $outerWidthSet)
     {
         // left space is 100% width that we can use
