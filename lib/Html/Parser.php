@@ -122,7 +122,7 @@ class Parser extends \YetiForcePDF\Base
         $this->box->fixTables();
         $this->box->getStyle()->fixDomTree();
         $this->box->layout();
-        //$this->box->spanAllRows();
+        $this->box->spanAllRows();
         $children = [];
         $this->box->getAllChildren($children);
         foreach ($children as $box) {

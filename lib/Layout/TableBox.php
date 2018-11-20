@@ -731,7 +731,7 @@ class TableBox extends BlockBox
     protected function finish()
     {
         foreach ($this->rows as $row) {
-            //$row->spanColumns();
+            $row->spanColumns();
         }
         $style = $this->getStyle();
         $width = $this->rows[0]->getDimensions()->getWidth();
