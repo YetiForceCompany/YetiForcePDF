@@ -58,9 +58,9 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
     {
         $this->imageData = file_get_contents($fileName);
         $info = getimagesize($fileName);
-        $this->bitsPerComponent = $info['bits'];
-        $this->width = $info[0];
-        $this->height = $info[1];
+        $this->bitsPerComponent = (string)$info['bits'];
+        $this->width = (string)$info[0];
+        $this->height = (string)$info[1];
         return $this;
     }
 

@@ -15,9 +15,7 @@ namespace YetiForcePDF\Layout;
 use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
+
 
 /**
  * Class LineBox
@@ -61,12 +59,21 @@ class LineBox extends Box implements BoxInterface
      */
     public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
     {
-        $box = (new InlineBlockBox())
-            ->setDocument($this->document)
-            ->setElement($element)
-            ->setParent($this)
-            ->setStyle($style)
-            ->init();
+        if ($childDomElement->tagName === 'img') {
+            $box = (new ImageBox())
+                ->setDocument($this->document)
+                ->setElement($element)
+                ->setParent($this)
+                ->setStyle($style)
+                ->init();
+        } else {
+            $box = (new InlineBlockBox())
+                ->setDocument($this->document)
+                ->setElement($element)
+                ->setParent($this)
+                ->setStyle($style)
+                ->init();
+        }
         $this->appendChild($box);
         $box->getStyle()->init();
         $box->buildTree($box);
