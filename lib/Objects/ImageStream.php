@@ -50,17 +50,51 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
     protected $bitsPerComponent = 8;
 
     /**
+     * Convert images to jpeg
+     * @param string $imageData
+     * @return string
+     */
+    protected function convertToJpg(string $imageData)
+    {
+        $image = imagecreatefromstring($imageData);
+        $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+        imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+        imagealphablending($bg, TRUE);
+        imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+        ob_start();
+        imagejpeg($bg, null, 90);
+        $imageString = ob_get_contents();
+        ob_end_clean();
+        imagedestroy($image);
+        imagedestroy($bg);
+        return $imageString;
+    }
+
+    /**
      * Load image data
      * @param string $fileName
      * @return $this
      */
     public function loadImage(string $fileName)
     {
-        $this->imageData = file_get_contents($fileName);
-        $info = getimagesize($fileName);
-        $this->bitsPerComponent = (string)$info['bits'];
-        $this->width = (string)$info[0];
-        $this->height = (string)$info[1];
+        if (filter_var($fileName, FILTER_VALIDATE_URL)) {
+            //try {
+            $client = new \GuzzleHttp\Client();
+            $res = $client->request('GET', $fileName, ['verify' => 'C:/usr/local/ssl/cert.pem']);
+            if ($res->getStatusCode() === 200) {
+                $res->getHeader('content-type');
+                $this->imageData = $this->convertToJpg((string)$res->getBody());
+            }
+            //} catch (\Exception $e) {}
+        } else {
+            $this->imageData = $this->convertToJpg(file_get_contents($fileName));
+        }
+        if ($this->imageData) {
+            $info = getimagesizefromstring($this->imageData);
+            $this->bitsPerComponent = (string)$info['bits'];
+            $this->width = (string)$info[0];
+            $this->height = (string)$info[1];
+        }
         return $this;
     }
 

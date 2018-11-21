@@ -17,6 +17,8 @@ use \YetiForcePDF\Layout\InlineBox;
 use \YetiForcePDF\Layout\TableBox;
 use \YetiForcePDF\Math;
 use \YetiForcePDF\Objects\ImageStream;
+use \YetiForcePDF\Layout\TableWrapperBlockBox;
+use \YetiForcePDF\Layout\LineBox;
 
 /**
  * Class Style
@@ -954,7 +956,7 @@ class Style extends \YetiForcePDF\Base
     /**
      * Parse and load image file
      * @param array $ruleParsed
-     * @return array
+     * @return $this
      */
     protected function parseImage(array $ruleParsed)
     {
@@ -979,7 +981,7 @@ class Style extends \YetiForcePDF\Base
         $this->backgroundImage->loadImage($src);
         $imageName = $this->backgroundImage->getImageName();
         $this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
-        return $ruleParsed;
+        return $this;
     }
 
     /**
