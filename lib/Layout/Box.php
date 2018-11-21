@@ -292,6 +292,19 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Remove all children
+     * @return $this
+     */
+    public function removeChildren()
+    {
+        foreach ($this->getChildren() as $child) {
+            $child->removeChildren();
+            $this->removeChild($child);
+        }
+        return $this;
+    }
+
+    /**
      * Insert box before other box
      * @param \YetiForcePDF\Layout\Box $child
      * @param \YetiForcePDF\Layout\Box $before
