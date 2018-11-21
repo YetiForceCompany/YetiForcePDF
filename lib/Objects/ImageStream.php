@@ -78,14 +78,15 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
     public function loadImage(string $fileName)
     {
         if (filter_var($fileName, FILTER_VALIDATE_URL)) {
-            //try {
-            $client = new \GuzzleHttp\Client();
-            $res = $client->request('GET', $fileName, ['verify' => 'C:/usr/local/ssl/cert.pem']);
-            if ($res->getStatusCode() === 200) {
-                $res->getHeader('content-type');
-                $this->imageData = $this->convertToJpg((string)$res->getBody());
+            try {
+                $client = new \GuzzleHttp\Client();
+                $res = $client->request('GET', $fileName /*, ['verify' => 'C:/usr/local/ssl/cert.pem']*/);
+                if ($res->getStatusCode() === 200) {
+                    $res->getHeader('content-type');
+                    $this->imageData = $this->convertToJpg((string)$res->getBody());
+                }
+            } catch (\Exception $e) {
             }
-            //} catch (\Exception $e) {}
         } else {
             $this->imageData = $this->convertToJpg(file_get_contents($fileName));
         }
