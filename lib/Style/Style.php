@@ -674,7 +674,7 @@ class Style extends \YetiForcePDF\Base
      * @param string $ruleValue
      * @return $this
      */
-    public function setRule(string $ruleName, string $ruleValue)
+    public function setRule(string $ruleName, $ruleValue)
     {
         $this->rules[$ruleName] = $ruleValue;
         return $this;
@@ -1017,7 +1017,7 @@ class Style extends \YetiForcePDF\Base
     public function applyBorderSpacing($rulesParsed)
     {
         if ($element = $this->getElement()) {
-            if ($element->getDOMElement()->nodeName === 'td') {
+            if ($this->box instanceof \YetiForcePDF\Layout\TableCellBox) {
                 $parentStyle = $this->getParent();
                 if ($parentStyle->getRules('border-collapse') !== 'collapse') {
                     $padding = $parentStyle->getRules('border-spacing');
@@ -1221,6 +1221,19 @@ class Style extends \YetiForcePDF\Base
                     $row->getStyle()->setRule('border-right-width', '0');
                     $row->getStyle()->setRule('border-bottom-width', '0');
                     $row->getStyle()->setRule('border-left-width', '0');
+                }
+            }
+            if ($this->getRules('border-collapse') === 'separate') {
+                // move background to cells from rows
+                foreach ($rows as $row) {
+                    $rowStyle = $row->getStyle();
+                    if ($rowStyle->getRules('background-color') !== 'transparent') {
+                        foreach ($row->getChildren() as $column) {
+                            $cell = $column->getFirstChild();
+                            $cell->getStyle()->setRule('background-color', $rowStyle->getRules('background-color'));
+                        }
+                        $rowStyle->setRule('background-color', 'transparent');
+                    }
                 }
             }
         }

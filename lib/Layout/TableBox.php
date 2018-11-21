@@ -714,6 +714,7 @@ class TableBox extends BlockBox
                     $cell->measureWidth();
                     $cell->measureHeight();
                     $cell->measureOffset();
+                    $cell->alignText();
                     $cell->measurePosition();
                 }
             }
@@ -1048,7 +1049,7 @@ class TableBox extends BlockBox
         $tableHeight = '0';
         foreach ($rows as $rowIndex => $row) {
             $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
-            $row->getParent()->getDimensions()->setHeight($row->getDimensions()->getOuterHeight());
+            $row->getParent()->getDimensions()->setHeight($row->getDimensions()->getHeight());
             foreach ($row->getChildren() as $column) {
                 $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
                 $cell = $column->getFirstChild();

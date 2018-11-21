@@ -56,7 +56,11 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return Math::sub($this->getWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
+        $width = $this->getWidth();
+        if ($width === null) {
+            $width = '0';
+        }
+        return Math::sub($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
     }
 
     /**
