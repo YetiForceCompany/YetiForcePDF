@@ -683,6 +683,17 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Set rules
+     * @param array $rules
+     * @return $this
+     */
+    public function setRules(array $rules)
+    {
+        $this->rules = array_merge($this->rules, $rules);
+        return $this;
+    }
+
+    /**
      * Get rules that are inherited from parent
      * @return array
      */
@@ -839,6 +850,9 @@ class Style extends \YetiForcePDF\Base
     public function getLineHeight()
     {
         $box = $this->getBox();
+        if (!$box->isRenderable()) {
+            return '0';
+        }
         if ($box instanceof InlineBox) {
             return Math::add($this->rules['line-height'], $this->getVerticalBordersWidth());
         }
@@ -851,11 +865,15 @@ class Style extends \YetiForcePDF\Base
      */
     public function getMaxLineHeight()
     {
+        $box = $this->getBox();
+        if (!$box->isRenderable()) {
+            return '0';
+        }
         $lineHeight = $this->rules['line-height'];
         if (!$this->getRules('display') !== 'inline') {
             $lineHeight = Math::add($lineHeight, $this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth());
         }
-        foreach ($this->getBox()->getChildren() as $child) {
+        foreach ($box->getChildren() as $child) {
             $maxLineHeight = $child->getStyle()->getMaxLineHeight();
             $lineHeight = Math::max($lineHeight, $maxLineHeight, $child->getDimensions()->getHeight());
         }

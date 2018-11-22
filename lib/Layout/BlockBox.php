@@ -270,6 +270,24 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     }
 
     /**
+     * Hide empty lines
+     * @return $this
+     */
+    protected function hideEmptyLines()
+    {
+        foreach ($this->getChildren() as $child) {
+            if ($child instanceof LineBox) {
+                if ($child->isEmpty()) {
+                    $child->setRenderable(false);
+                } else {
+                    $child->setRenderable();
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Divide lines
      * @return $this
      */
@@ -290,8 +308,10 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                 $this->removeChild($child);
             }
         }
+        $this->hideEmptyLines();
         return $this;
     }
+
 
     /**
      * Measure height

@@ -103,6 +103,19 @@ class LineBox extends Box implements BoxInterface
     }
 
     /**
+     * Is this line empty?  - filled with whitespaces / non measurable elements
+     */
+    public function isEmpty()
+    {
+        foreach ($this->getChildren() as $child) {
+            if ($child->isForMeasurement()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Will this box fit in line? (or need to create new one)
      * @param \YetiForcePDF\Layout\Box $box
      * @return bool
@@ -167,6 +180,7 @@ class LineBox extends Box implements BoxInterface
                     $line->appendChild($childBox);
                 }
             } else {
+                $lines[] = $line;
                 $line = (new LineBox())
                     ->setDocument($this->document)
                     ->setParent($this->getParent())

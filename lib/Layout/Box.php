@@ -74,7 +74,14 @@ class Box extends \YetiForcePDF\Base
      * @var bool do we need to measure this box ?
      */
     protected $forMeasurement = true;
-
+    /**
+     * @var bool is this element show up in view? take space?
+     */
+    protected $renderable = true;
+    /**
+     * @var array save state before it was unrenderable
+     */
+    protected $renderableState = [];
 
     /**
      * {@inheritdoc}
@@ -262,6 +269,88 @@ class Box extends \YetiForcePDF\Base
     public function isForMeasurement()
     {
         return $this->forMeasurement;
+    }
+
+    /**
+     * Save renderable state
+     * @return $this
+     */
+    protected function saveRenderableState()
+    {
+        $this->renderableState['styleRules'] = $this->getStyle()->getRules();
+        $this->renderableState['width'] = $this->getDimensions()->getWidth();
+        $this->renderableState['height'] = $this->getDimensions()->getHeight();
+        return $this;
+    }
+
+    /**
+     * Restore renderable state
+     * @return $this
+     */
+    protected function restoreRenderableState()
+    {
+        $this->getStyle()->setRules($this->renderableState['styleRules']);
+        $this->getDimensions()->setWidth($this->renderableState['width']);
+        $this->getDimensions()->setHeight($this->renderableState['height']);
+        return $this;
+    }
+
+    /**
+     * Hide this element - set width / height to 0 and remove all styles that will change width / height
+     * @return $this
+     */
+    protected function hide()
+    {
+        $this->getStyle()->setRules([
+            'padding-top' => '0',
+            'padding-right' => '0',
+            'padding-bottom' => '0',
+            'padding-left' => '0',
+            'margin-top' => '0',
+            'margin-right' => '0',
+            'margin-bottom' => '0',
+            'margin-left' => '0',
+            'border-top-width' => '0',
+            'border-right-width' => '0',
+            'border-bottom-width' => '0',
+            'border-left-width' => '0'
+        ]);
+        $this->getDimensions()->setWidth('0');
+        $this->getDimensions()->setHeight('0');
+        return $this;
+    }
+
+    /**
+     * Set renderable
+     * @param bool $renderable
+     * @return $this
+     */
+    public function setRenderable(bool $renderable = true)
+    {
+        $changed = $this->renderable !== $renderable;
+        if (!$this->renderable && $renderable) {
+            $this->restoreRenderableState();
+        }
+        if ($this->renderable && !$renderable) {
+            $this->saveRenderableState();
+            $this->hide();
+        }
+        if ($changed) {
+            $this->renderable = $renderable;
+            foreach ($this->getChildren() as $child) {
+                $child->setRenderable($renderable);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Is this element renderable?
+     * @return bool
+     */
+    public function isRenderable()
+    {
+        return $this->renderable;
     }
 
     /**
