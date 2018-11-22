@@ -18,8 +18,7 @@
   "require": {
     "php": ">=7.2",
     "phenx/php-font-lib": "^0.5.1",
-    "guzzlehttp/guzzle": "^6.3",
-    "masterminds/html5": "^2.4"
+    "guzzlehttp/guzzle": "^6.3"
   },
   "autoload": {
     "psr-4": {

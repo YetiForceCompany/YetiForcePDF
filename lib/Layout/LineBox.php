@@ -178,7 +178,6 @@ class LineBox extends Box implements BoxInterface
                     $childBox->setForMeasurement(true);
                 }
                 $line->appendChild($childBox);
-                $line->removeWhiteSpaces();
             }
         }
         // append last line
@@ -212,10 +211,10 @@ class LineBox extends Box implements BoxInterface
      */
     public function measureHeight()
     {
-        if ($this->getDimensions()->getWidth() === '0') {
+        /*if ($this->getDimensions()->getWidth() === '0') {
             $this->getDimensions()->setHeight('0');
             return $this;
-        }
+        }*/
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }

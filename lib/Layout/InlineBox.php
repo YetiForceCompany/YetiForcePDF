@@ -39,6 +39,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
             $clone->getDimensions()->setBox($clone);
             $clone->getOffset()->setBox($clone);
             $clone->getElement()->setBox($clone);
+            $clone->getCoordinates()->setBox($clone);
             $clone->appendChild($box);
             if (!$parent instanceof LineBox) {
                 $parent->cloneParent($clone);
