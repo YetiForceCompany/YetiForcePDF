@@ -70,7 +70,7 @@ class Parser extends \YetiForcePDF\Base
         $html = $this->cleanUpHtml($html, $fromEncoding);
         $this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
         $this->domDocument = new \DOMDocument();
-        $this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>');
+        $this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | LIBXML_NOWARNING);
         return $this;
     }
 

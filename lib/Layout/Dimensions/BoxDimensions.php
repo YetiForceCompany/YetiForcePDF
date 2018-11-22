@@ -49,12 +49,37 @@ class BoxDimensions extends Dimensions
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getWidth()
+    {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
+        return parent::getWidth();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeight()
+    {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
+        return parent::getHeight();
+    }
+
+    /**
      * Get innerWidth
      * @return string
      */
     public function getInnerWidth(): string
     {
         $box = $this->getBox();
+        if (!$box->isForMeasurement()) {
+            return '0';
+        }
         $style = $box->getStyle();
         $width = $this->getWidth();
         if ($width === null) {
@@ -70,6 +95,9 @@ class BoxDimensions extends Dimensions
     public function getInnerHeight(): string
     {
         $box = $this->getBox();
+        if (!$box->isForMeasurement()) {
+            return '0';
+        }
         $style = $box->getStyle();
         $height = $this->getHeight();
         if ($height === null) {
@@ -80,7 +108,6 @@ class BoxDimensions extends Dimensions
                 }
             }
         }
-
         return Math::sub($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
     }
 
@@ -92,6 +119,9 @@ class BoxDimensions extends Dimensions
     public function getOuterWidth()
     {
         $box = $this->getBox();
+        if (!$box->isForMeasurement()) {
+            return '0';
+        }
         if (!$box instanceof LineBox) {
             $style = $this->getBox()->getStyle();
             $childrenWidth = '0';
@@ -124,6 +154,9 @@ class BoxDimensions extends Dimensions
     public function getOuterHeight()
     {
         $box = $this->getBox();
+        if (!$box->isForMeasurement()) {
+            return '0';
+        }
         $style = $this->getBox()->getStyle();
         if (!$box instanceof LineBox) {
             $childrenHeight = '0';
@@ -155,6 +188,9 @@ class BoxDimensions extends Dimensions
     public function getMinWidth()
     {
         $box = $this->getBox();
+        if (!$box->isForMeasurement()) {
+            return '0';
+        }
         if ($box instanceof TextBox) {
             return $this->getTextWidth($this->getBox()->getText());
         }
@@ -179,6 +215,9 @@ class BoxDimensions extends Dimensions
      */
     public function getTextWidth($text)
     {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
         $font = $this->box->getStyle()->getFont();
         return $font->getTextWidth($text);
     }
@@ -190,6 +229,9 @@ class BoxDimensions extends Dimensions
      */
     public function getTextHeight($text)
     {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
         $font = $this->box->getStyle()->getFont();
         return $font->getTextHeight($text);
     }
@@ -200,6 +242,9 @@ class BoxDimensions extends Dimensions
      */
     public function computeAvailableSpace()
     {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
         if ($parent = $this->getBox()->getParent()) {
             $parentStyle = $parent->getStyle();
             if ($parent->getDimensions()->getWidth() === null) {
@@ -218,6 +263,9 @@ class BoxDimensions extends Dimensions
      */
     public function getStyleWidth()
     {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
         $width = $this->getBox()->getStyle()->getRules('width');
         if ($width === 'auto') {
             return null;
@@ -244,6 +292,9 @@ class BoxDimensions extends Dimensions
      */
     public function getStyleHeight()
     {
+        if (!$this->getBox()->isForMeasurement()) {
+            return '0';
+        }
         $height = $this->getBox()->getStyle()->getRules('height');
         if ($height === 'auto') {
             return null;

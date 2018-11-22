@@ -1033,6 +1033,19 @@ class TableBox extends BlockBox
         $style = $this->getStyle();
         $maxRowHeights = [];
         $rows = $this->getRows();
+        $spannedRowsCount = []; // spannedRowsCount is array of number of row spans for each row
+        foreach ($rows as $rowIndex => $row) {
+            foreach ($row->getChildren() as $column) {
+                $spannedRowsCount[$rowIndex] = max($spannedRowsCount[$rowIndex], $column->getRowSpan());
+            }
+        }
+        $rowsCount = []; // rowsCount is array with number of rows they must share for each row
+        foreach ($spannedRowsCount as $currentRowSpanIndex => $currentRowsCount) {
+            for ($i = 0; $i < $currentRowsCount; $i++) {
+                $rowsCount[$currentRowSpanIndex + $i] = max($rowsCount[$currentRowSpanIndex + $i], $currentRowsCount);
+            }
+        }
+        // get maximal height of each row
         foreach ($rows as $rowIndex => $row) {
             foreach ($row->getChildren() as $column) {
                 $cell = $column->getFirstChild();
@@ -1042,9 +1055,35 @@ class TableBox extends BlockBox
                 $columnStyle = $column->getStyle();
                 $columnVerticalSize = Math::add($columnStyle->getVerticalMarginsWidth(), $columnStyle->getVerticalPaddingsWidth(), $columnStyle->getVerticalBordersWidth());
                 $columnHeight = Math::add($cell->getDimensions()->getOuterHeight(), $columnVerticalSize);
-                $columnHeight = Math::div($columnHeight, (string)$column->getRowSpan());
-                $maxRowHeights[$rowIndex] = Math::max($maxRowHeights[$rowIndex], $columnHeight);
+                // for now ignore height of column that have span greater than 1
+                if ($column->getRowSpan() === 1) {
+                    $maxRowHeights[$rowIndex] = Math::max($maxRowHeights[$rowIndex], $columnHeight);
+                }
             }
+        }
+        // column that is spanned with more than 1 row must have height that is equal to all spanned rows height
+        foreach ($rows as $rowIndex => $row) {
+            $currentRowMax = $maxRowHeights[$rowIndex];
+            foreach ($row->getChildren() as $column) {
+                $rowSpan = $column->getRowSpan();
+                if ($rowSpan > 1) {
+                    $spannedRowsHeight = '0';
+                    // get sum of spanned row height starting from current row
+                    for ($i = 0; $i < $rowSpan; $i++) {
+                        $spannedRowsHeight = Math::add($spannedRowsHeight, $maxRowHeights[$rowIndex + $i]);
+                    }
+                    $fromOtherRows = Math::div($spannedRowsHeight, (string)$rowSpan);
+                    $fromColumnHeight = Math::div($column->getDimensions()->getOuterHeight(), (string)$rowSpan);
+                    $currentRowMax = Math::max($currentRowMax, $fromOtherRows, $fromColumnHeight);
+                    // if column that have rowSpan >1 is higher than sum of all other spanned rows max height expand others
+                    if (Math::comp($fromColumnHeight, $fromOtherRows) > 0) {
+                        for ($i = 0; $i < $rowSpan; $i++) {
+                            $maxRowHeights[$rowIndex + $i] = $currentRowMax;
+                        }
+                    }
+                }
+            }
+            $maxRowHeights[$rowIndex] = $currentRowMax;
         }
         $tableHeight = '0';
         foreach ($rows as $rowIndex => $row) {
@@ -1089,7 +1128,7 @@ class TableBox extends BlockBox
                 }
                 $cell->getDimensions()->setHeight(Math::max($height, $cellChildrenHeight));
             }
-            $tableHeight = Math::add($tableHeight, $row->getParent()->getDimensions()->getOuterHeight());
+            $tableHeight = Math::add($tableHeight, $row->getDimensions()->getHeight());
         }
         $this->getDimensions()->setHeight(Math::add($tableHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
         return $this;
