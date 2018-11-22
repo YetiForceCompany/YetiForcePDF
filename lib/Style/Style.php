@@ -956,7 +956,7 @@ class Style extends \YetiForcePDF\Base
     /**
      * Parse and load image file
      * @param array $ruleParsed
-     * @return $this
+     * @return array
      */
     protected function parseImage(array $ruleParsed)
     {
@@ -968,11 +968,11 @@ class Style extends \YetiForcePDF\Base
             }
         }
         if (!isset($ruleParsed['background-image'])) {
-            return $this;
+            return $ruleParsed;
         }
         $src = $ruleParsed['background-image'];
         if (substr($src, 0, 3) !== 'url') {
-            return $this;
+            return $ruleParsed;
         }
         $src = trim(substr($src, 3), ';)(\'\"');
         $this->backgroundImage = (new ImageStream())
@@ -981,7 +981,7 @@ class Style extends \YetiForcePDF\Base
         $this->backgroundImage->loadImage($src);
         $imageName = $this->backgroundImage->getImageName();
         $this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
-        return $this;
+        return $ruleParsed;
     }
 
     /**
@@ -1089,7 +1089,7 @@ class Style extends \YetiForcePDF\Base
             $rulesParsed = $this->applyTextStyle($rulesParsed, $inherited);
             $rulesParsed = $this->applyBorderSpacing($rulesParsed);
         }
-        $this->parseImage($rulesParsed);
+        $rulesParsed = $this->parseImage($rulesParsed);
         $finalRules = [];
         foreach ($rulesParsed as $ruleName => $ruleValue) {
             if (is_string($ruleValue)) {

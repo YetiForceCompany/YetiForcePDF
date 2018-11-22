@@ -230,9 +230,11 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     public function measureWidth()
     {
         $width = '0';
-        foreach ($this->getChildren() as $child) {
-            $child->measureWidth();
-            $width = Math::add($width, $child->getDimensions()->getOuterWidth());
+        if ($this->isForMeasurement()) {
+            foreach ($this->getChildren() as $child) {
+                $child->measureWidth();
+                $width = Math::add($width, $child->getDimensions()->getOuterWidth());
+            }
         }
         $style = $this->getStyle();
         $width = Math::add($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());

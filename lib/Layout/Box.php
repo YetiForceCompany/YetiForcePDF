@@ -70,6 +70,10 @@ class Box extends \YetiForcePDF\Base
      * @var bool
      */
     protected $anonymous = false;
+    /**
+     * @var bool do we need to measure this box ?
+     */
+    protected $forMeasurement = true;
 
 
     /**
@@ -237,6 +241,30 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Set for measurement - enable or disable this box measurement
+     * @param bool $forMeasure
+     * @return $this
+     */
+    public function setForMeasurement(bool $forMeasurement)
+    {
+        $allChildren = [];
+        $this->getAllChildren($allChildren);
+        foreach ($allChildren as $child) {
+            $child->forMeasurement = $forMeasurement;
+        }
+        return $this;
+    }
+
+    /**
+     * Is this box available for measurement? or it should now have any width?
+     * @return bool
+     */
+    public function isForMeasurement()
+    {
+        return $this->forMeasurement;
+    }
+
+    /**
      * Append child box - line box can have only inline/block boxes - not line boxes!
      * @param Box $box
      * @return $this
@@ -346,6 +374,32 @@ class Box extends \YetiForcePDF\Base
             $child->getAllChildren($allChildren);
         }
         return $allChildren;
+    }
+
+    /**
+     * Iterate all children
+     * @param callable $fn
+     * @param bool $reverse
+     * @param bool $deep
+     * @return $this
+     */
+    public function iterateChildren(callable $fn, bool $reverse = false, bool $deep = true)
+    {
+        $allChildren = [];
+        if ($deep) {
+            $this->getAllChildren($allChildren);
+        } else {
+            $allChildren = $this->getChildren();
+        }
+        if ($reverse) {
+            $allChildren = array_reverse($allChildren);
+        }
+        foreach ($allChildren as $child) {
+            if ($fn($child) === false) {
+                break;
+            }
+        }
+        return $this;
     }
 
     /**

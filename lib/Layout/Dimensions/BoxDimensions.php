@@ -71,7 +71,17 @@ class BoxDimensions extends Dimensions
     {
         $box = $this->getBox();
         $style = $box->getStyle();
-        return Math::sub($this->getHeight(), $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
+        $height = $this->getHeight();
+        if ($height === null) {
+            $height = '0';
+            if ($element = $box->getElement()) {
+                if ($element->getDOMElement() instanceof DOMText) {
+                    $height = $style->getLineHeight();
+                }
+            }
+        }
+
+        return Math::sub($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
     }
 
 

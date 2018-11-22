@@ -50,24 +50,6 @@ class ElementBox extends Box
     }
 
     /**
-     * Remove empty lines
-     * @return $this
-     */
-    public function removeEmptyLines()
-    {
-        foreach ($this->getChildren() as $child) {
-            if ($child instanceof LineBox) {
-                if ($child->isEmpty()) {
-                    $this->removeChild($child);
-                }
-            } else {
-                $child->removeEmptyLines();
-            }
-        }
-        return $this;
-    }
-
-    /**
      * Get boxes by tag name
      * @param string $tagName
      * @return array
@@ -145,12 +127,17 @@ class ElementBox extends Box
         return $this;
     }
 
+    /**
+     * Span all rows
+     * @return $this
+     */
     public function spanAllRows()
     {
         $tables = $this->getBoxesByTagName('table');
         foreach ($tables as $tableBox) {
             $tableBox->getFirstChild()->spanRows();
         }
+        return $this;
     }
 
     /**
@@ -213,7 +200,6 @@ class ElementBox extends Box
                 }
             }
         }
-        $this->removeEmptyLines();
         return $this;
     }
 

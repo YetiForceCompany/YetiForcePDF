@@ -258,6 +258,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                 $currentLine = $this->getNewLineBox($lines[0]);
                 foreach ($lines as $line) {
                     foreach ($line->getChildren() as $child) {
+                        $child->setForMeasurement(true);
                         $currentLine->appendChild($line->removeChild($child));
                     }
                     $this->removeChild($line);
@@ -281,12 +282,14 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
                 foreach ($lines as $line) {
                     $this->insertBefore($line, $child);
                     $line->getStyle()->init();
+                    if (!$this instanceof InlineBlockBox) {
+                        $line->removeWhiteSpaces();
+                    }
                     $line->measureWidth();
                 }
                 $this->removeChild($child);
             }
         }
-        $this->removeEmptyLines();
         return $this;
     }
 

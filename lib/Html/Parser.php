@@ -13,7 +13,8 @@ declare(strict_types=1);
 namespace YetiForcePDF\Html;
 
 use \YetiForcePDF\Layout\BlockBox;
-use Masterminds\HTML5;
+use \Masterminds\HTML5;
+
 
 /**
  * Class Parser
@@ -69,8 +70,10 @@ class Parser extends \YetiForcePDF\Base
     {
         $html = $this->cleanUpHtml($html, $fromEncoding);
         $this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
-        $html5 = new HTML5();
-        $this->domDocument = $html5->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>');
+        //$html5 = new HTML5();
+        //$this->domDocument = $html5->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>');
+        $this->domDocument = new \DOMDocument();
+        $this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>');
         return $this;
     }
 
