@@ -135,8 +135,7 @@ class LineBox extends Box implements BoxInterface
     public function removeWhiteSpaces()
     {
         $this->iterateChildren(function ($child) {
-            $textContent = trim($child->getTextContent());
-            if ($textContent !== '') {
+            if ($child->containContent()) {
                 $child->setForMeasurement(true);
                 return false;
             }
@@ -160,19 +159,23 @@ class LineBox extends Box implements BoxInterface
         $children = $this->getChildren();
         foreach ($children as $index => $childBox) {
             if ($line->willFit($childBox)) {
-                if ($line->getTextContent() === '') {
-                    $text = trim($childBox->getTextContent());
-                    if ($text === '') {
+                // if this is beginning of the line
+                if (!$line->containContent()) {
+                    if (!$childBox->containContent()) {
                         $childBox->setForMeasurement(false);
                     } else {
                         $childBox->setForMeasurement(true);
                     }
                     $line->appendChild($childBox);
                 } else {
-                    if (trim($childBox->getTextContent()) === '') {
-                        $previousText = trim($children[$index - 1]->getTextContent());
-                        if ($previousText === '') {
-                            $childBox->setForMeasurement(false);
+                    if (!$childBox->containContent()) {
+                        // if we doesn't have content and previous element too do not measure me
+                        if ($previous = $children[$index - 1]) {
+                            if (!$previous->containContent()) {
+                                $childBox->setForMeasurement(false);
+                            } else {
+                                $childBox->setForMeasurement(true);
+                            }
                         } else {
                             $childBox->setForMeasurement(true);
                         }
@@ -186,7 +189,7 @@ class LineBox extends Box implements BoxInterface
                     ->setParent($this->getParent())
                     ->setStyle(clone $this->style)
                     ->init();
-                if (trim($childBox->getTextContent()) === '') {
+                if (!$childBox->containContent()) {
                     $childBox->setForMeasurement(false);
                 } else {
                     $childBox->setForMeasurement(true);
@@ -225,10 +228,6 @@ class LineBox extends Box implements BoxInterface
      */
     public function measureHeight()
     {
-        /*if ($this->getDimensions()->getWidth() === '0') {
-            $this->getDimensions()->setHeight('0');
-            return $this;
-        }*/
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }

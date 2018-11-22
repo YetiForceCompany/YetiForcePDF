@@ -345,6 +345,30 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Contain content - do we have some elements that are not whitespace characters?
+     * @return bool
+     */
+    public function containContent()
+    {
+        if ($this instanceof TextBox && trim($this->getTextContent()) === '') {
+            return false;
+        }
+        // we are not text node - traverse further
+        $children = $this->getChildren();
+        if (count($children) === 0 && !$this instanceof LineBox) {
+            return true; // we are the content
+        }
+        if (count($children) === 0 && $this instanceof LineBox) {
+            return false; // we are the content
+        }
+        $childrenContent = false;
+        foreach ($children as $child) {
+            $childrenContent = $childrenContent || $child->containContent();
+        }
+        return $childrenContent;
+    }
+
+    /**
      * Is this element renderable?
      * @return bool
      */
