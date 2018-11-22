@@ -1223,7 +1223,7 @@ class Style extends \YetiForcePDF\Base
             }
             $rows = $box->getRows();
             if ($this->getRules('border-collapse') === 'collapse') {
-                $rowsCount = count($rows);
+                $rowsCount = count($rows) - 1;
                 foreach ($rows as $rowIndex => $row) {
                     if ($rowIndex < $rowsCount) {
                         $row->getStyle()->setRule('border-bottom-width', '0');
