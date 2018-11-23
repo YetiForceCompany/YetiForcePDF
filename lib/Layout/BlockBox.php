@@ -29,6 +29,10 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      * @var \YetiForcePDF\Layout\LineBox
      */
     protected $currentLineBox;
+    /**
+     * @var LineBox[]
+     */
+    protected $sourceLines = [];
 
     /**
      * {@inheritdoc}
@@ -104,6 +108,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      */
     public function closeLine()
     {
+        $this->saveSourceLine($this->currentLineBox);
         $this->currentLineBox = null;
         return $this->currentLineBox;
     }
@@ -285,6 +290,25 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             }
         }
         return $this;
+    }
+
+    /**
+     * Save source lines before any dividing process (to get maximal width of the block for tables later)
+     * @return $this
+     */
+    protected function saveSourceLine($line)
+    {
+        $this->sourceLines[] = clone $line;
+        return $this;
+    }
+
+    /**
+     * Get initial lines before any process was applied
+     * @return LineBox[]
+     */
+    public function getSourceLines()
+    {
+        return $this->sourceLines;
     }
 
     /**

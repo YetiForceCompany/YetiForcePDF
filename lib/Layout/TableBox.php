@@ -152,7 +152,7 @@ class TableBox extends BlockBox
             ->setStyle($cleanStyle)
             ->init();
         $this->appendChild($box);
-        $box->getStyle()->init();
+        $box->getStyle()->init()->setRule('display', 'block');
         $box->buildTree($box);
         return $box;
     }
@@ -260,12 +260,7 @@ class TableBox extends BlockBox
                 $cell = $column->getFirstChild();
                 $cellStyle = $cell->getStyle();
                 $columnStyle = $column->getStyle();
-                $columnOuterWidth = $column->getDimensions()->getOuterWidth();
-                if ($column->getColSpan() > 1) {
-                    $columnOuterWidth = Math::div($columnOuterWidth, (string)$column->getColSpan());
-                }
-                $columnSpacing = Math::add($columnStyle->getHorizontalBordersWidth(), $columnStyle->getHorizontalPaddingsWidth());
-                $columnInnerWidth = Math::sub($columnOuterWidth, $columnSpacing);
+                $columnInnerWidth = $cell->getDimensions()->getMaxWidth();
                 $styleWidth = $columnStyle->getRules('width');
                 $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex], $columnInnerWidth);
                 $minColumnWidth = $cell->getDimensions()->getMinWidth();
@@ -1010,6 +1005,23 @@ class TableBox extends BlockBox
         // percent columns were redistributed in the first step so we don't need to do anything
         $this->setRowsWidth();
         return $this;
+    }
+
+    /**
+     * Get table min width
+     * @return string
+     */
+    public function getMinWidth()
+    {
+        foreach ($this->getCells() as $cell) {
+            $cell->measureWidth();
+        }
+        $this->rows = $this->getRows();
+        $columnGroups = $this->getColumns();
+        $this->setUpSizingTypes($columnGroups);
+        $this->setUpWidths($columnGroups, '0');
+        $this->minContentGuess($this->rows)->finish();
+        return $this->getDimensions()->getWidth();
     }
 
     /**

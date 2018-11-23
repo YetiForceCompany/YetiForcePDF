@@ -16,6 +16,7 @@ use \YetiForcePDF\Math;
 use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\LineBox;
 use \YetiForcePDF\Layout\TextBox;
+use \YetiForcePDF\Layout\TableWrapperBlockBox;
 
 /**
  * Class BoxDimensions
@@ -182,6 +183,46 @@ class BoxDimensions extends Dimensions
     }
 
     /**
+     * Get max width with margins
+     * @return string
+     */
+    public function getMaxWidth()
+    {
+        $box = $this->getBox();
+        if (!$box->isForMeasurement()) {
+            return '0';
+        }
+        if (!$box instanceof LineBox) {
+            $style = $this->getBox()->getStyle();
+            $childrenWidth = '0';
+            // if some of the children overflows
+            if ($box->getStyle()->getRules('display') === 'inline') {
+                foreach ($box->getChildren() as $child) {
+                    $childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
+                }
+            } else {
+                foreach ($box->getSourceLines() as $line) {
+                    $childrenWidth = Math::max($childrenWidth, $line->getChildrenWidth());
+                }
+                foreach ($box->getChildren() as $child) {
+                    if (!$child instanceof Line) {
+                        $childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
+                    }
+                }
+            }
+            if ($this->getWidth() !== null) {
+                $childrenWidth = Math::add($childrenWidth, $style->getHorizontalMarginsWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
+                $width = Math::add($this->getWidth(), $style->getHorizontalMarginsWidth());
+                return Math::max($width, $childrenWidth);
+            } else {
+                return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
+            }
+        } else {
+            return $this->getBox()->getChildrenWidth();
+        }
+    }
+
+    /**
      * Get minimum space that current box could have without overflow
      * @return string
      */
@@ -190,6 +231,9 @@ class BoxDimensions extends Dimensions
         $box = $this->getBox();
         if (!$box->isForMeasurement()) {
             return '0';
+        }
+        if ($box instanceof TableWrapperBlockBox) {
+            return $box->getFirstChild()->getMinWidth();
         }
         if ($box instanceof TextBox) {
             return $this->getTextWidth($this->getBox()->getText());

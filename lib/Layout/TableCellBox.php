@@ -54,7 +54,7 @@ class TableCellBox extends BlockBox
             $child->measureWidth();
         }
         $this->divideLines();
-        // do not set up width because it was set by TableBox measureWidth method
+        // do not set up width because it was set higher by TableBox measureWidth method
         return $this;
     }
 

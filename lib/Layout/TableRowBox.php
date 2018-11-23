@@ -132,6 +132,7 @@ class TableRowBox extends BlockBox
     public function appendTableCellBox($childDomElement, $element, $style, $parentBlock)
     {
         $colSpan = 1;
+        $style->setRule('display', 'block');
         $attributeColSpan = $childDomElement->getAttribute('colspan');
         if ($attributeColSpan) {
             $colSpan = (int)$attributeColSpan;
@@ -151,7 +152,7 @@ class TableRowBox extends BlockBox
             ->init();
         $column->setColSpan($colSpan)->setRowSpan($rowSpan);
         $this->appendChild($column);
-        $column->getStyle()->init();
+        $column->getStyle()->init()->setRule('display', 'block');
         $box = (new TableCellBox())
             ->setDocument($this->document)
             ->setParent($column)
@@ -172,7 +173,7 @@ class TableRowBox extends BlockBox
                 ->init();
             $column->setColSpan(-1);
             $this->appendChild($column);
-            $column->getStyle()->init();
+            $column->getStyle()->init()->setRule('display', 'block');
             $spanBox = (new TableCellBox())
                 ->setDocument($this->document)
                 ->setParent($column)
