@@ -1157,67 +1157,67 @@ class Style extends \YetiForcePDF\Base
         $box = $this->getBox();
         if ($box instanceof TableBox) {
             $columnsGrouped = $box->getColumns();
-            $columnsCount = count($columnsGrouped);
+            $columnsCount = count($columnsGrouped[0]);
             if (!$columnsCount) {
-                return $this;
-            }
-            $rowsCount = count($columnsGrouped[0]);
-            if (!$rowsCount) {
                 return $this;
             }
             // max cell borders widths top,right,bottom,left
             $cellBorders = ['0', '0', '0', '0'];
-            foreach ($columnsGrouped as $columnIndex => $columns) {
-                foreach ($columns as $rowIndex => $column) {
-                    $rowStyle = $column->getParent()->getStyle();
-                    $columnStyle = $column->getStyle();
-                    if ($columnIndex + 1 < $columnsCount) {
-                        $columnStyle->setRule('padding-right', '0');
-                    }
-                    if ($rowIndex + 1 < $rowsCount) {
-                        $columnStyle->setRule('padding-bottom', '0');
-                    }
-                    $cellBorders = [
-                        Math::max($cellBorders[0], $rowStyle->getRules('border-top-width')),
-                        Math::max($cellBorders[1], $rowStyle->getRules('border-right-width')),
-                        Math::max($cellBorders[2], $rowStyle->getRules('border-bottom-width')),
-                        Math::max($cellBorders[3], $rowStyle->getRules('border-left-width')),
-                    ];
-                    if ($columnStyle->getRules('border-collapse') === 'collapse') {
-                        $cellStyle = $column->getFirstChild()->getStyle();
-                        $cellBorders = [
-                            Math::max($cellBorders[0], $cellStyle->getRules('border-top-width')),
-                            Math::max($cellBorders[1], $cellStyle->getRules('border-right-width')),
-                            Math::max($cellBorders[2], $cellStyle->getRules('border-bottom-width')),
-                            Math::max($cellBorders[3], $cellStyle->getRules('border-left-width')),
-                        ];
-                        if ($rowIndex + 1 < $rowsCount) {
-                            $cellStyle->setRule('border-bottom-width', '0');
-                        }
+            $rowGroupsCount = count($columnsGrouped);
+            foreach ($columnsGrouped as $rowGroupIndex => $rowGroup) {
+                $rowsCount = count($rowGroup[0]);
+                foreach ($rowGroup as $columnIndex => $columns) {
+                    foreach ($columns as $rowIndex => $column) {
+                        $rowStyle = $column->getParent()->getStyle();
+                        $columnStyle = $column->getStyle();
                         if ($columnIndex + 1 < $columnsCount) {
-                            $cellStyle->setRule('border-right-width', '0');
+                            $columnStyle->setRule('padding-right', '0');
+                        }
+                        if (!($rowIndex + 1 === $rowsCount && $rowGroupIndex + 1 === $rowGroupsCount)) {
+                            $columnStyle->setRule('padding-bottom', '0');
+                        }
+                        $cellBorders = [
+                            Math::max($cellBorders[0], $rowStyle->getRules('border-top-width')),
+                            Math::max($cellBorders[1], $rowStyle->getRules('border-right-width')),
+                            Math::max($cellBorders[2], $rowStyle->getRules('border-bottom-width')),
+                            Math::max($cellBorders[3], $rowStyle->getRules('border-left-width')),
+                        ];
+                        if ($columnStyle->getRules('border-collapse') === 'collapse') {
+                            $cellStyle = $column->getFirstChild()->getStyle();
+                            $cellBorders = [
+                                Math::max($cellBorders[0], $cellStyle->getRules('border-top-width')),
+                                Math::max($cellBorders[1], $cellStyle->getRules('border-right-width')),
+                                Math::max($cellBorders[2], $cellStyle->getRules('border-bottom-width')),
+                                Math::max($cellBorders[3], $cellStyle->getRules('border-left-width')),
+                            ];
+                            if ($rowIndex + 1 < $rowsCount) {
+                                $cellStyle->setRule('border-bottom-width', '0');
+                            }
+                            if ($columnIndex + 1 < $columnsCount) {
+                                $cellStyle->setRule('border-right-width', '0');
+                            }
+                        }
+                        // move specified css width to proper elements
+                        $cellStyle = $column->getFirstChild()->getStyle();
+                        if ($cellStyle->getRules('width') !== 'auto') {
+                            $columnStyle->setRule('width', $cellStyle->getRules('width'));
+                            $cellStyle->setRule('width', 'auto');
                         }
                     }
-                    // move specified css width to proper elements
-                    $cellStyle = $column->getFirstChild()->getStyle();
-                    if ($cellStyle->getRules('width') !== 'auto') {
-                        $columnStyle->setRule('width', $cellStyle->getRules('width'));
-                        $cellStyle->setRule('width', 'auto');
-                    }
-                }
-                if ($this->getRules('border-collapse') === 'collapse') {
-                    $parentStyle = $box->getParent()->getStyle();
-                    if (Math::comp($cellBorders[0], $parentStyle->getRules('border-top-width')) >= 0) {
-                        $parentStyle->setRule('border-top-width', '0');
-                    }
-                    if (Math::comp($cellBorders[1], $parentStyle->getRules('border-right-width')) >= 0) {
-                        $parentStyle->setRule('border-right-width', '0');
-                    }
-                    if (Math::comp($cellBorders[2], $parentStyle->getRules('border-bottom-width')) >= 0) {
-                        $parentStyle->setRule('border-bottom-width', '0');
-                    }
-                    if (Math::comp($cellBorders[3], $parentStyle->getRules('border-left-width')) >= 0) {
-                        $parentStyle->setRule('border-left-width', '0');
+                    if ($this->getRules('border-collapse') === 'collapse') {
+                        $parentStyle = $box->getParent()->getStyle();
+                        if (Math::comp($cellBorders[0], $parentStyle->getRules('border-top-width')) >= 0) {
+                            $parentStyle->setRule('border-top-width', '0');
+                        }
+                        if (Math::comp($cellBorders[1], $parentStyle->getRules('border-right-width')) >= 0) {
+                            $parentStyle->setRule('border-right-width', '0');
+                        }
+                        if (Math::comp($cellBorders[2], $parentStyle->getRules('border-bottom-width')) >= 0) {
+                            $parentStyle->setRule('border-bottom-width', '0');
+                        }
+                        if (Math::comp($cellBorders[3], $parentStyle->getRules('border-left-width')) >= 0) {
+                            $parentStyle->setRule('border-left-width', '0');
+                        }
                     }
                 }
             }

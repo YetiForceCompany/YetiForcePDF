@@ -211,12 +211,14 @@ class TableBox extends BlockBox
     public function getColumns()
     {
         $columns = [];
-        foreach ($this->getRows() as $row) {
-            $columnIndex = 0;
-            foreach ($row->getChildren() as $column) {
-                if ($column instanceof TableColumnBox) {
-                    $columns[$columnIndex][] = $column;
-                    $columnIndex++;
+        foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
+            foreach ($rowGroup->getChildren() as $row) {
+                $columnIndex = 0;
+                foreach ($row->getChildren() as $column) {
+                    if ($column instanceof TableColumnBox) {
+                        $columns[$rowGroupIndex][$columnIndex][] = $column;
+                        $columnIndex++;
+                    }
                 }
             }
         }
@@ -230,9 +232,11 @@ class TableBox extends BlockBox
     public function getCells()
     {
         $cells = [];
-        foreach ($this->getColumns() as $columnIndex => $row) {
-            foreach ($row as $column) {
-                $cells[] = $column->getFirstChild();
+        foreach ($this->getColumns() as $rowGroup) {
+            foreach ($rowGroup as $columnIndex => $row) {
+                foreach ($row as $column) {
+                    $cells[] = $column->getFirstChild();
+                }
             }
         }
         return $cells;
@@ -246,46 +250,48 @@ class TableBox extends BlockBox
      */
     public function setUpWidths(array $columnGroups, string $availableSpace)
     {
-        foreach ($columnGroups as $columnIndex => $columns) {
-            foreach ($columns as $column) {
-                if (!isset($this->preferredWidths[$columnIndex])) {
-                    $this->preferredWidths[$columnIndex] = '0';
-                }
-                if (!isset($this->minWidths[$columnIndex])) {
-                    $this->minWidths[$columnIndex] = '0';
-                }
-                if (!isset($this->contentWidths[$columnIndex])) {
-                    $this->contentWidths[$columnIndex] = '0';
-                }
-                $cell = $column->getFirstChild();
-                $cellStyle = $cell->getStyle();
-                $columnStyle = $column->getStyle();
-                $columnInnerWidth = $cell->getDimensions()->getMaxWidth();
-                $styleWidth = $columnStyle->getRules('width');
-                $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex], $columnInnerWidth);
-                $minColumnWidth = $cell->getDimensions()->getMinWidth();
-                if ($column->getColSpan() > 1) {
-                    $minColumnWidth = Math::div($minColumnWidth, (string)$column->getColSpan());
-                }
-                $this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex], $minColumnWidth);
-                if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === false) {
-                    if ($column->getColSpan() > 1) {
-                        $styleWidth = Math::div($styleWidth, (string)$column->getColSpan());
+        foreach ($columnGroups as $rowGroup) {
+            foreach ($rowGroup as $columnIndex => $columns) {
+                foreach ($columns as $column) {
+                    if (!isset($this->preferredWidths[$columnIndex])) {
+                        $this->preferredWidths[$columnIndex] = '0';
                     }
-                    $preferred = Math::max($styleWidth, $minColumnWidth);
-                    $this->minWidths[$columnIndex] = $preferred;
-                } elseif (strpos($styleWidth, '%') > 0) {
-                    $preferred = Math::max($this->preferredWidths[$columnIndex], $columnInnerWidth);
-                    $this->percentages[$columnIndex] = Math::max($this->percentages[$columnIndex] ?? '0', trim($styleWidth, '%'));
-                } else {
-                    $preferred = Math::max($this->preferredWidths[$columnIndex], $columnInnerWidth);
+                    if (!isset($this->minWidths[$columnIndex])) {
+                        $this->minWidths[$columnIndex] = '0';
+                    }
+                    if (!isset($this->contentWidths[$columnIndex])) {
+                        $this->contentWidths[$columnIndex] = '0';
+                    }
+                    $cell = $column->getFirstChild();
+                    $cellStyle = $cell->getStyle();
+                    $columnStyle = $column->getStyle();
+                    $columnInnerWidth = $cell->getDimensions()->getMaxWidth();
+                    $styleWidth = $columnStyle->getRules('width');
+                    $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex], $columnInnerWidth);
+                    $minColumnWidth = $cell->getDimensions()->getMinWidth();
+                    if ($column->getColSpan() > 1) {
+                        $minColumnWidth = Math::div($minColumnWidth, (string)$column->getColSpan());
+                    }
+                    $this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex], $minColumnWidth);
+                    if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === false) {
+                        if ($column->getColSpan() > 1) {
+                            $styleWidth = Math::div($styleWidth, (string)$column->getColSpan());
+                        }
+                        $preferred = Math::max($styleWidth, $minColumnWidth);
+                        $this->minWidths[$columnIndex] = $preferred;
+                    } elseif (strpos($styleWidth, '%') > 0) {
+                        $preferred = Math::max($this->preferredWidths[$columnIndex], $columnInnerWidth);
+                        $this->percentages[$columnIndex] = Math::max($this->percentages[$columnIndex] ?? '0', trim($styleWidth, '%'));
+                    } else {
+                        $preferred = Math::max($this->preferredWidths[$columnIndex], $columnInnerWidth);
+                    }
+                    $this->preferredWidths[$columnIndex] = $preferred;
                 }
-                $this->preferredWidths[$columnIndex] = $preferred;
+                $this->borderWidth = Math::add($this->borderWidth, $cellStyle->getHorizontalBordersWidth());
+                $this->minWidth = Math::add($this->minWidth, $this->minWidths[$columnIndex]);
+                $this->contentWidth = Math::add($this->contentWidth, $this->contentWidths[$columnIndex]);
+                $this->preferredWidth = Math::add($this->preferredWidth, $this->preferredWidths[$columnIndex]);
             }
-            $this->borderWidth = Math::add($this->borderWidth, $cellStyle->getHorizontalBordersWidth());
-            $this->minWidth = Math::add($this->minWidth, $this->minWidths[$columnIndex]);
-            $this->contentWidth = Math::add($this->contentWidth, $this->contentWidths[$columnIndex]);
-            $this->preferredWidth = Math::add($this->preferredWidth, $this->preferredWidths[$columnIndex]);
         }
         if ($this->getParent()->getStyle()->getRules('border-collapse') !== 'collapse') {
             $spacing = $this->getStyle()->getRules('border-spacing');
@@ -300,20 +306,22 @@ class TableBox extends BlockBox
      */
     protected function setUpSizingTypes(array $columnGroups)
     {
-        foreach ($columnGroups as $columnIndex => $columns) {
-            $firstColumn = $columns[0];
-            $columnStyleWidth = $firstColumn->getStyle()->getRules('width');
-            if (strpos($columnStyleWidth, '%') > 0) {
-                foreach ($columns as $rowIndex => $column) {
-                    $this->percentColumns[$columnIndex][$rowIndex] = $column;
-                }
-            } elseif ($columnStyleWidth !== 'auto') {
-                foreach ($columns as $rowIndex => $column) {
-                    $this->pixelColumns[$columnIndex][$rowIndex] = $column;
-                }
-            } else {
-                foreach ($columns as $rowIndex => $column) {
-                    $this->autoColumns[$columnIndex][$rowIndex] = $column;
+        foreach ($columnGroups as $rowGroup) {
+            foreach ($rowGroup as $columnIndex => $columns) {
+                $firstColumn = $columns[0];
+                $columnStyleWidth = $firstColumn->getStyle()->getRules('width');
+                if (strpos($columnStyleWidth, '%') > 0) {
+                    foreach ($columns as $rowIndex => $column) {
+                        $this->percentColumns[$columnIndex][$rowIndex] = $column;
+                    }
+                } elseif ($columnStyleWidth !== 'auto') {
+                    foreach ($columns as $rowIndex => $column) {
+                        $this->pixelColumns[$columnIndex][$rowIndex] = $column;
+                    }
+                } else {
+                    foreach ($columns as $rowIndex => $column) {
+                        $this->autoColumns[$columnIndex][$rowIndex] = $column;
+                    }
                 }
             }
         }
@@ -1078,65 +1086,67 @@ class TableBox extends BlockBox
         }
         $style = $this->getStyle();
         $maxRowHeights = [];
-        $rows = $this->getRows();
-        $spannedRowsCount = []; // spannedRowsCount is array of number of row spans for each row
-        foreach ($rows as $rowIndex => $row) {
-            foreach ($row->getChildren() as $column) {
-                $spannedRowsCount[$rowIndex] = max($spannedRowsCount[$rowIndex], $column->getRowSpan());
-            }
-        }
-        $rowsCount = []; // rowsCount is array with number of rows they must share for each row
-        foreach ($spannedRowsCount as $currentRowSpanIndex => $currentRowsCount) {
-            for ($i = 0; $i < $currentRowsCount; $i++) {
-                $rowsCount[$currentRowSpanIndex + $i] = max($rowsCount[$currentRowSpanIndex + $i], $currentRowsCount);
-            }
-        }
-        // get maximal height of each row
-        foreach ($rows as $rowIndex => $row) {
-            foreach ($row->getChildren() as $column) {
-                $cell = $column->getFirstChild();
-                if (!isset($maxRowHeights[$rowIndex])) {
-                    $maxRowHeights[$rowIndex] = '0';
-                }
-                $columnStyle = $column->getStyle();
-                $columnVerticalSize = Math::add($columnStyle->getVerticalMarginsWidth(), $columnStyle->getVerticalPaddingsWidth(), $columnStyle->getVerticalBordersWidth());
-                $columnHeight = Math::add($cell->getDimensions()->getOuterHeight(), $columnVerticalSize);
-                // for now ignore height of column that have span greater than 1
-                if ($column->getRowSpan() === 1) {
-                    $maxRowHeights[$rowIndex] = Math::max($maxRowHeights[$rowIndex], $columnHeight);
+        foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
+            $rows = $rowGroup->getChildren();
+            $spannedRowsCount = []; // spannedRowsCount is array of number of row spans for each row
+            foreach ($rows as $rowIndex => $row) {
+                foreach ($row->getChildren() as $column) {
+                    $spannedRowsCount[$rowIndex] = max($spannedRowsCount[$rowIndex], $column->getRowSpan());
                 }
             }
-        }
-        // column that is spanned with more than 1 row must have height that is equal to all spanned rows height
-        foreach ($rows as $rowIndex => $row) {
-            $currentRowMax = $maxRowHeights[$rowIndex];
-            foreach ($row->getChildren() as $column) {
-                $rowSpan = $column->getRowSpan();
-                if ($rowSpan > 1) {
-                    $spannedRowsHeight = '0';
-                    // get sum of spanned row height starting from current row
-                    for ($i = 0; $i < $rowSpan; $i++) {
-                        $spannedRowsHeight = Math::add($spannedRowsHeight, $maxRowHeights[$rowIndex + $i]);
+            $rowsCount = []; // rowsCount is array with number of rows they must share for each row
+            foreach ($spannedRowsCount as $currentRowSpanIndex => $currentRowsCount) {
+                for ($i = 0; $i < $currentRowsCount; $i++) {
+                    $rowsCount[$currentRowSpanIndex + $i] = max($rowsCount[$currentRowSpanIndex + $i], $currentRowsCount);
+                }
+            }
+            // get maximal height of each row
+            foreach ($rows as $rowIndex => $row) {
+                foreach ($row->getChildren() as $column) {
+                    $cell = $column->getFirstChild();
+                    if (!isset($maxRowHeights[$rowGroupIndex][$rowIndex])) {
+                        $maxRowHeights[$rowGroupIndex][$rowIndex] = '0';
                     }
-                    $fromOtherRows = Math::div($spannedRowsHeight, (string)$rowSpan);
-                    $fromColumnHeight = Math::div($column->getDimensions()->getOuterHeight(), (string)$rowSpan);
-                    $currentRowMax = Math::max($currentRowMax, $fromOtherRows, $fromColumnHeight);
-                    // if column that have rowSpan >1 is higher than sum of all other spanned rows max height expand others
-                    if (Math::comp($fromColumnHeight, $fromOtherRows) > 0) {
+                    $columnStyle = $column->getStyle();
+                    $columnVerticalSize = Math::add($columnStyle->getVerticalMarginsWidth(), $columnStyle->getVerticalPaddingsWidth(), $columnStyle->getVerticalBordersWidth());
+                    $columnHeight = Math::add($cell->getDimensions()->getOuterHeight(), $columnVerticalSize);
+                    // for now ignore height of column that have span greater than 1
+                    if ($column->getRowSpan() === 1) {
+                        $maxRowHeights[$rowGroupIndex][$rowIndex] = Math::max($maxRowHeights[$rowGroupIndex][$rowIndex], $columnHeight);
+                    }
+                }
+            }
+            // column that is spanned with more than 1 row must have height that is equal to all spanned rows height
+            foreach ($rows as $rowIndex => $row) {
+                $currentRowMax = $maxRowHeights[$rowGroupIndex][$rowIndex];
+                foreach ($row->getChildren() as $column) {
+                    $rowSpan = $column->getRowSpan();
+                    if ($rowSpan > 1) {
+                        $spannedRowsHeight = '0';
+                        // get sum of spanned row height starting from current row
                         for ($i = 0; $i < $rowSpan; $i++) {
-                            $maxRowHeights[$rowIndex + $i] = $currentRowMax;
+                            $spannedRowsHeight = Math::add($spannedRowsHeight, $maxRowHeights[$rowGroupIndex][$rowIndex + $i]);
+                        }
+                        $fromOtherRows = Math::div($spannedRowsHeight, (string)$rowSpan);
+                        $fromColumnHeight = Math::div($column->getDimensions()->getOuterHeight(), (string)$rowSpan);
+                        $currentRowMax = Math::max($currentRowMax, $fromOtherRows, $fromColumnHeight);
+                        // if column that have rowSpan >1 is higher than sum of all other spanned rows max height expand others
+                        if (Math::comp($fromColumnHeight, $fromOtherRows) > 0) {
+                            for ($i = 0; $i < $rowSpan; $i++) {
+                                $maxRowHeights[$rowGroupIndex][$rowIndex + $i] = $currentRowMax;
+                            }
                         }
                     }
                 }
+                $maxRowHeights[$rowGroupIndex][$rowIndex] = $currentRowMax;
             }
-            $maxRowHeights[$rowIndex] = $currentRowMax;
         }
         $tableHeight = '0';
-        foreach ($this->getChildren() as $rowGroup) {
+        foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
             $rowGroupHeight = '0';
             foreach ($rowGroup->getChildren() as $rowIndex => $row) {
                 $rowStyle = $row->getStyle();
-                $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $rowStyle->getVerticalBordersWidth(), $rowStyle->getVerticalPaddingsWidth()));
+                $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowGroupIndex][$rowIndex], $rowStyle->getVerticalBordersWidth(), $rowStyle->getVerticalPaddingsWidth()));
                 $rowGroupHeight = Math::add($rowGroupHeight, $row->getDimensions()->getHeight());
                 foreach ($row->getChildren() as $column) {
                     $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
