@@ -1132,49 +1132,53 @@ class TableBox extends BlockBox
             $maxRowHeights[$rowIndex] = $currentRowMax;
         }
         $tableHeight = '0';
-        foreach ($rows as $rowIndex => $row) {
-            $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
-            $row->getParent()->getDimensions()->setHeight($row->getDimensions()->getHeight());
-            foreach ($row->getChildren() as $column) {
-                $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
-                $cell = $column->getFirstChild();
-                $height = $column->getDimensions()->getInnerHeight();
-                $height = Math::div($height, (string)$column->getRowSpan());
-                $cellChildrenHeight = '0';
-                foreach ($cell->getChildren() as $cellChild) {
-                    $cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
-                }
-                $cellStyle = $cell->getStyle();
-                $cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
-                $cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
-                $cellChildrenHeight = Math::div($cellChildrenHeight, (string)$column->getRowSpan());
-                // add vertical padding if needed
-                if (Math::comp($height, $cellChildrenHeight) > 0) {
-                    $freeSpace = Math::sub($height, $cellChildrenHeight);
-                    $cellStyle = $cell->getStyle();
-                    switch ($cellStyle->getRules('vertical-align')) {
-                        case 'top':
-                            $freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-bottom'));
-                            $cellStyle->setRule('padding-bottom', $freeSpace);
-                            break;
-                        case 'bottom':
-                            $freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-top'));
-                            $cellStyle->setRule('padding-top', $freeSpace);
-                            break;
-                        case 'baseline':
-                        case 'middle':
-                        default:
-                            $disposition = Math::div($freeSpace, '2');
-                            $paddingTop = Math::add($cellStyle->getRules('padding-top'), $disposition);
-                            $paddingBottom = Math::add($cellStyle->getRules('padding-bottom'), $disposition);
-                            $cellStyle->setRule('padding-top', $paddingTop);
-                            $cellStyle->setRule('padding-bottom', $paddingBottom);
-                            break;
+        foreach ($this->getChildren() as $rowGroup) {
+            $rowGroupHeight = '0';
+            foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+                $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
+                $rowGroupHeight = Math::add($rowGroupHeight, $row->getDimensions()->getHeight());
+                foreach ($row->getChildren() as $column) {
+                    $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
+                    $cell = $column->getFirstChild();
+                    $height = $column->getDimensions()->getInnerHeight();
+                    $height = Math::div($height, (string)$column->getRowSpan());
+                    $cellChildrenHeight = '0';
+                    foreach ($cell->getChildren() as $cellChild) {
+                        $cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
                     }
+                    $cellStyle = $cell->getStyle();
+                    $cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
+                    $cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
+                    $cellChildrenHeight = Math::div($cellChildrenHeight, (string)$column->getRowSpan());
+                    // add vertical padding if needed
+                    if (Math::comp($height, $cellChildrenHeight) > 0) {
+                        $freeSpace = Math::sub($height, $cellChildrenHeight);
+                        $cellStyle = $cell->getStyle();
+                        switch ($cellStyle->getRules('vertical-align')) {
+                            case 'top':
+                                $freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-bottom'));
+                                $cellStyle->setRule('padding-bottom', $freeSpace);
+                                break;
+                            case 'bottom':
+                                $freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-top'));
+                                $cellStyle->setRule('padding-top', $freeSpace);
+                                break;
+                            case 'baseline':
+                            case 'middle':
+                            default:
+                                $disposition = Math::div($freeSpace, '2');
+                                $paddingTop = Math::add($cellStyle->getRules('padding-top'), $disposition);
+                                $paddingBottom = Math::add($cellStyle->getRules('padding-bottom'), $disposition);
+                                $cellStyle->setRule('padding-top', $paddingTop);
+                                $cellStyle->setRule('padding-bottom', $paddingBottom);
+                                break;
+                        }
+                    }
+                    $cell->getDimensions()->setHeight(Math::max($height, $cellChildrenHeight));
                 }
-                $cell->getDimensions()->setHeight(Math::max($height, $cellChildrenHeight));
             }
-            $tableHeight = Math::add($tableHeight, $row->getDimensions()->getHeight());
+            $rowGroup->getDimensions()->setHeight($rowGroupHeight);
+            $tableHeight = Math::add($tableHeight, $rowGroupHeight);
         }
         $this->getDimensions()->setHeight(Math::add($tableHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
         return $this;

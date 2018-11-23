@@ -97,7 +97,7 @@ class TableWrapperBlockBox extends BlockBox
         }
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
-            $maxHeight = Math::max($maxHeight, $child->getDimensions()->getOuterHeight());
+            $maxHeight = Math::max($maxHeight, $child->getDimensions()->getHeight());
         }
         $style = $this->getStyle();
         $maxHeight = Math::add($maxHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
