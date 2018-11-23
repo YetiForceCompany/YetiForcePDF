@@ -157,7 +157,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             ->setStyle($style)
             ->init();
         $this->appendChild($box);
-        $box->getStyle()->init();
+        $box->getStyle()->init()->setRule('display', 'block');
         // we wan't to build tree from here - we will build it from TableBox
         return $box;
     }

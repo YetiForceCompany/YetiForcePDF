@@ -69,7 +69,7 @@ class TableWrapperBlockBox extends BlockBox
             ->init();
         $cleanStyle->setRule('display', 'block');
         $this->appendChild($box);
-        $box->getStyle()->init();
+        $box->getStyle()->init()->setRule('display', 'block');
         $box->buildTree($box);
         return $box;
     }

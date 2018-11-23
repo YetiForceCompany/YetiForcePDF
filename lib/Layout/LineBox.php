@@ -200,7 +200,6 @@ class LineBox extends Box implements BoxInterface
         // append last line
         $lines[] = $line;
         return $lines;
-
     }
 
     /**
@@ -216,7 +215,7 @@ class LineBox extends Box implements BoxInterface
             $width = Math::add($width, $child->getDimensions()->getOuterWidth());
         }
         if ($parentWidth = $this->getParent()->getDimensions()->getWidth()) {
-            $width = Math::max($parentWidth, $width);
+            //$width = Math::max($parentWidth, $width);
         }
         $this->getDimensions()->setWidth($width);
         return $this;

@@ -205,7 +205,7 @@ class BoxDimensions extends Dimensions
                     $childrenWidth = Math::max($childrenWidth, $line->getChildrenWidth());
                 }
                 foreach ($box->getChildren() as $child) {
-                    if (!$child instanceof Line) {
+                    if (!$child instanceof LineBox) {
                         $childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
                     }
                 }
