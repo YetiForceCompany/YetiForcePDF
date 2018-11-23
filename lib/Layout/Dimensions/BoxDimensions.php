@@ -200,14 +200,19 @@ class BoxDimensions extends Dimensions
                 foreach ($box->getChildren() as $child) {
                     $childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
                 }
-            } else {
+            } elseif (count($box->getSourceLines())) {
                 foreach ($box->getSourceLines() as $line) {
                     $childrenWidth = Math::max($childrenWidth, $line->getChildrenWidth());
                 }
                 foreach ($box->getChildren() as $child) {
                     if (!$child instanceof LineBox) {
-                        $childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
+                        $childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getWidth());// TODO: neither getOuterWidth or getWidth works here
                     }
+                }
+            } else {
+                // TODO: each block and inline-block should have source lines but for now i don't have time so this is just patch
+                foreach ($box->getChildren() as $child) {
+                    $childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
                 }
             }
             if ($this->getWidth() !== null) {

@@ -94,7 +94,7 @@ class ElementBox extends Box
                             if ($column->getRowSpan() > 1) {
                                 $rowSpans = $column->getRowSpan();
                                 for ($i = 1; $i < $rowSpans; $i++) {
-                                    $nextRow = $rowGroup->getChildren()[$rowIndex+$i];
+                                    $nextRow = $rowGroup->getChildren()[$rowIndex + $i];
                                     $rowChildren = $nextRow->getChildren();
                                     $insertColumn = $nextRow->removeChild($nextRow->createColumnBox());
                                     if (isset($rowChildren[$columnIndex])) {
@@ -181,6 +181,8 @@ class ElementBox extends Box
                         $tableWrapper->appendTableBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table-row-group':
+                    case 'table-header-group':
+                    case 'table-footer-group':
                         $this->appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table-row':

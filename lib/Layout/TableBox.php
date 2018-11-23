@@ -708,8 +708,8 @@ class TableBox extends BlockBox
                         $spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
                         $toRemove[] = $spanColumn;
                     }
-                    if ($rowIndex + $i === count($this->getChildren()) && $column->getStyle()->getRules('border-collapse') === 'separate') {
-                        $spanHeight = Math::sub($spanHeight, $column->getStyle()->getRules('border-spacing'));
+                    if ($rowIndex + $i === count($this->rows) && $column->getStyle()->getRules('border-collapse') === 'separate') {
+                        $spanHeight = Math::sub($spanHeight, $this->getStyle()->getRules('border-spacing'));
                     }
                     $colDmns = $column->getDimensions();
                     $colDmns->setHeight(Math::add($colDmns->getHeight(), $spanHeight));
@@ -1135,7 +1135,8 @@ class TableBox extends BlockBox
         foreach ($this->getChildren() as $rowGroup) {
             $rowGroupHeight = '0';
             foreach ($rowGroup->getChildren() as $rowIndex => $row) {
-                $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
+                $rowStyle = $row->getStyle();
+                $row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowIndex], $rowStyle->getVerticalBordersWidth(), $rowStyle->getVerticalPaddingsWidth()));
                 $rowGroupHeight = Math::add($rowGroupHeight, $row->getDimensions()->getHeight());
                 foreach ($row->getChildren() as $column) {
                     $column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
@@ -1174,7 +1175,8 @@ class TableBox extends BlockBox
                                 break;
                         }
                     }
-                    $cell->getDimensions()->setHeight(Math::max($height, $cellChildrenHeight));
+                    $height = Math::max($height, $cellChildrenHeight);
+                    $cell->getDimensions()->setHeight($height);
                 }
             }
             $rowGroup->getDimensions()->setHeight($rowGroupHeight);
