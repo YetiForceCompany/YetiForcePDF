@@ -78,6 +78,10 @@ class TableBox extends BlockBox
      * @var array rows
      */
     protected $rows = [];
+    /**
+     * @var TableRowGroupBox|null
+     */
+    protected $anonymousRowGroup;
 
     /**
      * We shouldn't append block box here
@@ -149,7 +153,37 @@ class TableBox extends BlockBox
             ->init();
         $this->appendChild($box);
         $box->getStyle()->init();
-        // we don't want to build tree from here - we will do it in TableRowBox
+        $box->buildTree($box);
+        return $box;
+    }
+
+    /**
+     * Append table row group box element
+     * @param \DOMNode $childDomElement
+     * @param Element $element
+     * @param Style $style
+     * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     * @return $this
+     */
+    public function appendTableRowBox($childDomElement, $element, $style, $parentBlock)
+    {
+        if (!$this->anonymousRowGroup) {
+            $cleanStyle = (new \YetiForcePDF\Style\Style())
+                ->setDocument($this->document)
+                ->setContent('')
+                ->parseInline();
+            $box = (new TableRowGroupBox())
+                ->setDocument($this->document)
+                ->setParent($this)
+                ->setElement($element)
+                ->setStyle($cleanStyle)
+                ->init();
+            $this->appendChild($box);
+            $box->getStyle()->init();
+            $this->anonymousRowGroup = $box;
+        }
+        $this->anonymousRowGroup->appendTableRowBox($childDomElement, $element, $style, $parentBlock);
+        //$this->anonymousRowGroup->buildTree($this->anonymousRowGroup);
         return $box;
     }
 
@@ -302,19 +336,20 @@ class TableBox extends BlockBox
         foreach ($this->rows[0]->getChildren() as $column) {
             $width = Math::add($width, $column->getDimensions()->getWidth());
         }
-        foreach ($this->getRows() as $row) {
+        foreach ($this->rows as $row) {
             $rowStyle = $row->getStyle();
+            $rowWidth = $width;
             if ($this->getStyle()->getRules('border-collapse') === 'separate') {
                 $rowSpacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
-                $width = Math::add($width, $rowSpacing);
+                $rowWidth = Math::add($rowWidth, $rowSpacing);
             }
-            $row->getDimensions()->setWidth($width);
-            $row->getParent()->getDimensions()->setWidth($width);
+            $row->getDimensions()->setWidth($rowWidth);
         }
+        $row->getParent()->getDimensions()->setWidth($rowWidth);
         $style = $this->getStyle();
         $spacing = Math::add($style->getHorizontalPaddingsWidth(), $style->getHorizontalBordersWidth());
-        $width = Math::add($width, $spacing);
-        $this->getDimensions()->setWidth($width);
+        $rowWidth = Math::add($rowWidth, $spacing);
+        $this->getDimensions()->setWidth($rowWidth);
         return $this;
     }
 
@@ -674,8 +709,7 @@ class TableBox extends BlockBox
                     $rowSpans = $column->getRowSpan();
                     $spanHeight = '0';
                     for ($i = 1; $i < $rowSpans; $i++) {
-                        $nextRowGroup = $row->getParent()->getParent()->getChildren()[$rowIndex + $i];
-                        $spanColumn = $nextRowGroup->getFirstChild()->getChildren()[$columnIndex];
+                        $spanColumn = $row->getParent()->getChildren()[$rowIndex + $i]->getChildren()[$columnIndex];
                         $spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
                         $toRemove[] = $spanColumn;
                     }

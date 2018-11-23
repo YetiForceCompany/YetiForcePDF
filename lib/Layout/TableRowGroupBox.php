@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Math;
 use \YetiForcePDF\Style\Style;
 use \YetiForcePDF\Html\Element;
 
@@ -79,7 +78,6 @@ class TableRowGroupBox extends BlockBox
      */
     public function appendTableRowBox($childDomElement, $element, $style, $parentBlock)
     {
-        // we must wrap row into row group
         $box = (new TableRowBox())
             ->setDocument($this->document)
             ->setParent($this)

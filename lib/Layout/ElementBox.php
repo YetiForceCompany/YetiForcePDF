@@ -86,16 +86,15 @@ class ElementBox extends Box
                 $column->createCell();
             } else {
                 $columnsCount = 0;
-                foreach ($rowGroups as $rowIndex => $rowGroup) {
-                    foreach ($rowGroup->getChildren() as $row) {
+                foreach ($rowGroups as $rowGroup) {
+                    foreach ($rowGroup->getChildren() as $rowIndex => $row) {
                         $columns = $row->getChildren();
                         $columnsCount = max($columnsCount, count($columns));
                         foreach ($columns as $columnIndex => $column) {
                             if ($column->getRowSpan() > 1) {
                                 $rowSpans = $column->getRowSpan();
                                 for ($i = 1; $i < $rowSpans; $i++) {
-                                    $nextRowGroup = $rowGroup->getParent()->getChildren()[$rowIndex + $i];
-                                    $nextRow = $nextRowGroup->getFirstChild();
+                                    $nextRow = $rowGroup->getChildren()[$rowIndex+$i];
                                     $rowChildren = $nextRow->getChildren();
                                     $insertColumn = $nextRow->removeChild($nextRow->createColumnBox());
                                     if (isset($rowChildren[$columnIndex])) {
@@ -181,9 +180,11 @@ class ElementBox extends Box
                         $tableWrapper = $this->appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock);
                         $tableWrapper->appendTableBox($childDomElement, $element, $style, $parentBlock);
                         break;
+                    case 'table-row-group':
+                        $this->appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock);
+                        break;
                     case 'table-row':
-                        $rowGroup = $this->appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock);
-                        $rowGroup->appendTableRowBox($childDomElement, $element, $style, $parentBlock);
+                        $this->appendTableRowBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table-cell':
                         $this->appendTableCellBox($childDomElement, $element, $style, $parentBlock);
