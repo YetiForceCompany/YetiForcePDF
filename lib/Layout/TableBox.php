@@ -706,53 +706,55 @@ class TableBox extends BlockBox
     public function spanRows()
     {
         $toRemove = [];
-        foreach ($this->rows as $rowIndex => $row) {
-            foreach ($row->getChildren() as $columnIndex => $column) {
-                if ($column->getRowSpan() > 1) {
-                    $rowSpans = $column->getRowSpan();
-                    $spanHeight = '0';
-                    for ($i = 1; $i < $rowSpans; $i++) {
-                        $spanColumn = $row->getParent()->getChildren()[$rowIndex + $i]->getChildren()[$columnIndex];
-                        $spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
-                        $toRemove[] = $spanColumn;
+        foreach ($this->getChildren() as $rowGroup) {
+            foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+                foreach ($row->getChildren() as $columnIndex => $column) {
+                    if ($column->getRowSpan() > 1) {
+                        $rowSpans = $column->getRowSpan();
+                        $spanHeight = '0';
+                        for ($i = 1; $i < $rowSpans; $i++) {
+                            $spanColumn = $row->getParent()->getChildren()[$rowIndex + $i]->getChildren()[$columnIndex];
+                            $spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
+                            $toRemove[] = $spanColumn;
+                        }
+                        if ($rowIndex + $i === count($this->rows) && $column->getStyle()->getRules('border-collapse') === 'separate') {
+                            $spanHeight = Math::sub($spanHeight, $this->getStyle()->getRules('border-spacing'));
+                        }
+                        $colDmns = $column->getDimensions();
+                        $colDmns->setHeight(Math::add($colDmns->getHeight(), $spanHeight));
+                        $cell = $column->getFirstChild();
+                        $colInnerHeight = $colDmns->getInnerHeight();
+                        $cell->getDimensions()->setHeight($colInnerHeight);
+                        $cellHeight = '0';
+                        foreach ($cell->getChildren() as $cellChild) {
+                            $cellHeight = Math::add($cellHeight, $cellChild->getDimensions()->getOuterHeight());
+                        }
+                        $columnStyle = $column->getStyle();
+                        $cellStyle = $column->getFirstChild()->getStyle();
+                        if ($columnStyle->getRules('border-collapse') === 'collapse' && $rowIndex + $i === count($this->getChildren())) {
+                            $cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
+                        }
+                        $toDisposition = Math::sub($colInnerHeight, $cellHeight);
+                        switch ($cellStyle->getRules('vertical-align')) {
+                            case 'baseline':
+                            case 'middle':
+                                $padding = Math::div($toDisposition, '2');
+                                $cellStyle->setRule('padding-top', $padding);
+                                $cellStyle->setRule('padding-bottom', $padding);
+                                break;
+                            case 'top':
+                                $cellStyle->setRule('padding-bottom', $toDisposition);
+                                break;
+                            case 'bottom':
+                                $cellStyle->setRule('padding-top', $toDisposition);
+                                break;
+                        }
+                        $cell->measureWidth();
+                        $cell->measureHeight();
+                        $cell->measureOffset();
+                        $cell->alignText();
+                        $cell->measurePosition();
                     }
-                    if ($rowIndex + $i === count($this->rows) && $column->getStyle()->getRules('border-collapse') === 'separate') {
-                        $spanHeight = Math::sub($spanHeight, $this->getStyle()->getRules('border-spacing'));
-                    }
-                    $colDmns = $column->getDimensions();
-                    $colDmns->setHeight(Math::add($colDmns->getHeight(), $spanHeight));
-                    $cell = $column->getFirstChild();
-                    $colInnerHeight = $colDmns->getInnerHeight();
-                    $cell->getDimensions()->setHeight($colInnerHeight);
-                    $cellHeight = '0';
-                    foreach ($cell->getChildren() as $cellChild) {
-                        $cellHeight = Math::add($cellHeight, $cellChild->getDimensions()->getOuterHeight());
-                    }
-                    $columnStyle = $column->getStyle();
-                    $cellStyle = $column->getFirstChild()->getStyle();
-                    if ($columnStyle->getRules('border-collapse') === 'collapse' && $rowIndex + $i === count($this->getChildren())) {
-                        $cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
-                    }
-                    $toDisposition = Math::sub($colInnerHeight, $cellHeight);
-                    switch ($cellStyle->getRules('vertical-align')) {
-                        case 'baseline':
-                        case 'middle':
-                            $padding = Math::div($toDisposition, '2');
-                            $cellStyle->setRule('padding-top', $padding);
-                            $cellStyle->setRule('padding-bottom', $padding);
-                            break;
-                        case 'top':
-                            $cellStyle->setRule('padding-bottom', $toDisposition);
-                            break;
-                        case 'bottom':
-                            $cellStyle->setRule('padding-top', $toDisposition);
-                            break;
-                    }
-                    $cell->measureWidth();
-                    $cell->measureHeight();
-                    $cell->measureOffset();
-                    $cell->alignText();
-                    $cell->measurePosition();
                 }
             }
         }
