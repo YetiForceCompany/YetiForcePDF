@@ -14,8 +14,9 @@ namespace YetiForcePDF;
 
 use YetiForcePDF\Layout\Dimensions\Dimensions;
 use YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-use \YetiForcePDF\Layout\Box;
+use YetiForcePDF\Layout\Dimensions\BoxDimensions;
+use YetiForcePDF\Layout\Box;
+use YetiForcePDF\Objects\Basic\StreamObject;
 
 /**
  * Class Page
@@ -38,7 +39,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     protected $resources = [];
     /**
      * Page content streams
-     * @var \YetiForcePDF\Objects\Basic\StreamObject
+     * @var StreamObject
      */
     protected $contentStream;
     /**
@@ -653,6 +654,21 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     }
 
     /**
+     * Cut page at specified vertical position
+     * @param string $position
+     * @return $this
+     */
+    public function cutAt(string $position)
+    {
+        $newPage = clone $this;
+        $newPage->setId($this->document->getActualId());
+        $newPage->document->getPagesObject()->addChild($newPage);
+        $newPage->synchronizeFonts();
+        $this->document->addPage($this->format, $this->orientation, $newPage);
+        return $this;
+    }
+
+    /**
      * Layout page resources
      * @return string
      */
@@ -701,6 +717,20 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             '>>',
             'endobj'
         ]);
+    }
+
+    public function __clone()
+    {
+        $this->coordinates = clone $this->coordinates;
+        $this->contentStream = clone $this->contentStream;
+        $this->dimensions = clone $this->dimensions;
+        $this->outerDimensions = clone $this->dimensions;
+        $this->box = clone $this->box;
+        $currentResources = $this->resources;
+        $this->resources = [];
+        foreach ($currentResources as $resource) {
+            $this->resources[] = clone $resource;
+        }
     }
 
 }

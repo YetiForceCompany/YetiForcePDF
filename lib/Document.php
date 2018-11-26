@@ -92,11 +92,6 @@ class Document
      * @var int
      */
     protected $actualFontId = 0;
-
-    /**
-     * @var Element
-     */
-    protected $rootElement;
     /**
      * @var bool $debugMode
      */
@@ -301,11 +296,14 @@ class Document
      * Add page to the document
      * @param string $format - optional format 'A4' for example
      * @param string $orientation - optional orientation 'P' or 'L'
+     * @param Page|null $page - we can add cloned page or page from other document too
      * @return \YetiForcePDF\Page
      */
-    public function addPage(string $format = '', string $orientation = ''): \YetiForcePDF\Page
+    public function addPage(string $format = '', string $orientation = '', Page $page = null): \YetiForcePDF\Page
     {
-        $page = (new Page())->setDocument($this)->init();
+        if ($page === null) {
+            $page = (new Page())->setDocument($this)->init();
+        }
         if (!$format) {
             $format = $this->defaultFormat;
         }
@@ -334,26 +332,6 @@ class Document
     public function getPages()
     {
         return $this->pages;
-    }
-
-    /**
-     * Set root element
-     * @param \YetiForcePDF\Html\Element $rootElement
-     * @return $this
-     */
-    public function setRootElement(Element $rootElement)
-    {
-        $this->rootElement = $rootElement;
-        return $this;
-    }
-
-    /**
-     * Get root element
-     * @return \YetiForcePDF\Html\Element
-     */
-    public function getRootElement()
-    {
-        return $this->rootElement;
     }
 
     /**

@@ -23,8 +23,10 @@ class Display extends Normalizer
             return $this->normalized;
         }
         $normalized = ['display' => $ruleValue];
-        if ($this->element && $this->element->isTextNode()) {
-            $normalized = ['display' => 'inline'];
+        if ($element = $this->style->getElement()) {
+            if ($element->isTextNode()) {
+                $normalized = ['display' => 'inline'];
+            }
         }
         return $this->normalized = $normalized;
     }
