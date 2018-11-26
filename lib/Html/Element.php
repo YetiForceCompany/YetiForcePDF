@@ -46,7 +46,11 @@ class Element extends \YetiForcePDF\Base
     public function init()
     {
         parent::init();
-        $this->name = $this->domElement->tagName;
+        if (isset($this->domElement->tagName)) {
+            $this->name = $this->domElement->tagName;
+        } else {
+            $this->ame = $this->domElement->nodeName;
+        }
         return $this;
     }
 

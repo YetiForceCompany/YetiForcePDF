@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Style class
+ * Style class.
  *
  * @package   YetiForcePDF\Style
  *
@@ -12,16 +13,14 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
-use \YetiForcePDF\Layout\Box;
-use \YetiForcePDF\Layout\InlineBox;
-use \YetiForcePDF\Layout\TableBox;
-use \YetiForcePDF\Math;
-use \YetiForcePDF\Objects\ImageStream;
-use \YetiForcePDF\Layout\TableWrapperBlockBox;
-use \YetiForcePDF\Layout\LineBox;
+use YetiForcePDF\Layout\Box;
+use YetiForcePDF\Layout\InlineBox;
+use YetiForcePDF\Layout\TableBox;
+use YetiForcePDF\Math;
+use YetiForcePDF\Objects\ImageStream;
 
 /**
- * Class Style
+ * Class Style.
  */
 class Style extends \YetiForcePDF\Base
 {
@@ -30,10 +29,11 @@ class Style extends \YetiForcePDF\Base
      */
     protected $document;
     /**
-     * CSS text to parse
+     * CSS text to parse.
+     *
      * @var string|null
      */
-    protected $content = null;
+    protected $content;
     /**
      * @var \YetiForcePDF\Html\Element
      */
@@ -50,16 +50,15 @@ class Style extends \YetiForcePDF\Base
      * @var bool
      */
     protected $parsed = false;
-    /*
-     * @var string $elementName (nodeName)
-     */
+    // @var string $elementName (nodeName)
     protected $elementName = '';
     /**
      * @var ImageStream
      */
     protected $backgroundImage;
     /**
-     * Css properties that are inherited by default
+     * Css properties that are inherited by default.
+     *
      * @var array
      */
     protected $inherited = [
@@ -109,7 +108,8 @@ class Style extends \YetiForcePDF\Base
         'word-spacing',
     ];
     /**
-     * Rules that are mandatory with default values
+     * Rules that are mandatory with default values.
+     *
      * @var array
      */
     protected $mandatoryRules = [
@@ -154,18 +154,21 @@ class Style extends \YetiForcePDF\Base
         'white-space' => 'normal',
     ];
     /**
-     * Original css rules
+     * Original css rules.
+     *
      * @var array
      */
     protected $originalRules = [];
     /**
-     * Css rules (computed)
+     * Css rules (computed).
+     *
      * @var array
      */
     protected $rules = [];
 
     /**
-     * Default styles for certain elements
+     * Default styles for certain elements.
+     *
      * @var array
      */
     protected $elementDefaults = [
@@ -479,10 +482,11 @@ class Style extends \YetiForcePDF\Base
     ];
 
     /**
-     * Initialisation
+     * Initialisation.
+     *
      * @return \YetiForcePDF\Style\Style
      */
-    public function init(): Style
+    public function init(): self
     {
         parent::init();
         $this->parse();
@@ -490,8 +494,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Set box for this element (element is always inside box)
+     * Set box for this element (element is always inside box).
+     *
      * @param \YetiForcePDF\Layout\Box $box
+     *
      * @return $this
      */
     public function setBox($box)
@@ -501,7 +507,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get box
+     * Get box.
+     *
      * @return \YetiForcePDF\Layout\Box
      */
     public function getBox()
@@ -510,11 +517,13 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Set element
+     * Set element.
+     *
      * @param \YetiForcePDF\Html\Element $element
+     *
      * @return \YetiForcePDF\Style\Style
      */
-    public function setElement(\YetiForcePDF\Html\Element $element): Style
+    public function setElement(\YetiForcePDF\Html\Element $element): self
     {
         $this->element = $element;
         $this->setElementName($element->getDOMElement()->nodeName);
@@ -522,7 +531,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get element
+     * Get element.
+     *
      * @return \YetiForcePDF\Html\Element
      */
     public function getElement()
@@ -531,8 +541,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Set element name
+     * Set element name.
+     *
      * @param string $elementName
+     *
      * @return $this
      */
     public function setElementName(string $elementName)
@@ -542,7 +554,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get element name
+     * Get element name.
+     *
      * @return string
      */
     public function getElementName()
@@ -551,22 +564,26 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Set content
+     * Set content.
+     *
      * @param string|null $content
+     *
      * @return \YetiForcePDF\Style\Style
      */
-    public function setContent(string $content = null): Style
+    public function setContent(string $content = null): self
     {
         $this->content = $content;
         return $this;
     }
 
     /**
-     * Set margins
+     * Set margins.
+     *
      * @param string $top
      * @param string $right
      * @param string $bottom
      * @param string $left
+     *
      * @return $this
      */
     public function setMargins(string $top = null, string $right = null, string $bottom = null, string $left = null)
@@ -587,7 +604,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get parent style
+     * Get parent style.
+     *
      * @return Style|null
      */
     public function getParent()
@@ -600,8 +618,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get children styles
+     * Get children styles.
+     *
      * @param array $rules - filter styles with specified rules
+     *
      * @return \YetiForcePDF\Style\Style[]
      */
     public function getChildren(array $rules = [])
@@ -615,6 +635,7 @@ class Style extends \YetiForcePDF\Base
 
     /**
      * Do we have children?
+     *
      * @return bool
      */
     public function hasChildren()
@@ -623,7 +644,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get previous element style
+     * Get previous element style.
+     *
      * @return \YetiForcePDF\Style\Style
      */
     public function getPrevious()
@@ -634,7 +656,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get next element style
+     * Get next element style.
+     *
      * @return \YetiForcePDF\Style\Style
      */
     public function getNext()
@@ -645,35 +668,47 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get rules (or concrete rule if specified)
+     * Get rules (or concrete rule if specified).
+     *
      * @param string|null $ruleName
+     *
      * @return array|string
      */
     public function getRules(string $ruleName = null)
     {
         if ($ruleName) {
-            return $this->rules[$ruleName];
+            if (isset($this->rules[$ruleName])) {
+                return $this->rules[$ruleName];
+            }
+            return '';
         }
         return $this->rules;
     }
 
     /**
-     * Get original rules (or concrete rule if specified)
+     * Get original rules (or concrete rule if specified).
+     *
      * @param string|null $ruleName
+     *
      * @return array|mixed
      */
     public function getOriginalRules(string $ruleName = null)
     {
         if ($ruleName) {
-            return $this->originalRules[$ruleName];
+            if (isset($this->originalRules[$ruleName])) {
+                return $this->originalRules[$ruleName];
+            }
+            return '';
         }
         return $this->originalRules;
     }
 
     /**
-     * Set rule
+     * Set rule.
+     *
      * @param string $ruleName
      * @param string $ruleValue
+     *
      * @return $this
      */
     public function setRule(string $ruleName, $ruleValue)
@@ -683,8 +718,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Set rules
+     * Set rules.
+     *
      * @param array $rules
+     *
      * @return $this
      */
     public function setRules(array $rules)
@@ -694,7 +731,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get rules that are inherited from parent
+     * Get rules that are inherited from parent.
+     *
      * @return array
      */
     public function getInheritedRules(): array
@@ -709,7 +747,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get background image stream
+     * Get background image stream.
+     *
      * @return ImageStream
      */
     public function getBackgroundImageStream()
@@ -718,7 +757,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get horizontal borders width
+     * Get horizontal borders width.
+     *
      * @return string
      */
     public function getHorizontalBordersWidth()
@@ -727,7 +767,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get vertical borders width
+     * Get vertical borders width.
+     *
      * @return string
      */
     public function getVerticalBordersWidth()
@@ -736,7 +777,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get horizontal paddings width
+     * Get horizontal paddings width.
+     *
      * @return string
      */
     public function getHorizontalPaddingsWidth()
@@ -745,7 +787,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get vertical paddings width
+     * Get vertical paddings width.
+     *
      * @return string
      */
     public function getVerticalPaddingsWidth()
@@ -754,7 +797,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get horizontal margins width
+     * Get horizontal margins width.
+     *
      * @return string
      */
     public function getHorizontalMarginsWidth()
@@ -763,7 +807,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get vertical paddings width
+     * Get vertical paddings width.
+     *
      * @return string
      */
     public function getVerticalMarginsWidth()
@@ -772,7 +817,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get full left space
+     * Get full left space.
+     *
      * @return string
      */
     public function getFullLeftSpace()
@@ -781,7 +827,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get full right space
+     * Get full right space.
+     *
      * @return string
      */
     public function getFullRightSpace()
@@ -790,8 +837,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get offset top -  get top border width and top padding
+     * Get offset top -  get top border width and top padding.
+     *
      * @param bool $withBorders
+     *
      * @return string
      */
     public function getOffsetTop()
@@ -800,8 +849,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get offset left - get left border width and left padding
+     * Get offset left - get left border width and left padding.
+     *
      * @param bool $withBorders
+     *
      * @return string
      */
     public function getOffsetLeft()
@@ -810,7 +861,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get current style font
+     * Get current style font.
+     *
      * @return \YetiForcePDF\Objects\Font
      */
     public function getFont(): \YetiForcePDF\Objects\Font
@@ -819,9 +871,11 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Convert units from unit to pdf document units
+     * Convert units from unit to pdf document units.
+     *
      * @param string $unit
      * @param float $size
+     *
      * @return string
      */
     public function convertUnits(string $unit, string $size)
@@ -844,7 +898,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get line height
+     * Get line height.
+     *
      * @return string
      */
     public function getLineHeight()
@@ -860,7 +915,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get line height
+     * Get line height.
+     *
      * @return string
      */
     public function getMaxLineHeight()
@@ -881,8 +937,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get mandatory rules - with default for all elements
+     * Get mandatory rules - with default for all elements.
+     *
      * @param string $elementName
+     *
      * @return array
      */
     public function getMandatoryRules()
@@ -891,7 +949,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get default element rules
+     * Get default element rules.
+     *
      * @return array
      */
     public function getDefaultRules()
@@ -906,7 +965,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Parse inline style without inheritance and normalizer
+     * Parse inline style without inheritance and normalizer.
+     *
      * @return $this
      */
     public function parseInline()
@@ -938,8 +998,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * First of all parse font for convertUnits method
+     * First of all parse font for convertUnits method.
+     *
      * @param array $ruleParsed
+     *
      * @return $this
      */
     protected function parseFont(array $ruleParsed, array $inherited)
@@ -972,14 +1034,16 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Parse and load image file
+     * Parse and load image file.
+     *
      * @param array $ruleParsed
+     *
      * @return array
      */
     protected function parseImage(array $ruleParsed)
     {
         if ($element = $this->getElement()) {
-            if ($domElement = $element->getDOMElement()) {
+            if ($domElement = $element->getDOMElement() && isset($domElement->tagName)) {
                 if ($domElement->tagName === 'img' && $domElement->getAttribute('src')) {
                     $ruleParsed['background-image'] = 'url(' . $domElement->getAttribute('src') . ');';
                 }
@@ -1003,9 +1067,11 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Apply text style - default style for text nodes
+     * Apply text style - default style for text nodes.
+     *
      * @param array $rulesParsed
      * @param &array $inherited
+     *
      * @return array
      */
     public function applyTextStyle($rulesParsed, &$inherited)
@@ -1024,8 +1090,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Apply border spacing for table cell elements
+     * Apply border spacing for table cell elements.
+     *
      * @param array $rulesParsed
+     *
      * @return array
      */
     public function applyBorderSpacing($rulesParsed)
@@ -1046,8 +1114,10 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Get parent original value - traverse tree to first occurence
+     * Get parent original value - traverse tree to first occurence.
+     *
      * @param string $ruleName
+     *
      * @return string|null
      */
     public function getParentOriginalValue(string $ruleName)
@@ -1062,7 +1132,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Parse css style
+     * Parse css style.
+     *
      * @return $this
      */
     protected function parse()
@@ -1149,7 +1220,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Fix tables
+     * Fix tables.
+     *
      * @return $this
      */
     protected function fixTables()
@@ -1157,10 +1229,10 @@ class Style extends \YetiForcePDF\Base
         $box = $this->getBox();
         if ($box instanceof TableBox) {
             $columnsGrouped = $box->getColumns();
-            $columnsCount = count($columnsGrouped[0]);
-            if (!$columnsCount) {
+            if (empty($columnsGrouped)) {
                 return $this;
             }
+            $columnsCount = count($columnsGrouped[0]);
             // max cell borders widths top,right,bottom,left
             $cellBorders = ['0', '0', '0', '0'];
             $rowGroupsCount = count($columnsGrouped);
@@ -1255,7 +1327,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Fix dom tree - after dom tree is parsed we must clean up or add some rules
+     * Fix dom tree - after dom tree is parsed we must clean up or add some rules.
+     *
      * @return $this
      */
     public function fixDomTree()
@@ -1268,7 +1341,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Clear style for first inline element (in line)
+     * Clear style for first inline element (in line).
+     *
      * @return $this
      */
     public function clearFirstInline()
@@ -1289,7 +1363,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Clear style for last inline element (in line)
+     * Clear style for last inline element (in line).
+     *
      * @return $this
      */
     public function clearLastInline()
@@ -1319,7 +1394,8 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
-     * Clear style for middle inline element (in line)
+     * Clear style for middle inline element (in line).
+     *
      * @return $this
      */
     public function clearMiddleInline()
@@ -1359,5 +1435,4 @@ class Style extends \YetiForcePDF\Base
             $this->elemet = clone $this->element;
         }
     }
-
 }

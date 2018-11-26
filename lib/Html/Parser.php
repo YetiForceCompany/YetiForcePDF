@@ -67,6 +67,10 @@ class Parser extends \YetiForcePDF\Base
      */
     public function loadHtml(string $html, string $fromEncoding = ''): \YetiForcePDF\Html\Parser
     {
+        $config = \HTMLPurifier_Config::createDefault();
+        $config->set('CSS.AllowTricky', true);
+        $purifier = new \HTMLPurifier($config);
+        $html = $purifier->purify($html);
         $html = $this->cleanUpHtml($html, $fromEncoding);
         $this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
         $this->domDocument = new \DOMDocument();

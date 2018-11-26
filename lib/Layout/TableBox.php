@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * TableBox class
+ * TableBox class.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,13 +13,12 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Math;
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-
+use YetiForcePDF\Html\Element;
+use YetiForcePDF\Math;
+use YetiForcePDF\Style\Style;
 
 /**
- * Class TableBox
+ * Class TableBox.
  */
 class TableBox extends BlockBox
 {
@@ -84,28 +84,28 @@ class TableBox extends BlockBox
     protected $anonymousRowGroup;
 
     /**
-     * We shouldn't append block box here
+     * We shouldn't append block box here.
      */
     public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * We shouldn't append table wrapper here
+     * We shouldn't append table wrapper here.
      */
     public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * We shouldn't append inline block box here
+     * We shouldn't append inline block box here.
      */
     public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * We shouldn't append inline box here
+     * We shouldn't append inline box here.
      */
     public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
     {
@@ -113,7 +113,7 @@ class TableBox extends BlockBox
 
     /**
      * Create row group inside table
-     * return TableRowGroupBox
+     * return TableRowGroupBox.
      */
     public function createRowGroup()
     {
@@ -132,11 +132,13 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Append table row group box element
+     * Append table row group box element.
+     *
      * @param \DOMNode $childDomElement
      * @param Element $element
      * @param Style $style
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     *
      * @return $this
      */
     public function appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock)
@@ -158,11 +160,13 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Append table row group box element
+     * Append table row group box element.
+     *
      * @param \DOMNode $childDomElement
      * @param Element $element
      * @param Style $style
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     *
      * @return $this
      */
     public function appendTableRowBox($childDomElement, $element, $style, $parentBlock)
@@ -181,14 +185,15 @@ class TableBox extends BlockBox
             $this->appendChild($box);
             $box->getStyle()->init();
             $this->anonymousRowGroup = $box;
+            return $box;
         }
-        $this->anonymousRowGroup->appendTableRowBox($childDomElement, $element, $style, $parentBlock);
+        return $this->anonymousRowGroup->appendTableRowBox($childDomElement, $element, $style, $parentBlock);
         //$this->anonymousRowGroup->buildTree($this->anonymousRowGroup);
-        return $box;
     }
 
     /**
-     * Get all rows from all row groups
+     * Get all rows from all row groups.
+     *
      * @return array of LineBoxes and TableRowBoxes
      */
     public function getRows()
@@ -205,7 +210,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get columns - get table cells segregated by columns
+     * Get columns - get table cells segregated by columns.
+     *
      * @return array
      */
     public function getColumns()
@@ -226,7 +232,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get cells
+     * Get cells.
+     *
      * @return array
      */
     public function getCells()
@@ -243,9 +250,11 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get minimal and maximal column widths
+     * Get minimal and maximal column widths.
+     *
      * @param array $columnGroups
      * @param string $availableSpace
+     *
      * @return array
      */
     public function setUpWidths(array $columnGroups, string $availableSpace)
@@ -300,8 +309,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Set up sizing types for columns
+     * Set up sizing types for columns.
+     *
      * @param array $columnGroups
+     *
      * @return $this
      */
     protected function setUpSizingTypes(array $columnGroups)
@@ -329,13 +340,18 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Set rows width
+     * Set rows width.
+     *
      * @param string $width
+     *
      * @return $this
      */
     protected function setRowsWidth()
     {
         $width = '0';
+        if (empty($this->rows)) {
+            return $this;
+        }
         foreach ($this->rows[0]->getChildren() as $column) {
             $width = Math::add($width, $column->getDimensions()->getWidth());
         }
@@ -357,8 +373,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Minimal content guess
+     * Minimal content guess.
+     *
      * @param array $rows
+     *
      * @return $this
      */
     protected function minContentGuess(array $rows)
@@ -373,8 +391,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Add to preferred others (add left space to preferred width of auto/pixel columns)
+     * Add to preferred others (add left space to preferred width of auto/pixel columns).
+     *
      * @param string $leftSpace
+     *
      * @return string
      */
     protected function addToPreferredOthers(string $leftSpace)
@@ -437,9 +457,11 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Add to others (left space to auto/pixel columns)
+     * Add to others (left space to auto/pixel columns).
+     *
      * @param string $leftSpace
      * @param bool $withPreferred
+     *
      * @return $this
      */
     protected function addToOthers(string $leftSpace, bool $withPreferred = false)
@@ -492,7 +514,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get current others width (auto, pixel columns)
+     * Get current others width (auto, pixel columns).
+     *
      * @return string
      */
     protected function getCurrentOthersWidth()
@@ -508,7 +531,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get total percentage
+     * Get total percentage.
+     *
      * @return string
      */
     protected function getTotalPercentage()
@@ -521,7 +545,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get total percentages width
+     * Get total percentages width.
+     *
      * @return string
      */
     protected function getTotalPercentageWidth()
@@ -534,7 +559,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Expand percents to min width
+     * Expand percents to min width.
+     *
      * @return $this
      */
     protected function expandPercentsToMin()
@@ -576,7 +602,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Apply percentage dimensions
+     * Apply percentage dimensions.
+     *
      * @return $this
      */
     protected function applyPercentage()
@@ -618,8 +645,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Save current columns width state
+     * Save current columns width state.
+     *
      * @param array $rows
+     *
      * @return $this
      */
     protected function saveState(array $rows)
@@ -632,8 +661,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Minimal content percentage guess
+     * Minimal content percentage guess.
+     *
      * @param array $rows
+     *
      * @return $this
      */
     protected function minContentPercentageGuess(array $rows)
@@ -645,8 +676,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Minimal content specified guess
+     * Minimal content specified guess.
+     *
      * @param array $rows
+     *
      * @return $this
      */
     protected function minContentSpecifiedGuess(array $rows)
@@ -668,7 +701,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Set column width
+     * Set column width.
+     *
      * @param $column
      * @param string $width
      */
@@ -682,8 +716,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Maximal content guess
+     * Maximal content guess.
+     *
      * @param array $rows
+     *
      * @return $this
      */
     protected function maxContentGuess(array $rows)
@@ -700,7 +736,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Span rows
+     * Span rows.
+     *
      * @return $this
      */
     public function spanRows()
@@ -765,7 +802,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Finish table width calculations
+     * Finish table width calculations.
+     *
      * @return $this
      */
     protected function finish()
@@ -791,8 +829,10 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Check whenever table fill fit to available space
+     * Check whenever table fill fit to available space.
+     *
      * @param string $availableSpace
+     *
      * @return bool
      */
     protected function willFit(string $availableSpace)
@@ -804,7 +844,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get row inner width
+     * Get row inner width.
+     *
      * @return string
      */
     protected function getRowInnerWidth()
@@ -817,7 +858,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get auto columns max width
+     * Get auto columns max width.
+     *
      * @return string
      */
     protected function getAutoColumnsMaxWidth()
@@ -830,7 +872,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get auto columns min width
+     * Get auto columns min width.
+     *
      * @return string
      */
     protected function getAutoColumnsMinWidth()
@@ -843,7 +886,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get auto columns width
+     * Get auto columns width.
+     *
      * @return string
      */
     protected function getAutoColumnsWidth()
@@ -856,9 +900,11 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Shrink to fit
+     * Shrink to fit.
+     *
      * @param string $availableSpace
      * @param int $step
+     *
      * @return TableBox
      */
     protected function shrinkToFit(string $availableSpace, int $step)
@@ -947,9 +993,11 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Try preferred width
+     * Try preferred width.
+     *
      * @param string $leftSpace
      * @param bool $outerWidthSet
+     *
      * @return $this|TableBox
      */
     protected function tryPreferred(string $leftSpace, bool $outerWidthSet)
@@ -1018,7 +1066,8 @@ class TableBox extends BlockBox
     }
 
     /**
-     * Get table min width
+     * Get table min width.
+     *
      * @return string
      */
     public function getMinWidth()
@@ -1093,13 +1142,13 @@ class TableBox extends BlockBox
             $spannedRowsCount = []; // spannedRowsCount is array of number of row spans for each row
             foreach ($rows as $rowIndex => $row) {
                 foreach ($row->getChildren() as $column) {
-                    $spannedRowsCount[$rowIndex] = max($spannedRowsCount[$rowIndex], $column->getRowSpan());
+                    $spannedRowsCount[$rowIndex] = max($spannedRowsCount[$rowIndex] ?? '0', $column->getRowSpan());
                 }
             }
             $rowsCount = []; // rowsCount is array with number of rows they must share for each row
             foreach ($spannedRowsCount as $currentRowSpanIndex => $currentRowsCount) {
                 for ($i = 0; $i < $currentRowsCount; $i++) {
-                    $rowsCount[$currentRowSpanIndex + $i] = max($rowsCount[$currentRowSpanIndex + $i], $currentRowsCount);
+                    $rowsCount[$currentRowSpanIndex + $i] = max($rowsCount[$currentRowSpanIndex + $i] ?? '0', $currentRowsCount);
                 }
             }
             // get maximal height of each row

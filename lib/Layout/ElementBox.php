@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * ElementBox class
+ * ElementBox class.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,14 +13,11 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-use \YetiForcePDF\Html\Element;
+use YetiForcePDF\Html\Element;
 use YetiForcePDF\Style\Style;
 
 /**
- * Class ElementBox
+ * Class ElementBox.
  */
 class ElementBox extends Box
 {
@@ -29,7 +27,8 @@ class ElementBox extends Box
     protected $element;
 
     /**
-     * Get element
+     * Get element.
+     *
      * @return Element
      */
     public function getElement()
@@ -38,8 +37,10 @@ class ElementBox extends Box
     }
 
     /**
-     * Set element
+     * Set element.
+     *
      * @param Element $element
+     *
      * @return $this
      */
     public function setElement(Element $element)
@@ -50,8 +51,10 @@ class ElementBox extends Box
     }
 
     /**
-     * Get boxes by tag name
+     * Get boxes by tag name.
+     *
      * @param string $tagName
+     *
      * @return array
      */
     public function getBoxesByTagName(string $tagName)
@@ -60,10 +63,12 @@ class ElementBox extends Box
         $allChildren = [];
         $this->getAllChildren($allChildren);
         foreach ($allChildren as $child) {
-            if ($child instanceof ElementBox && $child->getElement() && $child->getElement()->getDOMElement()) {
-                $elementTagName = $child->getElement()->getDOMElement()->tagName;
-                if ($elementTagName && strtolower($elementTagName) === strtolower($tagName)) {
-                    $boxes[] = $child;
+            if ($child instanceof self && $child->getElement() && $child->getElement()->getDOMElement()) {
+                if (isset($child->getElement()->getDOMElement()->tagName)) {
+                    $elementTagName = $child->getElement()->getDOMElement()->tagName;
+                    if ($elementTagName && strtolower($elementTagName) === strtolower($tagName)) {
+                        $boxes[] = $child;
+                    }
                 }
             }
         }
@@ -71,7 +76,8 @@ class ElementBox extends Box
     }
 
     /**
-     * Fix tables - iterate through cells and insert missing one
+     * Fix tables - iterate through cells and insert missing one.
+     *
      * @return $this
      */
     public function fixTables()
@@ -80,13 +86,18 @@ class ElementBox extends Box
         foreach ($tables as $tableBox) {
             $rowGroups = $tableBox->getChildren()[0]->getChildren();
             if (!isset($rowGroups[0])) {
-                $rowGroup = $tableBox->createRowGroup();
-                $row = $rowGroup->createRow();
-                $column = $row->createColumn();
+                $rowGroup = $tableBox->createRowGroupBox();
+                $row = $rowGroup->createRowBox();
+                $column = $row->createColumnBox();
                 $column->createCell();
             } else {
                 $columnsCount = 0;
                 foreach ($rowGroups as $rowGroup) {
+                    if (!isset($rowGroup->getChildren()[0])) {
+                        $row = $rowGroup->createRowBox();
+                        $column = $row->createColumnBox();
+                        $column->createCellBox();
+                    }
                     foreach ($rowGroup->getChildren() as $rowIndex => $row) {
                         $columns = $row->getChildren();
                         $columnsCount = max($columnsCount, count($columns));
@@ -127,7 +138,8 @@ class ElementBox extends Box
     }
 
     /**
-     * Span all rows
+     * Span all rows.
+     *
      * @return $this
      */
     public function spanAllRows()
@@ -140,8 +152,10 @@ class ElementBox extends Box
     }
 
     /**
-     * Build tree
+     * Build tree.
+     *
      * @param $parentBlock
+     *
      * @return $this
      */
     public function buildTree($parentBlock = null)
@@ -205,5 +219,4 @@ class ElementBox extends Box
         }
         return $this;
     }
-
 }
