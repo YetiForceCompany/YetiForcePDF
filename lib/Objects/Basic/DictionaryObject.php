@@ -17,93 +17,104 @@ namespace YetiForcePDF\Objects\Basic;
  */
 class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 {
-	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
-	 * @var string
-	 */
-	protected $basicType = 'Dictionary';
-	/**
-	 * Object name
-	 * @var string
-	 */
-	protected $name = 'Dictionary';
-	/**
-	 * Which type of dictionary (Page, Catalog, Font etc...)
-	 * @var string
-	 */
-	protected $dictionaryType = '';
-	/**
-	 * @var array
-	 */
-	protected $values = [];
+    /**
+     * Basic object type (integer, string, boolean, dictionary etc..)
+     * @var string
+     */
+    protected $basicType = 'Dictionary';
+    /**
+     * Object name
+     * @var string
+     */
+    protected $name = 'Dictionary';
+    /**
+     * Which type of dictionary (Page, Catalog, Font etc...)
+     * @var string
+     */
+    protected $dictionaryType = '';
+    /**
+     * @var array
+     */
+    protected $values = [];
 
-	/**
-	 * Initialisation
-	 * @return $this
-	 */
-	public function init()
-	{
-		parent::init();
-		$this->id = $this->document->getActualId();
-		return $this;
-	}
+    /**
+     * Initialisation
+     * @return $this
+     */
+    public function init()
+    {
+        parent::init();
+        $this->setId($this->document->getActualId());
+        return $this;
+    }
 
-	/**
-	 * Add value
-	 * @param string $name
-	 * @param string $value
-	 * @return $this
-	 */
-	public function addValue(string $name, string $value)
-	{
-		$this->values[] = ['/' . $name, $value];
-		return $this;
-	}
+    /**
+     * Set id
+     * @param $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
 
-	/**
-	 * Clear all values
-	 * @return $this
-	 */
-	public function clearValues()
-	{
-		$this->values = [];
-		return $this;
-	}
+    /**
+     * Add value
+     * @param string $name
+     * @param string $value
+     * @return $this
+     */
+    public function addValue(string $name, string $value)
+    {
+        $this->values[] = ['/' . $name, $value];
+        return $this;
+    }
 
-	/**
-	 * Get dictionary type (Page, Catalog, Font etc...)
-	 * @return string
-	 */
-	public function getDictionaryType()
-	{
-		return $this->dictionaryType;
-	}
+    /**
+     * Clear all values
+     * @return $this
+     */
+    public function clearValues()
+    {
+        $this->values = [];
+        return $this;
+    }
 
-	/**
-	 * Set dictionary type
-	 * @param string $type
-	 * @return $this
-	 */
-	public function setDictionaryType(string $type)
-	{
-		$this->addValue('Type', '/' . $type);
-		$this->dictionaryType = $type;
-		return $this;
-	}
+    /**
+     * Get dictionary type (Page, Catalog, Font etc...)
+     * @return string
+     */
+    public function getDictionaryType()
+    {
+        return $this->dictionaryType;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function render(): string
-	{
-		$values = [
-			$this->getRawId() . ' obj',
-			'<<'
-		];
-		foreach ($this->values as $value) {
-			$values[] = implode(' ', $value);
-		}
-		$values[] = '>>';
-		return implode("\n", $values);
-	}
+    /**
+     * Set dictionary type
+     * @param string $type
+     * @return $this
+     */
+    public function setDictionaryType(string $type)
+    {
+        $this->addValue('Type', '/' . $type);
+        $this->dictionaryType = $type;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render(): string
+    {
+        $values = [
+            $this->getRawId() . ' obj',
+            '<<'
+        ];
+        foreach ($this->values as $value) {
+            $values[] = implode(' ', $value);
+        }
+        $values[] = '>>';
+        return implode("\n", $values);
+    }
 }

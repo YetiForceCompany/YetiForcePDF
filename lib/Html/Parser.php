@@ -115,7 +115,6 @@ class Parser extends \YetiForcePDF\Base
             ->setDocument($this->document)
             ->setDOMElement($this->domDocument->documentElement);
         // root element must be defined before initialisation
-        $this->document->setRootElement($this->rootElement);
         $this->rootElement->init();
         $this->box->setElement($this->rootElement);
         $this->box->setStyle($this->rootElement->parseStyle());
@@ -125,7 +124,7 @@ class Parser extends \YetiForcePDF\Base
         $this->box->layout();
         $this->box->spanAllRows();
         $this->document->getCurrentPage()->setBox($this->box);
-        //$this->box->divideIntoPages();
+        $this->box->divideIntoPages();
         foreach ($this->document->getPages() as $page) {
             $children = [];
             $page->getBox()->getAllChildren($children);
