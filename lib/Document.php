@@ -14,6 +14,7 @@ namespace YetiForcePDF;
 
 use YetiForcePDF\Html\Element;
 
+
 /**
  * Class Document
  */
@@ -37,12 +38,12 @@ class Document
     protected $catalog;
     /**
      * Pages dictionary
-     * @var \YetiForcePDF\Pages
+     * @var Pages
      */
     protected $pagesObject;
     /**
      * Current page object
-     * @var \YetiForcePDF\Page
+     * @var Page
      */
     protected $currentPageObject;
     /**
@@ -53,6 +54,11 @@ class Document
      * @var string default page orientation
      */
     protected $defaultOrientation = \YetiForcePDF\Page::ORIENTATION_PORTRAIT;
+
+    /**
+     * @var Page[] all pages in the document
+     */
+    protected $pages = [];
     /**
      * Default page margins
      * @var array
@@ -112,7 +118,7 @@ class Document
     public function init()
     {
         $this->catalog = (new \YetiForcePDF\Catalog())->setDocument($this)->init();
-        $this->pagesObject = $this->catalog->addChild((new \YetiForcePDF\Pages())->setDocument($this)->init());
+        $this->pagesObject = $this->catalog->addChild((new Pages())->setDocument($this)->init());
         $this->currentPageObject = $this->addPage($this->defaultFormat, $this->defaultOrientation);
         return $this;
     }
@@ -299,7 +305,7 @@ class Document
      */
     public function addPage(string $format = '', string $orientation = ''): \YetiForcePDF\Page
     {
-        $page = (new \YetiForcePDF\Page())->setDocument($this)->init();
+        $page = (new Page())->setDocument($this)->init();
         if (!$format) {
             $format = $this->defaultFormat;
         }
@@ -307,6 +313,7 @@ class Document
             $orientation = $this->defaultOrientation;
         }
         $page->setOrientation($orientation)->setFormat($format);
+        $this->pages[] = $page;
         $this->currentPageObject = $page;
         return $page;
     }
@@ -318,6 +325,15 @@ class Document
     public function getCurrentPage(): \YetiForcePDF\Page
     {
         return $this->currentPageObject;
+    }
+
+    /**
+     * Get all pages
+     * @return Page[]
+     */
+    public function getPages()
+    {
+        return $this->pages;
     }
 
     /**

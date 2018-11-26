@@ -838,7 +838,7 @@ class Style extends \YetiForcePDF\Base
                 return Math::div($size, '72');
             case '%':
                 return $size . '%'; // percent values are calculated later
-            case 'em':
+            default: // em too
                 return Math::mul($this->getFont()->getTextHeight(), $size);
         }
     }

@@ -214,9 +214,9 @@ class LineBox extends Box implements BoxInterface
             $child->measureWidth();
             $width = Math::add($width, $child->getDimensions()->getOuterWidth());
         }
-        if ($parentWidth = $this->getParent()->getDimensions()->getWidth()) {
+        /*if ($parentWidth = $this->getParent()->getDimensions()->getWidth()) {
             //$width = Math::max($parentWidth, $width);
-        }
+        }*/
         $this->getDimensions()->setWidth($width);
         return $this;
     }

@@ -884,6 +884,7 @@ class Font extends \YetiForcePDF\Objects\Resource
     public function setSize(string $size)
     {
         $this->size = $size;
+        $this->textHeight = Math::div(Math::mul($this->size, $this->height), $this->unitsPerEm);
         return $this;
     }
 

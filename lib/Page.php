@@ -14,6 +14,8 @@ namespace YetiForcePDF;
 
 use YetiForcePDF\Layout\Dimensions\Dimensions;
 use YetiForcePDF\Layout\Coordinates\Coordinates;
+use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
+use \YetiForcePDF\Layout\Box;
 
 /**
  * Class Page
@@ -69,16 +71,16 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     protected $margins;
     /**
      * Page dimensions
-     * @var \YetiForcePDF\Layout\Dimensions\BoxDimensions
+     * @var BoxDimensions
      */
     protected $dimensions;
     /**
      * Page outer dimensions
-     * @var \YetiForcePDF\Layout\Dimensions\BoxDimensions
+     * @var BoxDimensions
      */
     protected $outerDimensions;
     /**
-     * @var \YetiForcePDF\Layout\Coordinates\Coordinates
+     * @var Coordinates
      */
     protected $coordinates;
     /**
@@ -86,6 +88,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
      * @var string[]
      */
     protected $doNotGroup = [];
+    /**
+     * @var Box main box with content
+     */
+    protected $box;
 
     public static $pageFormats = [
         // ISO 216 A Series + 2 SIS 014711 extensions
@@ -538,6 +544,26 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     public function getCoordinates()
     {
         return $this->coordinates;
+    }
+
+    /**
+     * Set main box for the page
+     * @param Box $box
+     * @return $this
+     */
+    public function setBox(Box $box)
+    {
+        $this->box = $box;
+        return $this;
+    }
+
+    /**
+     * Get main box for the page
+     * @return Box
+     */
+    public function getBox()
+    {
+        return $this->box;
     }
 
     /**

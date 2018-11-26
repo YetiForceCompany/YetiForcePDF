@@ -124,11 +124,15 @@ class Parser extends \YetiForcePDF\Base
         $this->box->getStyle()->fixDomTree();
         $this->box->layout();
         $this->box->spanAllRows();
-        $children = [];
-        $this->box->getAllChildren($children);
-        foreach ($children as $box) {
-            if (!$box instanceof \YetiForcePDF\Layout\LineBox && $box->getStyle()->getRules('display') !== 'none') {
-                $this->document->getCurrentPage()->getContentStream()->addRawContent($box->getInstructions());
+        $this->document->getCurrentPage()->setBox($this->box);
+        //$this->box->divideIntoPages();
+        foreach ($this->document->getPages() as $page) {
+            $children = [];
+            $page->getBox()->getAllChildren($children);
+            foreach ($children as $box) {
+                if (!$box instanceof \YetiForcePDF\Layout\LineBox && $box->getStyle()->getRules('display') !== 'none') {
+                    $page->getContentStream()->addRawContent($box->getInstructions());
+                }
             }
         }
     }
