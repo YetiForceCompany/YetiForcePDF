@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Layout;
 
 use YetiForcePDF\Html\Element;
-use YetiForcePDF\Style\Style;
+use YetiForcePDF\Layout\TableWrapperBox;
 
 /**
  * Class ElementBox.
@@ -82,7 +82,7 @@ class ElementBox extends Box
      */
     public function fixTables()
     {
-        $tables = $this->getBoxesByTagName('table');
+        $tables = $this->getBoxesByType('TableWrapperBox');
         foreach ($tables as $tableWrapperBox) {
             $tableBox = $tableWrapperBox->getFirstChild();
             $rowGroups = $tableBox->getChildren();
@@ -154,9 +154,9 @@ class ElementBox extends Box
      */
     public function spanAllRows()
     {
-        $tables = $this->getBoxesByTagName('table');
-        foreach ($tables as $tableBox) {
-            $tableBox->getFirstChild()->spanRows();
+        $tablesBoxes = $this->getBoxesByType('TableBox');
+        foreach ($tablesBoxes as $tableBox) {
+            $tableBox->spanRows();
         }
         return $this;
     }
@@ -201,7 +201,7 @@ class ElementBox extends Box
                         $this->appendBlockBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table':
-                        $tableWrapper = $this->appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock);
+                        $tableWrapper = $this->appendTableWrapperBox($childDomElement, $element, $style, $parentBlock);
                         $tableWrapper->appendTableBox($childDomElement, $element, $style, $parentBlock);
                         break;
                     case 'table-row-group':

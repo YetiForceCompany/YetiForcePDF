@@ -145,12 +145,12 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     /**
      * {@inheritdoc}
      */
-    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
     {
         if ($this->getCurrentLineBox()) {
             $this->closeLine();
         }
-        $box = (new TableWrapperBlockBox())
+        $box = (new TableWrapperBox())
             ->setDocument($this->document)
             ->setParent($this)
             ->setElement($element)

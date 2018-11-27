@@ -76,9 +76,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     /**
      * {@inheritdoc}
      */
-    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
     {
-        $box = (new TableWrapperBlockBox())
+        $box = (new TableWrapperBox())
             ->setDocument($this->document)
             ->setParent($this)
             ->setElement($element)

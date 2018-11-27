@@ -42,7 +42,7 @@ interface AppendChildInterface
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
      * @return $this
      */
-    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock);
+    public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock);
 
     /**
      * Append inline block box element

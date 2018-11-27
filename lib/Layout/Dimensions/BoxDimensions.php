@@ -16,7 +16,8 @@ use \YetiForcePDF\Math;
 use \YetiForcePDF\Layout\Box;
 use \YetiForcePDF\Layout\LineBox;
 use \YetiForcePDF\Layout\TextBox;
-use \YetiForcePDF\Layout\TableWrapperBlockBox;
+use \YetiForcePDF\Layout\TableWrapperBox;
+use \YetiForcePDF\Layout\TableCellBox;
 
 /**
  * Class BoxDimensions
@@ -237,7 +238,7 @@ class BoxDimensions extends Dimensions
         if (!$box->isForMeasurement()) {
             return '0';
         }
-        if ($box instanceof TableWrapperBlockBox) {
+        if ($box instanceof TableWrapperBox) {
             return $box->getFirstChild()->getMinWidth();
         }
         if ($box instanceof TextBox) {

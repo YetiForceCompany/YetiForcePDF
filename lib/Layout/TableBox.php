@@ -93,7 +93,7 @@ class TableBox extends BlockBox
     /**
      * We shouldn't append table wrapper here.
      */
-    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
@@ -1085,6 +1085,9 @@ class TableBox extends BlockBox
     public function measureWidth()
     {
         foreach ($this->getCells() as $cell) {
+            /*foreach($cell->getBoxByType('TableBox') as $tableBox){
+
+            }*/
             $cell->measureWidth();
         }
         $step = 0;
@@ -1114,11 +1117,11 @@ class TableBox extends BlockBox
         }
         $this->maxContentGuess($rows);
         if (!$this->willFit($availableSpace)) {
-            return $this->shrinkToFit($availableSpace, $step);
+            //return $this->shrinkToFit($availableSpace, $step);
         }
         $leftSpace = Math::sub($availableSpace, $this->getDimensions()->getWidth());
         if (Math::comp($leftSpace, '0') > 0) {
-            $this->tryPreferred($leftSpace, $outerWidthSet);
+            //$this->tryPreferred($leftSpace, $outerWidthSet);
         }
         return $this->finish();
     }

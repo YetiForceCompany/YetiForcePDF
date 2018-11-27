@@ -516,6 +516,29 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Get boxes by type.
+     *
+     * @param string $className
+     *
+     * @return array
+     */
+    public function getBoxesByType(string $className)
+    {
+        if (substr($className, 0, 9) !== 'YetiForce') {
+            $className = 'YetiForcePDF\\Layout\\' . $className;
+        }
+        $boxes = [];
+        $allChildren = [];
+        $this->getAllChildren($allChildren);
+        foreach ($allChildren as $child) {
+            if ($child instanceof $className) {
+                $boxes[] = $child;
+            }
+        }
+        return $boxes;
+    }
+
+    /**
      * Do we have children?
      * @return bool
      */

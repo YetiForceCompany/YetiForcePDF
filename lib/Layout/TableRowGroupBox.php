@@ -30,7 +30,7 @@ class TableRowGroupBox extends BlockBox
     /**
      * We shouldn't append table wrapper here
      */
-    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 

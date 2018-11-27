@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * TableWrapperBlockBox class
+ * TableWrapperBox class
  *
  * @package   YetiForcePDF\Layout
  *
@@ -18,9 +18,9 @@ use \YetiForcePDF\Html\Element;
 
 
 /**
- * Class TableWrapperBlockBox
+ * Class TableWrapperBox
  */
-class TableWrapperBlockBox extends BlockBox
+class TableWrapperBox extends BlockBox
 {
     /**
      * We shouldn't append block box here
@@ -32,7 +32,7 @@ class TableWrapperBlockBox extends BlockBox
     /**
      * We shouldn't append table wrapper here
      */
-    public function appendTableWrapperBlockBox($childDomElement, $element, $style, $parentBlock)
+    public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
