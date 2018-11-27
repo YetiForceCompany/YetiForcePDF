@@ -108,7 +108,7 @@ class LineBox extends Box implements BoxInterface
     public function isEmpty()
     {
         foreach ($this->getChildren() as $child) {
-            if ($child->isForMeasurement()) {
+            if ($child->isForMeasurement() || $child->getStyle()->haveSpacing()) {
                 return false;
             }
         }
@@ -199,6 +199,16 @@ class LineBox extends Box implements BoxInterface
         }
         // append last line
         $lines[] = $line;
+        foreach ($lines as $line) {
+            $isForMeasurement = false;
+            foreach ($line->getChildren() as $child) {
+                if ($child->isForMeasurement()) {
+                    $isForMeasurement = true;
+                    break;
+                }
+            }
+            $line->forMeasurement = $isForMeasurement;
+        }
         return $lines;
     }
 
@@ -215,7 +225,7 @@ class LineBox extends Box implements BoxInterface
             $width = Math::add($width, $child->getDimensions()->getOuterWidth());
         }
         /*if ($parentWidth = $this->getParent()->getDimensions()->getWidth()) {
-            //$width = Math::max($parentWidth, $width);
+            $width = Math::max($parentWidth, $width);
         }*/
         $this->getDimensions()->setWidth($width);
         return $this;
@@ -227,6 +237,10 @@ class LineBox extends Box implements BoxInterface
      */
     public function measureHeight()
     {
+        if (!$this->isForMeasurement()) {
+            $this->getDimensions()->setHeight('0');
+            return $this;
+        }
         foreach ($this->getChildren() as $child) {
             $child->measureHeight();
         }

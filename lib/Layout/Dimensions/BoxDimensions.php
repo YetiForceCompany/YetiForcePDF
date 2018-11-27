@@ -54,7 +54,7 @@ class BoxDimensions extends Dimensions
      */
     public function getWidth()
     {
-        if (!$this->getBox()->isForMeasurement()) {
+        if (!$this->getBox()->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
             return '0';
         }
         return parent::getWidth();
@@ -65,7 +65,7 @@ class BoxDimensions extends Dimensions
      */
     public function getHeight()
     {
-        if (!$this->getBox()->isForMeasurement()) {
+        if (!$this->getBox()->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
             return '0';
         }
         return parent::getHeight();
@@ -78,7 +78,7 @@ class BoxDimensions extends Dimensions
     public function getInnerWidth(): string
     {
         $box = $this->getBox();
-        if (!$box->isForMeasurement()) {
+        if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
             return '0';
         }
         $style = $box->getStyle();
@@ -96,7 +96,7 @@ class BoxDimensions extends Dimensions
     public function getInnerHeight(): string
     {
         $box = $this->getBox();
-        if (!$box->isForMeasurement()) {
+        if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
             return '0';
         }
         $style = $box->getStyle();
@@ -104,7 +104,7 @@ class BoxDimensions extends Dimensions
         if ($height === null) {
             $height = '0';
             if ($element = $box->getElement()) {
-                if ($element->getDOMElement() instanceof DOMText) {
+                if ($element->getDOMElement() instanceof \DOMText) {
                     $height = $style->getLineHeight();
                 }
             }
@@ -120,7 +120,7 @@ class BoxDimensions extends Dimensions
     public function getOuterWidth()
     {
         $box = $this->getBox();
-        if (!$box->isForMeasurement()) {
+        if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
             return '0';
         }
         if (!$box instanceof LineBox) {
@@ -155,7 +155,7 @@ class BoxDimensions extends Dimensions
     public function getOuterHeight()
     {
         $box = $this->getBox();
-        if (!$box->isForMeasurement()) {
+        if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
             return '0';
         }
         $style = $this->getBox()->getStyle();

@@ -898,6 +898,16 @@ class Style extends \YetiForcePDF\Base
     }
 
     /**
+     * Is this box have a borders?
+     * @return bool
+     */
+    public function haveSpacing()
+    {
+        $spacing = Math::max($this->getHorizontalBordersWidth(), $this->getHorizontalPaddingsWidth());
+        return Math::comp($spacing, '0') > 0;
+    }
+
+    /**
      * Get line height.
      *
      * @return string
@@ -905,7 +915,7 @@ class Style extends \YetiForcePDF\Base
     public function getLineHeight()
     {
         $box = $this->getBox();
-        if (!$box->isRenderable()) {
+        if (!$box->isRenderable() && !$this->haveSpacing()) {
             return '0';
         }
         if ($box instanceof InlineBox) {
@@ -922,9 +932,6 @@ class Style extends \YetiForcePDF\Base
     public function getMaxLineHeight()
     {
         $box = $this->getBox();
-        if (!$box->isRenderable()) {
-            return '0';
-        }
         $lineHeight = $this->rules['line-height'];
         if (!$this->getRules('display') !== 'inline') {
             $lineHeight = Math::add($lineHeight, $this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth());

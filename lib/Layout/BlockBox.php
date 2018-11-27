@@ -282,7 +282,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     {
         foreach ($this->getChildren() as $child) {
             if ($child instanceof LineBox) {
-                if ($child->isEmpty()) {
+                if ($child->isEmpty() && !$child->getStyle()->haveSpacing()) {
                     $child->setRenderable(false);
                 } else {
                     $child->setRenderable();
