@@ -83,8 +83,18 @@ class ElementBox extends Box
     public function fixTables()
     {
         $tables = $this->getBoxesByTagName('table');
-        foreach ($tables as $tableBox) {
-            $rowGroups = $tableBox->getChildren()[0]->getChildren();
+        foreach ($tables as $tableWrapperBox) {
+            $tableBox = $tableWrapperBox->getFirstChild();
+            $rowGroups = $tableBox->getChildren();
+            foreach ($rowGroups as $rowGroup) {
+                // wrap rows with row groups
+                if ($rowGroup instanceof TableRowBox) {
+                    $wrapRowGroup = $tableBox->removeChild($tableBox->createRowGroupBox());
+                    $tableBox->insertBefore($wrapRowGroup, $rowGroup);
+                    $wrapRowGroup->appendChild($tableBox->removeChild($rowGroup));
+                }
+            }
+            $rowGroups = $tableBox->getChildren();
             if (!isset($rowGroups[0])) {
                 $rowGroup = $tableBox->createRowGroupBox();
                 $row = $rowGroup->createRowBox();

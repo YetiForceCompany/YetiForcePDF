@@ -115,7 +115,7 @@ class TableBox extends BlockBox
      * Create row group inside table
      * return TableRowGroupBox.
      */
-    public function createRowGroup()
+    public function createRowGroupBox()
     {
         $style = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
@@ -171,24 +171,20 @@ class TableBox extends BlockBox
      */
     public function appendTableRowBox($childDomElement, $element, $style, $parentBlock)
     {
-        if (!$this->anonymousRowGroup) {
-            $cleanStyle = (new \YetiForcePDF\Style\Style())
-                ->setDocument($this->document)
-                ->setContent('')
-                ->parseInline();
-            $box = (new TableRowGroupBox())
-                ->setDocument($this->document)
-                ->setParent($this)
-                ->setElement($element)
-                ->setStyle($cleanStyle)
-                ->init();
-            $this->appendChild($box);
-            $box->getStyle()->init();
-            $this->anonymousRowGroup = $box;
-            return $box;
-        }
-        return $this->anonymousRowGroup->appendTableRowBox($childDomElement, $element, $style, $parentBlock);
-        //$this->anonymousRowGroup->buildTree($this->anonymousRowGroup);
+        $cleanStyle = (new \YetiForcePDF\Style\Style())
+            ->setDocument($this->document)
+            ->setContent('')
+            ->parseInline();
+        $box = (new TableRowBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setElement($element)
+            ->setStyle($cleanStyle)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init()->setRule('display', 'block');
+        $box->buildTree($box);
+        return $box;
     }
 
     /**
