@@ -69,8 +69,12 @@ class Parser extends \YetiForcePDF\Base
     {
         $config = \HTMLPurifier_Config::createDefault();
         $config->set('CSS.AllowTricky', true);
+        $config->set('CSS.Proprietary', true);
+        $config->set('CSS.Trusted', true);
+        $config->set('HTML.Trusted', true);
+        $config->set('CSS.AllowDuplicates', true);
         $purifier = new \HTMLPurifier($config);
-        $html = $purifier->purify($html);
+        //$html = $purifier->purify($html);
         $html = $this->cleanUpHtml($html, $fromEncoding);
         $this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
         $this->domDocument = new \DOMDocument();

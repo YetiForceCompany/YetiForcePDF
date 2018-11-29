@@ -214,12 +214,10 @@ class TableBox extends BlockBox
     {
         $columns = [];
         foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
-            foreach ($rowGroup->getChildren() as $row) {
-                $columnIndex = 0;
-                foreach ($row->getChildren() as $column) {
+            foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+                foreach ($row->getChildren() as $columnIndex => $column) {
                     if ($column instanceof TableColumnBox) {
-                        $columns[$rowGroupIndex][$columnIndex][] = $column;
-                        $columnIndex++;
+                        $columns[$columnIndex][] = $column;
                     }
                 }
             }
@@ -235,9 +233,9 @@ class TableBox extends BlockBox
     public function getCells()
     {
         $cells = [];
-        foreach ($this->getColumns() as $rowGroup) {
-            foreach ($rowGroup as $columnIndex => $row) {
-                foreach ($row as $column) {
+        foreach ($this->getChildren() as $rowGroup) {
+            foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+                foreach ($row->getChildren() as $column) {
                     $cells[] = $column->getFirstChild();
                 }
             }
@@ -248,36 +246,27 @@ class TableBox extends BlockBox
     /**
      * Get minimal and maximal column widths.
      *
-     * @param array $columnGroups
      * @param string $availableSpace
      *
      * @return array
      */
-    public function setUpWidths(array $columnGroups, string $availableSpace)
+    public function setUpWidths(string $availableSpace)
     {
-        foreach ($columnGroups as $rowGroup) {
-            foreach ($rowGroup as $columnIndex => $columns) {
-                foreach ($columns as $column) {
-                    if (!isset($this->preferredWidths[$columnIndex])) {
-                        $this->preferredWidths[$columnIndex] = '0';
-                    }
-                    if (!isset($this->minWidths[$columnIndex])) {
-                        $this->minWidths[$columnIndex] = '0';
-                    }
-                    if (!isset($this->contentWidths[$columnIndex])) {
-                        $this->contentWidths[$columnIndex] = '0';
-                    }
+        foreach ($this->getChildren() as $rowGroup) {
+            foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+                $columns = $row->getChildren();
+                foreach ($columns as $columnIndex => $column) {
                     $cell = $column->getFirstChild();
                     $cellStyle = $cell->getStyle();
                     $columnStyle = $column->getStyle();
                     $columnInnerWidth = $cell->getDimensions()->getMaxWidth();
                     $styleWidth = $columnStyle->getRules('width');
-                    $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex], $columnInnerWidth);
+                    $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex] ?? '0', $columnInnerWidth);
                     $minColumnWidth = $cell->getDimensions()->getMinWidth();
                     if ($column->getColSpan() > 1) {
                         $minColumnWidth = Math::div($minColumnWidth, (string)$column->getColSpan());
                     }
-                    $this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex], $minColumnWidth);
+                    $this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex] ?? '0', $minColumnWidth);
                     if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === false) {
                         if ($column->getColSpan() > 1) {
                             $styleWidth = Math::div($styleWidth, (string)$column->getColSpan());
@@ -285,10 +274,10 @@ class TableBox extends BlockBox
                         $preferred = Math::max($styleWidth, $minColumnWidth);
                         $this->minWidths[$columnIndex] = $preferred;
                     } elseif (strpos($styleWidth, '%') > 0) {
-                        $preferred = Math::max($this->preferredWidths[$columnIndex], $columnInnerWidth);
+                        $preferred = Math::max($this->preferredWidths[$columnIndex] ?? '0', $columnInnerWidth);
                         $this->percentages[$columnIndex] = Math::max($this->percentages[$columnIndex] ?? '0', trim($styleWidth, '%'));
                     } else {
-                        $preferred = Math::max($this->preferredWidths[$columnIndex], $columnInnerWidth);
+                        $preferred = Math::max($this->preferredWidths[$columnIndex] ?? '0', $columnInnerWidth);
                     }
                     $this->preferredWidths[$columnIndex] = $preferred;
                 }
@@ -300,38 +289,42 @@ class TableBox extends BlockBox
         }
         if ($this->getParent()->getStyle()->getRules('border-collapse') !== 'collapse') {
             $spacing = $this->getStyle()->getRules('border-spacing');
-            $this->cellSpacingWidth = Math::mul((string)(count($columnGroups) + 1), $spacing);
+            $this->cellSpacingWidth = Math::mul((string)(count($columns) + 1), $spacing);
         }
     }
 
     /**
      * Set up sizing types for columns.
      *
-     * @param array $columnGroups
-     *
      * @return $this
      */
-    protected function setUpSizingTypes(array $columnGroups)
+    protected function setUpSizingTypes()
     {
-        foreach ($columnGroups as $rowGroup) {
-            foreach ($rowGroup as $columnIndex => $columns) {
-                $firstColumn = $columns[0];
-                $columnStyleWidth = $firstColumn->getStyle()->getRules('width');
-                if (strpos($columnStyleWidth, '%') > 0) {
-                    foreach ($columns as $rowIndex => $column) {
-                        $this->percentColumns[$columnIndex][$rowIndex] = $column;
-                    }
-                } elseif ($columnStyleWidth !== 'auto') {
-                    foreach ($columns as $rowIndex => $column) {
-                        $this->pixelColumns[$columnIndex][$rowIndex] = $column;
-                    }
-                } else {
-                    foreach ($columns as $rowIndex => $column) {
-                        $this->autoColumns[$columnIndex][$rowIndex] = $column;
+        $columnSizingTypes = [];
+        foreach ($this->getFirstChild()->getFirstChild()->getChildren() as $columnIndex => $column) {
+            $columnStyleWidth = $column->getStyle()->getRules('width');
+            if (strpos($columnStyleWidth, '%') > 0) {
+                $columnSizingTypes[$columnIndex] = 'percent';
+            } elseif ($columnStyleWidth !== 'auto') {
+                $columnSizingTypes[$columnIndex] = 'pixel';
+            } else {
+                $columnSizingTypes[$columnIndex] = 'auto';
+            }
+        }
+        foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
+            foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+                foreach ($row->getChildren() as $columnIndex => $column) {
+                    if ($columnSizingTypes[$columnIndex] === 'percent') {
+                        $this->percentColumns[$columnIndex][] = $column;
+                    } elseif ($columnSizingTypes[$columnIndex] === 'pixel') {
+                        $this->pixelColumns[$columnIndex][] = $column;
+                    } else {
+                        $this->autoColumns[$columnIndex][] = $column;
                     }
                 }
             }
         }
+        unset($columnSizingTypes);
         return $this;
     }
 
@@ -480,6 +473,9 @@ class TableBox extends BlockBox
                 $ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
                 $add = Math::mul($leftSpace, $ratio);
                 $colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
+                /*if (Math::comp($colWidth, $this->contentWidth[$columnIndex]) > 0) {
+                    $colWidth = $this->contentWidth[$columnIndex];
+                }*/
                 foreach ($columns as $column) {
                     $colDmns = $column->getDimensions();
                     $colDmns->setWidth($colWidth);
@@ -517,6 +513,7 @@ class TableBox extends BlockBox
     protected function getCurrentOthersWidth()
     {
         $currentOthersWidth = '0';
+
         foreach ($this->autoColumns as $columnIndex => $columns) {
             $currentOthersWidth = Math::add($currentOthersWidth, $columns[0]->getDimensions()->getInnerWidth());
         }
@@ -557,9 +554,11 @@ class TableBox extends BlockBox
     /**
      * Expand percents to min width.
      *
+     * @param string $availableSpace
+     *
      * @return $this
      */
-    protected function expandPercentsToMin()
+    protected function expandPercentsToMin(string $availableSpace)
     {
         $totalPercentageSpecified = $this->getTotalPercentage();
         $maxPercentRatio = '0';
@@ -590,9 +589,12 @@ class TableBox extends BlockBox
         }
         // percentage columns are satisfied, other columns must fulfill percentages
         $otherPercent = Math::sub('100', $totalPercentageSpecified);
-        $othersWidth = Math::mul($otherPercent, $onePercent);
+        $othersShouldHaveWidth = Math::mul($otherPercent, $onePercent);
+        if (Math::comp(Math::add($othersShouldHaveWidth, $currentPercentsWidth), $availableSpace) > 0) {
+            $othersShouldHaveWidth = Math::sub($availableSpace, $currentPercentsWidth);
+        }
         $currentOthersWidth = $this->getCurrentOthersWidth();
-        $leftSpace = Math::sub($othersWidth, $currentOthersWidth);
+        $leftSpace = Math::sub($othersShouldHaveWidth, $currentOthersWidth);
         $this->addToOthers($leftSpace);
         return $this;
     }
@@ -600,9 +602,11 @@ class TableBox extends BlockBox
     /**
      * Apply percentage dimensions.
      *
+     * @param string $availableSpace
+     *
      * @return $this
      */
-    protected function applyPercentage()
+    protected function applyPercentage(string $availableSpace)
     {
         $currentRowWidth = '0';
         if ($this->getParent()->getStyle()->getRules('width') === 'auto') {
@@ -627,7 +631,7 @@ class TableBox extends BlockBox
             }
         }
         if ($mustExpand) {
-            $this->expandPercentsToMin();
+            $this->expandPercentsToMin($availableSpace);
         } else {
             // everything is ok we can resize percentages
             foreach ($this->percentColumns as $columnIndex => $columns) {
@@ -660,13 +664,14 @@ class TableBox extends BlockBox
      * Minimal content percentage guess.
      *
      * @param array $rows
+     * @param string $availableSpace
      *
      * @return $this
      */
-    protected function minContentPercentageGuess(array $rows)
+    protected function minContentPercentageGuess(array $rows, string $availableSpace)
     {
         $this->saveState($rows);
-        $this->applyPercentage();
+        $this->applyPercentage($availableSpace);
         $this->setRowsWidth();
         return $this;
     }
@@ -675,10 +680,11 @@ class TableBox extends BlockBox
      * Minimal content specified guess.
      *
      * @param array $rows
+     * @param string $availableSpace
      *
      * @return $this
      */
-    protected function minContentSpecifiedGuess(array $rows)
+    protected function minContentSpecifiedGuess(array $rows, string $availableSpace)
     {
         $this->saveState($rows);
         $leftWidth = '0';
@@ -691,7 +697,8 @@ class TableBox extends BlockBox
         foreach ($this->autoColumns as $columnIndex => $columns) {
             $leftWidth = Math::add($leftWidth, $columns[0]->getDimensions()->getWidth());
         }
-        $this->applyPercentage();
+
+        $this->applyPercentage($availableSpace);
         $this->setRowsWidth();
         return $this;
     }
@@ -715,10 +722,11 @@ class TableBox extends BlockBox
      * Maximal content guess.
      *
      * @param array $rows
+     * @param string $availableSpace
      *
      * @return $this
      */
-    protected function maxContentGuess(array $rows)
+    protected function maxContentGuess(array $rows, string $availableSpace)
     {
         $this->saveState($rows);
         foreach ($this->autoColumns as $columnIndex => $columns) {
@@ -726,7 +734,7 @@ class TableBox extends BlockBox
                 $this->setColumnWidth($column, $this->contentWidths[$columnIndex]);
             }
         }
-        $this->applyPercentage();
+        $this->applyPercentage($availableSpace);
         $this->setRowsWidth();
         return $this;
     }
@@ -1072,9 +1080,8 @@ class TableBox extends BlockBox
             $cell->measureWidth();
         }
         $this->rows = $this->getRows();
-        $columnGroups = $this->getColumns();
-        $this->setUpSizingTypes($columnGroups);
-        $this->setUpWidths($columnGroups, '0');
+        $this->setUpSizingTypes();
+        $this->setUpWidths('0');
         $this->minContentGuess($this->rows)->finish();
         return $this->getDimensions()->getWidth();
     }
@@ -1085,14 +1092,10 @@ class TableBox extends BlockBox
     public function measureWidth()
     {
         foreach ($this->getCells() as $cell) {
-            /*foreach($cell->getBoxByType('TableBox') as $tableBox){
-
-            }*/
             $cell->measureWidth();
         }
         $step = 0;
-        $columnGroups = $this->getColumns();
-        $this->setUpSizingTypes($columnGroups);
+        $this->setUpSizingTypes();
         $availableSpace = $this->getParent()->getDimensions()->computeAvailableSpace();
         $outerWidthSet = false;
         if ($this->getParent()->getStyle()->getRules('width') !== 'auto') {
@@ -1101,27 +1104,27 @@ class TableBox extends BlockBox
             $outerWidthSet = true;
         }
         $rows = $this->rows = $this->getRows();
-        $this->setUpWidths($columnGroups, $availableSpace);
-        $this->minContentGuess($rows);
-        $this->minContentPercentageGuess($rows);
+        $this->setUpWidths($availableSpace);
+        $this->minContentGuess($rows, $availableSpace);
+        $this->minContentPercentageGuess($rows, $availableSpace);
         if (!$this->willFit($availableSpace)) {
             return $this->shrinkToFit($availableSpace, $step);
         } else {
             $step = 1;
         }
-        $this->minContentSpecifiedGuess($rows);
+        $this->minContentSpecifiedGuess($rows, $availableSpace);
         if (!$this->willFit($availableSpace)) {
             return $this->shrinkToFit($availableSpace, $step);
         } else {
             $step = 2;
         }
-        $this->maxContentGuess($rows);
+        $this->maxContentGuess($rows, $availableSpace);
         if (!$this->willFit($availableSpace)) {
-            //return $this->shrinkToFit($availableSpace, $step);
+            return $this->shrinkToFit($availableSpace, $step);
         }
         $leftSpace = Math::sub($availableSpace, $this->getDimensions()->getWidth());
         if (Math::comp($leftSpace, '0') > 0) {
-            //$this->tryPreferred($leftSpace, $outerWidthSet);
+            $this->tryPreferred($leftSpace, $outerWidthSet);
         }
         return $this->finish();
     }

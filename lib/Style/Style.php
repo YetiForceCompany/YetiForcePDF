@@ -16,6 +16,7 @@ namespace YetiForcePDF\Style;
 use YetiForcePDF\Layout\Box;
 use YetiForcePDF\Layout\InlineBox;
 use YetiForcePDF\Layout\TableBox;
+use YetiForcePDF\Layout\TableCellBox;
 use YetiForcePDF\Math;
 use YetiForcePDF\Objects\ImageStream;
 
@@ -1050,7 +1051,7 @@ class Style extends \YetiForcePDF\Base
     protected function parseImage(array $ruleParsed)
     {
         if ($element = $this->getElement()) {
-            if ($domElement = $element->getDOMElement() && isset($domElement->tagName)) {
+            if (($domElement = $element->getDOMElement()) && isset($domElement->tagName)) {
                 if ($domElement->tagName === 'img' && $domElement->getAttribute('src')) {
                     $ruleParsed['background-image'] = 'url(' . $domElement->getAttribute('src') . ');';
                 }
@@ -1106,7 +1107,7 @@ class Style extends \YetiForcePDF\Base
     public function applyBorderSpacing($rulesParsed)
     {
         if ($element = $this->getElement()) {
-            if ($this->box instanceof \YetiForcePDF\Layout\TableCellBox) {
+            if ($this->box instanceof TableCellBox) {
                 $parentStyle = $this->getParent();
                 if ($parentStyle->getRules('border-collapse') !== 'collapse') {
                     $padding = $parentStyle->getRules('border-spacing');
@@ -1235,18 +1236,17 @@ class Style extends \YetiForcePDF\Base
     {
         $box = $this->getBox();
         if ($box instanceof TableBox) {
-            $columnsGrouped = $box->getColumns();
-            if (empty($columnsGrouped)) {
-                return $this;
-            }
-            $columnsCount = count($columnsGrouped[0]);
             // max cell borders widths top,right,bottom,left
             $cellBorders = ['0', '0', '0', '0'];
-            $rowGroupsCount = count($columnsGrouped);
-            foreach ($columnsGrouped as $rowGroupIndex => $rowGroup) {
-                $rowsCount = count($rowGroup[0]);
-                foreach ($rowGroup as $columnIndex => $columns) {
-                    foreach ($columns as $rowIndex => $column) {
+            $rowGroups = $box->getChildren();
+            $rowGroupsCount = count($rowGroups);
+            foreach ($rowGroups as $rowGroupIndex => $rowGroup) {
+                $rows = $rowGroup->getChildren();
+                foreach ($rows as $rowIndex => $row) {
+                    $columns = $row->getChildren();
+                    $columnsCount = count($columns);
+                    $rowsCount = count($rows);
+                    foreach ($columns as $columnIndex => $column) {
                         $rowStyle = $column->getParent()->getStyle();
                         $columnStyle = $column->getStyle();
                         if ($columnIndex + 1 < $columnsCount) {

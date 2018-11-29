@@ -23,7 +23,10 @@ class Border extends Normalizer
             return $this->normalized;
         }
         $matches = [];
-        preg_match('/([0-9]+)([a-z]+)\s+(solid|dashed|dotted|none)\s+(.+)/i', $ruleValue, $matches);
+        preg_match('/([0-9]+)([a-z]+)\s+(solid|dashed|dotted|none)\s+(.+)?/i', $ruleValue, $matches);
+        if (!isset($matches[1])) {
+            $test = 'test';
+        }
         $originalSize = $matches[1];
         $originalUnit = $matches[2];
         if (isset($matches[3])) {
