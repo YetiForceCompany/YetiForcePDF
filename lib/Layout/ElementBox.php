@@ -89,8 +89,10 @@ class ElementBox extends Box
             foreach ($rowGroups as $rowGroup) {
                 // wrap rows with row groups
                 if ($rowGroup instanceof TableRowBox) {
-                    $wrapRowGroup = $tableBox->removeChild($tableBox->createRowGroupBox());
-                    $tableBox->insertBefore($wrapRowGroup, $rowGroup);
+                    if (!isset($wrapRowGroup)) {
+                        $wrapRowGroup = $tableBox->removeChild($tableBox->createRowGroupBox());
+                        $tableBox->insertBefore($wrapRowGroup, $rowGroup);
+                    }
                     $wrapRowGroup->appendChild($tableBox->removeChild($rowGroup));
                 }
             }
