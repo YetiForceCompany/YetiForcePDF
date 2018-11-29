@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class MarginBottom extends Normalizer
 {
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null) {
             return $this->normalized = ['margin-bottom' => $this->getNumberValues($ruleValue)[0]];

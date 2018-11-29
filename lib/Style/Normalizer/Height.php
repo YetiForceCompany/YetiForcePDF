@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class Height extends Normalizer
 {
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null && $ruleValue !== 'auto') {
             return ['height' => $this->getNumberValues($ruleValue)[0]];

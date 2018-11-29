@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BackgroundColor extends Normalizer
 {
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null && $ruleValue !== 'transparent') {
             return $this->normalized = ['background-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];

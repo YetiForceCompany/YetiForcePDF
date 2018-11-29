@@ -87,12 +87,13 @@ class Normalizer extends \YetiForcePDF\Base
 
     /**
      * Normalize css rule
-     * @param mixed $ruleValue
+     * @param string $ruleValue
+     * @param string $ruleName
      * @return array
      */
-    public function normalize(string $ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
-        return [];
+        return [$ruleName => $ruleValue];
     }
 
 

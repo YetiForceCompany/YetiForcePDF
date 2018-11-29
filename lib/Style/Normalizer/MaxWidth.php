@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class MaxWidth extends Normalizer
 {
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null && $ruleValue !== 'none') {
             return $this->normalized = ['max-width' => $this->getNumberValues($ruleValue)[0]];

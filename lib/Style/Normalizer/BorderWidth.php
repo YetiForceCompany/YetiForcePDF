@@ -20,7 +20,7 @@ class BorderWidth extends Normalizer
     /**
      * {@inheritdoc}
      */
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized !== null) {
             return $this->normalized;

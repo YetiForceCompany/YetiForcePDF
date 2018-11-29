@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BorderBottomStyle extends Normalizer
 {
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null) {
             if (in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {

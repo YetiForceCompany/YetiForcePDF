@@ -17,7 +17,7 @@ namespace YetiForcePDF\Style\Normalizer;
  */
 class BorderLeftWidth extends Normalizer
 {
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null) {
             return $this->normalized = ['border-left-width' => $this->getNumberValues($ruleValue)[0]];

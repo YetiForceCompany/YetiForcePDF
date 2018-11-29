@@ -18,7 +18,7 @@ namespace YetiForcePDF\Style\Normalizer;
 class BorderCollapse extends Normalizer
 {
 
-    public function normalize($ruleValue): array
+    public function normalize($ruleValue, string $ruleName = ''): array
     {
         if ($this->normalized === null) {
             if (!in_array($ruleValue, ['collapse', 'separate', 'inherit'])) {
