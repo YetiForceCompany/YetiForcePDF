@@ -633,6 +633,25 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Get first root child - closest parent that are child of root node
+     * @return Box
+     */
+    public function getFirstRootChild()
+    {
+        if ($this->isRoot()) {
+            return $this;
+        }
+        if ($this->getParent() !== null) {
+            $box = $this->getParent();
+            if ($box->isRoot()) {
+                return $this;
+            } else {
+                return $box->getFirstRootChild();
+            }
+        }
+    }
+
+    /**
      * Get text content from current and all nested boxes
      * @return string
      */

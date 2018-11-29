@@ -697,6 +697,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
      */
     public function breakAfter(Box $box)
     {
+        $box = $box->getFirstRootChild();
         $newPage = clone $this;
         $newPage->setId($this->document->getActualId());
         $newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
@@ -713,6 +714,15 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             $newBox->appendChild($moveBox->getParent()->removeChild($moveBox));
         }
         $newBox->layout();
+        return $this;
+    }
+
+    /**
+     * Break overflow of the current page
+     * @return $this
+     */
+    public function breakOverflow()
+    {
         return $this;
     }
 
