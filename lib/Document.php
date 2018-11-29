@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
-use YetiForcePDF\Html\Element;
-
+use \YetiForcePDF\Html\Element;
+use \YetiForcePDF\Objects\PdfObject;
 
 /**
  * Class Document
@@ -297,9 +297,10 @@ class Document
      * @param string $format - optional format 'A4' for example
      * @param string $orientation - optional orientation 'P' or 'L'
      * @param Page|null $page - we can add cloned page or page from other document too
+     * @param Page|null $after - add page after this page
      * @return \YetiForcePDF\Page
      */
-    public function addPage(string $format = '', string $orientation = '', Page $page = null): \YetiForcePDF\Page
+    public function addPage(string $format = '', string $orientation = '', Page $page = null, Page $after = null): \YetiForcePDF\Page
     {
         if ($page === null) {
             $page = (new Page())->setDocument($this)->init();
@@ -311,8 +312,23 @@ class Document
             $orientation = $this->defaultOrientation;
         }
         $page->setOrientation($orientation)->setFormat($format);
-        $page->setNumber(count($this->pages));
-        $this->pages[] = $page;
+        $afterIndex = count($this->pages);
+        if ($after) {
+            foreach ($this->pages as $afterIndex => $childPage) {
+                if ($childPage === $after) {
+                    break;
+                }
+            }
+            $afterIndex++;
+        }
+        $page->setNumber($afterIndex);
+        if ($after) {
+            $merge = array_splice($this->pages, $afterIndex);
+            $this->pages[] = $page;
+            $this->pages = array_merge($this->pages, $merge);
+        } else {
+            $this->pages[] = $page;
+        }
         $this->currentPageObject = $page;
         return $page;
     }
@@ -355,12 +371,22 @@ class Document
 
     /**
      * Add object to document
-     * @param \YetiForcePDF\Objects\Basic\StreamObject $stream
+     * @param PdfObject $object
+     * @param PdfObject|null $after - add after this element
      * @return \YetiForcePDF\Document
      */
-    public function addObject(\YetiForcePDF\Objects\PdfObject $object): \YetiForcePDF\Document
+    public function addObject(PdfObject $object, $after = null): \YetiForcePDF\Document
     {
-        $this->objects[] = $object;
+        $afterIndex = count($this->objects);
+        if ($after) {
+            foreach ($this->objects as $afterIndex => $obj) {
+                if ($after === $obj) {
+                    break;
+                }
+            }
+            $afterIndex++;
+        }
+        $this->objects[$afterIndex] = $object;
         return $this;
     }
 

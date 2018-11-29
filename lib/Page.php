@@ -679,7 +679,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     {
         $boxes = [];
         $box = $this->getBox();
-        if (Math::comp($box->getCoordinates()->getEndY(), $yPos) <= 0) {
+        $endY = $box->getCoordinates()->getEndY();
+        if (Math::comp($endY, $yPos) <= 0) {
             return $boxes;
         }
         foreach ($box->getChildren() as $childBox) {
@@ -704,7 +705,6 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             ->setDocument($this->document)
             ->init();
         $newPage->document->getPagesObject()->addChild($newPage);
-        $newPage->synchronizeFonts();
         $this->document->addPage($this->format, $this->orientation, $newPage);
         $this->document->addObject($newPage);
         $newBox = $newPage->getBox();
@@ -713,6 +713,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         foreach ($moveBoxes as $moveBox) {
             $newBox->appendChild($moveBox->getParent()->removeChild($moveBox));
         }
+        $this->getBox()->measureHeight();
         $newBox->layout();
         return $this;
     }
@@ -723,6 +724,25 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
      */
     public function breakOverflow()
     {
+        $pageHeight = $this->getDimensions()->getHeight();
+        $moveBoxes = $this->getBoxesAfterY($pageHeight);
+        if (!isset($moveBoxes[0])) {
+            return $this;
+        }
+        $newPage = clone $this;
+        $newPage->setId($this->document->getActualId());
+        $newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
+            ->setDocument($this->document)
+            ->init();
+        $newPage->document->getPagesObject()->addChild($newPage, $this);
+        $this->document->addPage($this->format, $this->orientation, $newPage, $this);
+        $this->document->addObject($newPage, $this);
+        $newBox = $newPage->getBox();
+        /*$newBox->clearChildren();
+        foreach ($moveBoxes as $moveBox) {
+            $newBox->appendChild($moveBox->getParent()->removeChild($moveBox));
+        }
+        $newBox->layout();*/
         return $this;
     }
 

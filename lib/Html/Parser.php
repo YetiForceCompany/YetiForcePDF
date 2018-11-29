@@ -134,6 +134,9 @@ class Parser extends \YetiForcePDF\Base
         $this->document->getCurrentPage()->setBox($this->box);
         $this->box->breakPageAfter();
         foreach ($this->document->getPages() as $page) {
+            //$page->breakOverflow();
+        }
+        foreach ($this->document->getPages() as $page) {
             $children = [];
             $page->getBox()->getAllChildren($children);
             foreach ($children as $box) {

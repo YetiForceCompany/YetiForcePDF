@@ -849,4 +849,12 @@ class Box extends \YetiForcePDF\Base
         return $element;
     }
 
+    public function __clone()
+    {
+        $this->dimensions = clone $this->dimensions;
+        $this->coordinates = clone $this->coordinates;
+        $this->offset = clone $this->offset;
+        $this->style = clone $this->style;
+    }
+
 }
