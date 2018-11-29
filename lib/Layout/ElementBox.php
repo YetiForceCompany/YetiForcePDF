@@ -96,12 +96,13 @@ class ElementBox extends Box
                     $wrapRowGroup->appendChild($tableBox->removeChild($rowGroup));
                 }
             }
+            unset($wrapRowGroup);
             $rowGroups = $tableBox->getChildren();
             if (!isset($rowGroups[0])) {
                 $rowGroup = $tableBox->createRowGroupBox();
                 $row = $rowGroup->createRowBox();
                 $column = $row->createColumnBox();
-                $column->createCell();
+                $column->createCellBox();
             } else {
                 $columnsCount = 0;
                 foreach ($rowGroups as $rowGroup) {
