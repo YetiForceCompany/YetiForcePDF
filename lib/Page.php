@@ -16,6 +16,7 @@ use YetiForcePDF\Layout\Dimensions\Dimensions;
 use YetiForcePDF\Layout\Coordinates\Coordinates;
 use YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use YetiForcePDF\Layout\Box;
+use YetiForcePDF\Layout\BlockBox;
 use YetiForcePDF\Objects\Basic\StreamObject;
 
 /**
@@ -654,18 +655,48 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     }
 
     /**
-     * Cut page at specified vertical position
-     * @param string $position
+     * Get boxes that are laid out after specified y position of the current page
+     * @param string $yPos
+     * @return Box[]
+     */
+    public function getBoxesAfterY(string $yPos)
+    {
+        $boxes = [];
+        $box = $this->getBox();
+        if (Math::comp($box->getCoordinates()->getEndY(), $yPos) <= 0) {
+            return $boxes;
+        }
+        foreach ($box->getChildren() as $childBox) {
+            if (Math::comp($childBox->getCoordinates()->getEndY(), $yPos) > 0) {
+                $boxes[] = $childBox;
+            }
+        }
+        return $boxes;
+    }
+
+    /**
+     * Break page after specified box
+     * @param Box $box
      * @return $this
      */
-    public function cutAt(string $position)
+    public function breakAfter(Box $box)
     {
         $newPage = clone $this;
         $newPage->setId($this->document->getActualId());
+        $newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
+            ->setDocument($this->document)
+            ->init();
         $newPage->document->getPagesObject()->addChild($newPage);
         $newPage->synchronizeFonts();
         $this->document->addPage($this->format, $this->orientation, $newPage);
         $this->document->addObject($newPage);
+        $newBox = $newPage->getBox();
+        $newBox->clearChildren();
+        $moveBoxes = $this->getBoxesAfterY($box->getCoordinates()->getEndY());
+        foreach ($moveBoxes as $moveBox) {
+            $newBox->appendChild($moveBox->getParent()->removeChild($moveBox));
+        }
+        $newBox->layout();
         return $this;
     }
 

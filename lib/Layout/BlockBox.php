@@ -485,20 +485,18 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      * Divide content into pages
      * @return $this
      */
-    public function divideIntoPages()
+    public function breakPageAfter()
     {
-        $pageCuts = [];
+        $breakAfter = [];
         $allChildren = [];
         $this->getAllChildren($allChildren);
         foreach ($allChildren as $child) {
             if ($child->getStyle()->getRules('page-break-after') === 'always') {
-                $pageCuts[] = $child;
+                $breakAfter[] = $child;
             }
         }
-        foreach ($pageCuts as $pageCut) {
-            $cutAt = Math::add($pageCut->getCoordinates()->getY(), $pageCut->getDimensions()->getHeight());
-            $cutAt = Math::add($cutAt, $pageCut->getStyle()->getRules('margin-bottom'));
-            $this->document->getCurrentPage()->cutAt($cutAt);
+        foreach ($breakAfter as $breakBox) {
+            $this->document->getCurrentPage()->breakAfter($breakBox);
         }
         return $this;
     }

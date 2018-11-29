@@ -117,4 +117,16 @@ class Coordinates extends \YetiForcePDF\Base
         return Math::sub($page->getOuterDimensions()->getHeight(), Math::add($this->htmlY, $height));
     }
 
+    /**
+     * Get end Y - position at the end of box
+     * @return string
+     */
+    public function getEndY()
+    {
+        $box = $this->getBox();
+        $height = $box->getDimensions()->getHeight();
+        $height = Math::add($height, $box->getStyle()->getRules('margin-bottom'));
+        return Math::add($height, $this->htmlY);
+    }
+
 }

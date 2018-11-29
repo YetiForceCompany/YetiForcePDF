@@ -433,6 +433,16 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Just clear children without changing associations for them
+     * @return $this
+     */
+    public function clearChildren()
+    {
+        $this->children = [];
+        return $this;
+    }
+
+    /**
      * Remove all children
      * @return $this
      */

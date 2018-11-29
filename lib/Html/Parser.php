@@ -132,7 +132,7 @@ class Parser extends \YetiForcePDF\Base
         $this->box->layout();
         $this->box->spanAllRows();
         $this->document->getCurrentPage()->setBox($this->box);
-        $this->box->divideIntoPages();
+        $this->box->breakPageAfter();
         foreach ($this->document->getPages() as $page) {
             $children = [];
             $page->getBox()->getAllChildren($children);
