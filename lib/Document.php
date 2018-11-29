@@ -114,7 +114,7 @@ class Document
     {
         $this->catalog = (new \YetiForcePDF\Catalog())->setDocument($this)->init();
         $this->pagesObject = $this->catalog->addChild((new Pages())->setDocument($this)->init());
-        $this->currentPageObject = $this->addPage($this->defaultFormat, $this->defaultOrientation);
+        $this->addPage($this->defaultFormat, $this->defaultOrientation);
         return $this;
     }
 

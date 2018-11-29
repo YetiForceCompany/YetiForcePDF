@@ -1204,7 +1204,7 @@ class Style extends \YetiForcePDF\Base
                     ->setDocument($this->document)
                     ->setStyle($this)
                     ->init();
-                foreach ($normalizer->normalize($ruleValue) as $name => $value) {
+                foreach ($normalizer->normalize($ruleValue, $ruleName) as $name => $value) {
                     $finalRules[$name] = $value;
                 }
             } else {

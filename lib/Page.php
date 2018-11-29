@@ -665,6 +665,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $newPage->document->getPagesObject()->addChild($newPage);
         $newPage->synchronizeFonts();
         $this->document->addPage($this->format, $this->orientation, $newPage);
+        $this->document->addObject($newPage);
         return $this;
     }
 
@@ -728,8 +729,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->box = clone $this->box;
         $currentResources = $this->resources;
         $this->resources = [];
-        foreach ($currentResources as $resource) {
-            $this->resources[] = clone $resource;
+        foreach ($currentResources as $groupName => $resources) {
+            foreach ($resources as $resourceName => $resource) {
+                $this->resources[$groupName][$resourceName] = clone $resource;
+            }
         }
     }
 
