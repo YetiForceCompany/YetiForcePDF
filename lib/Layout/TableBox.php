@@ -469,9 +469,6 @@ class TableBox extends BlockBox
                 $ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
                 $add = Math::mul($leftSpace, $ratio);
                 $colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
-                /*if (Math::comp($colWidth, $this->contentWidth[$columnIndex]) > 0) {
-                    $colWidth = $this->contentWidth[$columnIndex];
-                }*/
                 foreach ($columns as $column) {
                     $colDmns = $column->getDimensions();
                     $colDmns->setWidth($colWidth);
@@ -630,10 +627,25 @@ class TableBox extends BlockBox
             $this->expandPercentsToMin($availableSpace);
         } else {
             // everything is ok we can resize percentages
+            $percentsWidth = '0';
             foreach ($this->percentColumns as $columnIndex => $columns) {
                 $columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowWidth);
+                $percentsWidth = Math::add($percentsWidth, $columnWidth);
                 foreach ($columns as $rowIndex => $column) {
                     $this->setColumnWidth($column, $columnWidth);
+                }
+            }
+            $totalPercentage = $this->getTotalPercentage();
+            if ($totalPercentage !== '100' && Math::comp($this->getCurrentOthersWidth(), '0') === 0) {
+                // we have some space available
+                $leftSpace = Math::sub($availableSpace, $percentsWidth);
+                $add = Math::div($leftSpace, (string)count($this->percentColumns));
+                foreach ($this->percentColumns as $columnIndex => $columns) {
+                    foreach ($columns as $column) {
+                        $columnWidth = Math::add($column->getDimensions()->getWidth(), $add);
+                        $column->getDimensions()->setWidth($columnWidth);
+                        $column->getFirstChild()->getDimensions()->setWidth($column->getDimensions()->getInnerWidth());
+                    }
                 }
             }
         }
