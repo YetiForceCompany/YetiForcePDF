@@ -1235,6 +1235,7 @@ class Style extends \YetiForcePDF\Base
     protected function fixTables()
     {
         $box = $this->getBox();
+        $boxStyle = $box->getStyle();
         if ($box instanceof TableBox) {
             // max cell borders widths top,right,bottom,left
             $cellBorders = ['0', '0', '0', '0'];
@@ -1283,7 +1284,7 @@ class Style extends \YetiForcePDF\Base
                             $cellStyle->setRule('width', 'auto');
                         }
                     }
-                    if ($this->getRules('border-collapse') === 'collapse') {
+                    if ($boxStyle->getRules('border-collapse') === 'collapse') {
                         $parentStyle = $box->getParent()->getStyle();
                         if (Math::comp($cellBorders[0], $parentStyle->getRules('border-top-width')) >= 0) {
                             $parentStyle->setRule('border-top-width', '0');
@@ -1300,32 +1301,34 @@ class Style extends \YetiForcePDF\Base
                     }
                 }
             }
-            $rows = $box->getRows();
-            if ($this->getRules('border-collapse') === 'collapse') {
-                $rowsCount = count($rows) - 1;
-                foreach ($rows as $rowIndex => $row) {
-                    if ($rowIndex < $rowsCount) {
+            foreach ($box->getChildren() as $rowGroupIndex => $rowGroup) {
+                $rows = $rowGroup->getChildren();
+                if ($boxStyle->getRules('border-collapse') === 'collapse') {
+                    $rowsCount = count($rows) - 1;
+                    foreach ($rows as $rowIndex => $row) {
+                        if ($rowIndex < $rowsCount) {
+                            $row->getStyle()->setRule('border-bottom-width', '0');
+                        }
+                    }
+                } else {
+                    foreach ($rows as $row) {
+                        $row->getStyle()->setRule('border-top-width', '0');
+                        $row->getStyle()->setRule('border-right-width', '0');
                         $row->getStyle()->setRule('border-bottom-width', '0');
+                        $row->getStyle()->setRule('border-left-width', '0');
                     }
                 }
-            } else {
-                foreach ($rows as $row) {
-                    $row->getStyle()->setRule('border-top-width', '0');
-                    $row->getStyle()->setRule('border-right-width', '0');
-                    $row->getStyle()->setRule('border-bottom-width', '0');
-                    $row->getStyle()->setRule('border-left-width', '0');
-                }
-            }
-            if ($this->getRules('border-collapse') === 'separate') {
-                // move background to cells from rows
-                foreach ($rows as $row) {
-                    $rowStyle = $row->getStyle();
-                    if ($rowStyle->getRules('background-color') !== 'transparent') {
-                        foreach ($row->getChildren() as $column) {
-                            $cell = $column->getFirstChild();
-                            $cell->getStyle()->setRule('background-color', $rowStyle->getRules('background-color'));
+                if ($boxStyle->getRules('border-collapse') === 'separate') {
+                    // move background to cells from rows
+                    foreach ($rows as $row) {
+                        $rowStyle = $row->getStyle();
+                        if ($rowStyle->getRules('background-color') !== 'transparent') {
+                            foreach ($row->getChildren() as $column) {
+                                $cell = $column->getFirstChild();
+                                $cell->getStyle()->setRule('background-color', $rowStyle->getRules('background-color'));
+                            }
+                            $rowStyle->setRule('background-color', 'transparent');
                         }
-                        $rowStyle->setRule('background-color', 'transparent');
                     }
                 }
             }

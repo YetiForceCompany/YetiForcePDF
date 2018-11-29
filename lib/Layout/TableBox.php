@@ -171,15 +171,11 @@ class TableBox extends BlockBox
      */
     public function appendTableRowBox($childDomElement, $element, $style, $parentBlock)
     {
-        $cleanStyle = (new \YetiForcePDF\Style\Style())
-            ->setDocument($this->document)
-            ->setContent('')
-            ->parseInline();
         $box = (new TableRowBox())
             ->setDocument($this->document)
             ->setParent($this)
             ->setElement($element)
-            ->setStyle($cleanStyle)
+            ->setStyle($style)
             ->init();
         $this->appendChild($box);
         $box->getStyle()->init()->setRule('display', 'block');
