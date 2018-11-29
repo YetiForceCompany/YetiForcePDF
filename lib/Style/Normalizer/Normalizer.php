@@ -87,7 +87,7 @@ class Normalizer extends \YetiForcePDF\Base
 
     /**
      * Normalize css rule
-     * @param string $ruleValue
+     * @param mixed $ruleValue
      * @param string $ruleName
      * @return array
      */
