@@ -311,6 +311,7 @@ class Document
             $orientation = $this->defaultOrientation;
         }
         $page->setOrientation($orientation)->setFormat($format);
+        $page->setNumber(count($this->pages));
         $this->pages[] = $page;
         $this->currentPageObject = $page;
         return $page;

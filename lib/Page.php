@@ -33,6 +33,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
      * @var string
      */
     protected $name = 'Page';
+
+    /**
+     * @var int page number
+     */
+    protected $number = 1;
     /**
      * Page resources
      * @var array
@@ -506,6 +511,17 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     public function setOrientation(string $orientation): \YetiForcePDF\Page
     {
         $this->orientation = $orientation;
+        return $this;
+    }
+
+    /**
+     * Set page number
+     * @param int $number
+     * @return $this
+     */
+    public function setNumber(int $number)
+    {
+        $this->number = $number;
         return $this;
     }
 
