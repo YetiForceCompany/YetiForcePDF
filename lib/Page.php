@@ -796,11 +796,13 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
                 if (!$tableRowGroup instanceof \YetiForcePDF\Layout\TableFooterGroupBox) {
                     foreach ($row->getChildren() as $column) {
                         if (Math::comp($column->getCoordinates()->getEndY(), $pageEnd) >= 0) {
+                            // TODO rowspan
                             $moveRowGroup->appendChild($row->getParent()->removeChild($row));
                             break;
                         }
                     }
                 }
+                $previousRow = $row;
             }
             $newTableBox->appendChild($moveRowGroup);
         }
@@ -850,8 +852,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->getBox()->measureHeight();
         $this->getBox()->measureOffset();
         $this->getBox()->measurePosition();
+        $this->getBox()->getStyle()->fixTables();
         $newBox->layout(true);
-        if (Math::comp($newBox->getDimensions()->getHeight(), $pageHeight) > 0) {
+        $newBox->getStyle()->fixTables();
+        while (Math::comp($newBox->getDimensions()->getHeight(), $pageHeight) > 0) {
             $newPage->breakOverflow();
         }
         return $this;

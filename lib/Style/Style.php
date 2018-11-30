@@ -1232,7 +1232,7 @@ class Style extends \YetiForcePDF\Base
      *
      * @return $this
      */
-    protected function fixTables()
+    public function fixTables()
     {
         $box = $this->getBox();
         $boxStyle = $box->getStyle();
