@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Box class
+ * Box class.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,20 +13,21 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-use \YetiForcePDF\Html\Element;
+use YetiForcePDF\Html\Element;
+use YetiForcePDF\Layout\Coordinates\Coordinates;
+use YetiForcePDF\Layout\Coordinates\Offset;
+use YetiForcePDF\Layout\Dimensions\BoxDimensions;
+use YetiForcePDF\Math;
 use YetiForcePDF\Style\Style;
-use \YetiForcePDF\Math;
 
 /**
- * Class Box
+ * Class Box.
  */
 class Box extends \YetiForcePDF\Base
 {
     /**
-     * Id of this box (should be cloned to track inline wrapped elements)
+     * Id of this box (should be cloned to track inline wrapped elements).
+     *
      * @var string
      */
     protected $id;
@@ -45,9 +47,7 @@ class Box extends \YetiForcePDF\Base
      * @var Box
      */
     protected $previous;
-    /*
-     * @var BoxDimensions
-     */
+    // @var BoxDimensions
     protected $dimensions;
     /**
      * @var Coordinates
@@ -66,7 +66,8 @@ class Box extends \YetiForcePDF\Base
      */
     protected $style;
     /**
-     * Anonymous inline element is created to wrap TextBox
+     * Anonymous inline element is created to wrap TextBox.
+     *
      * @var bool
      */
     protected $anonymous = false;
@@ -106,7 +107,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get box id (id might be cloned and then we can track cloned elements)
+     * Get box id (id might be cloned and then we can track cloned elements).
+     *
      * @return string
      */
     public function getId()
@@ -115,7 +117,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get current box dom tree structure
+     * Get current box dom tree structure.
+     *
      * @return \DOMElement
      */
     public function getDOMTree()
@@ -124,18 +127,21 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set parent
+     * Set parent.
+     *
      * @param \YetiForcePDF\Layout\Box|null $parent
+     *
      * @return $this
      */
-    public function setParent(Box $parent = null)
+    public function setParent(self $parent = null)
     {
         $this->parent = $parent;
         return $this;
     }
 
     /**
-     * Get parent
+     * Get parent.
+     *
      * @return \YetiForcePDF\Layout\Box
      */
     public function getParent()
@@ -144,18 +150,21 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set next
+     * Set next.
+     *
      * @param \YetiForcePDF\Layout\Box|null $next
+     *
      * @return $this
      */
-    public function setNext(Box $next = null)
+    public function setNext(self $next = null)
     {
         $this->next = $next;
         return $this;
     }
 
     /**
-     * Get next
+     * Get next.
+     *
      * @return \YetiForcePDF\Layout\Box
      */
     public function getNext()
@@ -164,18 +173,21 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set previous
+     * Set previous.
+     *
      * @param \YetiForcePDF\Layout\Box|null $previous
+     *
      * @return $this
      */
-    public function setPrevious(Box $previous = null)
+    public function setPrevious(self $previous = null)
     {
         $this->previous = $previous;
         return $this;
     }
 
     /**
-     * Get previous
+     * Get previous.
+     *
      * @return \YetiForcePDF\Layout\Box
      */
     public function getPrevious()
@@ -185,7 +197,9 @@ class Box extends \YetiForcePDF\Base
 
     /**
      * Set root - is this root element?
+     *
      * @param bool $isRoot
+     *
      * @return $this
      */
     public function setRoot(bool $isRoot)
@@ -196,6 +210,7 @@ class Box extends \YetiForcePDF\Base
 
     /**
      * Is this root element?
+     *
      * @return bool
      */
     public function isRoot(): bool
@@ -204,8 +219,10 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set style
+     * Set style.
+     *
      * @param \YetiForcePDF\Style\Style $style
+     *
      * @return $this
      */
     public function setStyle(Style $style)
@@ -219,7 +236,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get style
+     * Get style.
+     *
      * @return Style
      */
     public function getStyle()
@@ -228,7 +246,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Is this box anonymous
+     * Is this box anonymous.
+     *
      * @return bool
      */
     public function isAnonymous()
@@ -237,8 +256,10 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set anonymous field
+     * Set anonymous field.
+     *
      * @param bool $anonymous
+     *
      * @return $this
      */
     public function setAnonymous(bool $anonymous)
@@ -248,8 +269,10 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set for measurement - enable or disable this box measurement
+     * Set for measurement - enable or disable this box measurement.
+     *
      * @param bool $forMeasure
+     *
      * @return $this
      */
     public function setForMeasurement(bool $forMeasurement)
@@ -264,6 +287,7 @@ class Box extends \YetiForcePDF\Base
 
     /**
      * Is this box available for measurement? or it should now have any width?
+     *
      * @return bool
      */
     public function isForMeasurement()
@@ -272,7 +296,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Save renderable state
+     * Save renderable state.
+     *
      * @return $this
      */
     protected function saveRenderableState()
@@ -284,7 +309,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Restore renderable state
+     * Restore renderable state.
+     *
      * @return $this
      */
     protected function restoreRenderableState()
@@ -296,7 +322,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Hide this element - set width / height to 0 and remove all styles that will change width / height
+     * Hide this element - set width / height to 0 and remove all styles that will change width / height.
+     *
      * @return $this
      */
     protected function hide()
@@ -321,8 +348,10 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Set renderable
+     * Set renderable.
+     *
      * @param bool $renderable
+     *
      * @return $this
      */
     public function setRenderable(bool $renderable = true)
@@ -346,6 +375,7 @@ class Box extends \YetiForcePDF\Base
 
     /**
      * Contain content - do we have some elements that are not whitespace characters?
+     *
      * @return bool
      */
     public function containContent()
@@ -370,6 +400,7 @@ class Box extends \YetiForcePDF\Base
 
     /**
      * Is this element renderable?
+     *
      * @return bool
      */
     public function isRenderable()
@@ -379,10 +410,12 @@ class Box extends \YetiForcePDF\Base
 
     /**
      * Append child box - line box can have only inline/block boxes - not line boxes!
+     *
      * @param Box $box
+     *
      * @return $this
      */
-    public function appendChild(Box $box)
+    public function appendChild(self $box)
     {
         if ($this instanceof LineBox && $box instanceof LineBox) {
             throw new \InvalidArgumentException('LineBox cannot append another LineBox as child.');
@@ -401,11 +434,13 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Remove child
+     * Remove child.
+     *
      * @param $child
+     *
      * @return Box
      */
-    public function removeChild(Box $child)
+    public function removeChild(self $child)
     {
         $oldChildren = $this->children; // copy children
         $this->children = [];
@@ -433,7 +468,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Just clear children without changing associations for them
+     * Just clear children without changing associations for them.
+     *
      * @return $this
      */
     public function clearChildren()
@@ -443,7 +479,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Remove all children
+     * Remove all children.
+     *
      * @return $this
      */
     public function removeChildren()
@@ -456,12 +493,14 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Insert box before other box
+     * Insert box before other box.
+     *
      * @param \YetiForcePDF\Layout\Box $child
      * @param \YetiForcePDF\Layout\Box $before
+     *
      * @return $this
      */
-    public function insertBefore(Box $child, Box $before)
+    public function insertBefore(self $child, self $before)
     {
         $currentChildren = $this->children; // copy children
         $this->children = [];
@@ -477,7 +516,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get children
+     * Get children.
+     *
      * @return Box[]
      */
     public function getChildren(): array
@@ -486,8 +526,10 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get all children
+     * Get all children.
+     *
      * @param Box[] $allChildren
+     *
      * @return Box[]
      */
     public function getAllChildren(&$allChildren = [])
@@ -500,10 +542,12 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Iterate all children
+     * Iterate all children.
+     *
      * @param callable $fn
      * @param bool $reverse
      * @param bool $deep
+     *
      * @return $this
      */
     public function iterateChildren(callable $fn, bool $reverse = false, bool $deep = true)
@@ -549,7 +593,32 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Get closest parent box by type.
+     *
+     * @param string $className
+     *
+     * @return Box
+     */
+    public function getClosestByType(string $className)
+    {
+        if (substr($className, 0, 9) !== 'YetiForce') {
+            $className = 'YetiForcePDF\\Layout\\' . $className;
+        }
+        if ($this instanceof $className) {
+            return $this;
+        }
+        if ($this->getParent() instanceof $className) {
+            return $this->getParent();
+        }
+        if ($this->getParent()->isRoot()) {
+            return null;
+        }
+        return $this->getParent()->closestByType($className);
+    }
+
+    /**
      * Do we have children?
+     *
      * @return bool
      */
     public function hasChildren()
@@ -558,7 +627,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get first child
+     * Get first child.
+     *
      * @return \YetiForcePDF\Layout\Box|null
      */
     public function getFirstChild()
@@ -569,7 +639,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get last child
+     * Get last child.
+     *
      * @return \YetiForcePDF\Layout\Box|null
      */
     public function getLastChild()
@@ -580,7 +651,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get closest line box
+     * Get closest line box.
+     *
      * @return \YetiForcePDF\Layout\LineBox
      */
     public function getClosestLineBox()
@@ -593,7 +665,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get closet box that is not a LineBox
+     * Get closet box that is not a LineBox.
+     *
      * @return \YetiForcePDF\Layout\Box
      */
     public function getClosestBox()
@@ -606,7 +679,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get dimensions
+     * Get dimensions.
+     *
      * @return BoxDimensions
      */
     public function getDimensions()
@@ -615,7 +689,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get coordinates
+     * Get coordinates.
+     *
      * @return Coordinates
      */
     public function getCoordinates()
@@ -624,7 +699,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Shorthand for offset
+     * Shorthand for offset.
+     *
      * @return Offset
      */
     public function getOffset(): Offset
@@ -633,7 +709,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get first root child - closest parent that are child of root node
+     * Get first root child - closest parent that are child of root node.
+     *
      * @return Box
      */
     public function getFirstRootChild()
@@ -652,7 +729,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get text content from current and all nested boxes
+     * Get text content from current and all nested boxes.
+     *
      * @return string
      */
     public function getTextContent()
@@ -669,7 +747,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get first child text box
+     * Get first child text box.
+     *
      * @return \YetiForcePDF\Layout\TextBox|null
      */
     public function getFirstTextBox()
@@ -686,7 +765,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get height from style
+     * Get height from style.
+     *
      * @return $this
      */
     public function applyStyleWidth()
@@ -699,7 +779,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Get height from style
+     * Get height from style.
+     *
      * @return $this
      */
     public function applyStyleHeight()
@@ -727,7 +808,8 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Fix offsets inside lines where text-align !== 'left'
+     * Fix offsets inside lines where text-align !== 'left'.
+     *
      * @return $this
      */
     public function alignText()
@@ -754,12 +836,14 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
-     * Add border instructions
+     * Add border instructions.
+     *
      * @param array $element
      * @param string $pdfX
      * @param string $pdfY
      * @param string $width
      * @param string $height
+     *
      * @return array
      */
     protected function addBorderInstructions(array $element, string $pdfX, string $pdfY, string $width, string $height)
@@ -849,6 +933,21 @@ class Box extends \YetiForcePDF\Base
         return $element;
     }
 
+    /**
+     * Clone this element along with the children elements
+     * @return Box
+     * @throws \InvalidArgumentException
+     */
+    public function cloneWithChildren()
+    {
+        $newElement = clone $this;
+        $newElement->clearChildren();
+        foreach ($this->getChildren() as $child) {
+            $newElement->appendChild($child->cloneWithChildren());
+        }
+        return $newElement;
+    }
+
     public function __clone()
     {
         $this->dimensions = clone $this->dimensions;
@@ -856,5 +955,4 @@ class Box extends \YetiForcePDF\Base
         $this->offset = clone $this->offset;
         $this->style = clone $this->style;
     }
-
 }
