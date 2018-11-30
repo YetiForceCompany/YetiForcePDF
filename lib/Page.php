@@ -744,6 +744,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             $newBox->appendChild($rootChild->getParent()->removeChild($rootChild));
         }
         $newBox->layout();
+        $newPage->breakOverflow();
         return $this;
     }
 
