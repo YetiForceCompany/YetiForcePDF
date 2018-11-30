@@ -310,7 +310,9 @@ class TableBox extends BlockBox
     protected function setUpSizingTypes()
     {
         $columnSizingTypes = [];
-        foreach ($this->getFirstChild()->getFirstChild()->getChildren() as $columnIndex => $column) {
+        // rowGroup -> row -> columns
+        $columns = $this->getFirstChild()->getFirstChild()->getChildren();
+        foreach ($columns as $columnIndex => $column) {
             $columnStyleWidth = $column->getStyle()->getRules('width');
             if (strpos($columnStyleWidth, '%') > 0) {
                 $columnSizingTypes[$columnIndex] = 'percent';

@@ -773,7 +773,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         // clone header if exists
         $newTableWrapperBox = clone $tableWrapperBox;
         $newTableWrapperBox->clearChildren();
-        $newTableBox = clone $tableWrapperBox->getFirstChild();
+        $tableBox = $tableWrapperBox->getFirstChild();
+        $newTableBox = clone $tableBox;
         $newTableBox->clearChildren();
         $newTableWrapperBox->appendChild($newTableBox);
         $clonedFooters = $tableWrapperBox->getBoxesByType('TableFooterGroupBox');
@@ -805,6 +806,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         }
         if (isset($clonedFooter)) {
             $newTableBox->appendChild($clonedFooter);
+        }
+        // remove original table if it was moved with all the content
+        if (!$tableBox->hasChildren() || !$tableBox->getFirstChild()->hasChildren()) {
+            $tableWrapperBox->getParent()->removeChild($tableWrapperBox);
         }
         return $newTableWrapperBox;
     }
@@ -842,7 +847,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             $rootChild = $moveBox->getFirstRootChild();
             $newBox->appendChild($rootChild->getParent()->removeChild($rootChild));
         }
-        $this->getBox()->layout();
+        $this->getBox()->measureHeight();
+        $this->getBox()->measureOffset();
+        $this->getBox()->measurePosition();
         $newBox->layout();
         if (Math::comp($newBox->getDimensions()->getHeight(), $pageHeight) > 0) {
             $newPage->breakOverflow();
