@@ -973,6 +973,25 @@ class Font extends \YetiForcePDF\Objects\Resource
     }
 
     /**
+     * Convert character to int
+     * @param $string
+     * @return int
+     */
+    public function mb_ord($string)
+    {
+        if (extension_loaded('mbstring') === true) {
+            mb_language('Neutral');
+            mb_internal_encoding('UTF-8');
+            mb_detect_order(array('UTF-8', 'ISO-8859-15', 'ISO-8859-1', 'ASCII'));
+            $result = unpack('N', mb_convert_encoding($string, 'UCS-4BE', 'UTF-8'));
+            if (is_array($result) === true) {
+                return $result[1];
+            }
+        }
+        return ord($string);
+    }
+
+    /**
      * Get text width.
      *
      * @param string $text
@@ -984,8 +1003,8 @@ class Font extends \YetiForcePDF\Objects\Resource
         $width = '0';
         for ($i = 0, $len = mb_strlen($text); $i < $len; $i++) {
             $char = mb_substr($text, $i, 1);
-            if(isset($this->widths[mb_ord($char)])) {
-                $width = Math::add($width, (string)$this->widths[mb_ord($char)]);
+            if (isset($this->widths[$this->mb_ord($char)])) {
+                $width = Math::add($width, (string)$this->widths[$this->mb_ord($char)]);
             }
         }
         return Math::div(Math::mul($this->size, $width), '1000');
