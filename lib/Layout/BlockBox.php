@@ -412,11 +412,14 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
     /**
      * Layout elements
+     * @param bool $afterPageDividing
      * @return $this
      */
-    public function layout()
+    public function layout(bool $afterPageDividing = false)
     {
-        $this->measureWidth();
+        if (!$afterPageDividing) {
+            $this->measureWidth();
+        }
         $this->measureHeight();
         $this->measureOffset();
         $this->alignText();

@@ -850,7 +850,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->getBox()->measureHeight();
         $this->getBox()->measureOffset();
         $this->getBox()->measurePosition();
-        $newBox->layout();
+        $newBox->layout(true);
         if (Math::comp($newBox->getDimensions()->getHeight(), $pageHeight) > 0) {
             $newPage->breakOverflow();
         }

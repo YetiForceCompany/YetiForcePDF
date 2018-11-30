@@ -67,11 +67,4 @@ class Dimensions extends \YetiForcePDF\Base
         return $this;
     }
 
-    public function __clone()
-    {
-        $this->width = null;
-        $this->height = null;
-    }
-
-
 }

@@ -47,7 +47,9 @@ class Box extends \YetiForcePDF\Base
      * @var Box
      */
     protected $previous;
-    // @var BoxDimensions
+    /*
+     * @var box dimensions
+     */
     protected $dimensions;
     /**
      * @var Coordinates
