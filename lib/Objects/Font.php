@@ -977,7 +977,7 @@ class Font extends \YetiForcePDF\Objects\Resource
      * @param $string
      * @return int
      */
-    public function mb_ord($string)
+    public function mbOrd($string)
     {
         if (extension_loaded('mbstring') === true) {
             mb_language('Neutral');
@@ -1003,8 +1003,8 @@ class Font extends \YetiForcePDF\Objects\Resource
         $width = '0';
         for ($i = 0, $len = mb_strlen($text); $i < $len; $i++) {
             $char = mb_substr($text, $i, 1);
-            if (isset($this->widths[$this->mb_ord($char)])) {
-                $width = Math::add($width, (string)$this->widths[$this->mb_ord($char)]);
+            if (isset($this->widths[$this->mbOrd($char)])) {
+                $width = Math::add($width, (string)$this->widths[$this->mbOrd($char)]);
             }
         }
         return Math::div(Math::mul($this->size, $width), '1000');
