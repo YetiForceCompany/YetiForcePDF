@@ -738,11 +738,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->document->addPage($this->format, $this->orientation, $newPage, $this);
         $this->document->addObject($newPage, $this);
         $newBox = $newPage->getBox();
-        /*$newBox->clearChildren();
+        $newBox->clearChildren();
         foreach ($moveBoxes as $moveBox) {
-            $newBox->appendChild($moveBox->getParent()->removeChild($moveBox));
+            $rootChild = $moveBox->getFirstRootChild();
+            $newBox->appendChild($rootChild->getParent()->removeChild($rootChild));
         }
-        $newBox->layout();*/
+        $newBox->layout();
         return $this;
     }
 

@@ -386,7 +386,13 @@ class Document
             }
             $afterIndex++;
         }
-        $this->objects[$afterIndex] = $object;
+        if (!$after) {
+            $this->objects[] = $object;
+            return $this;
+        }
+        $merge = array_splice($this->objects, $afterIndex);
+        $this->objects[] = $object;
+        $this->objects = array_merge($this->objects, $merge);
         return $this;
     }
 
