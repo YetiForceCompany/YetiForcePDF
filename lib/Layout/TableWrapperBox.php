@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * TableWrapperBox class
+ * TableWrapperBox class.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,50 +13,51 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Math;
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-
+use YetiForcePDF\Html\Element;
+use YetiForcePDF\Math;
+use YetiForcePDF\Style\Style;
 
 /**
- * Class TableWrapperBox
+ * Class TableWrapperBox.
  */
 class TableWrapperBox extends BlockBox
 {
     /**
-     * We shouldn't append block box here
+     * We shouldn't append block box here.
      */
     public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * We shouldn't append table wrapper here
+     * We shouldn't append table wrapper here.
      */
     public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * We shouldn't append inline block box here
+     * We shouldn't append inline block box here.
      */
     public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * We shouldn't append inline box here
+     * We shouldn't append inline box here.
      */
     public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
     {
     }
 
     /**
-     * Append table box element
+     * Append table box element.
+     *
      * @param \DOMNode $childDomElement
      * @param Element $element
      * @param Style $style
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     *
      * @return $this
      */
     public function appendTableBox($childDomElement, $element, $style, $parentBlock)
@@ -105,4 +107,5 @@ class TableWrapperBox extends BlockBox
         $this->applyStyleWidth();
         return $this;
     }
+
 }

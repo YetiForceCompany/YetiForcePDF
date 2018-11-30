@@ -210,7 +210,7 @@ class ElementBox extends Box
                     case 'table-row-group':
                     case 'table-header-group':
                     case 'table-footer-group':
-                        $this->appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock);
+                        $this->appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock, $display);
                         break;
                     case 'table-row':
                         $this->appendTableRowBox($childDomElement, $element, $style, $parentBlock);

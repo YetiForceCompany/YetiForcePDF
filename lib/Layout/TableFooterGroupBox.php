@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * TableFooterGroupBox class
+ * TableFooterGroupBox class.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,22 +13,9 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-
 /**
- * Class TableFooterGroupBox
+ * Class TableFooterGroupBox.
  */
-class TableFooterGroupBox extends BlockBox
+class TableFooterGroupBox extends TableRowGroupBox
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstructions(): string
-    {
-        return ''; // not renderable
-    }
 }

@@ -940,19 +940,27 @@ class Box extends \YetiForcePDF\Base
      */
     public function cloneWithChildren()
     {
-        $newElement = clone $this;
-        $newElement->clearChildren();
+        $newBox = clone $this;
+        $newBox->getCoordinates()->setBox($newBox);
+        $newBox->getDimensions()->setBox($newBox);
+        $newBox->getOffset()->setBox($newBox);
+        $newBox->getStyle()->setBox($newBox);
+        $newBox->clearChildren();
         foreach ($this->getChildren() as $child) {
-            $newElement->appendChild($child->cloneWithChildren());
+            $newBox->appendChild($child->cloneWithChildren());
         }
-        return $newElement;
+        return $newBox;
     }
 
     public function __clone()
     {
         $this->dimensions = clone $this->dimensions;
+        $this->dimensions->setBox($this);
         $this->coordinates = clone $this->coordinates;
+        $this->coordinates->setBox($this);
         $this->offset = clone $this->offset;
+        $this->offset->setBox($this);
         $this->style = clone $this->style;
+        $this->style->setBox($this);
     }
 }
