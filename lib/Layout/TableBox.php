@@ -16,6 +16,9 @@ namespace YetiForcePDF\Layout;
 use YetiForcePDF\Html\Element;
 use YetiForcePDF\Math;
 use YetiForcePDF\Style\Style;
+use YetiForcePDF\Layout\TableRowGroupBox;
+use YetiForcePDF\Layout\TableHeaderGroupBox;
+use YetiForcePDF\Layout\TableFooterGroupBox;
 
 /**
  * Class TableBox.
@@ -138,16 +141,26 @@ class TableBox extends BlockBox
      * @param Element $element
      * @param Style $style
      * @param \YetiForcePDF\Layout\BlockBox $parentBlock
+     * @param string $display
      *
      * @return $this
      */
-    public function appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock)
+    public function appendTableRowGroupBox($childDomElement, $element, $style, $parentBlock, string $display)
     {
         $cleanStyle = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
             ->setContent('')
             ->parseInline();
-        $box = (new TableRowGroupBox())
+        $rowGroupClass = 'YetiForcePDF\\Layout\\TableRowGroupBox';
+        switch ($display) {
+            case 'table-header-group':
+                $rowGroupClass = 'YetiForcePDF\\Layout\\TableHeaderGroupBox';
+                break;
+            case 'table-footer-group':
+                $rowGroupClass = 'YetiForcePDF\\Layout\\TableFooterGroupBox';
+                break;
+        }
+        $box = (new $rowGroupClass())
             ->setDocument($this->document)
             ->setParent($this)
             ->setElement($element)
