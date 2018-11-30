@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.1.1",
     "phenx/php-font-lib": "^0.5.1",
     "guzzlehttp/guzzle": "^6.3",
     "ezyang/htmlpurifier": "^4.10"
