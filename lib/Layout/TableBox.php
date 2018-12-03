@@ -85,6 +85,14 @@ class TableBox extends BlockBox
      * @var TableRowGroupBox|null
      */
     protected $anonymousRowGroup;
+    /**
+     * @var int $currentRowSpan
+     */
+    protected $currentRowSpan = 0;
+    /**
+     * @var int $currentRowSpans
+     */
+    protected $currentRowSpans = 1;
 
     /**
      * We shouldn't append block box here.
@@ -194,6 +202,46 @@ class TableBox extends BlockBox
         $box->getStyle()->init()->setRule('display', 'block');
         $box->buildTree($box);
         return $box;
+    }
+
+    /**
+     * Set current Row spans
+     * @param int $rowSpans
+     * @return $this
+     */
+    public function setCurrentRowSpans(int $rowSpans)
+    {
+        $this->currentRowSpans = $rowSpans;
+        return $this;
+    }
+
+    /**
+     * Get current row spans
+     * @return int
+     */
+    public function getCurrentRowSpans()
+    {
+        return $this->currentRowSpans;
+    }
+
+    /**
+     * Set current row span
+     * @param int $rowSpan
+     * @return $this
+     */
+    public function setCurrentRowSpan(int $rowSpan)
+    {
+        $this->currentRowSpan = $rowSpan;
+        return $this;
+    }
+
+    /**
+     * Get current row span
+     * @return int
+     */
+    public function getCurrentRowSpan()
+    {
+        return $this->currentRowSpan;
     }
 
     /**

@@ -615,7 +615,7 @@ class Box extends \YetiForcePDF\Base
         if ($this->getParent()->isRoot()) {
             return null;
         }
-        return $this->getParent()->closestByType($className);
+        return $this->getParent()->getClosestByType($className);
     }
 
     /**
