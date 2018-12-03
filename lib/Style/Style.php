@@ -1270,7 +1270,7 @@ class Style extends \YetiForcePDF\Base
                                 Math::max($cellBorders[2], $cellStyle->getRules('border-bottom-width')),
                                 Math::max($cellBorders[3], $cellStyle->getRules('border-left-width')),
                             ];
-                            if ($rowIndex + 1 < $rowsCount) {
+                            if ($rowIndex + $column->getRowSpan() < $rowsCount) {
                                 $cellStyle->setRule('border-bottom-width', '0');
                             }
                             if ($columnIndex + 1 < $columnsCount) {
