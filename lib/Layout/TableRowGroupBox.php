@@ -21,6 +21,15 @@ use \YetiForcePDF\Html\Element;
 class TableRowGroupBox extends BlockBox
 {
     /**
+     * @var int $currentRowSpan
+     */
+    protected $currentRowSpan = 0;
+    /**
+     * @var int $currentRowSpans
+     */
+    protected $currentRowSpans = 1;
+
+    /**
      * We shouldn't append block box here
      */
     public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
@@ -88,6 +97,33 @@ class TableRowGroupBox extends BlockBox
         $box->getStyle()->init();
         $box->buildTree($box);
         return $box;
+    }
+
+    /**
+     * Set current Row spans
+     * @param int $rowSpans
+     * @return $this
+     */
+    public function setCurrentRowSpans(int $rowSpans)
+    {
+        $this->currentRowSpans = $rowSpans;
+        return $this;
+    }
+
+    public function getCurrentRowSpans()
+    {
+        return $this->currentRowSpans;
+    }
+
+    public function setCurrentRowSpan(int $rowSpan)
+    {
+        $this->currentRowSpan = $rowSpan;
+        return $this;
+    }
+
+    public function getCurrentRowSpan()
+    {
+        return $this->currentRowSpan;
     }
 
     /**

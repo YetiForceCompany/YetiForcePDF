@@ -21,7 +21,6 @@ use \YetiForcePDF\Html\Element;
  */
 class TableRowBox extends BlockBox
 {
-
     /**
      * We shouldn't append block box here
      */
@@ -141,6 +140,15 @@ class TableRowBox extends BlockBox
         $attributeRowSpan = $childDomElement->getAttribute('rowspan');
         if ($attributeRowSpan) {
             $rowSpan = (int)$attributeRowSpan;
+            if ($rowSpan > 1) {
+                $this->currentRowSpans = $rowSpan;
+            }
+        }
+        if ($this->currentRowSpan < $this->currentRowSpans) {
+            $this->currentRowSpan = $this->currentRowSpan + 1;
+        } else {
+            $this->currentRowSpan = 1;
+            $this->currentRowSpans = 1;
         }
         $clearStyle = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
@@ -150,7 +158,7 @@ class TableRowBox extends BlockBox
             ->setParent($this)
             ->setStyle($clearStyle)
             ->init();
-        $column->setColSpan($colSpan)->setRowSpan($rowSpan);
+        $column->setColSpan($colSpan)->setRowSpan($rowSpan)->setRowSpanUp($this->currentRowSpan);
         $this->appendChild($column);
         $column->getStyle()->init()->setRule('display', 'block');
         $box = (new TableCellBox())

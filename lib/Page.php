@@ -18,6 +18,7 @@ use YetiForcePDF\Layout\Coordinates\Coordinates;
 use YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use YetiForcePDF\Layout\Dimensions\Dimensions;
 use YetiForcePDF\Layout\TableWrapperBox;
+use YetiForcePDF\Layout\TableFooterGroupBox;
 use YetiForcePDF\Objects\Basic\StreamObject;
 
 /**
@@ -793,10 +794,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             $moveRowGroup = clone $tableRowGroup;
             $moveRowGroup->clearChildren();
             foreach ($tableRowGroup->getChildren() as $rowIndex => $row) {
-                if (!$tableRowGroup instanceof \YetiForcePDF\Layout\TableFooterGroupBox) {
+                if (!$tableRowGroup instanceof TableFooterGroupBox) {
                     foreach ($row->getChildren() as $column) {
                         if (Math::comp($column->getCoordinates()->getEndY(), $pageEnd) >= 0) {
-                            // TODO rowspan
+
                             $moveRowGroup->appendChild($row->getParent()->removeChild($row));
                             break;
                         }

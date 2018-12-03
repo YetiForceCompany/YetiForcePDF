@@ -1201,7 +1201,9 @@ class TableBox extends BlockBox
                         $spannedRowsHeight = '0';
                         // get sum of spanned row height starting from current row
                         for ($i = 0; $i < $rowSpan; $i++) {
-                            $spannedRowsHeight = Math::add($spannedRowsHeight, $maxRowHeights[$rowGroupIndex][$rowIndex + $i]);
+                            if (isset($maxRowHeights[$rowGroupIndex][$rowIndex + $i])) {
+                                $spannedRowsHeight = Math::add($spannedRowsHeight, $maxRowHeights[$rowGroupIndex][$rowIndex + $i]);
+                            }
                         }
                         $fromOtherRows = Math::div($spannedRowsHeight, (string)$rowSpan);
                         $fromColumnHeight = Math::div($column->getDimensions()->getOuterHeight(), (string)$rowSpan);
