@@ -130,7 +130,7 @@ class TableRowBox extends BlockBox
      */
     public function appendTableCellBox($childDomElement, $element, $style, $parentBlock)
     {
-        $rowGroup = $this->getClosestByType('TableBox');
+        $tableBox = $this->getClosestByType('TableBox');
         $colSpan = 1;
         $style->setRule('display', 'block');
         $attributeColSpan = $childDomElement->getAttribute('colspan');
@@ -141,15 +141,6 @@ class TableRowBox extends BlockBox
         $attributeRowSpan = $childDomElement->getAttribute('rowspan');
         if ($attributeRowSpan) {
             $rowSpan = (int)$attributeRowSpan;
-            if ($rowSpan > 1) {
-                $rowGroup->setCurrentRowSpans($rowSpan);
-            }
-        }
-        if ($rowGroup->getCurrentRowSpan() < $rowGroup->getCurrentRowSpans()) {
-            $rowGroup->setCurrentRowSpan($rowGroup->getCurrentRowSpan() + 1);
-        } else {
-            $rowGroup->setCurrentRowSpan(1);
-            $rowGroup->setCurrentRowSpans(1);
         }
         $clearStyle = (new \YetiForcePDF\Style\Style())
             ->setDocument($this->document)
@@ -159,7 +150,7 @@ class TableRowBox extends BlockBox
             ->setParent($this)
             ->setStyle($clearStyle)
             ->init();
-        $column->setColSpan($colSpan)->setRowSpan($rowSpan)->setRowSpanUp($rowGroup->getCurrentRowSpan());
+        $column->setColSpan($colSpan)->setRowSpan($rowSpan);
         $this->appendChild($column);
         $column->getStyle()->init()->setRule('display', 'block');
         $box = (new TableCellBox())

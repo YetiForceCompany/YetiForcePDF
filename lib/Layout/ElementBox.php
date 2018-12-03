@@ -144,6 +144,28 @@ class ElementBox extends Box
                             $column->createCellBox();
                         }
                     }
+                    // fix row spans
+                    $rowSpans = [];
+                    $rowSpansUp = [];
+                    foreach ($rowGroup->getChildren() as $row) {
+                        foreach ($row->getChildren() as $columnIndex => $column) {
+                            if ($column->getRowSpan() > 1) {
+                                $rowSpans[$columnIndex] = $column->getRowSpan();
+                                $rowSpansUp[$columnIndex] = 0;
+                                $column->setRowSpanUp(0);
+                            } else {
+                                if (isset($rowSpans[$columnIndex]) && $rowSpans[$columnIndex] > 1) {
+                                    if ($rowSpansUp[$columnIndex] < $rowSpans[$columnIndex]) {
+                                        $rowSpansUp[$columnIndex]++;
+                                        $column->setRowSpanUp($rowSpansUp[$columnIndex]);
+                                    } else {
+                                        $rowSpansUp[$columnIndex] = 0;
+                                        $rowSpans[$columnIndex] = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

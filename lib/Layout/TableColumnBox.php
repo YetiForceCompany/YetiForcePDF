@@ -31,7 +31,7 @@ class TableColumnBox extends InlineBlockBox
     /**
      * @var int $rowSpanUp
      */
-    protected $rowSpanUp = 1;
+    protected $rowSpanUp = 0;
 
     /**
      * Set row span

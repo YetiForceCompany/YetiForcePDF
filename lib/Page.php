@@ -797,7 +797,13 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
                 if (!$tableRowGroup instanceof TableFooterGroupBox) {
                     foreach ($row->getChildren() as $column) {
                         if (Math::comp($column->getCoordinates()->getEndY(), $pageEnd) >= 0) {
-
+                            if ($column->getRowSpanUp() > 0) {
+                                // copy spanned rows too
+                                for ($i = $column->getRowSpanUp(); $i > 0; $i--) {
+                                    $spannedRow = $tableRowGroup->getChildren()[$rowIndex - $i];
+                                    $moveRowGroup->appendChild($spannedRow->getParent()->removeChild($spannedRow));
+                                }
+                            }
                             $moveRowGroup->appendChild($row->getParent()->removeChild($row));
                             break;
                         }
