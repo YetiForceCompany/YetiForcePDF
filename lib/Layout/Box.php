@@ -318,8 +318,12 @@ class Box extends \YetiForcePDF\Base
     protected function restoreRenderableState()
     {
         $this->getStyle()->setRules($this->renderableState['styleRules']);
-        $this->getDimensions()->setWidth($this->renderableState['width']);
-        $this->getDimensions()->setHeight($this->renderableState['height']);
+        if (isset($this->renderableState['width'])) {
+            $this->getDimensions()->setWidth($this->renderableState['width']);
+        }
+        if (isset($this->renderableState['height'])) {
+            $this->getDimensions()->setHeight($this->renderableState['height']);
+        }
         return $this;
     }
 
@@ -353,10 +357,11 @@ class Box extends \YetiForcePDF\Base
      * Set renderable.
      *
      * @param bool $renderable
+     * @param bool $forceUpdate
      *
      * @return $this
      */
-    public function setRenderable(bool $renderable = true)
+    public function setRenderable(bool $renderable = true, bool $forceUpdate = false)
     {
         $changed = $this->renderable !== $renderable;
         if (!$this->renderable && $renderable) {
@@ -366,10 +371,10 @@ class Box extends \YetiForcePDF\Base
             $this->saveRenderableState();
             $this->hide();
         }
-        if ($changed) {
+        if ($changed || $forceUpdate) {
             $this->renderable = $renderable;
             foreach ($this->getChildren() as $child) {
-                $child->setRenderable($renderable);
+                $child->setRenderable($renderable, $forceUpdate);
             }
         }
         return $this;

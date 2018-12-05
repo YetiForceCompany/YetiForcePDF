@@ -19,6 +19,8 @@ use YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use YetiForcePDF\Layout\Dimensions\Dimensions;
 use YetiForcePDF\Layout\TableWrapperBox;
 use YetiForcePDF\Layout\TableFooterGroupBox;
+use YetiForcePDF\Layout\HeaderBox;
+use YetiForcePDF\Layout\FooterBox;
 use YetiForcePDF\Objects\Basic\StreamObject;
 
 /**
@@ -702,6 +704,57 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     public function getOuterDimensions(): \YetiForcePDF\Layout\Dimensions\Dimensions
     {
         return $this->outerDimensions;
+    }
+
+    /**
+     * Layout header
+     * @param HeaderBox $header
+     * @return $this
+     */
+    protected function layoutHeader(HeaderBox $header)
+    {
+        $header = $header->cloneWithChildren();
+        $box = $this->getBox();
+        $box->insertBefore($header->getParent()->removeChild($header), $box->getFirstChild());
+        $header->setForMeasurement(true)->setRenderable(true, true);
+        $header->layout();
+        return $this;
+    }
+
+    /**
+     * Layout footer
+     * @param FooterBox $footer
+     * @return $this
+     */
+    protected function layoutFooter(FooterBox $footer)
+    {
+        return $this;
+    }
+
+    /**
+     * Set up header and footer
+     * @return $this
+     */
+    public function setUpHeaderFooter()
+    {
+        $box = $this->getBox();
+        $headers = $box->getBoxesByType('HeaderBox');
+        if (isset($headers[0])) {
+            $header = array_pop($headers);
+            $this->document->setHeader($header);
+            $this->layoutHeader($header);
+        } elseif ($this->document->getHeader()) {
+            $this->layoutHeader($this->document->getHeader());
+        }
+        $footers = $box->getBoxesByType('FooterBox');
+        if (isset($footers[0])) {
+            $footer = array_pop($footers);
+            $this->document->setFooter($footer);
+            $this->layoutFooter($footer);
+        } elseif ($this->document->getFooter()) {
+            $this->layoutFooter($this->document->getFooter());
+        }
+        return $this;
     }
 
     /**

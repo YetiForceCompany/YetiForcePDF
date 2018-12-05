@@ -176,6 +176,7 @@ class ElementBox extends Box
         return $this;
     }
 
+
     /**
      * Span all rows.
      *
@@ -227,7 +228,13 @@ class ElementBox extends Box
                 $display = $style->getRules('display');
                 switch ($display) {
                     case 'block':
-                        $this->appendBlockBox($childDomElement, $element, $style, $parentBlock);
+                        if ($domElement->hasAttribute('data-header')) {
+                            $this->appendHeaderBox($childDomElement, $element, $style, $parentBlock);
+                        } elseif ($domElement->hasAttribute('data-footer')) {
+                            $this->appendFooterBox($childDomElement, $element, $style, $parentBlock);
+                        } else {
+                            $this->appendBlockBox($childDomElement, $element, $style, $parentBlock);
+                        }
                         break;
                     case 'table':
                         $tableWrapper = $this->appendTableWrapperBox($childDomElement, $element, $style, $parentBlock);

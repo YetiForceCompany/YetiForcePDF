@@ -143,6 +143,60 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     }
 
     /**
+     * Append header box
+     * @param $childDomElement
+     * @param $element
+     * @param $style
+     * @param $parentBlock
+     * @return HeaderBox
+     * @throws \InvalidArgumentException
+     */
+    public function appendHeaderBox($childDomElement, $element, $style, $parentBlock)
+    {
+        if ($this->getCurrentLineBox()) {
+            $this->closeLine();
+        }
+        $box = (new HeaderBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setElement($element)
+            ->setStyle($style)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        $box->buildTree($box);
+        $box->setForMeasurement(false)->setRenderable(false);
+        return $box;
+    }
+
+    /**
+     * Append footer box
+     * @param $childDomElement
+     * @param $element
+     * @param $style
+     * @param $parentBlock
+     * @return HeaderBox
+     * @throws \InvalidArgumentException
+     */
+    public function appendFooterBox($childDomElement, $element, $style, $parentBlock)
+    {
+        if ($this->getCurrentLineBox()) {
+            $this->closeLine();
+        }
+        $box = (new FooterBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setElement($element)
+            ->setStyle($style)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        $box->buildTree($box);
+        $box->setForMeasurement(false)->setRenderable(false);
+        return $box;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)

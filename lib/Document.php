@@ -14,6 +14,8 @@ namespace YetiForcePDF;
 
 use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Objects\PdfObject;
+use \YetiForcePDF\Layout\HeaderBox;
+use \YetiForcePDF\Layout\FooterBox;
 
 /**
  * Class Document
@@ -96,6 +98,14 @@ class Document
      * @var bool $debugMode
      */
     protected $debugMode = false;
+    /**
+     * @var HeaderBox|null $header
+     */
+    protected $header;
+    /**
+     * @var FooterBox|null $footer
+     */
+    protected $footer;
 
     /**
      * Are we debugging?
@@ -290,6 +300,46 @@ class Document
     public function getDefaultMargins()
     {
         return $this->defaultMargins;
+    }
+
+    /**
+     * Set header
+     * @param HeaderBox $header
+     * @return $this
+     */
+    public function setHeader(HeaderBox $header)
+    {
+        $this->header = $header;
+        return $this;
+    }
+
+    /**
+     * Get header
+     * @return HeaderBox|null
+     */
+    public function getHeader()
+    {
+        return $this->header;
+    }
+
+    /**
+     * Set footer
+     * @param FooterBox $footer
+     * @return $this
+     */
+    public function setFooter(FooterBox $footer)
+    {
+        $this->footer = $footer;
+        return $this;
+    }
+
+    /**
+     * Get footer
+     * @return FooterBox|null
+     */
+    public function getFooter()
+    {
+        return $this->footer;
     }
 
     /**
