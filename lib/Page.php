@@ -795,21 +795,36 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             $moveRowGroup->clearChildren();
             foreach ($tableRowGroup->getChildren() as $rowIndex => $row) {
                 if (!$tableRowGroup instanceof TableFooterGroupBox) {
+                    $moveRow = false;
                     foreach ($row->getChildren() as $column) {
                         if (Math::comp($column->getCoordinates()->getEndY(), $pageEnd) >= 0) {
-                            if ($column->getRowSpanUp() > 0) {
-                                // copy spanned rows too
-                                for ($i = $column->getRowSpanUp(); $i > 0; $i--) {
-                                    $spannedRow = $tableRowGroup->getChildren()[$rowIndex - $i];
-                                    $moveRowGroup->appendChild($spannedRow->getParent()->removeChild($spannedRow));
-                                }
-                            }
-                            $moveRowGroup->appendChild($row->getParent()->removeChild($row));
+                            $moveRow = true;
                             break;
                         }
                     }
+                    if ($moveRow) {
+                        if ($row->getRowSpanUp() > 0) {
+                            $move = [];
+                            // copy spanned rows too
+                            for ($i = $row->getRowSpanUp(); $i >= 0; $i--) {
+                                $spannedRowIndex = $rowIndex - $i;
+                                $move[] = $tableRowGroup->getChildren()[$spannedRowIndex];
+                            }
+                            // copy all next rows
+                            $rows = $tableRowGroup->getChildren();
+                            for ($i = $rowIndex, $len = count($rows); $i < $len; $i++) {
+                                $nextRow = $rows[$i];
+                                $move[] = $nextRow;
+                            }
+                            foreach ($move as $mr) {
+                                $moveRowGroup->appendChild($mr->getParent()->removeChild($mr));
+                            }
+                            break;
+                        } else {
+                            $moveRowGroup->appendChild($row->getParent()->removeChild($row));
+                        }
+                    }
                 }
-                $previousRow = $row;
             }
             $newTableBox->appendChild($moveRowGroup);
         }

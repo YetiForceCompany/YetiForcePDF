@@ -153,11 +153,15 @@ class ElementBox extends Box
                                 $rowSpans[$columnIndex] = $column->getRowSpan();
                                 $rowSpansUp[$columnIndex] = 0;
                                 $column->setRowSpanUp(0);
+                                $row->setRowSpanUp(max($row->getRowSpanUp(), 0));
+                                $row->setRowSpan(max($row->getRowSpan(), $column->getRowSpan()));
                             } else {
                                 if (isset($rowSpans[$columnIndex]) && $rowSpans[$columnIndex] > 1) {
                                     if ($rowSpansUp[$columnIndex] < $rowSpans[$columnIndex]) {
                                         $rowSpansUp[$columnIndex]++;
                                         $column->setRowSpanUp($rowSpansUp[$columnIndex]);
+                                        $row->setRowSpanUp(max($row->getRowSpanUp(), $rowSpansUp[$columnIndex]));
+                                        $row->setRowSpan(max($row->getRowSpan(), $column->getRowSpan()));
                                     } else {
                                         $rowSpansUp[$columnIndex] = 0;
                                         $rowSpans[$columnIndex] = 1;

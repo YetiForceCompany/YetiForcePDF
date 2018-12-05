@@ -21,6 +21,56 @@ use \YetiForcePDF\Html\Element;
  */
 class TableRowBox extends BlockBox
 {
+
+    /**
+     * @var int $rowSpan
+     */
+    protected $rowSpan = 1;
+    /**
+     * @var int $rowSpanUp
+     */
+    protected $rowSpanUp = 0;
+
+    /**
+     * Set row span
+     * @param int $rowSpan
+     * @return $this
+     */
+    public function setRowSpan(int $rowSpan)
+    {
+        $this->rowSpan = $rowSpan;
+        return $this;
+    }
+
+    /**
+     * Get row span
+     * @return int
+     */
+    public function getRowSpan()
+    {
+        return $this->rowSpan;
+    }
+
+    /**
+     * Set row span up
+     * @param int $rowSpan
+     * @return $this
+     */
+    public function setRowSpanUp(int $rowSpanUp)
+    {
+        $this->rowSpanUp = $rowSpanUp;
+        return $this;
+    }
+
+    /**
+     * Get row span up
+     * @return int
+     */
+    public function getRowSpanUp()
+    {
+        return $this->rowSpanUp;
+    }
+
     /**
      * We shouldn't append block box here
      */
