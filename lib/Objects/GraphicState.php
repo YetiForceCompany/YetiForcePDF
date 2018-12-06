@@ -44,6 +44,7 @@ class GraphicState extends \YetiForcePDF\Objects\Resource
         $this->number = 'GS' . $this->document->getActualGraphicStateId();
         $this->document->getCurrentPage()->addResource($this->resourceType, $this->number, $this);
         $this->addValue('Type', '/ExtGState');
+        $this->addValue('SA', 'true');
         return $this;
     }
 

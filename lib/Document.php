@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
-use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Objects\PdfObject;
 use \YetiForcePDF\Layout\HeaderBox;
 use \YetiForcePDF\Layout\FooterBox;

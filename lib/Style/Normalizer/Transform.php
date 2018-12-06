@@ -23,11 +23,12 @@ class Transform extends Normalizer
             return $this->normalized;
         }
         $normalized = [
-            'translate' => [],
-            'scale' => [],
-            'rotate' => []
+            'transform' => []
         ];
-        
+        $operations = preg_split('/\s+/i', $ruleValue);
+        foreach ($operations as $operation) {
+
+        }
         return $normalized;
     }
 }
