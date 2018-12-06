@@ -134,6 +134,8 @@ class TextBox extends ElementBox implements BoxInterface
     {
         $style = $this->getStyle();
         $rules = $style->getRules();
+        $graphicState = $this->style->getGraphicState();
+        $graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
         $font = $style->getFont();
         $fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
         $coordinates = $this->getCoordinates();
@@ -148,6 +150,7 @@ class TextBox extends ElementBox implements BoxInterface
         $textContent = '(' . $this->filterText($this->getText()) . ')';
         $element = [
             'q',
+            $graphicStateStr,
             "1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
             "{$rules['color'][0]} {$rules['color'][1]} {$rules['color'][2]} rg",
             'BT',

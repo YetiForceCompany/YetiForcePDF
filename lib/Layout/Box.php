@@ -885,7 +885,7 @@ class Box extends \YetiForcePDF\Base
         }
         $rules = $this->style->getRules();
         $graphicState = $this->style->getGraphicState();
-        $element[] = '/' . $graphicState->getNumber() . ' gs';
+        $graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
         $x1 = '0';
         $x2 = $width;
         $y1 = $height;
@@ -900,6 +900,7 @@ class Box extends \YetiForcePDF\Base
             ]);
             $borderTop = [
                 'q',
+                $graphicStateStr,
                 "{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
                 "1 0 0 1 $pdfX $pdfY cm",
                 "$x1 $y1 m", // move to start point
@@ -918,6 +919,7 @@ class Box extends \YetiForcePDF\Base
             ]);
             $borderTop = [
                 'q',
+                $graphicStateStr,
                 "1 0 0 1 $pdfX $pdfY cm",
                 "{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
                 "$x2 $y1 m",
@@ -936,6 +938,7 @@ class Box extends \YetiForcePDF\Base
             ]);
             $borderTop = [
                 'q',
+                $graphicStateStr,
                 "1 0 0 1 $pdfX $pdfY cm",
                 "{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
                 "$x1 $y2 m",
@@ -954,6 +957,7 @@ class Box extends \YetiForcePDF\Base
             ]);
             $borderTop = [
                 'q',
+                $graphicStateStr,
                 "1 0 0 1 $pdfX $pdfY cm",
                 "{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
                 "$x1 $y1 m",

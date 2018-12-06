@@ -1120,6 +1120,7 @@ class Style extends \YetiForcePDF\Base
             ->setDocument($this->document)
             ->init();
         $this->graphicState->addValue('ca', $ruleParsed[$ruleName]);
+        $this->graphicState->addValue('CA', $ruleParsed[$ruleName]);
         return $ruleParsed;
     }
 

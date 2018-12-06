@@ -325,9 +325,12 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
             return $element;
         }
         $rules = $this->style->getRules();
+        $graphicState = $this->style->getGraphicState();
+        $graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
         if ($rules['background-color'] !== 'transparent') {
             $bgColor = [
                 'q',
+                $graphicStateStr,
                 "1 0 0 1 $pdfX $pdfY cm",
                 "{$rules['background-color'][0]} {$rules['background-color'][1]} {$rules['background-color'][2]} rg",
                 "0 0 $width $height re",

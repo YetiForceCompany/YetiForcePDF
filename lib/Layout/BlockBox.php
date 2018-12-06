@@ -523,9 +523,12 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             return $element;
         }
         $rules = $this->style->getRules();
+        $graphicState = $this->style->getGraphicState();
+        $graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
         if ($rules['background-color'] !== 'transparent') {
             $bgColor = [
                 'q',
+                $graphicStateStr,
                 "1 0 0 1 $pdfX $pdfY cm",
                 "{$rules['background-color'][0]} {$rules['background-color'][1]} {$rules['background-color'][2]} rg",
                 "0 0 $width $height re",
@@ -552,9 +555,12 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
             return $element;
         }
         $rules = $this->style->getRules();
+        $graphicState = $this->style->getGraphicState();
+        $graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
         if ($rules['background-image'] !== 'transparent') {
             $bgColor = [
                 'q',
+                $graphicStateStr,
                 "1 0 0 1 $pdfX $pdfY cm",
                 "$width 0 0 $height 0 0 cm",
                 '/' . $this->getStyle()->getBackgroundImageStream()->getImageName() . ' Do',
