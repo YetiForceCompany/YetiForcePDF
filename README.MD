@@ -69,7 +69,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] vertical-align [baseline, top, bottom, middle]
 - [x] line-height [px, em, cm, mm, pt, in]
 - [x] background-color [hex, rgb]
-- [x] color [hex, rgb, named]
+- [x] color [hex, rgb, rgba, named]
 - [x] word-wrap [normal]
 - [ ] max-width
 - [ ] min-width
@@ -79,7 +79,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] clear
 - [x] table displays
 - [x] background-image
-- [x] rgb / rgba color [without alpha inside pdf for now]
+- [x] rgb / rgba color
 
 
 ### Available fonts
@@ -103,12 +103,12 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] ~~tables~~
 - [x] ~~images~~
 - [x] ~~page headers / footers~~
-- [ ] alpha channel support for colors (rgba) and opacity
-- [ ] background watermarks
+- [x] ~~alpha channel support for colors (rgba) and opacity~~
+- [x] ~~background watermarks~~
 
 ### TODO (later but important)
 - [ ] floats
 - [ ] barcode generation
 - [ ] display: list-item
-- [ ] basic transformations (rotateXY, scaleXY, translateXY)
+- [-] basic transformations (rotateXY, scaleXY, translateXY)
 - [ ] position (absolute, relative)
