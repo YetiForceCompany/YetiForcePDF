@@ -110,5 +110,5 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [ ] floats
 - [ ] barcode generation
 - [ ] display: list-item
-- [-] basic transformations (rotateXY, scaleXY, translateXY)
+- [ ] basic transformations (rotateXY, scaleXY, translateXY)
 - [ ] position (absolute, relative)
