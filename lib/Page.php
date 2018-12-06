@@ -718,9 +718,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $box = $this->getBox();
         $box->insertBefore($header, $box->getFirstChild());
         $outerWidth = $this->getOuterDimensions()->getWidth();
+        $outerHeight = $this->getOuterDimensions()->getHeight();
         $header->getDimensions()->resetWidth()->resetHeight();
         $this->getDimensions()->setWidth($outerWidth);
         $this->getBox()->getDimensions()->setWidth($outerWidth);
+        $this->getDimensions()->setHeight($outerHeight);
+        $this->getBox()->getDimensions()->setWidth($outerHeight);
         $header->getDimensions()->setWidth($outerWidth);
         $header->setForMeasurement(true)->setRenderable(true, true);
         $header->layout();
@@ -734,6 +737,19 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
      */
     protected function layoutFooter(FooterBox $footer)
     {
+        $footer = $footer->cloneWithChildren();
+        $box = $this->getBox();
+        $box->insertBefore($footer, $box->getFirstChild());
+        $outerWidth = $this->getOuterDimensions()->getWidth();
+        $outerHeight = $this->getOuterDimensions()->getHeight();
+        $footer->getDimensions()->resetWidth()->resetHeight();
+        $this->getDimensions()->setWidth($outerWidth);
+        $this->getBox()->getDimensions()->setWidth($outerWidth);
+        $this->getDimensions()->setHeight($outerHeight);
+        $this->getBox()->getDimensions()->setWidth($outerHeight);
+        $footer->getDimensions()->setWidth($outerWidth);
+        $footer->setForMeasurement(true)->setRenderable(true, true);
+        $footer->layout();
         return $this;
     }
 
