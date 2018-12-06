@@ -1,0 +1,33 @@
+<?php
+declare(strict_types=1);
+/**
+ * Transform class
+ *
+ * @package   YetiForcePDF\Style\Normalizer
+ *
+ * @copyright YetiForce Sp. z o.o
+ * @license   MIT
+ * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
+ */
+
+namespace YetiForcePDF\Style\Normalizer;
+
+/**
+ * Class Transform
+ */
+class Transform extends Normalizer
+{
+    public function normalize($ruleValue, string $ruleName = ''): array
+    {
+        if ($this->normalized !== null) {
+            return $this->normalized;
+        }
+        $normalized = [
+            'translate' => [],
+            'scale' => [],
+            'rotate' => []
+        ];
+        
+        return $normalized;
+    }
+}
