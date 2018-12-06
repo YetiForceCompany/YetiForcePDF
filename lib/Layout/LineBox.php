@@ -287,7 +287,9 @@ class LineBox extends Box implements BoxInterface
         $top = $parentStyle->getOffsetTop();
         $left = $parentStyle->getOffsetLeft();
         if ($previous = $this->getPrevious()) {
-            $top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'));
+            if (!$previous->isAbsolute()) {
+                $top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'));
+            }
         }
         $top = Math::add($top, $this->getStyle()->getRules('margin-top'));
         $this->getOffset()->setTop($top);
@@ -304,6 +306,9 @@ class LineBox extends Box implements BoxInterface
      */
     public function measurePosition()
     {
+        if (!$this->isRenderable()) {
+            return $this;
+        }
         $parent = $this->getParent();
         $this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
         $this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
@@ -361,7 +366,9 @@ class LineBox extends Box implements BoxInterface
     {
         $width = '0';
         foreach ($this->getChildren() as $childBox) {
-            $width = Math::add($width, $childBox->getDimensions()->getOuterWidth());
+            if ($childBox->isForMeasurement()) {
+                $width = Math::add($width, $childBox->getDimensions()->getOuterWidth());
+            }
         }
         return $width;
     }

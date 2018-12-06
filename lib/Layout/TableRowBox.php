@@ -180,7 +180,6 @@ class TableRowBox extends BlockBox
      */
     public function appendTableCellBox($childDomElement, $element, $style, $parentBlock)
     {
-        $tableBox = $this->getClosestByType('TableBox');
         $colSpan = 1;
         $style->setRule('display', 'block');
         $attributeColSpan = $childDomElement->getAttribute('colspan');

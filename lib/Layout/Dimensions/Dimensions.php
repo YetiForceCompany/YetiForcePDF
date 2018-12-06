@@ -47,10 +47,10 @@ class Dimensions extends \YetiForcePDF\Base
 
     /**
      * Set width
-     * @param string $width
+     * @param string|null $width
      * @return $this
      */
-    public function setWidth(string $width)
+    public function setWidth(string $width = null)
     {
         $this->width = $width;
         return $this;
@@ -58,10 +58,10 @@ class Dimensions extends \YetiForcePDF\Base
 
     /**
      * Set height
-     * @param string $height
+     * @param string|null $height
      * @return $this
      */
-    public function setHeight(string $height)
+    public function setHeight(string $height = null)
     {
         $this->height = $height;
         return $this;

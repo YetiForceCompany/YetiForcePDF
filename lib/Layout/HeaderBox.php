@@ -26,8 +26,19 @@ use YetiForcePDF\Style\Style;
 class HeaderBox extends BlockBox
 {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $absolute = true;
+
+    /**
+     * {@inheritdoc}
+     */
     public function measureWidth()
     {
+        if (!$this->isRenderable()) {
+            return $this;
+        }
         $horizontalMargins = $this->getStyle()->getHorizontalMarginsWidth();
         $pageWidth = $this->document->getCurrentPage()->getOuterDimensions()->getWidth();
         $width = Math::sub($pageWidth, $horizontalMargins);
@@ -43,8 +54,22 @@ class HeaderBox extends BlockBox
     /**
      * {@inheritdoc}
      */
+    public function measureHeight()
+    {
+        if (!$this->isRenderable()) {
+            return $this;
+        }
+        return parent::measureHeight();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function measureOffset()
     {
+        if (!$this->isRenderable()) {
+            return $this;
+        }
         $top = '0';
         $left = '0';
         $marginTop = $this->getStyle()->getRules('margin-top');
@@ -63,6 +88,9 @@ class HeaderBox extends BlockBox
      */
     public function measurePosition()
     {
+        if (!$this->isRenderable()) {
+            return $this;
+        }
         $marginTop = $this->getStyle()->getRules('margin-top');
         $marginLeft = $this->getStyle()->getRules('margin-left');
         $this->getCoordinates()->setX($marginLeft)->setY($marginTop);
@@ -71,4 +99,5 @@ class HeaderBox extends BlockBox
         }
         return $this;
     }
+
 }

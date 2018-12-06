@@ -51,6 +51,24 @@ class BoxDimensions extends Dimensions
     }
 
     /**
+     * Get raw width
+     * @return string|null
+     */
+    public function getRawWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * Get raw height
+     * @return string|null
+     */
+    public function getRawHeight()
+    {
+        return $this->height;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getWidth()
@@ -85,7 +103,7 @@ class BoxDimensions extends Dimensions
         $style = $box->getStyle();
         $width = $this->getWidth();
         if ($width === null) {
-            $width = '0';
+            return '0';
         }
         return Math::sub($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
     }
@@ -181,6 +199,34 @@ class BoxDimensions extends Dimensions
         } else {
             return Math::add($this->getHeight(), $style->getHorizontalMarginsWidth());
         }
+    }
+
+    /**
+     * Reset width
+     * @return $this
+     */
+    public function resetWidth()
+    {
+        $this->setWidth();
+        foreach ($this->getBox()->getChildren() as $child) {
+            $child->getDimensions()->setWidth();
+            $child->getDimensions()->resetWidth();
+        }
+        return $this;
+    }
+
+    /**
+     * Reset height
+     * @return $this
+     */
+    public function resetHeight()
+    {
+        $this->setHeight();
+        foreach ($this->getBox()->getChildren() as $child) {
+            $child->getDimensions()->setHeight();
+            $child->getDimensions()->resetHeight();
+        }
+        return $this;
     }
 
     /**
@@ -313,7 +359,7 @@ class BoxDimensions extends Dimensions
      */
     public function getStyleWidth()
     {
-        if (!$this->getBox()->isForMeasurement()) {
+        if (!$this->getBox()->isForMeasurement() && !$this->getBox()) {
             return '0';
         }
         $width = $this->getBox()->getStyle()->getRules('width');
@@ -326,6 +372,8 @@ class BoxDimensions extends Dimensions
             $closestBoxDimensions = $this->getBox()->getClosestBox()->getDimensions();
             if ($closestBoxDimensions->getWidth() !== null) {
                 $parentWidth = $closestBoxDimensions->getInnerWidth();
+                $style = $this->getBox()->getStyle();
+                $parentWidth = Math::sub($parentWidth, $style->getHorizontalMarginsWidth());
                 if ($parentWidth) {
                     return Math::percent($widthInPercent, $parentWidth);
                 }

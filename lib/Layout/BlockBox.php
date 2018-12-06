@@ -165,7 +165,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         $this->appendChild($box);
         $box->getStyle()->init();
         $box->buildTree($box);
-        $box->setForMeasurement(false)->setRenderable(false);
+        $box->setForMeasurement(false)->setRenderable(false, true);
         return $box;
     }
 
@@ -192,7 +192,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
         $this->appendChild($box);
         $box->getStyle()->init();
         $box->buildTree($box);
-        $box->setForMeasurement(false)->setRenderable(false);
+        $box->setForMeasurement(false)->setRenderable(false, true);
         return $box;
     }
 

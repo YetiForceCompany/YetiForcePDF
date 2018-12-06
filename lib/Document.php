@@ -385,11 +385,20 @@ class Document
 
     /**
      * Get current page
-     * @return \YetiForcePDF\Page
+     * @return Page
      */
-    public function getCurrentPage(): \YetiForcePDF\Page
+    public function getCurrentPage(): Page
     {
         return $this->currentPageObject;
+    }
+
+    /**
+     * Set current page
+     * @param Page $page
+     */
+    public function setCurrentPage(Page $page)
+    {
+        $this->currentPageObject = $page;
     }
 
     /**

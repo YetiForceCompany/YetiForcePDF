@@ -228,9 +228,9 @@ class ElementBox extends Box
                 $display = $style->getRules('display');
                 switch ($display) {
                     case 'block':
-                        if ($domElement->hasAttribute('data-header')) {
+                        if ($childDomElement->hasAttribute('data-header')) {
                             $this->appendHeaderBox($childDomElement, $element, $style, $parentBlock);
-                        } elseif ($domElement->hasAttribute('data-footer')) {
+                        } elseif ($childDomElement->hasAttribute('data-footer')) {
                             $this->appendFooterBox($childDomElement, $element, $style, $parentBlock);
                         } else {
                             $this->appendBlockBox($childDomElement, $element, $style, $parentBlock);

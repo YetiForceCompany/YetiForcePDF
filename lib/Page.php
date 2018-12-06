@@ -507,7 +507,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->dimensions = (new Dimensions())
             ->setDocument($this->document)
             ->init();
-        $this->dimensions->setWidth(Math::sub((string)$dimensions[0], Math::add((string)$this->margins['left'], (string)$this->margins['right'])))
+        $this->dimensions
+            ->setWidth(Math::sub((string)$dimensions[0], Math::add((string)$this->margins['left'], (string)$this->margins['right'])))
             ->setHeight(Math::sub((string)$dimensions[1], Math::add((string)$this->margins['top'], (string)$this->margins['bottom'])));
         $this->outerDimensions = (new Dimensions())
             ->setDocument($this->document)
@@ -715,7 +716,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     {
         $header = $header->cloneWithChildren();
         $box = $this->getBox();
-        $box->insertBefore($header->getParent()->removeChild($header), $box->getFirstChild());
+        $box->insertBefore($header, $box->getFirstChild());
+        $outerWidth = $this->getOuterDimensions()->getWidth();
+        $header->getDimensions()->resetWidth()->resetHeight();
+        $this->getDimensions()->setWidth($outerWidth);
+        $this->getBox()->getDimensions()->setWidth($outerWidth);
+        $header->getDimensions()->setWidth($outerWidth);
         $header->setForMeasurement(true)->setRenderable(true, true);
         $header->layout();
         return $this;
@@ -737,10 +743,17 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
      */
     public function setUpHeaderFooter()
     {
+        $this->document->setCurrentPage($this);
+        $this->getBox()->getOffset()->setLeft('0');
+        $this->getBox()->getOffset()->setTop('0');
+        $this->getBox()->getCoordinates()->setX('0');
+        $this->getBox()->getCoordinates()->setY('0');
+        $this->setMargins(0, 0, 0, 0);
         $box = $this->getBox();
         $headers = $box->getBoxesByType('HeaderBox');
         if (isset($headers[0])) {
             $header = array_pop($headers);
+            $header = $header->getParent()->removeChild($header)->cloneWithChildren();
             $this->document->setHeader($header);
             $this->layoutHeader($header);
         } elseif ($this->document->getHeader()) {
@@ -989,11 +1002,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
     public function __clone()
     {
+        $this->box = $this->box->cloneWithChildren();
         $this->coordinates = clone $this->coordinates;
+        $this->coordinates->setBox($this->box);
         $this->contentStream = clone $this->contentStream;
         $this->dimensions = clone $this->dimensions;
         $this->outerDimensions = clone $this->dimensions;
-        $this->box = clone $this->box;
         $currentResources = $this->resources;
         $this->resources = [];
         foreach ($currentResources as $groupName => $resources) {

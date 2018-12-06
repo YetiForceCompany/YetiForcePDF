@@ -267,9 +267,8 @@ class TableBox extends BlockBox
                 foreach ($columns as $columnIndex => $column) {
                     $cell = $column->getFirstChild();
                     $cellStyle = $cell->getStyle();
-                    $columnStyle = $column->getStyle();
                     $columnInnerWidth = $cell->getDimensions()->getMaxWidth();
-                    $styleWidth = $columnStyle->getRules('width');
+                    $styleWidth = $column->getStyle()->getRules('width');
                     $this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex] ?? '0', $columnInnerWidth);
                     $minColumnWidth = $cell->getDimensions()->getMinWidth();
                     if ($column->getColSpan() > 1) {
@@ -848,6 +847,8 @@ class TableBox extends BlockBox
             $parentSpacing = Math::add($parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
             $width = Math::add($width, $parentSpacing);
             $parent->getDimensions()->setWidth($width);
+        } else {
+            $parent->applyStyleWidth();
         }
         foreach ($this->getCells() as $cell) {
             $cell->measureWidth();

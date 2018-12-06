@@ -85,6 +85,11 @@ class Box extends \YetiForcePDF\Base
      * @var array save state before it was unrenderable
      */
     protected $renderableState = [];
+    /**
+     * Is this box absolute positioned?
+     * @var bool
+     */
+    protected $absolute = false;
 
     /**
      * {@inheritdoc}
@@ -221,6 +226,26 @@ class Box extends \YetiForcePDF\Base
     }
 
     /**
+     * Is this box absolute positioned?
+     * @return bool
+     */
+    public function isAbsolute()
+    {
+        return $this->absolute;
+    }
+
+    /**
+     * Set absolute - this box will be absolute positioned
+     * @param bool $absolute
+     * @return $this
+     */
+    public function setAbsolute(bool $absolute)
+    {
+        $this->absolute = $absolute;
+        return $this;
+    }
+
+    /**
      * Set style.
      *
      * @param \YetiForcePDF\Style\Style $style
@@ -305,8 +330,8 @@ class Box extends \YetiForcePDF\Base
     protected function saveRenderableState()
     {
         $this->renderableState['styleRules'] = $this->getStyle()->getRules();
-        $this->renderableState['width'] = $this->getDimensions()->getWidth();
-        $this->renderableState['height'] = $this->getDimensions()->getHeight();
+        $this->renderableState['width'] = $this->getDimensions()->getRawWidth();
+        $this->renderableState['height'] = $this->getDimensions()->getRawHeight();
         return $this;
     }
 
