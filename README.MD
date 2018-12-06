@@ -102,7 +102,7 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] ~~basic html elements with default css rules (br, table, image, hr etc.)~~
 - [x] ~~tables~~
 - [x] ~~images~~
-- [ ] page headers / footers
+- [x] ~~page headers / footers~~
 - [ ] alpha channel support for colors (rgba) and opacity
 - [ ] background watermarks
 
