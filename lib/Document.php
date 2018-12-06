@@ -16,6 +16,7 @@ use \YetiForcePDF\Html\Element;
 use \YetiForcePDF\Objects\PdfObject;
 use \YetiForcePDF\Layout\HeaderBox;
 use \YetiForcePDF\Layout\FooterBox;
+use \YetiForcePDF\Layout\WatermarkBox;
 
 /**
  * Class Document
@@ -106,6 +107,10 @@ class Document
      * @var FooterBox|null $footer
      */
     protected $footer;
+    /**
+     * @var WatermarkBox|null
+     */
+    protected $watermark;
 
     /**
      * Are we debugging?
@@ -320,6 +325,26 @@ class Document
     public function getHeader()
     {
         return $this->header;
+    }
+
+    /**
+     * Set watermark
+     * @param WatermarkBox $watermark
+     * @return $this
+     */
+    public function setWatermark(WatermarkBox $watermark)
+    {
+        $this->watermark = $watermark;
+        return $this;
+    }
+
+    /**
+     * Get watermark
+     * @return WatermarkBox|null
+     */
+    public function getWatermark()
+    {
+        return $this->watermark;
     }
 
     /**

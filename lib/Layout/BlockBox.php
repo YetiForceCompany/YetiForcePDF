@@ -197,6 +197,33 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
     }
 
     /**
+     * Append watermark box
+     * @param $childDomElement
+     * @param $element
+     * @param $style
+     * @param $parentBlock
+     * @return HeaderBox
+     * @throws \InvalidArgumentException
+     */
+    public function appendWatermarkBox($childDomElement, $element, $style, $parentBlock)
+    {
+        if ($this->getCurrentLineBox()) {
+            $this->closeLine();
+        }
+        $box = (new WatermarkBox())
+            ->setDocument($this->document)
+            ->setParent($this)
+            ->setElement($element)
+            ->setStyle($style)
+            ->init();
+        $this->appendChild($box);
+        $box->getStyle()->init();
+        $box->buildTree($box);
+        $box->setForMeasurement(false)->setRenderable(false, true);
+        return $box;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)

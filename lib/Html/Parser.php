@@ -142,7 +142,7 @@ class Parser extends \YetiForcePDF\Base
         }
         foreach ($this->document->getPages() as $page) {
             $children = [];
-            $page->setUpHeaderFooter();
+            $page->setUpAbsoluteBoxes();
             $page->getBox()->getAllChildren($children);
             foreach ($children as $box) {
                 if (!$box instanceof \YetiForcePDF\Layout\LineBox && $box->isRenderable()) {

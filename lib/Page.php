@@ -21,6 +21,7 @@ use YetiForcePDF\Layout\TableWrapperBox;
 use YetiForcePDF\Layout\TableFooterGroupBox;
 use YetiForcePDF\Layout\HeaderBox;
 use YetiForcePDF\Layout\FooterBox;
+use YetiForcePDF\Layout\WatermarkBox;
 use YetiForcePDF\Objects\Basic\StreamObject;
 
 /**
@@ -754,10 +755,33 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     }
 
     /**
-     * Set up header and footer
+     * Layout watermark
+     * @param WatermarkBox $watermark
      * @return $this
      */
-    public function setUpHeaderFooter()
+    protected function layoutWatermark(WatermarkBox $watermark)
+    {
+        $watermark = $watermark->cloneWithChildren();
+        $box = $this->getBox();
+        $box->insertBefore($watermark, $box->getFirstChild());
+        $outerWidth = $this->getOuterDimensions()->getWidth();
+        $outerHeight = $this->getOuterDimensions()->getHeight();
+        $watermark->getDimensions()->resetWidth()->resetHeight();
+        $this->getDimensions()->setWidth($outerWidth);
+        $this->getBox()->getDimensions()->setWidth($outerWidth);
+        $this->getDimensions()->setHeight($outerHeight);
+        $this->getBox()->getDimensions()->setWidth($outerHeight);
+        $watermark->getDimensions()->setWidth($outerWidth);
+        $watermark->setForMeasurement(true)->setRenderable(true, true);
+        $watermark->layout();
+        return $this;
+    }
+
+    /**
+     * Set up absolute positioned boxes like header,footer, watermark
+     * @return $this
+     */
+    public function setUpAbsoluteBoxes()
     {
         $this->document->setCurrentPage($this);
         $this->getBox()->getOffset()->setLeft('0');
@@ -782,6 +806,15 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
             $this->layoutFooter($footer);
         } elseif ($this->document->getFooter()) {
             $this->layoutFooter($this->document->getFooter());
+        }
+        $watermarks = $box->getBoxesByType('WatermarkBox');
+        if (isset($watermarks[0])) {
+            $watermark = array_pop($watermarks);
+            $watermark = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
+            $this->document->setWatermark($watermark);
+            $this->layoutWatermark($watermark);
+        } elseif ($this->document->getWatermark()) {
+            $this->layoutWatermark($this->document->getWatermark());
         }
         return $this;
     }
