@@ -19,6 +19,9 @@ use YetiForcePDF\Layout\TableBox;
 use YetiForcePDF\Layout\TableCellBox;
 use YetiForcePDF\Math;
 use YetiForcePDF\Objects\ImageStream;
+use YetiForcePDF\Objects\GraphicState;
+use YetiForcePDF\Objects\Font;
+use YetiForcePDF\Html\Element;
 
 /**
  * Class Style.
@@ -36,13 +39,17 @@ class Style extends \YetiForcePDF\Base
      */
     protected $content;
     /**
-     * @var \YetiForcePDF\Html\Element
+     * @var Element
      */
     protected $element;
     /**
-     * @var \YetiForcePDF\Objects\Font
+     * @var Font
      */
     protected $font;
+    /**
+     * @var GraphicState
+     */
+    protected $graphicState;
     /**
      * @var Box
      */
@@ -86,6 +93,7 @@ class Style extends \YetiForcePDF\Base
         'list-style-type',
         'list-style',
         'orphans',
+        'opacity',
         'page-break-inside',
         'pitch-range',
         'pitch',
@@ -153,6 +161,7 @@ class Style extends \YetiForcePDF\Base
         'max-width' => 'none',
         'min-width' => '0',
         'white-space' => 'normal',
+        'opacity' => '1'
     ];
     /**
      * Original css rules.
@@ -864,11 +873,20 @@ class Style extends \YetiForcePDF\Base
     /**
      * Get current style font.
      *
-     * @return \YetiForcePDF\Objects\Font
+     * @return Font
      */
-    public function getFont(): \YetiForcePDF\Objects\Font
+    public function getFont(): Font
     {
         return $this->font;
+    }
+
+    /**
+     * Get graphic state
+     * @return GraphicState
+     */
+    public function getGraphicState(): GraphicState
+    {
+        return $this->graphicState;
     }
 
     /**
@@ -1030,14 +1048,16 @@ class Style extends \YetiForcePDF\Base
                 $finalRules[$ruleName] = $inherited[$ruleName];
             }
         }
-        $this->font = (new \YetiForcePDF\Objects\Font())
-            ->setDocument($this->document)
-            ->setFamily($finalRules['font-family'])
-            ->setWeight($finalRules['font-weight'])
-            ->setStyle($finalRules['font-style'])
-            ->init();
-        // size must be defined after initialisation because we could get cloned font that already exists
-        $this->font->setSize($finalRules['font-size']);
+        if (isset($finalRules['font-family'], $finalRules['font-weight'], $finalRules['font-style'], $finalRules['font-size'])) {
+            $this->font = (new \YetiForcePDF\Objects\Font())
+                ->setDocument($this->document)
+                ->setFamily($finalRules['font-family'])
+                ->setWeight($finalRules['font-weight'])
+                ->setStyle($finalRules['font-style'])
+                ->init();
+            // size must be defined after initialisation because we could get cloned font that already exists
+            $this->font->setSize($finalRules['font-size']);
+        }
         return $this;
     }
 
@@ -1071,6 +1091,35 @@ class Style extends \YetiForcePDF\Base
         $this->backgroundImage->loadImage($src);
         $imageName = $this->backgroundImage->getImageName();
         $this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
+        return $ruleParsed;
+    }
+
+    /**
+     * Parse graphic states.
+     *
+     * @param array $ruleParsed
+     *
+     * @return array
+     */
+    protected function parseGraphicState(array $ruleParsed, array $inherited)
+    {
+        $ruleName = 'opacity';
+        if (!isset($ruleParsed[$ruleName])) {
+            return $this;
+        }
+        $ruleValue = $ruleParsed['opacity'];
+        $normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
+        $normalizer = (new $normalizerName())
+            ->setDocument($this->document)
+            ->setStyle($this)
+            ->init();
+        foreach ($normalizer->normalize($ruleValue, $ruleName) as $name => $value) {
+            $ruleParsed[$name] = $value;
+        }
+        $this->graphicState = (new GraphicState())
+            ->setDocument($this->document)
+            ->init();
+        $this->graphicState->addValue('ca', $ruleParsed[$ruleName]);
         return $ruleParsed;
     }
 
@@ -1187,6 +1236,7 @@ class Style extends \YetiForcePDF\Base
             $rulesParsed = $this->applyBorderSpacing($rulesParsed);
         }
         $rulesParsed = $this->parseImage($rulesParsed);
+        $rulesParsed = $this->parseGraphicState($rulesParsed, $inherited);
         $finalRules = [];
         foreach ($rulesParsed as $ruleName => $ruleValue) {
             if (is_string($ruleValue)) {

@@ -884,6 +884,8 @@ class Box extends \YetiForcePDF\Base
             return $element;
         }
         $rules = $this->style->getRules();
+        $graphicState = $this->style->getGraphicState();
+        $element[] = '/' . $graphicState->getNumber() . ' gs';
         $x1 = '0';
         $x2 = $width;
         $y1 = $height;

@@ -96,6 +96,11 @@ class Document
      */
     protected $actualFontId = 0;
     /**
+     * Actual graphic state id
+     * @var int
+     */
+    protected $actualGraphicStateId = 0;
+    /**
      * @var bool $debugMode
      */
     protected $debugMode = false;
@@ -192,6 +197,15 @@ class Document
     public function getActualFontId(): int
     {
         return ++$this->actualFontId;
+    }
+
+    /**
+     * Get actual id for newly created graphic state
+     * @return int
+     */
+    public function getActualGraphicStateId(): int
+    {
+        return ++$this->actualGraphicStateId;
     }
 
     /**
