@@ -1048,7 +1048,7 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		foreach (['font-family', 'font-size', 'font-weight', 'font-style'] as $ruleName) {
-			if (isset($inherited[$ruleName]) && !isset($ruleParsed[$ruleName])) {
+			if (isset($inherited[$ruleName]) && !isset($finalRules[$ruleName])) {
 				$finalRules[$ruleName] = $inherited[$ruleName];
 			}
 		}
