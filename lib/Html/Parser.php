@@ -75,8 +75,9 @@ class Parser extends \YetiForcePDF\Base
         $config->set('CSS.AllowDuplicates', true);
         $purifier = new \HTMLPurifier($config);
         //$html = $purifier->purify($html);
-        $html = $this->cleanUpHtml($html, $fromEncoding);
-        $this->html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+        $this->html = $this->cleanUpHtml($html, $fromEncoding);
+        //$this->html = mb_convert_encoding($html, 'UTF-8');
+        $this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
         $this->domDocument = new \DOMDocument();
         $this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
         return $this;

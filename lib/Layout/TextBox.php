@@ -148,10 +148,11 @@ class TextBox extends ElementBox implements BoxInterface
         $textWidth = $style->getFont()->getTextWidth($this->getText());
         $textHeight = $style->getFont()->getTextHeight();
         $textContent = '(' . $this->filterText($this->getText()) . ')';
+        $transform = $style->getTransformations($pdfX, $baseLineY);
         $element = [
             'q',
             $graphicStateStr,
-            "1 0 0 1 $pdfX $baseLineY cm % html x:$htmlX y:$htmlY",
+            $transform,
             "{$rules['color'][0]} {$rules['color'][1]} {$rules['color'][2]} rg",
             'BT',
             $fontStr,

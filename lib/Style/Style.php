@@ -1489,6 +1489,15 @@ class Style extends \YetiForcePDF\Base
         return $this;
     }
 
+    /**
+     * Get transformations
+     * @return string
+     */
+    public function getTransformations(string $x, string $y)
+    {
+        return "1 0 0 1 $x $y cm";
+    }
+
     public function __clone()
     {
         $this->font = clone $this->font;
