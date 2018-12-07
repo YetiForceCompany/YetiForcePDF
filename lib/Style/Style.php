@@ -900,6 +900,9 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function convertUnits(string $unit, string $size)
 	{
+		if ($size === '' || $size === '0') {
+			$size = $this->mandatoryRules['font-size'];
+		}
 		switch ($unit) {
 			case 'px':
 			case 'pt':
@@ -913,6 +916,9 @@ class Style extends \YetiForcePDF\Base
 			case '%':
 				return $size . '%'; // percent values are calculated later
 			default: // em too
+				if ($this->getParent()) {
+					return Math::mul($this->getParent()->getFont()->getTextHeight(), $size);
+				}
 				return Math::mul($this->getFont()->getTextHeight(), $size);
 		}
 	}
@@ -1214,6 +1220,9 @@ class Style extends \YetiForcePDF\Base
 		}
 		$defaultRules = $this->getDefaultRules();
 		$inherited = array_diff_key($inherited, $defaultRules);
+		if ($this->elementName === 'h1') {
+			$test = '';
+		}
 		$parsed = array_merge($parsed, $defaultRules);
 		if ($this->document->inDebugMode() && $this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
 			$this->content = 'border:1px solid red;';

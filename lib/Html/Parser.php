@@ -57,6 +57,7 @@ class Parser extends \YetiForcePDF\Base
 			$fromEncoding = mb_detect_encoding($html);
 		}
 		$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
+		$html = html_entity_decode($html, ENT_COMPAT, 'UTF-8');
 		$html = preg_replace('/\r\n/u', "\r", $html);
 		$html = preg_replace('/\n/u', "\r", $html);
 		return $html;
@@ -84,8 +85,8 @@ class Parser extends \YetiForcePDF\Base
 		$def->addAttribute('div', 'data-footer', new \HTMLPurifier_AttrDef_Text());
 		$def->addAttribute('div', 'data-watermark', new \HTMLPurifier_AttrDef_Text());
 		$purifier = new \HTMLPurifier($config);
-		$html = $purifier->purify($html);
 		$this->html = $this->cleanUpHtml($html, $fromEncoding);
+		$this->html = $purifier->purify($this->html);
 		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
 		$this->domDocument->recover = true;
