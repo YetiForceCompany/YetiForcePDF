@@ -168,7 +168,7 @@ class TableRowBox extends BlockBox
 					$spannedWidth = Math::sub($spannedWidth, $column->getStyle()->getRules('border-spacing'));
 				}
 				foreach ($columns as $column) {
-					$column->setSpanned($colSpansCount - $index)->setRenderable(false);
+					$column->setColSpanned($colSpansCount - $index)->setRenderable(false);
 				}
 				if ($source->getNext() === null) {
 					$cell = $source->getFirstChild();

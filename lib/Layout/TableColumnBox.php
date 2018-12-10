@@ -33,7 +33,7 @@ class TableColumnBox extends InlineBlockBox
 	/**
 	 * @var int
 	 */
-	protected $spanned = 0;
+	protected $colSpanned = 0;
 
 	/**
 	 * Set row span.
@@ -109,9 +109,9 @@ class TableColumnBox extends InlineBlockBox
 	 *
 	 * @return int
 	 */
-	public function getSpanned()
+	public function getColSpanned()
 	{
-		return $this->spanned;
+		return $this->colSpanned;
 	}
 
 	/**
@@ -121,9 +121,9 @@ class TableColumnBox extends InlineBlockBox
 	 *
 	 * @return $this
 	 */
-	public function setSpanned(int $spanned)
+	public function setColSpanned(int $spanned)
 	{
-		$this->spanned = $spanned;
+		$this->colSpanned = $spanned;
 		return $this;
 	}
 
