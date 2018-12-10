@@ -888,45 +888,50 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 
     /**
      * Group boxes by parent
-     * return Box[]
+     * @param Box|null $box
+     * return Box cloned box
      */
-    public function cloneAndDivideChildrenAfterY(string $yPos)
+    public function cloneAndDivideChildrenAfterY(string $yPos, Box $box = null)
     {
-        $cloned = [];
-        $rootChildren = $this->getRootChildsAfterY($yPos);
-        if (!isset($rootChildren[0])) {
-            return [];
-        }
-        foreach ($rootChildren as $rootChild) {
-            $cloned[] = $rootChild->cloneWithChildren();
-        }
-        if (Math::comp($cloned[0]->getCoordinates()->getY(), $yPos) < 0) {
-            // we must remove children that could stay in previous pages
-            $allChildren = [];
-            $cloned[0]->getAllChildren($allChildren, false);
-            $allChildren = array_reverse($allChildren);
-            foreach ($allChildren as $child) {
-                if (Math::comp($child->getCoordinates()->getEndY(), $yPos) <= 0) {
-                    $child->setRenderable(false);
-                } elseif (Math::comp($child->getCoordinates()->getY(), $yPos) <= 0) {
-                    $this->cutAbove($child, $yPos);
+        if (!$box) {
+            foreach ($this->getBox()->getChildren() as $child) {
+                if (Math::comp($child->getCoordinates()->getEndY(), $yPos) >= 0) {
+                    $box = $child;
+                    break;
                 }
             }
-            $this->cutAbove($cloned[0], $yPos);
         }
-        // remove source children that will be moved
-        foreach ($rootChildren as $rootChild) {
-            $allRootChildren = [];
-            $rootChild->getAllChildren($allRootChildren, false);
-            $allRootChildren = array_reverse($allRootChildren);
-            foreach ($allRootChildren as $child) {
-                if (Math::comp($child->getCoordinates()->getY(), $yPos) > 0) {
-                    $child->setRenderable(false);
-                } elseif (Math::comp($child->getCoordinates()->getY(), $yPos) <= 0 && Math::comp($child->getCoordinates()->getEndY(), $yPos) > 0) {
-                    $this->cutBelow($child, $yPos);
+        if (!$box) {
+            return null;
+        }
+        $cloned = clone $box;
+        $cloned->clearChildren();
+        foreach ($box->getChildren() as $index => $child) {
+            if (!$child instanceof TableWrapperBox) {
+                $clonedChild = $this->cloneAndDivideChildrenAfterY($yPos, $child);
+                $clonedChild = $clonedChild->getParent()->removeChild($clonedChild);
+                if (Math::comp($child->getCoordinates()->getEndY(), $yPos) < 0) {
+                    $clonedChild->setRenderable(false)->setForMeasurement(false);
+                } elseif (Math::comp($child->getCoordinates()->getY(), $yPos) >= 0) {
+                    $child->setRenderable(false)->setForMeasurement(false);
+                }
+                $cloned->appendChild($clonedChild);
+            } else {
+                if (Math::comp($child->getCoordinates()->getY(), $yPos) >= 0) {
+                    $clonedChild = $child->cloneWithChildren();
+                    $child->setRenderable(false)->setForMeasurement(false);
+                    $cloned->appendChild($clonedChild->getParent()->removeChild($clonedChild));
+                } elseif (Math::comp($child->getCoordinates()->getEndY(), $yPos) < 0) {
+
+                } else {
+                    $clonedChild = $this->divideTable($child);
+                    $cloned->appendChild($clonedChild->getParent()->removeChild($clonedChild));
                 }
             }
-            $this->cutBelow($rootChild, $yPos);
+        }
+        if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) >= 0) {
+            $this->cutBelow($box, $yPos);
+            $this->cutAbove($cloned, $yPos);
         }
         return $cloned;
     }
@@ -985,11 +990,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $newTableBox->getStyle()->setBox($newTableBox);
         $newTableBox->clearChildren();
         $newTableWrapperBox->appendChild($newTableBox);
-        $clonedFooters = $tableWrapperBox->getBoxesByType('TableFooterGroupBox');
+        $clonedFooters = $tableWrapperBox->getBoxesByType('TableFooterGroupBox', 'TableWrapperBox');
         if (isset($clonedFooters[0])) {
             $clonedFooter = $clonedFooters[0]->cloneWithChildren();
         }
-        $headers = $tableWrapperBox->getBoxesByType('TableHeaderGroupBox');
+        $headers = $tableWrapperBox->getBoxesByType('TableHeaderGroupBox', 'TableWrapperBox');
         if (isset($headers[0])) {
             $newTableBox->appendChild($headers[0]->cloneWithChildren());
         }
@@ -1042,7 +1047,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $removeSource = !$tableBox->hasChildren() || !$tableBox->getFirstChild()->hasChildren();
         $removeSource = $removeSource && $tableBox->getFirstChild() instanceof TableHeaderGroupBox && count($tableBox->getChildren()) === 1;
         if ($removeSource) {
-            $tableWrapperBox->getParent()->removeChild($tableWrapperBox);
+            $tableWrapperBox->setRenderable(false);
         }
         return $newTableWrapperBox;
     }
@@ -1055,8 +1060,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
     public function breakOverflow()
     {
         $pageHeight = $this->getDimensions()->getHeight();
-        $moveBoxes = $this->cloneAndDivideChildrenAfterY($pageHeight);
-        if (!isset($moveBoxes[0])) {
+        $clonedBox = $this->cloneAndDivideChildrenAfterY($pageHeight);
+        if ($clonedBox === null) {
             return $this;
         }
         $newPage = clone $this;
@@ -1069,17 +1074,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
         $this->document->addObject($newPage, $this);
         $newBox = $newPage->getBox();
         $newBox->clearChildren();
-        /**foreach ($moveBoxes as $index => &$moveBox) {
-         * $reflect = new \ReflectionClass($moveBox);
-         * if (substr($reflect->getShortName(), 0, 5) === 'Table') {
-         * // got a table element - divide table into two tables
-         * $moveBox = $moveBoxes[$index] = $this->divideTable($moveBox);
-         * }
-         * }*/
-        foreach ($moveBoxes as $moveBox) {
-            $rootChild = $moveBox->getFirstRootChild();
-            $newBox->appendChild($rootChild->getParent()->removeChild($rootChild));
-        }
+        $newBox->appendChild($clonedBox->getParent()->removeChild($clonedBox));
         $this->getBox()->getStyle()->fixTables();
         $newBox->layout(true);
         $newBox->getStyle()->fixTables();

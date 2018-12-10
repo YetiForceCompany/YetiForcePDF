@@ -311,10 +311,15 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
     public function __clone()
     {
         $this->element = clone $this->element;
+        $this->element->setBox($this);
         $this->style = clone $this->style;
+        $this->style->setBox($this);
         $this->offset = clone $this->offset;
+        $this->offset->setBox($this);
         $this->dimensions = clone $this->dimensions;
+        $this->dimensions->setBox($this);
         $this->coordinates = clone $this->coordinates;
+        $this->coordinates->setBox($this);
         $this->children = [];
     }
 

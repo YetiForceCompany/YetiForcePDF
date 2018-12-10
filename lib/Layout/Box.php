@@ -95,6 +95,10 @@ class Box extends \YetiForcePDF\Base
      * @var bool
      */
     protected $cut = false;
+    /**
+     * @var bool
+     */
+    protected $displayable = true;
 
     /**
      * {@inheritdoc}
@@ -267,6 +271,30 @@ class Box extends \YetiForcePDF\Base
     public function setCut(bool $cut)
     {
         $this->cut = $cut;
+        return $this;
+    }
+
+    /**
+     * Is this element displayable
+     * @return bool
+     */
+    public function isDisplayable()
+    {
+        return $this->displayable;
+    }
+
+    /**
+     * Set displayable
+     * @param bool $displayable
+     * @return $this
+     */
+    public function setDisplayable(bool $displayable)
+    {
+        $allChildren = [];
+        $this->getAllChildren($allChildren);
+        foreach ($allChildren as $child) {
+            $child->displayable = $displayable;
+        }
         return $this;
     }
 
@@ -632,21 +660,22 @@ class Box extends \YetiForcePDF\Base
     /**
      * Get boxes by type.
      *
-     * @param string $className
-     *
+     * @param string $shortClassName
+     * @param string|null $until
      * @return array
      */
-    public function getBoxesByType(string $className)
+    public function getBoxesByType(string $shortClassName, string $until = '')
     {
-        if (substr($className, 0, 9) !== 'YetiForce') {
-            $className = 'YetiForcePDF\\Layout\\' . $className;
-        }
         $boxes = [];
         $allChildren = [];
         $this->getAllChildren($allChildren);
         foreach ($allChildren as $child) {
-            if ($child instanceof $className) {
+            $reflectShortClassName = (new \ReflectionClass($child))->getShortName();
+            if ($reflectShortClassName === $shortClassName) {
                 $boxes[] = $child;
+            }
+            if ($reflectShortClassName === $until) {
+                break;
             }
         }
         return $boxes;

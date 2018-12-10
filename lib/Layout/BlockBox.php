@@ -448,13 +448,10 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
      */
     public function measureHeight(bool $afterPageDividing = false)
     {
-        if (!$this->wasCut()) {
-            $this->applyStyleHeight();
-        }
+
+        $this->applyStyleHeight();
         foreach ($this->getChildren() as $child) {
-            if (!$child->wasCut()) {
-                $child->measureHeight($afterPageDividing);
-            }
+            $child->measureHeight($afterPageDividing);
         }
         $height = '0';
         foreach ($this->getChildren() as $child) {
