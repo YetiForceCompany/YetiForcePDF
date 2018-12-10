@@ -92,6 +92,11 @@ class Box extends \YetiForcePDF\Base
     protected $absolute = false;
 
     /**
+     * @var bool
+     */
+    protected $cut = false;
+
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -242,6 +247,26 @@ class Box extends \YetiForcePDF\Base
     public function setAbsolute(bool $absolute)
     {
         $this->absolute = $absolute;
+        return $this;
+    }
+
+    /**
+     * Box was cut to next page
+     * @return bool
+     */
+    public function wasCut()
+    {
+        return $this->cut;
+    }
+
+    /**
+     * Set cut
+     * @param bool $cut
+     * @return $this
+     */
+    public function setCut(bool $cut)
+    {
+        $this->cut = $cut;
         return $this;
     }
 
@@ -561,12 +586,15 @@ class Box extends \YetiForcePDF\Base
      * Get all children.
      *
      * @param Box[] $allChildren
+     * @param bool $withCurrent
      *
      * @return Box[]
      */
-    public function getAllChildren(&$allChildren = [])
+    public function getAllChildren(&$allChildren = [], bool $withCurrent = true)
     {
-        $allChildren[] = $this;
+        if ($withCurrent) {
+            $allChildren[] = $this;
+        }
         foreach ($this->getChildren() as $child) {
             $child->getAllChildren($allChildren);
         }
