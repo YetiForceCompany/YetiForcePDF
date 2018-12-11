@@ -934,7 +934,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 						}
 					}
 					if (Math::comp($childCoords->getY(), $yPos) >= 0) {
-						$child->setRenderable(false);
+						$child->setRenderable(false)->setForMeasurement(false);
 					}
 				}
 				if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
@@ -1090,7 +1090,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getBox()->getStyle()->fixTables();
 		$newBox->layout(true);
 		$newBox->getStyle()->fixTables();
-		while (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
+		$boxHeight = $newBox->getDimensions()->getHeight();
+		if (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
 			$newPage->breakOverflow();
 		}
 		return $this;
