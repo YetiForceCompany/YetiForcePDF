@@ -918,24 +918,29 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		foreach ($boxes as $box) {
 			$cloned = $box->clone();
 			$cloned->clearChildren();
-			foreach ($box->getChildren() as $index => $child) {
-				if (!$child->isForMeasurement() || !$child->isRenderable()) {
-					continue;
-				}
-				$childCoords = $child->getCoordinates();
-				if (Math::comp($childCoords->getEndY(), $yPos) > 0) {
-					$boxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
-					foreach ($boxes as $childBox) {
-						$cloned->appendChild($childBox);
+			$boxCoords = $box->getCoordinates();
+			if ($box instanceof TableWrapperBox && Math::comp($boxCoords->getY(), $yPos) <= 0 && Math::comp($boxCoords->getEndY(), $yPos) > 0) {
+				$cloned = $this->divideTable($box);
+			} else {
+				foreach ($box->getChildren() as $index => $child) {
+					if (!$child->isForMeasurement() || !$child->isRenderable()) {
+						continue;
+					}
+					$childCoords = $child->getCoordinates();
+					if (Math::comp($childCoords->getEndY(), $yPos) > 0) {
+						$boxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
+						foreach ($boxes as $childBox) {
+							$cloned->appendChild($childBox);
+						}
+					}
+					if (Math::comp($childCoords->getY(), $yPos) >= 0) {
+						$child->setRenderable(false);
 					}
 				}
-				if (Math::comp($childCoords->getY(), $yPos) >= 0) {
-					$child->setRenderable(false);
+				if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
+					$this->cutBelow($box, $yPos);
+					$this->cutAbove($cloned, $yPos);
 				}
-			}
-			if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
-				$this->cutBelow($box, $yPos);
-				$this->cutAbove($cloned, $yPos);
 			}
 			$clonedBoxes[] = $cloned;
 		}
