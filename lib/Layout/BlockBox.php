@@ -538,6 +538,25 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		return $this;
 	}
 
+	public function replacePageNumbers()
+	{
+		$allChildren = [];
+		$this->getAllChildren($allChildren);
+		foreach ($allChildren as $child) {
+			if ($child instanceof TextBox) {
+				if (mb_stripos($child->getTextContent(), '{PAGENO}') !== false) {
+					$pageNumber = (string)($this->document->getCurrentPage()->getPageNumber() + 1);
+					$child->setText(str_ireplace('{PAGENO}', $pageNumber, $child->getTextContent()));
+				}
+				if (mb_stripos($child->getTextContent(), '{nb}') !== false) {
+					$pages = (string)count($this->document->getPages());
+					$child->setText(str_ireplace('{nb}', $pages, $child->getTextContent()));
+				}
+			}
+		}
+		return $this;
+	}
+
 	/**
 	 * Add background color instructions.
 	 *

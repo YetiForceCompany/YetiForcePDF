@@ -89,7 +89,7 @@ class Parser extends \YetiForcePDF\Base
 		$this->html = $purifier->purify($this->html);
 		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
-		$this->domDocument->recover = true;
+		//$this->domDocument->recover = true;
 		$this->domDocument->encoding = 'utf-8';
 		$this->domDocument->substituteEntities = false;
 		$this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
@@ -158,8 +158,10 @@ class Parser extends \YetiForcePDF\Base
 			$page->getBox()->spanAllRows();
 		}
 		foreach ($this->document->getPages() as $page) {
+			$this->document->setCurrentPage($page);
 			$children = [];
 			$page->setUpAbsoluteBoxes();
+			$page->getBox()->replacePageNumbers();
 			$page->getBox()->getAllChildren($children);
 			foreach ($children as $box) {
 				if (!$box instanceof \YetiForcePDF\Layout\LineBox && $box->isRenderable()) {

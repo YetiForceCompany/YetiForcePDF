@@ -45,7 +45,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * @var int page number
 	 */
-	protected $number = 1;
+	protected $pageNumber = 1;
 	/**
 	 * Page resources.
 	 *
@@ -544,10 +544,19 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return $this
 	 */
-	public function setNumber(int $number)
+	public function setPageNumber(int $number)
 	{
-		$this->number = $number;
+		$this->pageNumber = $number;
 		return $this;
+	}
+
+	/**
+	 * Get page number
+	 * @return int
+	 */
+	public function getPageNumber()
+	{
+		return $this->pageNumber;
 	}
 
 	/**
@@ -803,7 +812,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if (isset($headers[0])) {
 			$header = array_pop($headers);
 			$header = $header->getParent()->removeChild($header)->cloneWithChildren();
-			$this->document->setHeader($header);
+			$this->document->setHeader($header->cloneWithChildren());
 			$this->layoutHeader($header);
 		} elseif ($this->document->getHeader()) {
 			$this->layoutHeader($this->document->getHeader());
@@ -811,7 +820,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$footers = $box->getBoxesByType('FooterBox');
 		if (isset($footers[0])) {
 			$footer = array_pop($footers);
-			$this->document->setFooter($footer);
+			$this->document->setFooter($footer->cloneWithChildren());
 			$this->layoutFooter($footer);
 		} elseif ($this->document->getFooter()) {
 			$this->layoutFooter($this->document->getFooter());
@@ -820,7 +829,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if (isset($watermarks[0])) {
 			$watermark = array_pop($watermarks);
 			$watermark = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
-			$this->document->setWatermark($watermark);
+			$this->document->setWatermark($watermark->cloneWithChildren());
 			$this->layoutWatermark($watermark);
 		} elseif ($this->document->getWatermark()) {
 			$this->layoutWatermark($this->document->getWatermark());
@@ -959,6 +968,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$box = $box->getFirstRootChild();
 		$newPage = clone $this;
 		$newPage->setId($this->document->getActualId());
+		$newPage->setPageNumber(count($this->document->getPages()));
 		$newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
@@ -1076,6 +1086,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		}
 		$newPage = clone $this;
 		$newPage->setId($this->document->getActualId());
+		$newPage->setPageNumber(count($this->document->getPages()));
 		$newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
