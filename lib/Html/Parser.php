@@ -86,10 +86,10 @@ class Parser extends \YetiForcePDF\Base
 		$def->addAttribute('div', 'data-watermark', new \HTMLPurifier_AttrDef_Text());
 		$purifier = new \HTMLPurifier($config);
 		$this->html = $this->cleanUpHtml($html, $fromEncoding);
-		//$this->html = $purifier->purify($this->html);
+		$this->html = $purifier->purify($this->html);
 		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
-		//$this->domDocument->recover = true;
+		$this->domDocument->recover = true;
 		$this->domDocument->encoding = 'utf-8';
 		$this->domDocument->substituteEntities = false;
 		$this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
@@ -100,7 +100,7 @@ class Parser extends \YetiForcePDF\Base
 	 * Get all elements as a flat array.
 	 *
 	 * @param \YetiForcePDF\Html\Element $currentNode
-	 * @param array                      $currentResult
+	 * @param array $currentResult
 	 *
 	 * @return \YetiForcePDF\Html\Element[]
 	 */

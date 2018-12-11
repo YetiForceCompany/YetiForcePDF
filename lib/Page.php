@@ -1090,7 +1090,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getBox()->getStyle()->fixTables();
 		$newBox->layout(true);
 		$newBox->getStyle()->fixTables();
-		while (Math::comp($newBox->getDimensions()->getHeight(), $pageHeight) > 0) {
+		while (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
 			$newPage->breakOverflow();
 		}
 		return $this;
