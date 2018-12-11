@@ -667,6 +667,7 @@ class Box extends \YetiForcePDF\Base
 	public function getBoxesByType(string $shortClassName, string $until = '')
 	{
 		$boxes = [];
+		$untilWas = 0;
 		$allChildren = [];
 		$this->getAllChildren($allChildren);
 		foreach ($allChildren as $child) {
@@ -675,6 +676,9 @@ class Box extends \YetiForcePDF\Base
 				$boxes[] = $child;
 			}
 			if ($reflectShortClassName === $until) {
+				$untilWas++;
+			}
+			if ($reflectShortClassName === $until && $untilWas === 2) {
 				break;
 			}
 		}

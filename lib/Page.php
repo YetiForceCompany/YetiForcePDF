@@ -1002,11 +1002,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			return $tableWrapperBox;
 		}
 		// clone header if exists
-		$newTableWrapperBox = clone $tableWrapperBox;
+		$newTableWrapperBox = $tableWrapperBox->clone();
 		$newTableWrapperBox->getStyle()->setBox($newTableWrapperBox);
 		$newTableWrapperBox->clearChildren();
 		$tableBox = $tableWrapperBox->getFirstChild();
-		$newTableBox = clone $tableBox;
+		$newTableBox = $tableBox->clone();
 		$newTableBox->getStyle()->setBox($newTableBox);
 		$newTableBox->clearChildren();
 		$newTableWrapperBox->appendChild($newTableBox);
