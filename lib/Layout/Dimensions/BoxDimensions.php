@@ -80,6 +80,9 @@ class BoxDimensions extends Dimensions
 		if (!$this->getBox()->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
 			return '0';
 		}
+		if (!$this->getBox()->isDisplayable()) {
+			return '0';
+		}
 		return parent::getWidth();
 	}
 
@@ -89,6 +92,9 @@ class BoxDimensions extends Dimensions
 	public function getHeight()
 	{
 		if (!$this->getBox()->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
+			return '0';
+		}
+		if (!$this->getBox()->isDisplayable()) {
 			return '0';
 		}
 		return parent::getHeight();
@@ -103,6 +109,9 @@ class BoxDimensions extends Dimensions
 	{
 		$box = $this->getBox();
 		if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
+			return '0';
+		}
+		if (!$this->getBox()->isDisplayable()) {
 			return '0';
 		}
 		$style = $box->getStyle();
@@ -122,6 +131,9 @@ class BoxDimensions extends Dimensions
 	{
 		$box = $this->getBox();
 		if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
+			return '0';
+		}
+		if (!$this->getBox()->isDisplayable()) {
 			return '0';
 		}
 		$style = $box->getStyle();
@@ -146,6 +158,9 @@ class BoxDimensions extends Dimensions
 	{
 		$box = $this->getBox();
 		if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
+			return '0';
+		}
+		if (!$this->getBox()->isDisplayable()) {
 			return '0';
 		}
 		if (!$box instanceof LineBox) {
@@ -182,6 +197,9 @@ class BoxDimensions extends Dimensions
 	{
 		$box = $this->getBox();
 		if (!$box->isForMeasurement() && !$this->getBox()->getStyle()->haveSpacing()) {
+			return '0';
+		}
+		if (!$this->getBox()->isDisplayable()) {
 			return '0';
 		}
 		$style = $this->getBox()->getStyle();

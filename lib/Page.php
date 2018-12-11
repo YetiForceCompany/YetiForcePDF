@@ -739,7 +739,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getDimensions()->setHeight($outerHeight);
 		$this->getBox()->getDimensions()->setWidth($outerHeight);
 		$header->getDimensions()->setWidth($outerWidth);
-		$header->setForMeasurement(true)->setRenderable(true, true);
+		$header->setDisplayable(true);
 		$header->layout();
 		return $this;
 	}
@@ -764,7 +764,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getDimensions()->setHeight($outerHeight);
 		$this->getBox()->getDimensions()->setWidth($outerHeight);
 		$footer->getDimensions()->setWidth($outerWidth);
-		$footer->setForMeasurement(true)->setRenderable(true, true);
+		$footer->setDisplayable(true);
 		$footer->layout();
 		return $this;
 	}
@@ -789,7 +789,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getDimensions()->setHeight($outerHeight);
 		$this->getBox()->getDimensions()->setWidth($outerHeight);
 		$watermark->getDimensions()->setWidth($outerWidth);
-		$watermark->setForMeasurement(true)->setRenderable(true, true);
+		$watermark->setDisplayable(true);
 		$watermark->layout();
 		return $this;
 	}

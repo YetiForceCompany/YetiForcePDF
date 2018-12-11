@@ -176,7 +176,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->appendChild($box);
 		$box->getStyle()->init();
 		$box->buildTree($box);
-		$box->setForMeasurement(false)->setRenderable(false, true);
+		$box->setDisplayable(false);
 		return $box;
 	}
 
@@ -206,7 +206,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->appendChild($box);
 		$box->getStyle()->init();
 		$box->buildTree($box);
-		$box->setForMeasurement(false)->setRenderable(false, true);
+		$box->setDisplayable(false);
 		return $box;
 	}
 
@@ -236,7 +236,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->appendChild($box);
 		$box->getStyle()->init();
 		$box->buildTree($box);
-		$box->setForMeasurement(false)->setRenderable(false, true);
+		$box->setDisplayable(false);
 		return $box;
 	}
 
@@ -538,6 +538,10 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		return $this;
 	}
 
+	/**
+	 * Replace page numbers
+	 * @return $this
+	 */
 	public function replacePageNumbers()
 	{
 		$allChildren = [];
