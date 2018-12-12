@@ -548,13 +548,15 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->getAllChildren($allChildren);
 		foreach ($allChildren as $child) {
 			if ($child instanceof TextBox) {
-				if (mb_stripos($child->getTextContent(), '{PAGENO}') !== false) {
+				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
 					$pageNumber = (string)($this->document->getCurrentPage()->getPageNumber() + 1);
-					$child->setText(preg_replace('/{PAGENO}/i', $pageNumber, $child->getTextContent()));
+					$child->setText(preg_replace('/{p}/i', $pageNumber, $child->getTextContent()));
+					$child->getClosestByType('BlockBox')->layout();
 				}
-				if (mb_stripos($child->getTextContent(), '{nb}') !== false) {
+				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
 					$pages = (string)count($this->document->getPages());
-					$child->setText(preg_replace('/{nb}/i', $pages, $child->getTextContent()));
+					$child->setText(preg_replace('/{a}/i', $pages, $child->getTextContent()));
+					$child->getClosestByType('BlockBox')->layout();
 				}
 			}
 		}

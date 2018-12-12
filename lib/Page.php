@@ -811,26 +811,30 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$headers = $box->getBoxesByType('HeaderBox');
 		if (isset($headers[0])) {
 			$header = array_pop($headers);
-			$header = $header->getParent()->removeChild($header)->cloneWithChildren();
-			$this->document->setHeader($header->cloneWithChildren());
-			$this->layoutHeader($header);
+			$headerClone = $header->getParent()->removeChild($header)->cloneWithChildren();
+			$header->clearChildren();
+			$this->document->setHeader($headerClone);
+			$this->layoutHeader($headerClone);
 		} elseif ($this->document->getHeader()) {
 			$this->layoutHeader($this->document->getHeader());
 		}
 		$footers = $box->getBoxesByType('FooterBox');
 		if (isset($footers[0])) {
 			$footer = array_pop($footers);
-			$this->document->setFooter($footer->cloneWithChildren());
-			$this->layoutFooter($footer);
+			$footerClone = $footer->getParent()->removeChild($footer)->cloneWithChildren();
+			$footer->clearChildren();
+			$this->document->setFooter($footerClone);
+			$this->layoutFooter($footerClone);
 		} elseif ($this->document->getFooter()) {
 			$this->layoutFooter($this->document->getFooter());
 		}
 		$watermarks = $box->getBoxesByType('WatermarkBox');
 		if (isset($watermarks[0])) {
 			$watermark = array_pop($watermarks);
-			$watermark = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
-			$this->document->setWatermark($watermark->cloneWithChildren());
-			$this->layoutWatermark($watermark);
+			$watermarkClone = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
+			$watermark->clearChildren();
+			$this->document->setWatermark($watermarkClone);
+			$this->layoutWatermark($watermarkClone);
 		} elseif ($this->document->getWatermark()) {
 			$this->layoutWatermark($this->document->getWatermark());
 		}

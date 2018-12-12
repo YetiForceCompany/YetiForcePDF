@@ -327,6 +327,9 @@ class Document
 	 */
 	public function setHeader(HeaderBox $header)
 	{
+		if ($header->getParent()) {
+			$header - $header->getParent()->removeChild($header);
+		}
 		$this->header = $header;
 		return $this;
 	}
@@ -347,6 +350,9 @@ class Document
 	 */
 	public function setWatermark(WatermarkBox $watermark)
 	{
+		if ($watermark->getParent()) {
+			$watermark = $watermark->getParent()->removeChild($watermark);
+		}
 		$this->watermark = $watermark;
 		return $this;
 	}
@@ -367,6 +373,9 @@ class Document
 	 */
 	public function setFooter(FooterBox $footer)
 	{
+		if ($footer->getParent()) {
+			$footer = $footer->getParent()->removeChild($footer);
+		}
 		$this->footer = $footer;
 		return $this;
 	}
