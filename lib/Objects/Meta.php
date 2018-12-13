@@ -3,19 +3,19 @@ declare(strict_types=1);
 /**
  * Meta class
  *
- * @package   YetiForcePDF
+ * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
-namespace YetiForcePDF;
+namespace YetiForcePDF\Objects;
 
 /**
  * Class Meta
  */
-class Meta extends Base
+class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
 	 * @var string
@@ -24,7 +24,11 @@ class Meta extends Base
 	/**
 	 * @var string
 	 */
-	protected $creator = 'YetiForcePDF';
+	protected $creator = 'YetiForceCRM';
+	/**
+	 * @var string
+	 */
+	protected $producer = 'YetiForcePDF';
 	/**
 	 * @var string
 	 */
@@ -32,7 +36,7 @@ class Meta extends Base
 	/**
 	 * @var string
 	 */
-	protected $topic = '';
+	protected $subject = '';
 	/**
 	 * @var string[]
 	 */
@@ -79,6 +83,26 @@ class Meta extends Base
 	}
 
 	/**
+	 * Set producer
+	 * @param string $producer
+	 * @return $this
+	 */
+	public function setProducer(string $producer)
+	{
+		$this->producer = $producer;
+		return $this;
+	}
+
+	/**
+	 * Get producer
+	 * @return string
+	 */
+	public function getProducer()
+	{
+		return $this->producer;
+	}
+
+	/**
 	 * Set title
 	 * @param string $title
 	 * @return $this
@@ -99,23 +123,23 @@ class Meta extends Base
 	}
 
 	/**
-	 * Set topic
-	 * @param string $topic
+	 * Set subject
+	 * @param string $subject
 	 * @return $this
 	 */
-	public function setTopic(string $topic)
+	public function setSubject(string $subject)
 	{
-		$this->topic = $topic;
+		$this->subject = $subject;
 		return $this;
 	}
 
 	/**
-	 * Get topic
+	 * Get subject
 	 * @return string
 	 */
-	public function getTopic()
+	public function getSubject()
 	{
-		return $this->topic;
+		return $this->subject;
 	}
 
 	/**
@@ -136,5 +160,22 @@ class Meta extends Base
 	public function getKeywords()
 	{
 		return $this->keywords;
+	}
+
+	public function render(): string
+	{
+		if ($this->title) {
+			$this->addValue('Title', $this->document->filterText($this->title, 'UTF-16', true, true));
+		}
+		if ($this->subject) {
+			$this->addValue('Subject', $this->document->filterText($this->subject, 'UTF-16', true, true));
+		}
+		$this->addValue('Author', $this->document->filterText($this->author, 'UTF-16', true, true));
+		$this->addValue('Creator', $this->document->filterText($this->creator, 'UTF-16', true, true));
+		$this->addValue('Producer', $this->document->filterText($this->producer, 'UTF-16', true, true));
+		if (isset($this->keywords[0])) {
+			$this->addValue('Keywords', $this->document->filterText(implode(', ', $this->keywords), 'UTF-16', true, true));
+		}
+		return parent::render();
 	}
 }

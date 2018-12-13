@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 use \YetiForcePDF\Objects\PdfObject;
+use \YetiForcePDF\Objects\Meta;
 use \YetiForcePDF\Layout\HeaderBox;
 use \YetiForcePDF\Layout\FooterBox;
 use \YetiForcePDF\Layout\WatermarkBox;
@@ -634,6 +635,32 @@ class Document
 		return array_filter($this->objects, function ($currentObject) use ($name) {
 			return $currentObject->getName() === $name;
 		});
+	}
+
+	/**
+	 * Filter text
+	 * Filter the text, this is applied to all text just before being inserted into the pdf document
+	 * it escapes the various things that need to be escaped, and so on.
+	 *
+	 * @param string $text
+	 * @param bool $withParenthesis
+	 * @param bool $prependBom
+	 *
+	 * @return string
+	 */
+	public function filterText($text, string $encoding = 'UTF-16', bool $withParenthesis = false, bool $prependBom = false)
+	{
+		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
+		$text = preg_replace('/\s+/', ' ', $text);
+		$text = mb_convert_encoding($text, 'UTF-16', 'UTF-8');
+		$text = strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
+		if ($prependBom) {
+			$text = chr(254) . chr(255) . $text;
+		}
+		if ($withParenthesis) {
+			return '(' . $text . ')';
+		}
+		return $text;
 	}
 
 	/**
