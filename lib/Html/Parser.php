@@ -57,7 +57,7 @@ class Parser extends \YetiForcePDF\Base
 			$fromEncoding = mb_detect_encoding($html);
 		}
 		$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
-		$html = html_entity_decode($html, ENT_COMPAT, 'UTF-8');
+		$html = html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
 		$html = preg_replace('/\r\n/u', "\r", $html);
 		$html = preg_replace('/\n/u', "\r", $html);
 		return $html;
@@ -91,7 +91,7 @@ class Parser extends \YetiForcePDF\Base
 		$this->domDocument = new \DOMDocument();
 		//$this->domDocument->recover = true;
 		$this->domDocument->encoding = 'utf-8';
-		$this->domDocument->substituteEntities = false;
+		//$this->domDocument->substituteEntities = false;
 		$this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
 		return $this;
 	}

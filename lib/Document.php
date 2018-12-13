@@ -145,6 +145,9 @@ class Document
 	public function setDefaultFormat(string $defaultFormat)
 	{
 		$this->defaultFormat = $defaultFormat;
+		foreach ($this->pages as $page) {
+			$page->setFormat($defaultFormat);
+		}
 		return $this;
 	}
 
@@ -156,6 +159,9 @@ class Document
 	public function setDefaultOrientation(string $defaultOrientation)
 	{
 		$this->defaultOrientation = $defaultOrientation;
+		foreach ($this->pages as $page) {
+			$page->setOrientation($defaultOrientation);
+		}
 		return $this;
 	}
 
@@ -177,6 +183,61 @@ class Document
 			'horizontal' => $left + $right,
 			'vertical' => $top + $bottom
 		];
+		foreach ($this->pages as $page) {
+			$page->setMargins($left, $top, $right, $bottom);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set default left margin
+	 * @param float $left
+	 */
+	public function setDefaultLeftMargin(float $left)
+	{
+		$this->defaultMargins['left'] = $left;
+		foreach ($this->pages as $page) {
+			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set default top margin
+	 * @param float $left
+	 */
+	public function setDefaultTopMargin(float $top)
+	{
+		$this->defaultMargins['top'] = $top;
+		foreach ($this->pages as $page) {
+			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set default right margin
+	 * @param float $left
+	 */
+	public function setDefaultRightMargin(float $right)
+	{
+		$this->defaultMargins['right'] = $right;
+		foreach ($this->pages as $page) {
+			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set default bottom margin
+	 * @param float $left
+	 */
+	public function setDefaultBottomMargin(float $bottom)
+	{
+		$this->defaultMargins['bottom'] = $bottom;
+		foreach ($this->pages as $page) {
+			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
+		}
 		return $this;
 	}
 

@@ -498,9 +498,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @param string $format
 	 *
-	 * @return \YetiForcePDF\Page
+	 * @return $this
 	 */
-	public function setFormat(string $format): \YetiForcePDF\Page
+	public function setFormat(string $format)
 	{
 		$this->format = $format;
 		$dimensions = self::$pageFormats[$this->format];
@@ -589,6 +589,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'horizontal' => $left + $right,
 			'vertical' => $top + $bottom
 		];
+		$this->setFormat($this->format);
 		return $this;
 	}
 

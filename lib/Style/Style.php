@@ -466,7 +466,7 @@ class Style extends \YetiForcePDF\Base
 			'font-weight' => 'bold',
 			'text-align' => 'center',
 			'padding' => '1px',
-			'background-color' => '#eee'
+			'background-color' => '#ddd'
 		],
 		'thead' => [
 			'display' => 'table-header-group',
