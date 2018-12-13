@@ -115,6 +115,10 @@ class Document
 	 * @var WatermarkBox|null
 	 */
 	protected $watermark;
+	/**
+	 * @var Meta
+	 */
+	protected $meta;
 
 	/**
 	 * Are we debugging?
@@ -134,6 +138,7 @@ class Document
 		$this->catalog = (new \YetiForcePDF\Catalog())->setDocument($this)->init();
 		$this->pagesObject = $this->catalog->addChild((new Pages())->setDocument($this)->init());
 		$this->addPage($this->defaultFormat, $this->defaultOrientation);
+		$this->meta = (new Meta())->setDocument($this)->init();
 		return $this;
 	}
 
@@ -239,6 +244,15 @@ class Document
 			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
 		}
 		return $this;
+	}
+
+	/**
+	 * Get meta
+	 * @return Meta
+	 */
+	public function getMeta()
+	{
+		return $this->meta;
 	}
 
 	/**
