@@ -648,7 +648,7 @@ class Document
 	 *
 	 * @return string
 	 */
-	public function filterText($text, string $encoding = 'UTF-16', bool $withParenthesis = false, bool $prependBom = false)
+	public function filterText($text, string $encoding = 'UTF-16', bool $withParenthesis = true, bool $prependBom = true)
 	{
 		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
 		$text = preg_replace('/\s+/', ' ', $text);

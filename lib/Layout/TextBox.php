@@ -135,7 +135,7 @@ class TextBox extends ElementBox implements BoxInterface
 		$baseLineY = Math::sub($pdfY, $baseLine);
 		$textWidth = $style->getFont()->getTextWidth($this->getText());
 		$textHeight = $style->getFont()->getTextHeight();
-		$textContent = '(' . $this->document->filterText($this->getText()) . ')';
+		$textContent = $this->document->filterText($this->getText());
 		$transform = $style->getTransformations($pdfX, $baseLineY);
 		$element = [
 			'q',
