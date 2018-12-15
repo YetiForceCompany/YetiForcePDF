@@ -525,6 +525,15 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Get format
+	 * @return string
+	 */
+	public function getFormat()
+	{
+		return $this->format;
+	}
+
+	/**
 	 * Set page orientation.
 	 *
 	 * @param string $orientation
@@ -535,6 +544,15 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$this->orientation = $orientation;
 		return $this;
+	}
+
+	/**
+	 * Get orientation
+	 * @return string
+	 */
+	public function getOrientation()
+	{
+		return $this->orientation;
 	}
 
 	/**
@@ -811,7 +829,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$box = $this->getBox();
 		$headers = $box->getBoxesByType('HeaderBox');
 		if (isset($headers[0])) {
-			$header = array_pop($headers);
+			$header = $headers[0];
 			$headerClone = $header->getParent()->removeChild($header)->cloneWithChildren();
 			$header->clearChildren();
 			$this->document->setHeader($headerClone);
@@ -821,7 +839,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		}
 		$footers = $box->getBoxesByType('FooterBox');
 		if (isset($footers[0])) {
-			$footer = array_pop($footers);
+			$footer = $footers[0];
 			$footerClone = $footer->getParent()->removeChild($footer)->cloneWithChildren();
 			$footer->clearChildren();
 			$this->document->setFooter($footerClone);
@@ -831,7 +849,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		}
 		$watermarks = $box->getBoxesByType('WatermarkBox');
 		if (isset($watermarks[0])) {
-			$watermark = array_pop($watermarks);
+			$watermark = $watermarks[0];
 			$watermarkClone = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
 			$watermark->clearChildren();
 			$this->document->setWatermark($watermarkClone);
@@ -962,36 +980,6 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Break page after specified box.
-	 *
-	 * @param Box $box
-	 *
-	 * @return $this
-	 */
-	public function breakAfter(Box $box)
-	{
-		$box = $box->getFirstRootChild();
-		$newPage = clone $this;
-		$newPage->setId($this->document->getActualId());
-		$newPage->setPageNumber(count($this->document->getPages()));
-		$newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
-			->setDocument($this->document)
-			->init();
-		$newPage->document->getPagesObject()->addChild($newPage);
-		$this->document->addPage($this->format, $this->orientation, $newPage);
-		$this->document->addObject($newPage);
-		$newBox = $newPage->getBox();
-		$newBox->clearChildren();
-		$moveBoxes = $this->getRootChildsAfterY($box->getCoordinates()->getEndY());
-		foreach ($moveBoxes as $moveBox) {
-			$newBox->appendChild($moveBox);
-		}
-		$this->getBox()->layout();
-		$newBox->layout();
-		return $this;
-	}
-
-	/**
 	 * Divide overflowed table.
 	 *
 	 * @param Box $tableChild
@@ -1078,17 +1066,12 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Break overflow of the current page.
-	 *
-	 * @return $this
+	 * Clone current page
+	 * @return Page
+	 * @throws \InvalidArgumentException
 	 */
-	public function breakOverflow()
+	public function cloneCurrentPage()
 	{
-		$pageHeight = Math::add($this->getDimensions()->getHeight(), (string)$this->margins['top']);
-		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($pageHeight);
-		if (!isset($clonedBoxes[0])) {
-			return $this;
-		}
 		$newPage = clone $this;
 		$newPage->setId($this->document->getActualId());
 		$newPage->setPageNumber(count($this->document->getPages()));
@@ -1098,6 +1081,50 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$newPage->document->getPagesObject()->addChild($newPage, $this);
 		$this->document->addPage($this->format, $this->orientation, $newPage, $this);
 		$this->document->addObject($newPage, $this);
+		return $newPage;
+	}
+
+	/**
+	 * Break page after specified box.
+	 *
+	 * @param Box $box
+	 *
+	 * @return $this
+	 */
+	public function breakAfter(Box $box)
+	{
+		$box = $box->getFirstRootChild();
+		$newPage = $this->cloneCurrentPage();
+		$newBox = $newPage->getBox()->clone();
+		$newBox->clearChildren();
+		$newPage->setBox($newBox);
+		$break = false;
+		foreach ($box->getParent()->getChildren() as $child) {
+			if ($child === $box) {
+				$break = true;
+			}
+			if ($break && $child !== $box) {
+				$newBox->appendChild($child->getParent()->removeChild($child));
+			}
+		}
+		$newBox->layout(true);
+		$this->document->setCurrentPage($newPage);
+		return $this;
+	}
+
+	/**
+	 * Break overflow of the current page.
+	 *
+	 * @return $this
+	 */
+	public function breakOverflow()
+	{
+		$atYPos = Math::add($this->getDimensions()->getHeight(), (string)$this->margins['top']);
+		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($atYPos);
+		if (!isset($clonedBoxes[0])) {
+			return $this;
+		}
+		$newPage = $this->cloneCurrentPage();
 		$newBox = $newPage->getBox();
 		$newBox->clearChildren();
 		foreach ($clonedBoxes as $clonedBox) {
@@ -1106,7 +1133,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getBox()->getStyle()->fixTables();
 		$newBox->layout(true);
 		$newBox->getStyle()->fixTables();
-		$boxHeight = $newBox->getDimensions()->getHeight();
+		$this->document->setCurrentPage($newPage);
 		if (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
 			$newPage->breakOverflow();
 		}

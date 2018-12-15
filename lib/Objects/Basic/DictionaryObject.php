@@ -49,17 +49,6 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Set id
-	 * @param $id
-	 * @return $this
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	/**
 	 * Add value
 	 * @param string $name
 	 * @param string $value

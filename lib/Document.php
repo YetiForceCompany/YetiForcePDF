@@ -120,6 +120,10 @@ class Document
 	 * @var Meta
 	 */
 	protected $meta;
+	/**
+	 * @var bool
+	 */
+	protected $parsed = false;
 
 	/**
 	 * Are we debugging?
@@ -128,6 +132,15 @@ class Document
 	public function inDebugMode()
 	{
 		return $this->debugMode;
+	}
+
+	/**
+	 * Is document already parsed?
+	 * @return bool
+	 */
+	public function isParsed()
+	{
+		return $this->parsed;
 	}
 
 	/**
@@ -573,6 +586,13 @@ class Document
 			return $this;
 		}
 		$merge = array_splice($this->objects, $afterIndex);
+		foreach ($this->objects as $obj) {
+			if ($obj->getId() === $object->getId()) {
+				// id already exists (maybe we are merging with other doc) - generate new one
+				$object->setId($this->getActualId());
+				break;
+			}
+		}
 		$this->objects[] = $object;
 		$this->objects = array_merge($this->objects, $merge);
 		return $this;
@@ -650,6 +670,7 @@ class Document
 	 */
 	public function filterText($text, string $encoding = 'UTF-16', bool $withParenthesis = true, bool $prependBom = true)
 	{
+		$text = html_entity_decode($text, ENT_NOQUOTES);
 		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
 		$text = preg_replace('/\s+/', ' ', $text);
 		$text = mb_convert_encoding($text, 'UTF-16', 'UTF-8');
@@ -664,6 +685,19 @@ class Document
 	}
 
 	/**
+	 * Parse html
+	 * @return $this
+	 */
+	public function parse()
+	{
+		if (!$this->isParsed()) {
+			$this->htmlParser->parse();
+			$this->parsed = true;
+		}
+		return $this;
+	}
+
+	/**
 	 * Layout document content to pdf string
 	 * @return string
 	 */
@@ -671,7 +705,7 @@ class Document
 	{
 		$this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
-		$this->htmlParser->parse();
+		$this->parse();
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)
 			->init();
@@ -685,5 +719,26 @@ class Document
 		$this->removeObject($trailer);
 		return $this->buffer;
 	}
+
+	/*public function __clone()
+	{
+		$oldObjects = $this->objects;
+		$this->objects = [];
+		foreach ($oldObjects as $object) {
+			$this->objects[] = clone $object;
+		}
+		$oldPages = $this->pages;
+		$this->pages = [];
+		foreach ($oldPages as $page) {
+			$this->pages[] = clone $page;
+		}
+		$this->pagesObject = clone $this->pagesObject;
+		$this->htmlParser = clone $this->htmlParser;
+		$this->header = clone $this->header;
+		$this->footer = clone $this->footer;
+		$this->watermark = clone $this->watermark;
+		$this->currentPageObject = clone $this->currentPageObject;
+		$this->meta = clone $this->meta;
+	}*/
 
 }

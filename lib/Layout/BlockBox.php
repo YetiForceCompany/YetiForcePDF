@@ -29,6 +29,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 * @var \YetiForcePDF\Layout\LineBox
 	 */
 	protected $currentLineBox;
+
 	/**
 	 * @var LineBox[]
 	 */
@@ -77,6 +78,15 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->element = $element;
 		$element->setBox($this);
 		return $this;
+	}
+
+	/**
+	 * Should we break page after this element?
+	 * @return bool
+	 */
+	public function shouldBreakPage()
+	{
+		return $this->getStyle()->getRules('break-page-after') === 'always';
 	}
 
 	/**

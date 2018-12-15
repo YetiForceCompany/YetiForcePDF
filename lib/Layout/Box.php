@@ -858,6 +858,15 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Should we break page after this element?
+	 * @return bool
+	 */
+	public function shouldBreakPage()
+	{
+		return false; // only block boxes should break the page
+	}
+
+	/**
 	 * Get height from style.
 	 *
 	 * @return $this

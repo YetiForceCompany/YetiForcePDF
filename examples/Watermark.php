@@ -9,6 +9,6 @@ foreach ($files as $file) {
 	$meta->setSubject('Test ąęść pdfa');
 	$meta->setTitle('Tytuł pdfa');
 	$meta->setKeywords(['Słowa kluczowe', 'YetiForcePDF', 'YetiForceCRM']);
-	$pdfFile = $document->render();
+	$pdfFile = $document->parse()->render();
 	file_put_contents($file . '.pdf', $pdfFile);
 }
