@@ -798,6 +798,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$header = $header->cloneWithChildren();
 		$box = $this->getBox();
+		if (!$box->hasChildren()) {
+			return $this;
+		}
 		$box->insertBefore($header, $box->getFirstChild());
 		$outerWidth = $this->getOuterDimensions()->getWidth();
 		$outerHeight = $this->getOuterDimensions()->getHeight();
@@ -823,6 +826,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$footer = $footer->cloneWithChildren();
 		$box = $this->getBox();
+		if (!$box->hasChildren()) {
+			return $this;
+		}
 		$box->insertBefore($footer, $box->getFirstChild());
 		$outerWidth = $this->getOuterDimensions()->getWidth();
 		$outerHeight = $this->getOuterDimensions()->getHeight();
@@ -848,6 +854,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$watermark = $watermark->cloneWithChildren();
 		$box = $this->getBox();
+		if (!$box->hasChildren()) {
+			return $this;
+		}
 		$box->insertBefore($watermark, $box->getFirstChild());
 		$outerWidth = $this->getOuterDimensions()->getWidth();
 		$outerHeight = $this->getOuterDimensions()->getHeight();
@@ -1143,6 +1152,28 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	public function breakAfter(Box $box)
 	{
 		$box = $box->getFirstRootChild();
+		if ($box->getParent()->getLastChild() === $box) {
+			return $this;
+		}
+		$contentBoxes = [];
+		foreach ($box->getParent()->getChildren() as $child) {
+			if ($child === $box) {
+				$break = true;
+			}
+			if ($break && $child !== $box) {
+				$contentBoxes[] = $child;
+			}
+		}
+		$haveContent = false;
+		foreach ($contentBoxes as $contentBox) {
+			if ($contentBox->containContent()) {
+				$haveContent = true;
+				break;
+			}
+		}
+		if (!$haveContent) {
+			return $this;
+		}
 		$newPage = $this->cloneCurrentPage();
 		$newBox = $newPage->getBox()->clone();
 		$newBox->clearChildren();

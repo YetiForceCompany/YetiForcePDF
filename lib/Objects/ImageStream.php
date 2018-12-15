@@ -88,7 +88,9 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			} catch (\Exception $e) {
 			}
 		} else {
-			$this->imageData = $this->convertToJpg(file_get_contents($fileName));
+			if (file_exists($fileName)) {
+				$this->imageData = $this->convertToJpg(file_get_contents($fileName));
+			}
 		}
 		if ($this->imageData) {
 			$info = getimagesizefromstring($this->imageData);

@@ -156,9 +156,6 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			->init();
 		$this->appendChild($box);
 		$box->getStyle()->init();
-		if ($childDomElement->hasAttribute('data-page-group')) {
-			$box->setPageGroup(true);
-		}
 		$box->buildTree($box);
 		return $box;
 	}
