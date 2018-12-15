@@ -151,7 +151,6 @@ class Document
 	{
 		$this->catalog = (new \YetiForcePDF\Catalog())->setDocument($this)->init();
 		$this->pagesObject = $this->catalog->addChild((new Pages())->setDocument($this)->init());
-		$this->addPage($this->defaultFormat, $this->defaultOrientation);
 		$this->meta = (new Meta())->setDocument($this)->init();
 		return $this;
 	}

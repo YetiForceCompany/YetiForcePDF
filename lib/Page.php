@@ -1134,6 +1134,18 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Set up page options
+	 * @param Page $page
+	 * @param Box $box
+	 * @return $this
+	 */
+	public function setPageOptions(Page $page, Box $box)
+	{
+
+		return $this;
+	}
+
+	/**
 	 * Break page after specified box.
 	 *
 	 * @param Box $box
