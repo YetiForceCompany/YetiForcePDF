@@ -103,6 +103,10 @@ class Box extends \YetiForcePDF\Base
 	 * @var bool
 	 */
 	protected $pageGroup = false;
+	/**
+	 * @var array
+	 */
+	protected $options = [];
 
 	/**
 	 * {@inheritdoc}
@@ -888,6 +892,31 @@ class Box extends \YetiForcePDF\Base
 	public function getPageGroup()
 	{
 		return $this->pageGroup;
+	}
+
+	/**
+	 * Set option (page group for example)
+	 * @param string $name
+	 * @param string $value
+	 * @return $this
+	 */
+	public function setOption(string $name, string $value)
+	{
+		$this->options[$name] = $value;
+		return $this;
+	}
+
+	/**
+	 * Get option
+	 * @param string $name
+	 * @return string
+	 */
+	public function getOption(string $name)
+	{
+		if (isset($this->options[$name])) {
+			return $this->options[$name];
+		}
+		return '';
 	}
 
 	/**

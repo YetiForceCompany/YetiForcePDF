@@ -158,6 +158,30 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$box->getStyle()->init();
 		if ($childDomElement->hasAttribute('data-page-group')) {
 			$box->setPageGroup(true);
+			if ($childDomElement->hasAttribute('data-format')) {
+				$box->setOption('format', $childDomElement->getAttribute('data-format'));
+			}
+			if ($childDomElement->hasAttribute('data-orientation')) {
+				$box->setOption('orientation', $childDomElement->getAttribute('data-orientation'));
+			}
+			if ($childDomElement->hasAttribute('data-margin-left')) {
+				$box->setOption('margin-left', $childDomElement->getAttribute('data-margin-left'));
+			}
+			if ($childDomElement->hasAttribute('data-margin-right')) {
+				$box->setOption('margin-right', $childDomElement->getAttribute('data-margin-right'));
+			}
+			if ($childDomElement->hasAttribute('data-margin-top')) {
+				$box->setOption('margin-top', $childDomElement->getAttribute('data-margin-top'));
+			}
+			if ($childDomElement->hasAttribute('data-margin-bottom')) {
+				$box->setOption('margin-bottom', $childDomElement->getAttribute('data-margin-bottom'));
+			}
+			if ($childDomElement->hasAttribute('data-header-top')) {
+				$box->setOption('header-top', $childDomElement->getAttribute('data-header-top'));
+			}
+			if ($childDomElement->hasAttribute('data-footer-bottom')) {
+				$box->setOption('footer-bottom', $childDomElement->getAttribute('data-footer-bottom'));
+			}
 		}
 		$box->buildTree($box);
 		return $box;
