@@ -158,7 +158,7 @@ class Parser extends \YetiForcePDF\Base
 			return null;
 		}
 		$this->htmlPageGroups = $this->getHtmlPageGroups($this->html);
-		foreach ($this->htmlPageGroups as $htmlPageGroup) {
+		foreach ($this->htmlPageGroups as $groupIndex => $htmlPageGroup) {
 			$domDocument = new \DOMDocument();
 			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
 			$pageGroup = (new PageGroupBox())
@@ -168,8 +168,8 @@ class Parser extends \YetiForcePDF\Base
 			$this->setGroupOptions($pageGroup, $domDocument);
 			$page = $this->document->addPage($pageGroup->format, $pageGroup->orientation);
 			$page->setPageNumber(1);
+			$page->setGroup($groupIndex);
 			$page->setMargins($pageGroup->marginLeft, $pageGroup->marginTop, $pageGroup->marginRight, $pageGroup->marginBottom);
-
 			$rootElement = (new \YetiForcePDF\Html\Element())
 				->setDocument($this->document)
 				->setDOMElement($domDocument->documentElement);
@@ -184,17 +184,17 @@ class Parser extends \YetiForcePDF\Base
 			$pageGroup->layout();
 			$this->document->getCurrentPage()->setBox($pageGroup);
 
-			foreach ($this->document->getPages() as $page) {
+			foreach ($this->document->getPages($groupIndex) as $page) {
 				$page->getBox()->breakPageAfter();
 			}
-			foreach ($this->document->getPages() as $page) {
+			foreach ($this->document->getPages($groupIndex) as $page) {
 				$page->breakOverflow();
 			}
-			foreach ($this->document->getPages() as $page) {
+			foreach ($this->document->getPages($groupIndex) as $page) {
 				$page->getBox()->spanAllRows();
 			}
 			$this->document->fixPageNumbers();
-			foreach ($this->document->getPages() as $page) {
+			foreach ($this->document->getPages($groupIndex) as $page) {
 				$this->document->setCurrentPage($page);
 				$children = [];
 				$page->setUpAbsoluteBoxes();

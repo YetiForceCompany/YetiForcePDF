@@ -1123,7 +1123,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$newPage = clone $this;
 		$newPage->setId($this->document->getActualId());
-		$newPage->setPageNumber(count($this->document->getPages()));
+		$newPage->setPageNumber($this->getPageNumber() + 1);
 		$newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
@@ -1131,18 +1131,6 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->document->addPage($this->format, $this->orientation, $newPage, $this);
 		$this->document->addObject($newPage, $this);
 		return $newPage;
-	}
-
-	/**
-	 * Set up page options
-	 * @param Page $page
-	 * @param Box $box
-	 * @return $this
-	 */
-	public function setPageOptions(Page $page, Box $box)
-	{
-
-		return $this;
 	}
 
 	/**

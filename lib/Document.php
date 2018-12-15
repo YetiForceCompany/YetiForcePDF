@@ -540,31 +540,18 @@ class Document
 	 * Get all pages
 	 * @return Page[]
 	 */
-	public function getPages()
+	public function getPages(int $groupIndex = null)
 	{
-		return $this->pages;
-	}
-
-
-	/**
-	 * Group pages (data-group elem attr)
-	 * @return $this
-	 */
-	public function groupPages()
-	{
-		$group = 0;
-		foreach ($this->getPages() as $page) {
-			$allChildren = [];
-			$page->getBox()->getAllChildren($allChildren);
-			foreach ($allChildren as $child) {
-				if ($child->getPageGroup()) {
-					$group++;
-					break;
+		if ($groupIndex) {
+			$pages = [];
+			foreach ($this->pages as $page) {
+				if ($page->getGroup() === $groupIndex) {
+					$pages[] = $page;
 				}
 			}
-			$page->setGroup($group);
+			return $pages;
 		}
-		return $this;
+		return $this->pages;
 	}
 
 	/**
@@ -578,7 +565,6 @@ class Document
 	 */
 	public function fixPageNumbers()
 	{
-		$this->groupPages();
 		$groups = [];
 		foreach ($this->getPages() as $page) {
 			$groups[$page->getGroup()][] = $page;
