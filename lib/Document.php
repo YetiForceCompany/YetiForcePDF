@@ -546,6 +546,54 @@ class Document
 		return $this->pages;
 	}
 
+
+	/**
+	 * Group pages (data-group elem attr)
+	 * @return $this
+	 */
+	public function groupPages()
+	{
+		$group = 0;
+		foreach ($this->getPages() as $page) {
+			$allChildren = [];
+			$page->getBox()->getAllChildren($allChildren);
+			foreach ($allChildren as $child) {
+				if ($child->getPageGroup()) {
+					$group++;
+					break;
+				}
+			}
+			$page->setGroup($group);
+		}
+		return $this;
+	}
+
+	/**
+	 * Fix page numbers
+	 *
+	 * pages that are expanded by overflow will have the same unique id - cloned
+	 * so they are in one group of pages - if some page is added with different unique id
+	 * then it means that from now on pages are from other group and we should reset page numbers / count
+	 *
+	 * @return $this
+	 */
+	public function fixPageNumbers()
+	{
+		$this->groupPages();
+		$groups = [];
+		foreach ($this->getPages() as $page) {
+			$groups[$page->getGroup()][] = $page;
+		}
+		foreach ($groups as $group => $pages) {
+			$pageCount = count($pages);
+			foreach ($pages as $index => $page) {
+				$page->setPageNumber($index + 1);
+				$page->setPageCount($pageCount);
+			}
+		}
+		return $this;
+	}
+
 	/**
 	 * Get document header
 	 * @return string

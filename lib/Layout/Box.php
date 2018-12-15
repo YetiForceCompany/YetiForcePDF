@@ -90,7 +90,6 @@ class Box extends \YetiForcePDF\Base
 	 * @var bool
 	 */
 	protected $absolute = false;
-
 	/**
 	 * @var bool
 	 */
@@ -99,6 +98,11 @@ class Box extends \YetiForcePDF\Base
 	 * @var bool
 	 */
 	protected $displayable = true;
+	/**
+	 * Is this new group of pages?
+	 * @var bool
+	 */
+	protected $pageGroup = false;
 
 	/**
 	 * {@inheritdoc}
@@ -864,6 +868,26 @@ class Box extends \YetiForcePDF\Base
 	public function shouldBreakPage()
 	{
 		return false; // only block boxes should break the page
+	}
+
+	/**
+	 * Set marker that this is a new group of pages and should have new numbering
+	 * @param bool $pageGroup
+	 * @return $this
+	 */
+	public function setPageGroup(bool $pageGroup)
+	{
+		$this->pageGroup = true;
+		return $this;
+	}
+
+	/**
+	 * Get force page number
+	 * @return int
+	 */
+	public function getPageGroup()
+	{
+		return $this->pageGroup;
 	}
 
 	/**

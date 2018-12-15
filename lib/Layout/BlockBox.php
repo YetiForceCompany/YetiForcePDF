@@ -156,6 +156,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			->init();
 		$this->appendChild($box);
 		$box->getStyle()->init();
+		if ($childDomElement->hasAttribute('data-page-group')) {
+			$box->setPageGroup(true);
+		}
 		$box->buildTree($box);
 		return $box;
 	}
@@ -559,12 +562,12 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		foreach ($allChildren as $child) {
 			if ($child instanceof TextBox) {
 				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
-					$pageNumber = (string)($this->document->getCurrentPage()->getPageNumber() + 1);
-					$child->setText(preg_replace('/{p}/i', $pageNumber, $child->getTextContent()));
+					$pageNumber = $this->document->getCurrentPage()->getPageNumber();
+					$child->setText(preg_replace('/{p}/i', (string)$pageNumber, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
 				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
-					$pages = (string)count($this->document->getPages());
+					$pages = (string)$this->document->getCurrentPage()->getPageCount();
 					$child->setText(preg_replace('/{a}/i', $pages, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}

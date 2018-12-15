@@ -80,23 +80,13 @@ class Parser extends \YetiForcePDF\Base
 		$def->addAttribute('div', 'data-footer', new \HTMLPurifier_AttrDef_Text());
 		$def->addAttribute('div', 'data-watermark', new \HTMLPurifier_AttrDef_Text());
 		$purifier = new \HTMLPurifier($config);
-		//$html = html_entity_decode($html, ENT_NOQUOTES);
-		//$html = mb_convert_encoding($html, 'UTF-8', 'HTML-ENTITIES');
-		if (!$fromEncoding) {
-			$fromEncoding = mb_detect_encoding($html);
-			if (!$fromEncoding) {
-				$fromEncoding = 'UTF-8';
-			}
-		}
-		if ($fromEncoding !== 'UTF-8') {
-			//$html = mb_convert_encoding($html, 'UTF-8', $fromEncoding);
-		}
+		$html = mb_convert_encoding($html, 'UTF-8', 'HTML-ENTITIES');
 		$this->html = $this->cleanUpHtml($html);
 		//$this->html = $purifier->purify($this->html);
-		//$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
+		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
 		$this->domDocument = new \DOMDocument();
 		//$this->domDocument->recover = true;
-		//$this->domDocument->encoding = 'UTF-8';
+		$this->domDocument->encoding = 'UTF-8';
 		//$this->domDocument->substituteEntities = true;
 		$this->domDocument->loadHTML('<div id="yetiforcepdf">' . $this->html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
 		return $this;
@@ -172,6 +162,7 @@ class Parser extends \YetiForcePDF\Base
 		foreach ($this->document->getPages() as $page) {
 			$page->getBox()->spanAllRows();
 		}
+		$this->document->fixPageNumbers();
 		foreach ($this->document->getPages() as $page) {
 			$this->document->setCurrentPage($page);
 			$children = [];

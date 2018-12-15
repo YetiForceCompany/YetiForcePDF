@@ -32,6 +32,10 @@ use YetiForcePDF\Objects\Basic\StreamObject;
 class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
+	 * @var int
+	 */
+	protected $group = 0;
+	/**
 	 * {@inheritdoc}
 	 */
 	protected $dictionaryType = 'Page';
@@ -46,6 +50,10 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @var int page number
 	 */
 	protected $pageNumber = 1;
+	/**
+	 * @var int page count
+	 */
+	protected $pageCount = 1;
 	/**
 	 * Page resources.
 	 *
@@ -494,6 +502,27 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Set page group
+	 * @param int $group
+	 * @return $this
+	 */
+	public function setGroup(int $group)
+	{
+		$this->group = $group;
+		return $this;
+	}
+
+
+	/**
+	 * Get page group
+	 * @return int
+	 */
+	public function getGroup()
+	{
+		return $this->group;
+	}
+
+	/**
 	 * Set page format.
 	 *
 	 * @param string $format
@@ -575,6 +604,26 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	public function getPageNumber()
 	{
 		return $this->pageNumber;
+	}
+
+	/**
+	 * Set page count
+	 * @param int $pageCount
+	 * @return $this
+	 */
+	public function setPageCount(int $pageCount)
+	{
+		$this->pageCount = $pageCount;
+		return $this;
+	}
+
+	/**
+	 * Get page count
+	 * @return mixed
+	 */
+	public function getPageCount()
+	{
+		return $this->pageCount;
 	}
 
 	/**
