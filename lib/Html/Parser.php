@@ -129,22 +129,22 @@ class Parser extends \YetiForcePDF\Base
 			$root->orientation = $childDomElement->getAttribute('data-orientation');
 		}
 		if ($childDomElement->hasAttribute('data-margin-left')) {
-			$root->marginLeft = $childDomElement->getAttribute('data-margin-left');
+			$root->marginLeft = (float)$childDomElement->getAttribute('data-margin-left');
 		}
 		if ($childDomElement->hasAttribute('data-margin-right')) {
-			$root->marginRight = $childDomElement->getAttribute('data-margin-right');
+			$root->marginRight = (float)$childDomElement->getAttribute('data-margin-right');
 		}
 		if ($childDomElement->hasAttribute('data-margin-top')) {
-			$root->marginTop = $childDomElement->getAttribute('data-margin-top');
+			$root->marginTop = (float)$childDomElement->getAttribute('data-margin-top');
 		}
 		if ($childDomElement->hasAttribute('data-margin-bottom')) {
-			$root->marginBottom = $childDomElement->getAttribute('data-margin-bottom');
+			$root->marginBottom = (float)$childDomElement->getAttribute('data-margin-bottom');
 		}
 		if ($childDomElement->hasAttribute('data-header-top')) {
-			$root->headerTop = $childDomElement->getAttribute('data-header-top');
+			$root->headerTop = (float)$childDomElement->getAttribute('data-header-top');
 		}
 		if ($childDomElement->hasAttribute('data-footer-bottom')) {
-			$root->footerBottom = $childDomElement->getAttribute('data-footer-bottom');
+			$root->footerBottom = (float)$childDomElement->getAttribute('data-footer-bottom');
 		}
 		return $this;
 	}
