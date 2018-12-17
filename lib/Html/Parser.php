@@ -185,9 +185,7 @@ class Parser extends \YetiForcePDF\Base
 			$domDocument = new \DOMDocument();
 			//$domDocument->encoding = 'UTF-8';
 			$domDocument->substituteEntities = false;
-			file_put_contents('cache/before_domLoad.html', $htmlPageGroup);
 			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
-			file_put_contents('cache/from_dom.html', $domDocument->saveHTML());
 			$pageGroup = (new PageGroupBox())
 				->setDocument($this->document)
 				->setRoot(true)
