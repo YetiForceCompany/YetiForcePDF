@@ -75,9 +75,8 @@ class Parser extends \YetiForcePDF\Base
 		$def->addAttribute('div', 'data-footer', new \HTMLPurifier_AttrDef_Text());
 		$def->addAttribute('div', 'data-watermark', new \HTMLPurifier_AttrDef_Text());
 		$purifier = new \HTMLPurifier($config);
-		$html = mb_convert_encoding($html, 'UTF-8', 'HTML-ENTITIES');
+		$html = htmlspecialchars_decode($html, ENT_NOQUOTES);
 		$this->html = $this->cleanUpHtml($html);
-		//$this->html = $purifier->purify($this->html);
 		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
 		return $this;
 	}
@@ -184,7 +183,11 @@ class Parser extends \YetiForcePDF\Base
 		$this->htmlPageGroups = $this->getHtmlPageGroups($this->html);
 		foreach ($this->htmlPageGroups as $groupIndex => $htmlPageGroup) {
 			$domDocument = new \DOMDocument();
+			//$domDocument->encoding = 'UTF-8';
+			$domDocument->substituteEntities = false;
+			file_put_contents('cache/before_domLoad.html', $htmlPageGroup);
 			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
+			file_put_contents('cache/from_dom.html', $domDocument->saveHTML());
 			$pageGroup = (new PageGroupBox())
 				->setDocument($this->document)
 				->setRoot(true)

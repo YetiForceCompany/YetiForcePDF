@@ -703,10 +703,9 @@ class Document
 	 */
 	public function filterText($text, string $encoding = 'UTF-16', bool $withParenthesis = true, bool $prependBom = true)
 	{
-		$text = html_entity_decode($text, ENT_NOQUOTES);
-		$text = trim(preg_replace('/[\n\r\t\s]+/', ' ', mb_convert_encoding($text, 'UTF-8')));
-		$text = preg_replace('/\s+/', ' ', $text);
-		$text = mb_convert_encoding($text, 'UTF-16', 'UTF-8');
+		$text = trim(preg_replace('/[\n\r\t\s]+/u', ' ', mb_convert_encoding($text, 'UTF-8')));
+		$text = preg_replace('/\s+/u', ' ', $text);
+		$text = mb_convert_encoding($text, 'UTF-16', mb_detect_encoding($text));
 		$text = strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
 		if ($prependBom) {
 			$text = chr(254) . chr(255) . $text;
