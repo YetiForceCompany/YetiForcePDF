@@ -183,7 +183,7 @@ class Parser extends \YetiForcePDF\Base
 		$this->htmlPageGroups = $this->getHtmlPageGroups($this->html);
 		foreach ($this->htmlPageGroups as $groupIndex => $htmlPageGroup) {
 			$domDocument = new \DOMDocument();
-			//$domDocument->encoding = 'UTF-8';
+			$domDocument->encoding = 'UTF-8';
 			$domDocument->substituteEntities = false;
 			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
 			$pageGroup = (new PageGroupBox())
