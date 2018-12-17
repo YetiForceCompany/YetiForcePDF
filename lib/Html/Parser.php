@@ -190,6 +190,7 @@ class Parser extends \YetiForcePDF\Base
 				->setDocument($this->document)
 				->setRoot(true)
 				->init();
+			$pageGroup->orientation = $this->document->getDefaultOrientation();
 			$this->setGroupOptions($pageGroup, $domDocument);
 			$page = $this->document->addPage($pageGroup->format, $pageGroup->orientation);
 			$page->setPageNumber(1);
