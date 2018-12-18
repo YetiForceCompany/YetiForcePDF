@@ -106,6 +106,12 @@ class Parser extends \YetiForcePDF\Base
 		return $pageGroups;
 	}
 
+	/**
+	 * Set page group options
+	 * @param PageGroupBox $root
+	 * @param \DOMDocument $domDocument
+	 * @return $this
+	 */
 	public function setGroupOptions(PageGroupBox $root, \DOMDocument $domDocument)
 	{
 		$childDomElement = $domDocument->documentElement->firstChild;
