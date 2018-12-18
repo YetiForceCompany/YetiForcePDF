@@ -184,7 +184,7 @@ class Parser extends \YetiForcePDF\Base
 			$domDocument->strictErrorChecking = false;
 			$domDocument->substituteEntities = false;
 			$domDocument->recover = false;
-			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING | LIBXML_NOBLANKS | LIBXML_NOERROR);
+			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING /*| LIBXML_NOBLANKS | LIBXML_NOERROR*/);
 			$pageGroup = (new PageGroupBox())
 				->setDocument($this->document)
 				->setRoot(true)
