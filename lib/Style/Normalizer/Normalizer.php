@@ -63,8 +63,11 @@ class Normalizer extends \YetiForcePDF\Base
 	public function getNumberValues($ruleValue)
 	{
 		$matches = [];
-		preg_match_all('/(([0-9\.?]+)([a-z%]+)?\s?)/', $ruleValue, $matches, PREG_SET_ORDER);
+		preg_match_all('/(([0-9.?]+)([a-z%]+)?\s?)/ui', $ruleValue, $matches, PREG_SET_ORDER);
 		$originalSize = $matches[0][2];
+		if ($originalSize === null) {
+			$rest = '';
+		}
 		if (isset($matches[0][3])) {
 			$originalUnit = $matches[0][3];
 		} else {

@@ -219,10 +219,10 @@ class Color
 		if (strlen($color) === 6) {
 			$color .= 'FF';
 		}
-		$r = (string) hexdec(substr($color, 0, 2));
-		$g = (string) hexdec(substr($color, 2, 2));
-		$b = (string) hexdec(substr($color, 4, 2));
-		$a = (string) hexdec(substr($color, 6, 2));
+		$r = (string)hexdec(substr($color, 0, 2));
+		$g = (string)hexdec(substr($color, 2, 2));
+		$b = (string)hexdec(substr($color, 4, 2));
+		$a = (string)hexdec(substr($color, 6, 2));
 		return [$r, $g, $b, $a];
 	}
 
@@ -236,7 +236,7 @@ class Color
 	public static function fromRGBA(string $rgbColor)
 	{
 		$matches = [];
-		preg_match_all('/rgb\(([0-9]+)\s?\,\s?([0-9]+)\s?\,\s?([0-9]+)\s?([0-9]+)?\s?\)/', str_replace("\n\t\r ", '', $rgbColor), $matches);
+		preg_match_all('/rgb\(([0-9]+)\s?\,\s?([0-9]+)\s?\,\s?([0-9]+)\s?([0-9]+)?\s?\)/ui', str_replace("\n\t\r ", '', $rgbColor), $matches);
 		if (isset($matches[4]) && $matches[4][0] !== '') {
 			$alpha = $matches[4][0];
 		} else {
@@ -249,7 +249,7 @@ class Color
 	 * Convert css color definition to rgba values.
 	 *
 	 * @param string $colorInput
-	 * @param bool   $inPDFColorSpace
+	 * @param bool $inPDFColorSpace
 	 *
 	 * @return int[]
 	 */

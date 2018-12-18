@@ -696,16 +696,18 @@ class Document
 	 * it escapes the various things that need to be escaped, and so on.
 	 *
 	 * @param string $text
+	 * @param string $encoding
 	 * @param bool $withParenthesis
 	 * @param bool $prependBom
 	 *
 	 * @return string
 	 */
-	public function filterText($text, string $encoding = 'UTF-16', bool $withParenthesis = true, bool $prependBom = true)
+	public function filterText(string $text, string $encoding = 'UTF-16', bool $withParenthesis = true, bool $prependBom = false)
 	{
-		$text = trim(preg_replace('/[\n\r\t\s]+/u', ' ', mb_convert_encoding($text, 'UTF-8')));
+		$text = preg_replace('/[\n\r\t\s]+/u', ' ', mb_convert_encoding($text, 'UTF-8'));
+		$text = preg_replace('/^\s+|\s+$/u', '', $text);
 		$text = preg_replace('/\s+/u', ' ', $text);
-		$text = mb_convert_encoding($text, 'UTF-16', mb_detect_encoding($text));
+		$text = mb_convert_encoding($text, $encoding, mb_detect_encoding($text));
 		$text = strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
 		if ($prependBom) {
 			$text = chr(254) . chr(255) . $text;

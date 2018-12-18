@@ -63,18 +63,6 @@ class Parser extends \YetiForcePDF\Base
 	 */
 	public function loadHtml(string $html, string $fromEncoding = ''): \YetiForcePDF\Html\Parser
 	{
-		$config = \HTMLPurifier_Config::createDefault();
-		$config->set('CSS.AllowTricky', true);
-		$config->set('CSS.Proprietary', true);
-		$config->set('CSS.Trusted', true);
-		$config->set('HTML.Trusted', true);
-		$config->set('CSS.AllowDuplicates', true);
-		$config->set('Attr.EnableID', true);
-		$def = $config->getHTMLDefinition(true);
-		$def->addAttribute('div', 'data-header', new \HTMLPurifier_AttrDef_Text());
-		$def->addAttribute('div', 'data-footer', new \HTMLPurifier_AttrDef_Text());
-		$def->addAttribute('div', 'data-watermark', new \HTMLPurifier_AttrDef_Text());
-		$purifier = new \HTMLPurifier($config);
 		$html = htmlspecialchars_decode($html, ENT_HTML5);
 		$this->html = $this->cleanUpHtml($html);
 		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
@@ -121,6 +109,9 @@ class Parser extends \YetiForcePDF\Base
 	public function setGroupOptions(PageGroupBox $root, \DOMDocument $domDocument)
 	{
 		$childDomElement = $domDocument->documentElement->firstChild;
+		if (!$childDomElement instanceof \DOMElement) {
+			return $this;
+		}
 		if ($childDomElement->hasAttribute('data-format')) {
 			$root->format = $childDomElement->getAttribute('data-format');
 			if (!$root->format) {
@@ -184,8 +175,11 @@ class Parser extends \YetiForcePDF\Base
 		foreach ($this->htmlPageGroups as $groupIndex => $htmlPageGroup) {
 			$domDocument = new \DOMDocument();
 			$domDocument->encoding = 'UTF-8';
+			$domDocument->strictErrorChecking = false;
 			$domDocument->substituteEntities = false;
+			$domDocument->recover = false;
 			$domDocument->loadHTML('<div id="yetiforcepdf">' . $htmlPageGroup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_NOWARNING);
+			//$domDocument->normalizeDocument();
 			$pageGroup = (new PageGroupBox())
 				->setDocument($this->document)
 				->setRoot(true)
