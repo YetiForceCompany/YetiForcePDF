@@ -75,7 +75,7 @@ class Parser extends \YetiForcePDF\Base
 		$def->addAttribute('div', 'data-footer', new \HTMLPurifier_AttrDef_Text());
 		$def->addAttribute('div', 'data-watermark', new \HTMLPurifier_AttrDef_Text());
 		$purifier = new \HTMLPurifier($config);
-		$html = htmlspecialchars_decode($html, ENT_NOQUOTES);
+		$html = htmlspecialchars_decode($html, ENT_HTML5);
 		$this->html = $this->cleanUpHtml($html);
 		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
 		return $this;
