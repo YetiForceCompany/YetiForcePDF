@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Document class
+ * Document class.
  *
  * @package   YetiForcePDF
  *
@@ -12,40 +13,44 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
-use \YetiForcePDF\Objects\PdfObject;
-use \YetiForcePDF\Objects\Meta;
-use \YetiForcePDF\Layout\HeaderBox;
-use \YetiForcePDF\Layout\FooterBox;
-use \YetiForcePDF\Layout\WatermarkBox;
+use YetiForcePDF\Layout\FooterBox;
+use YetiForcePDF\Layout\HeaderBox;
+use YetiForcePDF\Layout\WatermarkBox;
+use YetiForcePDF\Objects\Meta;
+use YetiForcePDF\Objects\PdfObject;
 
 /**
- * Class Document
+ * Class Document.
  */
 class Document
 {
-
 	/**
-	 * Actual id auto incremented
+	 * Actual id auto incremented.
+	 *
 	 * @var int
 	 */
 	protected $actualId = 0;
 	/**
-	 * Main output buffer / content for pdf file
+	 * Main output buffer / content for pdf file.
+	 *
 	 * @var string
 	 */
 	protected $buffer = '';
 	/**
-	 * Main entry point - root element
-	 * @var \YetiForcePDF\Catalog $catalog
+	 * Main entry point - root element.
+	 *
+	 * @var \YetiForcePDF\Catalog
 	 */
 	protected $catalog;
 	/**
-	 * Pages dictionary
+	 * Pages dictionary.
+	 *
 	 * @var Pages
 	 */
 	protected $pagesObject;
 	/**
-	 * Current page object
+	 * Current page object.
+	 *
 	 * @var Page
 	 */
 	protected $currentPageObject;
@@ -63,7 +68,8 @@ class Document
 	 */
 	protected $pages = [];
 	/**
-	 * Default page margins
+	 * Default page margins.
+	 *
 	 * @var array
 	 */
 	protected $defaultMargins = [
@@ -73,7 +79,8 @@ class Document
 		'bottom' => 40
 	];
 	/**
-	 * All objects inside document
+	 * All objects inside document.
+	 *
 	 * @var \YetiForcePDF\Objects\PdfObject[]
 	 */
 	protected $objects = [];
@@ -82,7 +89,8 @@ class Document
 	 */
 	protected $htmlParser;
 	/**
-	 * Fonts data
+	 * Fonts data.
+	 *
 	 * @var array
 	 */
 	protected $fontsData = [];
@@ -91,25 +99,27 @@ class Document
 	 */
 	protected $fontInstances = [];
 	/**
-	 * Actual font id
+	 * Actual font id.
+	 *
 	 * @var int
 	 */
 	protected $actualFontId = 0;
 	/**
-	 * Actual graphic state id
+	 * Actual graphic state id.
+	 *
 	 * @var int
 	 */
 	protected $actualGraphicStateId = 0;
 	/**
-	 * @var bool $debugMode
+	 * @var bool
 	 */
 	protected $debugMode = false;
 	/**
-	 * @var HeaderBox|null $header
+	 * @var HeaderBox|null
 	 */
 	protected $header;
 	/**
-	 * @var FooterBox|null $footer
+	 * @var FooterBox|null
 	 */
 	protected $footer;
 	/**
@@ -127,6 +137,7 @@ class Document
 
 	/**
 	 * Are we debugging?
+	 *
 	 * @return bool
 	 */
 	public function inDebugMode()
@@ -136,6 +147,7 @@ class Document
 
 	/**
 	 * Is document already parsed?
+	 *
 	 * @return bool
 	 */
 	public function isParsed()
@@ -144,7 +156,8 @@ class Document
 	}
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -156,8 +169,10 @@ class Document
 	}
 
 	/**
-	 * Set default page format
+	 * Set default page format.
+	 *
 	 * @param string $defaultFormat
+	 *
 	 * @return $this
 	 */
 	public function setDefaultFormat(string $defaultFormat)
@@ -170,8 +185,10 @@ class Document
 	}
 
 	/**
-	 * Set default page orientation
+	 * Set default page orientation.
+	 *
 	 * @param string $defaultOrientation
+	 *
 	 * @return $this
 	 */
 	public function setDefaultOrientation(string $defaultOrientation)
@@ -184,11 +201,13 @@ class Document
 	}
 
 	/**
-	 * Set default page margins
+	 * Set default page margins.
+	 *
 	 * @param float $left
 	 * @param float $top
 	 * @param float $right
 	 * @param float $bottom
+	 *
 	 * @return $this
 	 */
 	public function setDefaultMargins(float $left, float $top, float $right, float $bottom)
@@ -208,7 +227,8 @@ class Document
 	}
 
 	/**
-	 * Set default left margin
+	 * Set default left margin.
+	 *
 	 * @param float $left
 	 */
 	public function setDefaultLeftMargin(float $left)
@@ -221,7 +241,8 @@ class Document
 	}
 
 	/**
-	 * Set default top margin
+	 * Set default top margin.
+	 *
 	 * @param float $left
 	 */
 	public function setDefaultTopMargin(float $top)
@@ -234,7 +255,8 @@ class Document
 	}
 
 	/**
-	 * Set default right margin
+	 * Set default right margin.
+	 *
 	 * @param float $left
 	 */
 	public function setDefaultRightMargin(float $right)
@@ -247,7 +269,8 @@ class Document
 	}
 
 	/**
-	 * Set default bottom margin
+	 * Set default bottom margin.
+	 *
 	 * @param float $left
 	 */
 	public function setDefaultBottomMargin(float $bottom)
@@ -260,7 +283,8 @@ class Document
 	}
 
 	/**
-	 * Get meta
+	 * Get meta.
+	 *
 	 * @return Meta
 	 */
 	public function getMeta()
@@ -269,7 +293,8 @@ class Document
 	}
 
 	/**
-	 * Get actual id for newly created object
+	 * Get actual id for newly created object.
+	 *
 	 * @return int
 	 */
 	public function getActualId()
@@ -278,7 +303,8 @@ class Document
 	}
 
 	/**
-	 * Get actual id for newly created font
+	 * Get actual id for newly created font.
+	 *
 	 * @return int
 	 */
 	public function getActualFontId(): int
@@ -287,7 +313,8 @@ class Document
 	}
 
 	/**
-	 * Get actual id for newly created graphic state
+	 * Get actual id for newly created graphic state.
+	 *
 	 * @return int
 	 */
 	public function getActualGraphicStateId(): int
@@ -296,11 +323,13 @@ class Document
 	}
 
 	/**
-	 * Set font
-	 * @param string $family
-	 * @param string $weight
-	 * @param string $style
+	 * Set font.
+	 *
+	 * @param string                     $family
+	 * @param string                     $weight
+	 * @param string                     $style
 	 * @param \YetiForcePDF\Objects\Font $fontInstance
+	 *
 	 * @return $this
 	 */
 	public function setFontInstance(string $family, string $weight, string $style, \YetiForcePDF\Objects\Font $fontInstance)
@@ -310,10 +339,12 @@ class Document
 	}
 
 	/**
-	 * Get font instance
+	 * Get font instance.
+	 *
 	 * @param string $family
 	 * @param string $weight
 	 * @param string $style
+	 *
 	 * @return null|\YetiForcePDF\Objects\Font
 	 */
 	public function getFontInstance(string $family, string $weight, string $style)
@@ -325,7 +356,8 @@ class Document
 	}
 
 	/**
-	 * Get all font instances
+	 * Get all font instances.
+	 *
 	 * @return \YetiForcePDF\Objects\Font[]
 	 */
 	public function getAllFontInstances()
@@ -342,11 +374,13 @@ class Document
 	}
 
 	/**
-	 * Set font information
-	 * @param string $family
-	 * @param string $weight
-	 * @param string $style
+	 * Set font information.
+	 *
+	 * @param string                 $family
+	 * @param string                 $weight
+	 * @param string                 $style
 	 * @param \FontLib\TrueType\File $font
+	 *
 	 * @return $this
 	 */
 	public function setFontData(string $family, string $weight, string $style, \FontLib\TrueType\File $font)
@@ -358,10 +392,12 @@ class Document
 	}
 
 	/**
-	 * Get font data
+	 * Get font data.
+	 *
 	 * @param string $family
 	 * @param string $weight
 	 * @param string $style
+	 *
 	 * @return \FontLib\Font|null
 	 */
 	public function getFontData(string $family, string $weight, string $style)
@@ -373,7 +409,8 @@ class Document
 	}
 
 	/**
-	 * Get pages object
+	 * Get pages object.
+	 *
 	 * @return \YetiForcePDF\Pages
 	 */
 	public function getPagesObject(): \YetiForcePDF\Pages
@@ -382,7 +419,8 @@ class Document
 	}
 
 	/**
-	 * Get default page format
+	 * Get default page format.
+	 *
 	 * @return string
 	 */
 	public function getDefaultFormat()
@@ -391,7 +429,8 @@ class Document
 	}
 
 	/**
-	 * Get default page orientation
+	 * Get default page orientation.
+	 *
 	 * @return string
 	 */
 	public function getDefaultOrientation()
@@ -400,7 +439,8 @@ class Document
 	}
 
 	/**
-	 * Get default margins
+	 * Get default margins.
+	 *
 	 * @return array
 	 */
 	public function getDefaultMargins()
@@ -409,8 +449,10 @@ class Document
 	}
 
 	/**
-	 * Set header
+	 * Set header.
+	 *
 	 * @param HeaderBox $header
+	 *
 	 * @return $this
 	 */
 	public function setHeader(HeaderBox $header)
@@ -423,7 +465,8 @@ class Document
 	}
 
 	/**
-	 * Get header
+	 * Get header.
+	 *
 	 * @return HeaderBox|null
 	 */
 	public function getHeader()
@@ -432,8 +475,10 @@ class Document
 	}
 
 	/**
-	 * Set watermark
+	 * Set watermark.
+	 *
 	 * @param WatermarkBox $watermark
+	 *
 	 * @return $this
 	 */
 	public function setWatermark(WatermarkBox $watermark)
@@ -446,7 +491,8 @@ class Document
 	}
 
 	/**
-	 * Get watermark
+	 * Get watermark.
+	 *
 	 * @return WatermarkBox|null
 	 */
 	public function getWatermark()
@@ -455,8 +501,10 @@ class Document
 	}
 
 	/**
-	 * Set footer
+	 * Set footer.
+	 *
 	 * @param FooterBox $footer
+	 *
 	 * @return $this
 	 */
 	public function setFooter(FooterBox $footer)
@@ -469,7 +517,8 @@ class Document
 	}
 
 	/**
-	 * Get footer
+	 * Get footer.
+	 *
 	 * @return FooterBox|null
 	 */
 	public function getFooter()
@@ -478,11 +527,13 @@ class Document
 	}
 
 	/**
-	 * Add page to the document
-	 * @param string $format - optional format 'A4' for example
-	 * @param string $orientation - optional orientation 'P' or 'L'
-	 * @param Page|null $page - we can add cloned page or page from other document too
-	 * @param Page|null $after - add page after this page
+	 * Add page to the document.
+	 *
+	 * @param string    $format      - optional format 'A4' for example
+	 * @param string    $orientation - optional orientation 'P' or 'L'
+	 * @param Page|null $page        - we can add cloned page or page from other document too
+	 * @param Page|null $after       - add page after this page
+	 *
 	 * @return \YetiForcePDF\Page
 	 */
 	public function addPage(string $format = '', string $orientation = '', Page $page = null, Page $after = null): \YetiForcePDF\Page
@@ -519,7 +570,8 @@ class Document
 	}
 
 	/**
-	 * Get current page
+	 * Get current page.
+	 *
 	 * @return Page
 	 */
 	public function getCurrentPage(): Page
@@ -528,7 +580,8 @@ class Document
 	}
 
 	/**
-	 * Set current page
+	 * Set current page.
+	 *
 	 * @param Page $page
 	 */
 	public function setCurrentPage(Page $page)
@@ -537,7 +590,8 @@ class Document
 	}
 
 	/**
-	 * Get all pages
+	 * Get all pages.
+	 *
 	 * @return Page[]
 	 */
 	public function getPages(int $groupIndex = null)
@@ -555,7 +609,7 @@ class Document
 	}
 
 	/**
-	 * Fix page numbers
+	 * Fix page numbers.
 	 *
 	 * pages that are expanded by overflow will have the same unique id - cloned
 	 * so they are in one group of pages - if some page is added with different unique id
@@ -580,7 +634,8 @@ class Document
 	}
 
 	/**
-	 * Get document header
+	 * Get document header.
+	 *
 	 * @return string
 	 */
 	protected function getDocumentHeader(): string
@@ -589,7 +644,8 @@ class Document
 	}
 
 	/**
-	 * Get document footer
+	 * Get document footer.
+	 *
 	 * @return string
 	 */
 	protected function getDocumentFooter(): string
@@ -598,9 +654,11 @@ class Document
 	}
 
 	/**
-	 * Add object to document
-	 * @param PdfObject $object
-	 * @param PdfObject|null $after - add after this element
+	 * Add object to document.
+	 *
+	 * @param PdfObject      $object
+	 * @param PdfObject|null $after  - add after this element
+	 *
 	 * @return \YetiForcePDF\Document
 	 */
 	public function addObject(PdfObject $object, $after = null): \YetiForcePDF\Document
@@ -632,8 +690,10 @@ class Document
 	}
 
 	/**
-	 * Remove object from document
+	 * Remove object from document.
+	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $object
+	 *
 	 * @return \YetiForcePDF\Document
 	 */
 	public function removeObject(\YetiForcePDF\Objects\PdfObject $object): \YetiForcePDF\Document
@@ -645,9 +705,11 @@ class Document
 	}
 
 	/**
-	 * Load html string
+	 * Load html string.
+	 *
 	 * @param string $html
 	 * @param string $inputEncoding
+	 *
 	 * @return $this
 	 */
 	public function loadHtml(string $html, string $inputEncoding)
@@ -658,8 +720,10 @@ class Document
 	}
 
 	/**
-	 * Count objects
+	 * Count objects.
+	 *
 	 * @param string $name - object name
+	 *
 	 * @return int
 	 */
 	public function countObjects(string $name = ''): int
@@ -677,8 +741,10 @@ class Document
 	}
 
 	/**
-	 * Get objects
+	 * Get objects.
+	 *
 	 * @param string $name - object name
+	 *
 	 * @return \YetiForcePDF\Objects\PdfObject[]
 	 */
 	public function getObjects(string $name = ''): array
@@ -698,8 +764,8 @@ class Document
 	 *
 	 * @param string $text
 	 * @param string $encoding
-	 * @param bool $withParenthesis
-	 * @param bool $prependBom
+	 * @param bool   $withParenthesis
+	 * @param bool   $prependBom
 	 *
 	 * @return string
 	 */
@@ -720,7 +786,8 @@ class Document
 	}
 
 	/**
-	 * Parse html
+	 * Parse html.
+	 *
 	 * @return $this
 	 */
 	public function parse()
@@ -733,7 +800,8 @@ class Document
 	}
 
 	/**
-	 * Layout document content to pdf string
+	 * Layout document content to pdf string.
+	 *
 	 * @return string
 	 */
 	public function render(): string
@@ -775,5 +843,4 @@ class Document
 		$this->currentPageObject = clone $this->currentPageObject;
 		$this->meta = clone $this->meta;
 	}*/
-
 }

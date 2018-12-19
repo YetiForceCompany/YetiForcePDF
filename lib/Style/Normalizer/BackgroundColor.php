@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BackgroundColor class
+ * BackgroundColor class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,18 +14,18 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BackgroundColor
+ * Class BackgroundColor.
  */
 class BackgroundColor extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null && $ruleValue !== 'transparent') {
-            return $this->normalized = ['background-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
-        }
-        if ($ruleValue === 'transparent') {
-            return $this->normalized = ['background-color' => 'transparent'];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null && $ruleValue !== 'transparent') {
+			return $this->normalized = ['background-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
+		}
+		if ($ruleValue === 'transparent') {
+			return $this->normalized = ['background-color' => 'transparent'];
+		}
+		return $this->normalized;
+	}
 }

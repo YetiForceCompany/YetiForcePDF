@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BorderLeftWidth class
+ * BorderLeftWidth class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,15 +14,15 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BorderLeftWidth
+ * Class BorderLeftWidth.
  */
 class BorderLeftWidth extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null) {
-            return $this->normalized = ['border-left-width' => $this->getNumberValues($ruleValue)[0]];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null) {
+			return $this->normalized = ['border-left-width' => $this->getNumberValues($ruleValue)[0]];
+		}
+		return $this->normalized;
+	}
 }

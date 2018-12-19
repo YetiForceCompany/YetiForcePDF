@@ -13,13 +13,11 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-
 /**
  * Class PageGroupBox.
  */
 class PageGroupBox extends BlockBox
 {
-
 	/**
 	 * {@inheritdoc}
 	 */

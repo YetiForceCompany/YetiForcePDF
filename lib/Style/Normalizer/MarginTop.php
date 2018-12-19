@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * MarginTop class
+ * MarginTop class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,15 +14,15 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class MarginTop
+ * Class MarginTop.
  */
 class MarginTop extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null) {
-            return $this->normalized = ['margin-top' => $this->getNumberValues($ruleValue)[0]];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null) {
+			return $this->normalized = ['margin-top' => $this->getNumberValues($ruleValue)[0]];
+		}
+		return $this->normalized;
+	}
 }

@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * TransformOrigin class
+ * TransformOrigin class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,18 +14,18 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class TransformOrigin
+ * Class TransformOrigin.
  */
 class TransformOrigin extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        $values = $this->getNumberValues($ruleValue);
-        return [
-            'transform-origin' => [$x, $y]
-        ];
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		$values = $this->getNumberValues($ruleValue);
+		return [
+			'transform-origin' => [$x, $y]
+		];
+	}
 }

@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * PdfObject class
+ * PdfObject class.
  *
  * @package   YetiForcePDF\Objects
  *
@@ -13,27 +14,31 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 /**
- * Class PdfObject
+ * Class PdfObject.
  */
 class PdfObject extends \YetiForcePDF\Base
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = '';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'PdfObject';
 	/**
-	 * Id of the current object
+	 * Id of the current object.
+	 *
 	 * @var int
 	 */
 	protected $id = 1;
 	/**
 	 * Add object to document objects?
+	 *
 	 * @var bool
 	 */
 	protected $addToDocument = true;
@@ -42,18 +47,21 @@ class PdfObject extends \YetiForcePDF\Base
 	 */
 	protected $document;
 	/**
-	 * Children elements - referenced
+	 * Children elements - referenced.
+	 *
 	 * @var array
 	 */
 	protected $children = [];
 	/**
-	 * Parent object
+	 * Parent object.
+	 *
 	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $parent;
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -65,8 +73,10 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set addToDocument variable
+	 * Set addToDocument variable.
+	 *
 	 * @param bool $addToDocument
+	 *
 	 * @return $this
 	 */
 	public function setAddToDocument(bool $addToDocument = true)
@@ -76,8 +86,10 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set id
+	 * Set id.
+	 *
 	 * @param $id
+	 *
 	 * @return $this
 	 */
 	public function setId($id)
@@ -87,7 +99,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object id
+	 * Get object id.
+	 *
 	 * @return int
 	 */
 	public function getId(): int
@@ -96,7 +109,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object name
+	 * Get object name.
+	 *
 	 * @return string
 	 */
 	public function getName(): string
@@ -105,7 +119,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get raw id (that will exists in pdf file)
+	 * Get raw id (that will exists in pdf file).
+	 *
 	 * @return string
 	 */
 	public function getRawId(): string
@@ -114,7 +129,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object basic type (integer,string, boolean, dictionary etc..)
+	 * Get object basic type (integer,string, boolean, dictionary etc..).
+	 *
 	 * @return string
 	 */
 	public function getBasicType(): string
@@ -123,7 +139,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get children elements (pages etc)
+	 * Get children elements (pages etc).
+	 *
 	 * @param bool $all - do we want all children from tree (flat structure)?
 	 */
 	public function getChildren(bool $all = false, array &$current = []): array
@@ -139,13 +156,16 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Add child object
+	 * Add child object.
+	 *
 	 * @param PdfObject $child
 	 * @param PdfObject $after - add after this element
-	 * @return PdfObject
+	 *
 	 * @throws \InvalidArgumentException
+	 *
+	 * @return PdfObject
 	 */
-	public function addChild(PdfObject $child, PdfObject $after = null): PdfObject
+	public function addChild(self $child, self $after = null): self
 	{
 		$afterIndex = count($this->children);
 		if ($after) {
@@ -170,8 +190,10 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set parent object
+	 * Set parent object.
+	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $parent
+	 *
 	 * @return \YetiForcePDF\Objects\PdfObject
 	 */
 	public function setParent(\YetiForcePDF\Objects\PdfObject $parent): \YetiForcePDF\Objects\PdfObject
@@ -181,7 +203,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object reference string
+	 * Get object reference string.
+	 *
 	 * @return string
 	 */
 	public function getReference(): string
@@ -190,12 +213,12 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Layout current object
+	 * Layout current object.
+	 *
 	 * @return string
 	 */
 	public function render(): string
 	{
 		return '';
 	}
-
 }

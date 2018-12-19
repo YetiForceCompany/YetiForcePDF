@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Padding class
+ * Padding class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,16 +14,15 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Padding
+ * Class Padding.
  */
 class Padding extends Normalizer
 {
-
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        return $this->normalized = $this->normalizeMultiValues(['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], $ruleValue);
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		return $this->normalized = $this->normalizeMultiValues(['padding-top', 'padding-right', 'padding-bottom', 'padding-left'], $ruleValue);
+	}
 }

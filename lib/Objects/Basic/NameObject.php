@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * NameObject class
+ * NameObject class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
@@ -13,17 +14,19 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class NameObject
+ * Class NameObject.
  */
 class NameObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'Name';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Name';

@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BorderCollapse class
+ * BorderCollapse class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,19 +14,18 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BorderCollapse
+ * Class BorderCollapse.
  */
 class BorderCollapse extends Normalizer
 {
-
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null) {
-            if (!in_array($ruleValue, ['collapse', 'separate', 'inherit'])) {
-                $ruleValue = 'separate';
-            }
-            return $this->normalized = ['border-collapse' => $ruleValue];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null) {
+			if (!in_array($ruleValue, ['collapse', 'separate', 'inherit'])) {
+				$ruleValue = 'separate';
+			}
+			return $this->normalized = ['border-collapse' => $ruleValue];
+		}
+		return $this->normalized;
+	}
 }

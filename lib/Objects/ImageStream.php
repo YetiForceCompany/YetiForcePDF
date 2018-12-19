@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * ImageStream class
+ * ImageStream class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
@@ -13,22 +14,25 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 /**
- * Class ImageStream
+ * Class ImageStream.
  */
 class ImageStream extends \YetiForcePDF\Objects\Resource
 {
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'ImageStream';
 	/**
-	 * Text x position at current page
+	 * Text x position at current page.
+	 *
 	 * @var int
 	 */
 	protected $x = 0;
 	/**
-	 * Text y position at current page
+	 * Text y position at current page.
+	 *
 	 * @var int
 	 */
 	protected $y = 0;
@@ -50,8 +54,10 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	protected $bitsPerComponent = 8;
 
 	/**
-	 * Convert images to jpeg
+	 * Convert images to jpeg.
+	 *
 	 * @param string $imageData
+	 *
 	 * @return string
 	 */
 	protected function convertToJpg(string $imageData)
@@ -71,8 +77,10 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
-	 * Load image data
+	 * Load image data.
+	 *
 	 * @param string $fileName
+	 *
 	 * @return $this
 	 */
 	public function loadImage(string $fileName)
@@ -83,7 +91,7 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 				$res = $client->request('GET', $fileName, ['verify' => \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath()]);
 				if ($res->getStatusCode() === 200) {
 					$res->getHeader('content-type');
-					$this->imageData = $this->convertToJpg((string)$res->getBody());
+					$this->imageData = $this->convertToJpg((string) $res->getBody());
 				}
 			} catch (\Exception $e) {
 			}
@@ -94,15 +102,16 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 		}
 		if ($this->imageData) {
 			$info = getimagesizefromstring($this->imageData);
-			$this->bitsPerComponent = (string)$info['bits'];
-			$this->width = (string)$info[0];
-			$this->height = (string)$info[1];
+			$this->bitsPerComponent = (string) $info['bits'];
+			$this->width = (string) $info[0];
+			$this->height = (string) $info[1];
 		}
 		return $this;
 	}
 
 	/**
-	 * Get image name
+	 * Get image name.
+	 *
 	 * @return string
 	 */
 	public function getImageName()
@@ -111,7 +120,8 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
-	 * Get image width
+	 * Get image width.
+	 *
 	 * @return string
 	 */
 	public function getWidth()
@@ -120,7 +130,8 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
-	 * Get image height
+	 * Get image height.
+	 *
 	 * @return string
 	 */
 	public function getHeight()
@@ -152,5 +163,4 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			'endobj'
 		]);
 	}
-
 }

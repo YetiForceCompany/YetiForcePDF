@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * ArrayObject class
+ * ArrayObject class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
@@ -13,28 +14,32 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class ArrayObject
+ * Class ArrayObject.
  */
 class ArrayObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'Array';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Array';
 	/**
-	 * Collection of items
+	 * Collection of items.
+	 *
 	 * @var array
 	 */
 	protected $items = [];
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -60,7 +65,7 @@ class ArrayObject extends \YetiForcePDF\Objects\PdfObject
 			if ($item instanceof \YetiForcePDF\Objects\PdfObject) {
 				$stringItems[] = $item->getReference();
 			} else {
-				$stringItems[] = (string)$item;
+				$stringItems[] = (string) $item;
 			}
 		}
 		return implode("\n", [

@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * StreamObject class
+ * StreamObject class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
@@ -13,33 +14,38 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class StreamObject
+ * Class StreamObject.
  */
 class StreamObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'Stream';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Stream';
 	/**
-	 * Content of the stream as string instructions
+	 * Content of the stream as string instructions.
+	 *
 	 * @var string[]
 	 */
 	protected $content = [];
 	/**
-	 * Filter used to decode stream
+	 * Filter used to decode stream.
+	 *
 	 * @var null|string
 	 */
 	protected $filter;
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -50,8 +56,10 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Add raw content instructions as string
+	 * Add raw content instructions as string.
+	 *
 	 * @param string $content
+	 *
 	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
 	public function addRawContent(string $content, string $filter = ''): \YetiForcePDF\Objects\Basic\StreamObject
@@ -64,8 +72,10 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Set filter
+	 * Set filter.
+	 *
 	 * @param string $filter
+	 *
 	 * @return $this
 	 */
 	public function setFilter(string $filter)

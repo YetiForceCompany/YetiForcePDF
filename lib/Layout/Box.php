@@ -47,9 +47,7 @@ class Box extends \YetiForcePDF\Base
 	 * @var Box
 	 */
 	protected $previous;
-	/*
-	 * @var box dimensions
-	 */
+	// @var box dimensions
 	protected $dimensions;
 	/**
 	 * @var Coordinates
@@ -87,6 +85,7 @@ class Box extends \YetiForcePDF\Base
 	protected $renderableState = [];
 	/**
 	 * Is this box absolute positioned?
+	 *
 	 * @var bool
 	 */
 	protected $absolute = false;
@@ -100,6 +99,7 @@ class Box extends \YetiForcePDF\Base
 	protected $displayable = true;
 	/**
 	 * Is this new group of pages?
+	 *
 	 * @var bool
 	 */
 	protected $pageGroup = false;
@@ -244,6 +244,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Is this box absolute positioned?
+	 *
 	 * @return bool
 	 */
 	public function isAbsolute()
@@ -252,8 +253,10 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set absolute - this box will be absolute positioned
+	 * Set absolute - this box will be absolute positioned.
+	 *
 	 * @param bool $absolute
+	 *
 	 * @return $this
 	 */
 	public function setAbsolute(bool $absolute)
@@ -263,7 +266,8 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Box was cut to next page
+	 * Box was cut to next page.
+	 *
 	 * @return bool
 	 */
 	public function wasCut()
@@ -272,8 +276,10 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set cut
+	 * Set cut.
+	 *
 	 * @param bool $cut
+	 *
 	 * @return $this
 	 */
 	public function setCut(bool $cut)
@@ -283,7 +289,8 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Is this element displayable
+	 * Is this element displayable.
+	 *
 	 * @return bool
 	 */
 	public function isDisplayable()
@@ -292,8 +299,10 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set displayable
+	 * Set displayable.
+	 *
 	 * @param bool $displayable
+	 *
 	 * @return $this
 	 */
 	public function setDisplayable(bool $displayable)
@@ -622,7 +631,7 @@ class Box extends \YetiForcePDF\Base
 	 * Get all children.
 	 *
 	 * @param Box[] $allChildren
-	 * @param bool $withCurrent
+	 * @param bool  $withCurrent
 	 *
 	 * @return Box[]
 	 */
@@ -641,8 +650,8 @@ class Box extends \YetiForcePDF\Base
 	 * Iterate all children.
 	 *
 	 * @param callable $fn
-	 * @param bool $reverse
-	 * @param bool $deep
+	 * @param bool     $reverse
+	 * @param bool     $deep
 	 *
 	 * @return $this
 	 */
@@ -668,8 +677,9 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Get boxes by type.
 	 *
-	 * @param string $shortClassName
+	 * @param string      $shortClassName
 	 * @param string|null $until
+	 *
 	 * @return array
 	 */
 	public function getBoxesByType(string $shortClassName, string $until = '')
@@ -867,6 +877,7 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Should we break page after this element?
+	 *
 	 * @return bool
 	 */
 	public function shouldBreakPage()
@@ -875,8 +886,10 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set marker that this is a new group of pages and should have new numbering
+	 * Set marker that this is a new group of pages and should have new numbering.
+	 *
 	 * @param bool $pageGroup
+	 *
 	 * @return $this
 	 */
 	public function setPageGroup(bool $pageGroup)
@@ -886,7 +899,8 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get force page number
+	 * Get force page number.
+	 *
 	 * @return int
 	 */
 	public function getPageGroup()
@@ -895,9 +909,11 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set option (page group for example)
+	 * Set option (page group for example).
+	 *
 	 * @param string $name
 	 * @param string $value
+	 *
 	 * @return $this
 	 */
 	public function setOption(string $name, string $value)
@@ -907,8 +923,10 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get option
+	 * Get option.
+	 *
 	 * @param string $name
+	 *
 	 * @return string
 	 */
 	public function getOption(string $name)
@@ -993,7 +1011,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Add border instructions.
 	 *
-	 * @param array $element
+	 * @param array  $element
 	 * @param string $pdfX
 	 * @param string $pdfY
 	 * @param string $width
@@ -1095,9 +1113,11 @@ class Box extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Clone this element along with the children elements
-	 * @return Box
+	 * Clone this element along with the children elements.
+	 *
 	 * @throws \InvalidArgumentException
+	 *
+	 * @return Box
 	 */
 	public function cloneWithChildren()
 	{

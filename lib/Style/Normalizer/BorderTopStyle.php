@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BorderTopStyle class
+ * BorderTopStyle class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,20 +14,20 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BorderTopStyle
+ * Class BorderTopStyle.
  */
 class BorderTopStyle extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null) {
-            if (in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {
-                $style = $ruleValue;
-            } else {
-                $style = 'none';
-            }
-            return $this->normalized = ['border-top-style' => $style];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null) {
+			if (in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {
+				$style = $ruleValue;
+			} else {
+				$style = 'none';
+			}
+			return $this->normalized = ['border-top-style' => $style];
+		}
+		return $this->normalized;
+	}
 }

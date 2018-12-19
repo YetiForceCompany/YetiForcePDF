@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * WhiteSpace class
+ * WhiteSpace class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,20 +14,20 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class WhiteSpace
+ * Class WhiteSpace.
  */
 class WhiteSpace extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        if (in_array($ruleValue, ['normal', 'pre', 'nowrap'])) {
-            $normalized = ['white-space' => $ruleValue];
-        } else {
-            $normalized = ['white-space' => 'normal'];
-        }
-        return $this->normalized = $normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		if (in_array($ruleValue, ['normal', 'pre', 'nowrap'])) {
+			$normalized = ['white-space' => $ruleValue];
+		} else {
+			$normalized = ['white-space' => 'normal'];
+		}
+		return $this->normalized = $normalized;
+	}
 }

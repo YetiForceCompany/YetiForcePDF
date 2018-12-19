@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * FontEncoding class
+ * FontEncoding class.
  *
  * @package   YetiForcePDF\Objects
  *
@@ -13,12 +14,13 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 /**
- * Class FontEncoding
+ * Class FontEncoding.
  */
 class FontEncoding extends \YetiForcePDF\Objects\Resource
 {
 	/**
-	 * Encoding
+	 * Encoding.
+	 *
 	 * @var string
 	 */
 	protected $encoding = 'WinAnsiEncoding';
@@ -29,7 +31,7 @@ class FontEncoding extends \YetiForcePDF\Objects\Resource
 	public function render(): string
 	{
 		return implode("\n", [
-			$this->getRawId() . " obj",
+			$this->getRawId() . ' obj',
 			'<<',
 			'  /Type Encoding',
 			'  /BaseEncoding /' . $this->encoding,

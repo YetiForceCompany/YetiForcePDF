@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * DictionaryObject class
+ * DictionaryObject class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
@@ -13,22 +14,25 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class DictionaryObject
+ * Class DictionaryObject.
  */
 class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'Dictionary';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Dictionary';
 	/**
-	 * Which type of dictionary (Page, Catalog, Font etc...)
+	 * Which type of dictionary (Page, Catalog, Font etc...).
+	 *
 	 * @var string
 	 */
 	protected $dictionaryType = '';
@@ -38,7 +42,8 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	protected $values = [];
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -49,9 +54,11 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Add value
+	 * Add value.
+	 *
 	 * @param string $name
 	 * @param string $value
+	 *
 	 * @return $this
 	 */
 	public function addValue(string $name, string $value)
@@ -61,7 +68,8 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Clear all values
+	 * Clear all values.
+	 *
 	 * @return $this
 	 */
 	public function clearValues()
@@ -71,7 +79,8 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Get dictionary type (Page, Catalog, Font etc...)
+	 * Get dictionary type (Page, Catalog, Font etc...).
+	 *
 	 * @return string
 	 */
 	public function getDictionaryType()
@@ -80,8 +89,10 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Set dictionary type
+	 * Set dictionary type.
+	 *
 	 * @param string $type
+	 *
 	 * @return $this
 	 */
 	public function setDictionaryType(string $type)

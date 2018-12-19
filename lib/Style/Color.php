@@ -219,10 +219,10 @@ class Color
 		if (strlen($color) === 6) {
 			$color .= 'FF';
 		}
-		$r = (string)hexdec(substr($color, 0, 2));
-		$g = (string)hexdec(substr($color, 2, 2));
-		$b = (string)hexdec(substr($color, 4, 2));
-		$a = (string)hexdec(substr($color, 6, 2));
+		$r = (string) hexdec(substr($color, 0, 2));
+		$g = (string) hexdec(substr($color, 2, 2));
+		$b = (string) hexdec(substr($color, 4, 2));
+		$a = (string) hexdec(substr($color, 6, 2));
 		return [$r, $g, $b, $a];
 	}
 
@@ -249,7 +249,7 @@ class Color
 	 * Convert css color definition to rgba values.
 	 *
 	 * @param string $colorInput
-	 * @param bool $inPDFColorSpace
+	 * @param bool   $inPDFColorSpace
 	 *
 	 * @return int[]
 	 */

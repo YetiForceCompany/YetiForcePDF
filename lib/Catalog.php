@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Catalog class
+ * Catalog class.
  *
  * @package   YetiForcePDF\Document
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 /**
- * Class Catalog
+ * Class Catalog.
  */
 class Catalog extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
@@ -22,12 +23,14 @@ class Catalog extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dictionaryType = 'Catalog';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Catalog';
 	/**
-	 * Children elements
+	 * Children elements.
+	 *
 	 * @var \YetiForcePDF\Objects\PdfObject[]
 	 */
 	protected $children = [];
@@ -46,5 +49,4 @@ class Catalog extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'endobj'
 		]);
 	}
-
 }

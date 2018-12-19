@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Display class
+ * Display class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,21 +14,21 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Display
+ * Class Display.
  */
 class Display extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        $normalized = ['display' => $ruleValue];
-        if ($element = $this->style->getElement()) {
-            if ($element->isTextNode()) {
-                $normalized = ['display' => 'inline'];
-            }
-        }
-        return $this->normalized = $normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		$normalized = ['display' => $ruleValue];
+		if ($element = $this->style->getElement()) {
+			if ($element->isTextNode()) {
+				$normalized = ['display' => 'inline'];
+			}
+		}
+		return $this->normalized = $normalized;
+	}
 }

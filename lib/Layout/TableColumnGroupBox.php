@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * TableColumnGroupBox class
+ * TableColumnGroupBox class.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,22 +13,16 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Style\Style;
-use \YetiForcePDF\Html\Element;
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-
 /**
- * Class TableColumnGroupBox
+ * Class TableColumnGroupBox.
  */
 class TableColumnGroupBox extends InlineBlockBox
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstructions(): string
-    {
-        return ''; // not renderable
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getInstructions(): string
+	{
+		return ''; // not renderable
+	}
 }

@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Normalizer class
+ * Normalizer class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -15,11 +16,10 @@ namespace YetiForcePDF\Style\Normalizer;
 use YetiForcePDF\Style\Style;
 
 /**
- * Class Normalizer
+ * Class Normalizer.
  */
 class Normalizer extends \YetiForcePDF\Base
 {
-
 	/**
 	 * @var Style
 	 */
@@ -30,8 +30,10 @@ class Normalizer extends \YetiForcePDF\Base
 	protected $normalized;
 
 	/**
-	 * Set style
+	 * Set style.
+	 *
 	 * @param \YetiForcePDF\Style\Style $style
+	 *
 	 * @return $this
 	 */
 	public function setStyle(Style $style)
@@ -41,8 +43,10 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get normalizer class name
+	 * Get normalizer class name.
+	 *
 	 * @param string $ruleName
+	 *
 	 * @return string
 	 */
 	public static function getNormalizerClassName(string $ruleName)
@@ -52,12 +56,14 @@ class Normalizer extends \YetiForcePDF\Base
 		if (class_exists($normalizerClassName)) {
 			return $normalizerClassName;
 		}
-		return "YetiForcePDF\\Style\\Normalizer\\Normalizer";
+		return 'YetiForcePDF\\Style\\Normalizer\\Normalizer';
 	}
 
 	/**
-	 * Get number value from style
+	 * Get number value from style.
+	 *
 	 * @param $ruleValue
+	 *
 	 * @return string[]
 	 */
 	public function getNumberValues($ruleValue)
@@ -90,9 +96,11 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Normalize css rule
-	 * @param mixed $ruleValue
+	 * Normalize css rule.
+	 *
+	 * @param mixed  $ruleValue
 	 * @param string $ruleName
+	 *
 	 * @return array
 	 */
 	public function normalize($ruleValue, string $ruleName = ''): array
@@ -100,11 +108,12 @@ class Normalizer extends \YetiForcePDF\Base
 		return [$ruleName => $ruleValue];
 	}
 
-
 	/**
-	 * One value
+	 * One value.
+	 *
 	 * @param array $ruleNames
 	 * @param array $numberValues
+	 *
 	 * @return array
 	 */
 	protected function oneValue(array $ruleNames, array $numberValues)
@@ -118,9 +127,11 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Two values
+	 * Two values.
+	 *
 	 * @param array $ruleNames
 	 * @param array $numberValues
+	 *
 	 * @return array
 	 */
 	protected function twoValues(array $ruleNames, array $numberValues)
@@ -134,9 +145,11 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Three values
+	 * Three values.
+	 *
 	 * @param array $ruleNames
 	 * @param array $numberValues
+	 *
 	 * @return array
 	 */
 	protected function threeValues(array $ruleNames, array $numberValues)
@@ -150,9 +163,11 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Four values
+	 * Four values.
+	 *
 	 * @param array $ruleNames
 	 * @param array $numberValues
+	 *
 	 * @return array
 	 */
 	protected function fourValues(array $ruleNames, array $numberValues)
@@ -166,10 +181,11 @@ class Normalizer extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Normalize multi number values
+	 * Normalize multi number values.
+	 *
 	 * @param string[] $ruleNames ['margin-top','margin-right','margin-bottom','margin-left']
-	 * @param string $ruleValue
-	 * return array
+	 * @param string   $ruleValue
+	 *                            return array
 	 */
 	public function normalizeMultiValues(array $ruleNames, $ruleValue): array
 	{

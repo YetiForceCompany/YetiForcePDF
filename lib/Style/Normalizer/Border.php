@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Border class
+ * Border class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Border
+ * Class Border.
  */
 class Border extends Normalizer
 {

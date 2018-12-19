@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BackgroundImage class
+ * BackgroundImage class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,18 +14,18 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BackgroundImage
+ * Class BackgroundImage.
  */
 class BackgroundImage extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null && $ruleValue !== 'transparent') {
-            return $this->normalized = ['background-image' => $ruleValue];
-        }
-        if ($ruleValue === 'transparent') {
-            return $this->normalized = ['background-image' => 'transparent'];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null && $ruleValue !== 'transparent') {
+			return $this->normalized = ['background-image' => $ruleValue];
+		}
+		if ($ruleValue === 'transparent') {
+			return $this->normalized = ['background-image' => 'transparent'];
+		}
+		return $this->normalized;
+	}
 }

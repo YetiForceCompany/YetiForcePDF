@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * WordWrap class
+ * WordWrap class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,20 +14,20 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class WordWrap
+ * Class WordWrap.
  */
 class WordWrap extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        if (in_array($ruleValue, ['normal', 'break-word'])) {
-            $normalized = ['word-wrap' => $ruleValue];
-        } else {
-            $normalized = ['word-wrap' => 'normal'];
-        }
-        return $this->normalized = $normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		if (in_array($ruleValue, ['normal', 'break-word'])) {
+			$normalized = ['word-wrap' => $ruleValue];
+		} else {
+			$normalized = ['word-wrap' => 'normal'];
+		}
+		return $this->normalized = $normalized;
+	}
 }

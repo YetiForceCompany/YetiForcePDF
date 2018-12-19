@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Opacity class
+ * Opacity class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,15 +14,15 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Opacity
+ * Class Opacity.
  */
 class Opacity extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null) {
-            return ['opacity' => (string)(float)$ruleValue];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null) {
+			return ['opacity' => (string) (float) $ruleValue];
+		}
+		return $this->normalized;
+	}
 }

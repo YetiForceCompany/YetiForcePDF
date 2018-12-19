@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Meta class
+ * Meta class.
  *
  * @package   YetiForcePDF\Objects
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 /**
- * Class Meta
+ * Class Meta.
  */
 class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
@@ -43,8 +44,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected $keywords = [];
 
 	/**
-	 * Set author
+	 * Set author.
+	 *
 	 * @param string $author
+	 *
 	 * @return $this
 	 */
 	public function setAuthor(string $author)
@@ -54,7 +57,8 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get author
+	 * Get author.
+	 *
 	 * @return string
 	 */
 	public function getAuthor()
@@ -63,8 +67,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Set creator
+	 * Set creator.
+	 *
 	 * @param string $creator
+	 *
 	 * @return $this
 	 */
 	public function setCreator(string $creator)
@@ -74,7 +80,8 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get creator
+	 * Get creator.
+	 *
 	 * @return string
 	 */
 	public function getCreator()
@@ -83,8 +90,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Set producer
+	 * Set producer.
+	 *
 	 * @param string $producer
+	 *
 	 * @return $this
 	 */
 	public function setProducer(string $producer)
@@ -94,7 +103,8 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get producer
+	 * Get producer.
+	 *
 	 * @return string
 	 */
 	public function getProducer()
@@ -103,8 +113,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Set title
+	 * Set title.
+	 *
 	 * @param string $title
+	 *
 	 * @return $this
 	 */
 	public function setTitle(string $title)
@@ -114,7 +126,8 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get title
+	 * Get title.
+	 *
 	 * @return string
 	 */
 	public function getTitle()
@@ -123,8 +136,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Set subject
+	 * Set subject.
+	 *
 	 * @param string $subject
+	 *
 	 * @return $this
 	 */
 	public function setSubject(string $subject)
@@ -134,7 +149,8 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get subject
+	 * Get subject.
+	 *
 	 * @return string
 	 */
 	public function getSubject()
@@ -143,8 +159,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Set keywords
+	 * Set keywords.
+	 *
 	 * @param string[] $keywords
+	 *
 	 * @return $this
 	 */
 	public function setKeywords(array $keywords)
@@ -158,7 +176,8 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
-	 * Get keywords
+	 * Get keywords.
+	 *
 	 * @return string[]
 	 */
 	public function getKeywords()

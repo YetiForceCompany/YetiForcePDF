@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * VerticalAlign class
+ * VerticalAlign class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,20 +14,20 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class VerticalAlign
+ * Class VerticalAlign.
  */
 class VerticalAlign extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        if (in_array($ruleValue, ['top', 'bottom', 'middle', 'baseline'])) {
-            $normalized = ['vertical-align' => $ruleValue];
-        } else {
-            $normalized = ['vertical-align' => 'baseline'];
-        }
-        return $this->normalized = $normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		if (in_array($ruleValue, ['top', 'bottom', 'middle', 'baseline'])) {
+			$normalized = ['vertical-align' => $ruleValue];
+		} else {
+			$normalized = ['vertical-align' => 'baseline'];
+		}
+		return $this->normalized = $normalized;
+	}
 }

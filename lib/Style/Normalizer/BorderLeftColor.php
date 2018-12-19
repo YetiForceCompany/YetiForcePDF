@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BorderLeftColor class
+ * BorderLeftColor class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,15 +14,15 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BorderLeftColor
+ * Class BorderLeftColor.
  */
 class BorderLeftColor extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null) {
-            return $this->normalized = ['border-left-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null) {
+			return $this->normalized = ['border-left-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
+		}
+		return $this->normalized;
+	}
 }

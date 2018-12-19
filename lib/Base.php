@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Base class
+ * Base class.
  *
  * @package   YetiForcePDF
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 /**
- * Class Base
+ * Class Base.
  */
 class Base
 {
@@ -22,9 +23,9 @@ class Base
 	 */
 	protected $document;
 
-
 	/**
-	 * Set document
+	 * Set document.
+	 *
 	 * @param \YetiForcePDF\Document $document
 	 */
 	public function setDocument(\YetiForcePDF\Document $document)
@@ -34,7 +35,8 @@ class Base
 	}
 
 	/**
-	 * Get document
+	 * Get document.
+	 *
 	 * @return \YetiForcePDF\Document
 	 */
 	public function getDocument(): \YetiForcePDF\Document
@@ -43,7 +45,8 @@ class Base
 	}
 
 	/**
-	 * Initialisation instead of constructor
+	 * Initialisation instead of constructor.
+	 *
 	 * @param array $args - associative array of values - might be helpful
 	 */
 	public function init()

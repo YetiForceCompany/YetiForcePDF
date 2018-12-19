@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * FontStyle class
+ * FontStyle class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,19 +14,19 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class FontStyle
+ * Class FontStyle.
  */
 class FontStyle extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        $ruleValue = strtolower($ruleValue);
-        if (!in_array($ruleValue, ['normal', 'italic'])) {
-            $ruleValue = 'normal';
-        }
-        return $this->normalized = ['font-style' => $ruleValue];
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		$ruleValue = strtolower($ruleValue);
+		if (!in_array($ruleValue, ['normal', 'italic'])) {
+			$ruleValue = 'normal';
+		}
+		return $this->normalized = ['font-style' => $ruleValue];
+	}
 }

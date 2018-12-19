@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BuildTree interface
+ * BuildTree interface.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,22 +13,16 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-use \YetiForcePDF\Html\Element;
-use YetiForcePDF\Style\Style;
-
 /**
- * Interface BuildTreeInterface
+ * Interface BuildTreeInterface.
  */
 interface BuildTreeInterface
 {
-
-
 	/**
-	 * Build tree from dom tree
+	 * Build tree from dom tree.
+	 *
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+	 *
 	 * @return $this
 	 */
 	public function buildTree($parentBlock = null);

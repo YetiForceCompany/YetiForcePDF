@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * FontDescriptor class
+ * FontDescriptor class.
  *
  * @package   YetiForcePDF\Objects
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 /**
- * Class FontDescriptor
+ * Class FontDescriptor.
  */
 class FontDescriptor extends \YetiForcePDF\Objects\Resource
 {
@@ -23,8 +24,10 @@ class FontDescriptor extends \YetiForcePDF\Objects\Resource
 	protected $font;
 
 	/**
-	 * Set font instance
+	 * Set font instance.
+	 *
 	 * @param \YetiForcePDF\Objects\Font $font
+	 *
 	 * @return $this
 	 */
 	public function setFont(\YetiForcePDF\Objects\Font $font)
@@ -40,7 +43,7 @@ class FontDescriptor extends \YetiForcePDF\Objects\Resource
 	{
 		$descriptor = $this->font->getOutputInfo()['descriptor'];
 		return implode("\n", [
-			$this->getRawId() . " obj",
+			$this->getRawId() . ' obj',
 			'<<',
 			'  /Type /FontDescriptor',
 			'  /FontName /' . $this->font->getFullName(),

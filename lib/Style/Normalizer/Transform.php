@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Transform class
+ * Transform class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,31 +14,31 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Transform
+ * Class Transform.
  */
 class Transform extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        $normalized = [
-            'transform' => []
-        ];
-        $operations = preg_split('/\s+/i', $ruleValue);
-        foreach ($operations as $operation) {
-            $matches = [];
-            preg_match('/(rotate|scale|translate)\(([0-9]+)([a-z]+)?\)/i', $operation, $matches);
-            $normalizerName = static::getNormalizerClassName('transform-' . $matches[1]);
-            $normalizer = (new $normalizerName())
-                ->setDocument($this->document)
-                ->setStyle($this->style)
-                ->init();
-            foreach ($normalizer->normalize($matches[2], $matches[1]) as $name => $value) {
-                $normalized['transform'][] = [$name, $value];
-            }
-        }
-        return $normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		$normalized = [
+			'transform' => []
+		];
+		$operations = preg_split('/\s+/i', $ruleValue);
+		foreach ($operations as $operation) {
+			$matches = [];
+			preg_match('/(rotate|scale|translate)\(([0-9]+)([a-z]+)?\)/i', $operation, $matches);
+			$normalizerName = static::getNormalizerClassName('transform-' . $matches[1]);
+			$normalizer = (new $normalizerName())
+				->setDocument($this->document)
+				->setStyle($this->style)
+				->init();
+			foreach ($normalizer->normalize($matches[2], $matches[1]) as $name => $value) {
+				$normalized['transform'][] = [$name, $value];
+			}
+		}
+		return $normalized;
+	}
 }

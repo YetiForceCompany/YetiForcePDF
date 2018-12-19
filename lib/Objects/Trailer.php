@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Trailer class
+ * Trailer class.
  *
  * @package   YetiForcePDF\Objects
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 /**
- * Class Font
+ * Class Font.
  */
 class Trailer extends \YetiForcePDF\Objects\PdfObject
 {
@@ -22,23 +23,27 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $basicType = 'Trailer';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Trailer';
 	/**
-	 * Root element
+	 * Root element.
+	 *
 	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $root;
 	/**
-	 * Number of objects in the document
+	 * Number of objects in the document.
+	 *
 	 * @var int
 	 */
 	protected $size = 0;
 
 	/**
-	 * Set root object
+	 * Set root object.
+	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $root
 	 */
 	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root): \YetiForcePDF\Objects\Trailer
@@ -48,8 +53,10 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Set document size - number of objects
+	 * Set document size - number of objects.
+	 *
 	 * @param int $size
+	 *
 	 * @return \YetiForcePDF\Objects\Trailer
 	 */
 	public function setSize(int $size): \YetiForcePDF\Objects\Trailer

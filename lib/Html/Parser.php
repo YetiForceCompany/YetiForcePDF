@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
-use YetiForcePDF\Layout\BlockBox;
 use YetiForcePDF\Layout\PageGroupBox;
 
 /**
@@ -70,7 +69,8 @@ class Parser extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get html
+	 * Get html.
+	 *
 	 * @return string
 	 */
 	public function getHtml()
@@ -79,8 +79,10 @@ class Parser extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Divide html into page groups
+	 * Divide html into page groups.
+	 *
 	 * @param $html
+	 *
 	 * @return array
 	 */
 	public function getHtmlPageGroups($html)
@@ -107,9 +109,11 @@ class Parser extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set page group options
+	 * Set page group options.
+	 *
 	 * @param PageGroupBox $root
 	 * @param \DOMDocument $domDocument
+	 *
 	 * @return $this
 	 */
 	public function setGroupOptions(PageGroupBox $root, \DOMDocument $domDocument)
@@ -131,37 +135,37 @@ class Parser extends \YetiForcePDF\Base
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-left')) {
-			$root->marginLeft = (float)$childDomElement->getAttribute('data-margin-left');
+			$root->marginLeft = (float) $childDomElement->getAttribute('data-margin-left');
 			if (!$root->marginLeft) {
 				$root->marginLeft = 30;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-right')) {
-			$root->marginRight = (float)$childDomElement->getAttribute('data-margin-right');
+			$root->marginRight = (float) $childDomElement->getAttribute('data-margin-right');
 			if (!$root->marginRight) {
 				$root->marginRight = 30;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-top')) {
-			$root->marginTop = (float)$childDomElement->getAttribute('data-margin-top');
+			$root->marginTop = (float) $childDomElement->getAttribute('data-margin-top');
 			if (!$root->marginTop) {
 				$root->marginTop = 40;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-bottom')) {
-			$root->marginBottom = (float)$childDomElement->getAttribute('data-margin-bottom');
+			$root->marginBottom = (float) $childDomElement->getAttribute('data-margin-bottom');
 			if (!$root->marginBottom) {
 				$root->marginBottom = 40;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-header-top')) {
-			$root->headerTop = (float)$childDomElement->getAttribute('data-header-top');
+			$root->headerTop = (float) $childDomElement->getAttribute('data-header-top');
 			if (!$root->headerTop) {
 				$root->headerTop = 10;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-footer-bottom')) {
-			$root->footerBottom = (float)$childDomElement->getAttribute('data-footer-bottom');
+			$root->footerBottom = (float) $childDomElement->getAttribute('data-footer-bottom');
 			if (!$root->footerBottom) {
 				$root->footerBottom = 10;
 			}

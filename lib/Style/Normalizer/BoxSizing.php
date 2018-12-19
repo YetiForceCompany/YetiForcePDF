@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * BoxSizing class
+ * BoxSizing class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,19 +14,19 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class BoxSizing
+ * Class BoxSizing.
  */
 class BoxSizing extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        $normalized = ['box-sizing' => 'border-box'];
-        if (in_array($ruleValue, ['border-box', 'content-box'])) {
-            $normalized = ['box-sizing' => $ruleValue];
-        }
-        return $this->normalized = $normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		$normalized = ['box-sizing' => 'border-box'];
+		if (in_array($ruleValue, ['border-box', 'content-box'])) {
+			$normalized = ['box-sizing' => $ruleValue];
+		}
+		return $this->normalized = $normalized;
+	}
 }

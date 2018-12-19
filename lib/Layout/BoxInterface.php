@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Box interface
+ * Box interface.
  *
  * @package   YetiForcePDF\Layout
  *
@@ -12,39 +13,38 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use \YetiForcePDF\Layout\Coordinates\Coordinates;
-use \YetiForcePDF\Layout\Coordinates\Offset;
-use \YetiForcePDF\Layout\Dimensions\BoxDimensions;
-use \YetiForcePDF\Html\Element;
-use YetiForcePDF\Style\Style;
+use YetiForcePDF\Layout\Coordinates\Offset;
 
 /**
- * Interface BoxInterface
+ * Interface BoxInterface.
  */
 interface BoxInterface
 {
 	/**
-	 * Measure width
+	 * Measure width.
+	 *
 	 * @return $this
 	 */
 	public function measureWidth();
 
 	/**
-	 * Measure height
+	 * Measure height.
+	 *
 	 * @return $this
 	 */
 	public function measureHeight();
 
 	/**
-	 * Measure offset relative to parent Box
+	 * Measure offset relative to parent Box.
+	 *
 	 * @return $this
 	 */
 	public function measureOffset();
 
 	/**
-	 * Measure absolute position
+	 * Measure absolute position.
+	 *
 	 * @return $this
 	 */
 	public function measurePosition();
-
 }

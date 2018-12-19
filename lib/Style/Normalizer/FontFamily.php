@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * FontFamily class
+ * FontFamily class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,15 +14,15 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class FontFamily
+ * Class FontFamily.
  */
 class FontFamily extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        return $this->normalized = ['font-family' => str_replace(['\'', '"'], '', $ruleValue)];
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		return $this->normalized = ['font-family' => str_replace(['\'', '"'], '', $ruleValue)];
+	}
 }

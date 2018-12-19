@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Width class
+ * Width class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,18 +14,18 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Width
+ * Class Width.
  */
 class Width extends Normalizer
 {
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized === null && $ruleValue !== 'auto') {
-            return $this->normalized = ['width' => $this->getNumberValues($ruleValue)[0]];
-        }
-        if ($ruleValue === 'auto') {
-            return $this->normalized = ['width' => 'auto'];
-        }
-        return $this->normalized;
-    }
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized === null && $ruleValue !== 'auto') {
+			return $this->normalized = ['width' => $this->getNumberValues($ruleValue)[0]];
+		}
+		if ($ruleValue === 'auto') {
+			return $this->normalized = ['width' => 'auto'];
+		}
+		return $this->normalized;
+	}
 }

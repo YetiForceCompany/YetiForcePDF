@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Coordinates class
+ * Coordinates class.
  *
  * @package   YetiForcePDF\Layout\Coordinates
  *
@@ -13,32 +14,35 @@ declare(strict_types=1);
 namespace YetiForcePDF\Layout\Coordinates;
 
 use YetiForcePDF\Layout\Box;
-use \YetiForcePDF\Math;
+use YetiForcePDF\Math;
 
 /**
- * Class Coordinates
+ * Class Coordinates.
  */
 class Coordinates extends \YetiForcePDF\Base
 {
-
 	/**
 	 * @var Box
 	 */
 	protected $box;
 	/**
-	 * Absolute X position inside html coordinate system
+	 * Absolute X position inside html coordinate system.
+	 *
 	 * @var string
 	 */
 	protected $htmlX = '0';
 	/**
-	 * Absolute Y position inside html coordinate system
+	 * Absolute Y position inside html coordinate system.
+	 *
 	 * @var string
 	 */
 	protected $htmlY = '0';
 
 	/**
-	 * Set box
+	 * Set box.
+	 *
 	 * @param \YetiForcePDF\Layout\Box $box
+	 *
 	 * @return $this
 	 */
 	public function setBox(Box $box)
@@ -48,7 +52,8 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get box
+	 * Get box.
+	 *
 	 * @return \YetiForcePDF\Layout\Box
 	 */
 	public function getBox()
@@ -57,8 +62,10 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set absolute html coordinates x position
+	 * Set absolute html coordinates x position.
+	 *
 	 * @param float $x
+	 *
 	 * @return $this
 	 */
 	public function setX(string $x)
@@ -68,7 +75,8 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get html X
+	 * Get html X.
+	 *
 	 * @return string
 	 */
 	public function getX()
@@ -77,7 +85,8 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get html Y
+	 * Get html Y.
+	 *
 	 * @return string
 	 */
 	public function getY()
@@ -86,8 +95,10 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set absolute html coordinates y position
+	 * Set absolute html coordinates y position.
+	 *
 	 * @param string $y
+	 *
 	 * @return $this
 	 */
 	public function setY(string $y)
@@ -96,9 +107,9 @@ class Coordinates extends \YetiForcePDF\Base
 		return $this;
 	}
 
-
 	/**
-	 * Get pdf X coodrinates
+	 * Get pdf X coodrinates.
+	 *
 	 * @return string
 	 */
 	public function getPdfX()
@@ -107,7 +118,8 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Convert html to pdf y
+	 * Convert html to pdf y.
+	 *
 	 * @return string
 	 */
 	public function getPdfY()
@@ -118,7 +130,8 @@ class Coordinates extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get end Y - position at the end of box
+	 * Get end Y - position at the end of box.
+	 *
 	 * @return string
 	 */
 	public function getEndY()
@@ -127,5 +140,4 @@ class Coordinates extends \YetiForcePDF\Base
 		$height = $box->getDimensions()->getHeight();
 		return Math::add($height, $this->htmlY);
 	}
-
 }

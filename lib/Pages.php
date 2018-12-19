@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Page class
+ * Page class.
  *
  * @package   YetiForcePDF\Document
  *
@@ -13,7 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF;
 
 /**
- * Class Pages
+ * Class Pages.
  */
 class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
@@ -22,20 +23,24 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dictionaryType = 'Pages';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Pages';
 
 	/**
-	 * Proc Set
+	 * Proc Set.
+	 *
 	 * @var \YetiForcePDF\Objects\Basic\ArrayObject
 	 */
 	protected $procSet;
 
 	/**
-	 * Add proc set
+	 * Add proc set.
+	 *
 	 * @param \YetiForcePDF\Objects\Basic\ArrayObject $procSet
+	 *
 	 * @return $this
 	 */
 	public function addProcSet(\YetiForcePDF\Objects\Basic\ArrayObject $procSet)
@@ -55,7 +60,7 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		}
 		$this->clearValues()
 			->addValue('Type', '/Pages')
-			->addValue('Count', (string)count($kids))
+			->addValue('Count', (string) count($kids))
 			->addValue('Kids', '[' . implode("\n    ", $kids) . ']');
 		if ($this->procSet) {
 			$this->addValue('ProcSet', $this->procSet->getReference());

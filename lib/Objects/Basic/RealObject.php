@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * RealObject class (real number)
+ * RealObject class (real number).
  *
  * @package   YetiForcePDF\Objects\Basic
  *
@@ -13,17 +14,19 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class RealObject
+ * Class RealObject.
  */
 class RealObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'Real';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Real';

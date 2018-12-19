@@ -13,19 +13,13 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Layout;
 
-use YetiForcePDF\Html\Element;
-use YetiForcePDF\Layout\Coordinates\Coordinates;
-use YetiForcePDF\Layout\Coordinates\Offset;
-use YetiForcePDF\Layout\Dimensions\BoxDimensions;
 use YetiForcePDF\Math;
-use YetiForcePDF\Style\Style;
 
 /**
  * Class HeaderBox.
  */
 class HeaderBox extends BlockBox
 {
-
 	/**
 	 * {@inheritdoc}
 	 */
@@ -99,5 +93,4 @@ class HeaderBox extends BlockBox
 		}
 		return $this;
 	}
-
 }

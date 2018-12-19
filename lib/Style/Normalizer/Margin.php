@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Margin class
+ * Margin class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
@@ -13,19 +14,18 @@ declare(strict_types=1);
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class Margin
+ * Class Margin.
  */
 class Margin extends Normalizer
 {
-
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($ruleValue, string $ruleName = ''): array
-    {
-        if ($this->normalized !== null) {
-            return $this->normalized;
-        }
-        return $this->normalized = $this->normalizeMultiValues(['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], $ruleValue);
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function normalize($ruleValue, string $ruleName = ''): array
+	{
+		if ($this->normalized !== null) {
+			return $this->normalized;
+		}
+		return $this->normalized = $this->normalizeMultiValues(['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], $ruleValue);
+	}
 }

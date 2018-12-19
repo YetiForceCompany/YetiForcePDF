@@ -82,6 +82,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
 	/**
 	 * Should we break page after this element?
+	 *
 	 * @return bool
 	 */
 	public function shouldBreakPage()
@@ -119,7 +120,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 * Close line box.
 	 *
 	 * @param \YetiForcePDF\Layout\LineBox|null $lineBox
-	 * @param bool $createNew
+	 * @param bool                              $createNew
 	 *
 	 * @return \YetiForcePDF\Layout\LineBox
 	 */
@@ -453,7 +454,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
 	/**
 	 * Measure height.
+	 *
 	 * @param bool $afterPageDividing
+	 *
 	 * @return $this
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
@@ -549,7 +552,8 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	}
 
 	/**
-	 * Replace page numbers
+	 * Replace page numbers.
+	 *
 	 * @return $this
 	 */
 	public function replacePageNumbers()
@@ -560,11 +564,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			if ($child instanceof TextBox) {
 				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
 					$pageNumber = $this->document->getCurrentPage()->getPageNumber();
-					$child->setText(preg_replace('/{p}/ui', (string)$pageNumber, $child->getTextContent()));
+					$child->setText(preg_replace('/{p}/ui', (string) $pageNumber, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
 				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
-					$pages = (string)$this->document->getCurrentPage()->getPageCount();
+					$pages = (string) $this->document->getCurrentPage()->getPageCount();
 					$child->setText(preg_replace('/{a}/ui', $pages, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
