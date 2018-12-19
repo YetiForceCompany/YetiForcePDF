@@ -134,11 +134,11 @@ class TableBox extends BlockBox
 	/**
 	 * Append table row group box element.
 	 *
-	 * @param \DOMNode                      $childDomElement
-	 * @param Element                       $element
-	 * @param Style                         $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox $parentBlock
-	 * @param string                        $display
+	 * @param string $display
 	 *
 	 * @return $this
 	 */
@@ -172,9 +172,9 @@ class TableBox extends BlockBox
 	/**
 	 * Append table row group box element.
 	 *
-	 * @param \DOMNode                      $childDomElement
-	 * @param Element                       $element
-	 * @param Style                         $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox $parentBlock
 	 *
 	 * @return $this
@@ -219,8 +219,8 @@ class TableBox extends BlockBox
 	public function getColumns()
 	{
 		$columns = [];
-		foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
-			foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+		foreach ($this->getChildren() as $rowGroup) {
+			foreach ($rowGroup->getChildren() as $row) {
 				foreach ($row->getChildren() as $columnIndex => $column) {
 					if ($column instanceof TableColumnBox) {
 						$columns[$columnIndex][] = $column;
@@ -240,7 +240,7 @@ class TableBox extends BlockBox
 	{
 		$cells = [];
 		foreach ($this->getChildren() as $rowGroup) {
-			foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+			foreach ($rowGroup->getChildren() as $row) {
 				foreach ($row->getChildren() as $column) {
 					$cells[] = $column->getFirstChild();
 				}
@@ -259,7 +259,7 @@ class TableBox extends BlockBox
 	public function setUpWidths(string $availableSpace)
 	{
 		foreach ($this->getChildren() as $rowGroup) {
-			foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+			foreach ($rowGroup->getChildren() as $row) {
 				$columns = $row->getChildren();
 				foreach ($columns as $columnIndex => $column) {
 					$cell = $column->getFirstChild();
@@ -269,12 +269,12 @@ class TableBox extends BlockBox
 					$this->contentWidths[$columnIndex] = Math::max($this->contentWidths[$columnIndex] ?? '0', $columnInnerWidth);
 					$minColumnWidth = $cell->getDimensions()->getMinWidth();
 					if ($column->getColSpan() > 1) {
-						$minColumnWidth = Math::div($minColumnWidth, (string) $column->getColSpan());
+						$minColumnWidth = Math::div($minColumnWidth, (string)$column->getColSpan());
 					}
 					$this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex] ?? '0', $minColumnWidth);
 					if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === false) {
 						if ($column->getColSpan() > 1) {
-							$styleWidth = Math::div($styleWidth, (string) $column->getColSpan());
+							$styleWidth = Math::div($styleWidth, (string)$column->getColSpan());
 						}
 						$preferred = Math::max($styleWidth, $minColumnWidth);
 						$this->minWidths[$columnIndex] = $preferred;
@@ -294,7 +294,7 @@ class TableBox extends BlockBox
 		}
 		if ($this->getParent()->getStyle()->getRules('border-collapse') !== 'collapse') {
 			$spacing = $this->getStyle()->getRules('border-spacing');
-			$this->cellSpacingWidth = Math::mul((string) (count($columns) + 1), $spacing);
+			$this->cellSpacingWidth = Math::mul((string)(count($columns) + 1), $spacing);
 		}
 	}
 
@@ -321,8 +321,8 @@ class TableBox extends BlockBox
 		$this->percentColumns = [];
 		$this->pixelColumns = [];
 		$this->autoColumns = [];
-		foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
-			foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+		foreach ($this->getChildren() as $rowGroup) {
+			foreach ($rowGroup->getChildren() as $row) {
 				foreach ($row->getChildren() as $columnIndex => $column) {
 					if ($columnSizingTypes[$columnIndex] === 'percent') {
 						$this->percentColumns[$columnIndex][] = $column;
@@ -451,15 +451,14 @@ class TableBox extends BlockBox
 				}
 			}
 		}
-		$leftSpace = Math::sub($leftSpace, $totalToAdd);
-		return $leftSpace;
+		return Math::sub($leftSpace, $totalToAdd);
 	}
 
 	/**
 	 * Add to others (left space to auto/pixel columns).
 	 *
 	 * @param string $leftSpace
-	 * @param bool   $withPreferred
+	 * @param bool $withPreferred
 	 *
 	 * @return $this
 	 */
@@ -477,7 +476,7 @@ class TableBox extends BlockBox
 			return $this;
 		}
 		// first redistribute it to auto columns because they are most flexible ones
-		if ($count = count($this->autoColumns)) {
+		if (isset($this->autoColumns[0])) {
 			$autoColumnsMaxWidth = $this->getAutoColumnsMaxWidth();
 			foreach ($this->autoColumns as $columnIndex => $columns) {
 				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
@@ -495,7 +494,7 @@ class TableBox extends BlockBox
 			}
 		} elseif ($count = count($this->pixelColumns)) {
 			// next redistribute left space to pixel columns if there where no auto columns
-			$add = Math::div($leftSpace, (string) $count);
+			$add = Math::div($leftSpace, (string)$count);
 			foreach ($this->pixelColumns as $columnIndex => $columns) {
 				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
 				foreach ($columns as $column) {
@@ -521,10 +520,10 @@ class TableBox extends BlockBox
 	{
 		$currentOthersWidth = '0';
 
-		foreach ($this->autoColumns as $columnIndex => $columns) {
+		foreach ($this->autoColumns as $columns) {
 			$currentOthersWidth = Math::add($currentOthersWidth, $columns[0]->getDimensions()->getInnerWidth());
 		}
-		foreach ($this->pixelColumns as $columnIndex => $columns) {
+		foreach ($this->pixelColumns as $columns) {
 			$currentOthersWidth = Math::add($currentOthersWidth, $columns[0]->getDimensions()->getInnerWidth());
 		}
 		return $currentOthersWidth;
@@ -552,7 +551,7 @@ class TableBox extends BlockBox
 	protected function getTotalPercentageWidth()
 	{
 		$totalPercentageColumnsWidth = '0';
-		foreach ($this->percentColumns as $columnIndex => $columns) {
+		foreach ($this->percentColumns as $columns) {
 			$totalPercentageColumnsWidth = Math::add($totalPercentageColumnsWidth, $columns[0]->getDimensions()->getInnerWidth());
 		}
 		return $totalPercentageColumnsWidth;
@@ -586,7 +585,7 @@ class TableBox extends BlockBox
 		$currentPercentsWidth = '0';
 		foreach ($this->percentColumns as $columnIndex => $columns) {
 			$columnWidth = Math::mul($this->percentages[$columnIndex], $onePercent);
-			foreach ($columns as $rowIndex => $column) {
+			foreach ($columns as $column) {
 				$columnStyle = $column->getStyle();
 				$column->getDimensions()->setWidth(Math::add($columnWidth, $columnStyle->getHorizontalPaddingsWidth()));
 				$column->getFirstChild()->getDimensions()->setWidth($columnWidth);
@@ -645,7 +644,7 @@ class TableBox extends BlockBox
 			foreach ($this->percentColumns as $columnIndex => $columns) {
 				$columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowWidth);
 				$percentsWidth = Math::add($percentsWidth, $columnWidth);
-				foreach ($columns as $rowIndex => $column) {
+				foreach ($columns as $column) {
 					$this->setColumnWidth($column, $columnWidth);
 				}
 			}
@@ -653,7 +652,7 @@ class TableBox extends BlockBox
 			if ($totalPercentage !== '100' && Math::comp($this->getCurrentOthersWidth(), '0') === 0) {
 				// we have some space available
 				$leftSpace = Math::sub($availableSpace, $percentsWidth);
-				$add = Math::div($leftSpace, (string) count($this->percentColumns));
+				$add = Math::div($leftSpace, (string)count($this->percentColumns));
 				foreach ($this->percentColumns as $columnIndex => $columns) {
 					foreach ($columns as $column) {
 						$columnWidth = Math::add($column->getDimensions()->getWidth(), $add);
@@ -685,7 +684,7 @@ class TableBox extends BlockBox
 	/**
 	 * Minimal content percentage guess.
 	 *
-	 * @param array  $rows
+	 * @param array $rows
 	 * @param string $availableSpace
 	 *
 	 * @return $this
@@ -701,7 +700,7 @@ class TableBox extends BlockBox
 	/**
 	 * Minimal content specified guess.
 	 *
-	 * @param array  $rows
+	 * @param array $rows
 	 * @param string $availableSpace
 	 *
 	 * @return $this
@@ -743,7 +742,7 @@ class TableBox extends BlockBox
 	/**
 	 * Maximal content guess.
 	 *
-	 * @param array  $rows
+	 * @param array $rows
 	 * @param string $availableSpace
 	 *
 	 * @return $this
@@ -921,7 +920,7 @@ class TableBox extends BlockBox
 	protected function getAutoColumnsWidth()
 	{
 		$autoColumnsWidth = '0';
-		foreach ($this->autoColumns as $columnIndex => $columns) {
+		foreach ($this->autoColumns as $columns) {
 			$autoColumnsWidth = Math::add($autoColumnsWidth, $columns[0]->getDimensions()->getInnerWidth());
 		}
 		return $autoColumnsWidth;
@@ -931,7 +930,7 @@ class TableBox extends BlockBox
 	 * Shrink to fit.
 	 *
 	 * @param string $availableSpace
-	 * @param int    $step
+	 * @param int $step
 	 *
 	 * @return TableBox
 	 */
@@ -1024,7 +1023,7 @@ class TableBox extends BlockBox
 	 * Try preferred width.
 	 *
 	 * @param string $leftSpace
-	 * @param bool   $outerWidthSet
+	 * @param bool $outerWidthSet
 	 *
 	 * @return $this|TableBox
 	 */
@@ -1206,8 +1205,8 @@ class TableBox extends BlockBox
 								$spannedRowsHeight = Math::add($spannedRowsHeight, $maxRowHeights[$rowGroupIndex][$rowIndex + $i]);
 							}
 						}
-						$fromOtherRows = Math::div($spannedRowsHeight, (string) $rowSpan);
-						$fromColumnHeight = Math::div($column->getDimensions()->getOuterHeight(), (string) $rowSpan);
+						$fromOtherRows = Math::div($spannedRowsHeight, (string)$rowSpan);
+						$fromColumnHeight = Math::div($column->getDimensions()->getOuterHeight(), (string)$rowSpan);
 						$currentRowMax = Math::max($currentRowMax, $fromOtherRows, $fromColumnHeight);
 						// if column that have rowSpan >1 is higher than sum of all other spanned rows max height expand others
 						if (Math::comp($fromColumnHeight, $fromOtherRows) > 0) {
@@ -1231,7 +1230,7 @@ class TableBox extends BlockBox
 					$column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
 					$cell = $column->getFirstChild();
 					$height = $column->getDimensions()->getInnerHeight();
-					$height = Math::div($height, (string) $column->getRowSpan());
+					$height = Math::div($height, (string)$column->getRowSpan());
 					$cellChildrenHeight = '0';
 					foreach ($cell->getChildren() as $cellChild) {
 						$cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
@@ -1239,7 +1238,7 @@ class TableBox extends BlockBox
 					$cellStyle = $cell->getStyle();
 					$cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
 					$cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
-					$cellChildrenHeight = Math::div($cellChildrenHeight, (string) $column->getRowSpan());
+					$cellChildrenHeight = Math::div($cellChildrenHeight, (string)$column->getRowSpan());
 					// add vertical padding if needed
 					if (Math::comp($height, $cellChildrenHeight) > 0) {
 						$freeSpace = Math::sub($height, $cellChildrenHeight);

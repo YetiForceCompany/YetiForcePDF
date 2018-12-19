@@ -25,7 +25,9 @@ class TextBox extends ElementBox implements BoxInterface
 	 */
 	protected $text;
 
-	// {@inheritdoc}
+	/**
+	 * {@inheritdoc}
+	 */
 	public function init()
 	{
 		parent::init();

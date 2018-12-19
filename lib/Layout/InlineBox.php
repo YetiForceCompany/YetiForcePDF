@@ -179,19 +179,18 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	protected function getPreviousText()
 	{
 		$closest = $this->getClosestLineBox()->getLastChild();
-		if ($previousTop = $closest->getPrevious()) {
-			if ($textBox = $previousTop->getFirstTextBox()) {
-				return $textBox->getText();
-			}
+		$previousTop = $closest->getPrevious();
+		if ($previousTop && $textBox = $previousTop->getFirstTextBox()) {
+			return $textBox->getText();
 		}
 	}
 
 	/**
 	 * Add text.
 	 *
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return $this

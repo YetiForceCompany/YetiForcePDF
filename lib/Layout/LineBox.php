@@ -25,9 +25,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Append block box element.
 	 *
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\BlockBox
@@ -40,9 +40,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Append table block box element.
 	 *
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\BlockBox
@@ -55,9 +55,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Append inline block box element.
 	 *
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBlockBox
@@ -88,9 +88,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Add inline child (and split text to individual characters).
 	 *
-	 * @param \DOMNode                           $childDomElement
-	 * @param Element                            $element
-	 * @param Style                              $style
+	 * @param \DOMNode $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBox
@@ -301,10 +301,9 @@ class LineBox extends Box implements BoxInterface
 		$parentStyle = $parent->getStyle();
 		$top = $parentStyle->getOffsetTop();
 		$left = $parentStyle->getOffsetLeft();
-		if ($previous = $this->getPrevious()) {
-			if (!$previous->isAbsolute()) {
-				$top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'));
-			}
+		$previous = $this->getPrevious();
+		if ($previous && !$previous->isAbsolute()) {
+			$top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight(), $previous->getStyle()->getRules('margin-bottom'));
 		}
 		$top = Math::add($top, $this->getStyle()->getRules('margin-top'));
 		$this->getOffset()->setTop($top);
@@ -345,12 +344,12 @@ class LineBox extends Box implements BoxInterface
 		foreach ($this->getChildren() as $child) {
 			$allChildren = [];
 			$child->getAllChildren($allChildren);
-			$maxLevel = Math::max($maxLevel, (string) count($allChildren));
+			$maxLevel = Math::max($maxLevel, (string)count($allChildren));
 			$allNestedChildren[] = $allChildren;
 		}
 		$clones = [];
 		for ($row = 0; $row < $maxLevel; $row++) {
-			foreach ($allNestedChildren as $column => $childArray) {
+			foreach ($allNestedChildren as $childArray) {
 				if (isset($childArray[$row])) {
 					$current = $childArray[$row];
 					$clones[$current->getId()][] = $current;

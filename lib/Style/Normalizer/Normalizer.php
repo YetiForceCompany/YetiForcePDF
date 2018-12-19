@@ -71,9 +71,6 @@ class Normalizer extends \YetiForcePDF\Base
 		$matches = [];
 		preg_match_all('/(([0-9.?]+)([a-z%]+)?\s?)/ui', $ruleValue, $matches, PREG_SET_ORDER);
 		$originalSize = $matches[0][2];
-		if ($originalSize === null) {
-			$rest = '';
-		}
 		if (isset($matches[0][3])) {
 			$originalUnit = $matches[0][3];
 		} else {
@@ -98,7 +95,7 @@ class Normalizer extends \YetiForcePDF\Base
 	/**
 	 * Normalize css rule.
 	 *
-	 * @param mixed  $ruleValue
+	 * @param mixed $ruleValue
 	 * @param string $ruleName
 	 *
 	 * @return array
@@ -184,7 +181,7 @@ class Normalizer extends \YetiForcePDF\Base
 	 * Normalize multi number values.
 	 *
 	 * @param string[] $ruleNames ['margin-top','margin-right','margin-bottom','margin-left']
-	 * @param string   $ruleValue
+	 * @param string $ruleValue
 	 *                            return array
 	 */
 	public function normalizeMultiValues(array $ruleNames, $ruleValue): array

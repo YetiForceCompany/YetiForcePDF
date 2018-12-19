@@ -135,7 +135,7 @@ class TableRowBox extends BlockBox
 	public function spanColumns()
 	{
 		$colSpans = [];
-		foreach ($this->getChildren() as $columnIndex => $column) {
+		foreach ($this->getChildren() as $column) {
 			if ($column->getColSpan() > 1) {
 				$spanCount = $column->getColSpan() - 1;
 				$spans = [$column];
@@ -162,7 +162,7 @@ class TableRowBox extends BlockBox
 			if ($column !== null) {
 				$separate = $column->getStyle()->getRules('border-collapse') === 'separate';
 				if ($separate && $tableAuto) {
-					$spannedWidth = Math::add($spannedWidth, Math::mul((string) (count($columns)), $column->getStyle()->getRules('border-spacing')));
+					$spannedWidth = Math::add($spannedWidth, Math::mul((string)(count($columns)), $column->getStyle()->getRules('border-spacing')));
 				}
 				if ($separate && $column->getNext() === null && !$tableAuto) {
 					$spannedWidth = Math::sub($spannedWidth, $column->getStyle()->getRules('border-spacing'));
@@ -187,9 +187,9 @@ class TableRowBox extends BlockBox
 	/**
 	 * Append table cell box element.
 	 *
-	 * @param \DOMElement                   $childDomElement
-	 * @param Element                       $element
-	 * @param Style                         $style
+	 * @param \DOMElement $childDomElement
+	 * @param Element $element
+	 * @param Style $style
 	 * @param \YetiForcePDF\Layout\BlockBox $parentBlock
 	 *
 	 * @return $this
@@ -200,12 +200,12 @@ class TableRowBox extends BlockBox
 		$style->setRule('display', 'block');
 		$attributeColSpan = $childDomElement->getAttribute('colspan');
 		if ($attributeColSpan) {
-			$colSpan = (int) $attributeColSpan;
+			$colSpan = (int)$attributeColSpan;
 		}
 		$rowSpan = 1;
 		$attributeRowSpan = $childDomElement->getAttribute('rowspan');
 		if ($attributeRowSpan) {
-			$rowSpan = (int) $attributeRowSpan;
+			$rowSpan = (int)$attributeRowSpan;
 		}
 		$clearStyle = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)

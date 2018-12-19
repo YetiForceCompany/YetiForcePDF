@@ -325,9 +325,9 @@ class Document
 	/**
 	 * Set font.
 	 *
-	 * @param string                     $family
-	 * @param string                     $weight
-	 * @param string                     $style
+	 * @param string $family
+	 * @param string $weight
+	 * @param string $style
 	 * @param \YetiForcePDF\Objects\Font $fontInstance
 	 *
 	 * @return $this
@@ -363,8 +363,8 @@ class Document
 	public function getAllFontInstances()
 	{
 		$instances = [];
-		foreach ($this->fontInstances as $family => $weights) {
-			foreach ($weights as $weight => $styles) {
+		foreach ($this->fontInstances as $weights) {
+			foreach ($weights as $styles) {
 				foreach ($styles as $instance) {
 					$instances[] = $instance;
 				}
@@ -376,9 +376,9 @@ class Document
 	/**
 	 * Set font information.
 	 *
-	 * @param string                 $family
-	 * @param string                 $weight
-	 * @param string                 $style
+	 * @param string $family
+	 * @param string $weight
+	 * @param string $style
 	 * @param \FontLib\TrueType\File $font
 	 *
 	 * @return $this
@@ -458,7 +458,7 @@ class Document
 	public function setHeader(HeaderBox $header)
 	{
 		if ($header->getParent()) {
-			$header - $header->getParent()->removeChild($header);
+			$header = $header->getParent()->removeChild($header);
 		}
 		$this->header = $header;
 		return $this;
@@ -529,10 +529,10 @@ class Document
 	/**
 	 * Add page to the document.
 	 *
-	 * @param string    $format      - optional format 'A4' for example
-	 * @param string    $orientation - optional orientation 'P' or 'L'
-	 * @param Page|null $page        - we can add cloned page or page from other document too
-	 * @param Page|null $after       - add page after this page
+	 * @param string $format - optional format 'A4' for example
+	 * @param string $orientation - optional orientation 'P' or 'L'
+	 * @param Page|null $page - we can add cloned page or page from other document too
+	 * @param Page|null $after - add page after this page
 	 *
 	 * @return \YetiForcePDF\Page
 	 */
@@ -623,7 +623,7 @@ class Document
 		foreach ($this->getPages() as $page) {
 			$groups[$page->getGroup()][] = $page;
 		}
-		foreach ($groups as $group => $pages) {
+		foreach ($groups as $pages) {
 			$pageCount = count($pages);
 			foreach ($pages as $index => $page) {
 				$page->setPageNumber($index + 1);
@@ -656,8 +656,8 @@ class Document
 	/**
 	 * Add object to document.
 	 *
-	 * @param PdfObject      $object
-	 * @param PdfObject|null $after  - add after this element
+	 * @param PdfObject $object
+	 * @param PdfObject|null $after - add after this element
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
@@ -764,8 +764,8 @@ class Document
 	 *
 	 * @param string $text
 	 * @param string $encoding
-	 * @param bool   $withParenthesis
-	 * @param bool   $prependBom
+	 * @param bool $withParenthesis
+	 * @param bool $prependBom
 	 *
 	 * @return string
 	 */
@@ -823,24 +823,4 @@ class Document
 		return $this->buffer;
 	}
 
-	/*public function __clone()
-	{
-		$oldObjects = $this->objects;
-		$this->objects = [];
-		foreach ($oldObjects as $object) {
-			$this->objects[] = clone $object;
-		}
-		$oldPages = $this->pages;
-		$this->pages = [];
-		foreach ($oldPages as $page) {
-			$this->pages[] = clone $page;
-		}
-		$this->pagesObject = clone $this->pagesObject;
-		$this->htmlParser = clone $this->htmlParser;
-		$this->header = clone $this->header;
-		$this->footer = clone $this->footer;
-		$this->watermark = clone $this->watermark;
-		$this->currentPageObject = clone $this->currentPageObject;
-		$this->meta = clone $this->meta;
-	}*/
 }

@@ -542,16 +542,16 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			->setDocument($this->document)
 			->init();
 		$this->dimensions
-			->setWidth(Math::sub((string) $dimensions[0], Math::add((string) $this->margins['left'], (string) $this->margins['right'])))
-			->setHeight(Math::sub((string) $dimensions[1], Math::add((string) $this->margins['top'], (string) $this->margins['bottom'])));
+			->setWidth(Math::sub((string)$dimensions[0], Math::add((string)$this->margins['left'], (string)$this->margins['right'])))
+			->setHeight(Math::sub((string)$dimensions[1], Math::add((string)$this->margins['top'], (string)$this->margins['bottom'])));
 		$this->outerDimensions = (new Dimensions())
 			->setDocument($this->document)
 			->init();
-		$this->outerDimensions->setWidth((string) $dimensions[0])->setHeight((string) $dimensions[1]);
+		$this->outerDimensions->setWidth((string)$dimensions[0])->setHeight((string)$dimensions[1]);
 		$this->coordinates = (new Coordinates())
 			->setDocument($this->document)
 			->init();
-		$this->coordinates->setX((string) $this->margins['left'])->setY((string) $this->margins['top'])->init();
+		$this->coordinates->setX((string)$this->margins['left'])->setY((string)$this->margins['top'])->init();
 		return $this;
 	}
 
@@ -717,8 +717,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Add page resource.
 	 *
-	 * @param string                          $groupName
-	 * @param string                          $resourceName
+	 * @param string $groupName
+	 * @param string $resourceName
 	 * @param \YetiForcePDF\Objects\PdfObject $resource
 	 *
 	 * @return \YetiForcePDF\Page
@@ -757,7 +757,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	public function synchronizeFonts()
 	{
 		// add all existing fonts
-		foreach ($this->document->getAllFontInstances() as $fontName => $fontInstance) {
+		foreach ($this->document->getAllFontInstances() as $fontInstance) {
 			$fontNumber = $fontInstance->getNumber();
 			if (!$this->getResource('Font', $fontNumber)) {
 				$this->addResource('Font', $fontNumber, $fontInstance->getType0Font());
@@ -952,7 +952,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Cut box above specified position.
 	 *
-	 * @param Box    $child
+	 * @param Box $child
 	 * @param string $yPos
 	 *
 	 * @return $this
@@ -972,7 +972,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Cut box below specified position.
 	 *
-	 * @param Box    $child
+	 * @param Box $child
 	 * @param string $yPos
 	 *
 	 * @return $this
@@ -1021,7 +1021,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			if ($box instanceof TableWrapperBox && Math::comp($boxCoords->getY(), $yPos) <= 0 && Math::comp($boxCoords->getEndY(), $yPos) > 0) {
 				$cloned = $this->divideTable($box);
 			} else {
-				foreach ($box->getChildren() as $index => $child) {
+				foreach ($box->getChildren() as $child) {
 					if (!$child->isForMeasurement() || !$child->isRenderable()) {
 						continue;
 					}
@@ -1056,7 +1056,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	protected function divideTable(Box $tableChild)
 	{
 		$tableWrapperBox = $tableChild->getClosestByType('TableWrapperBox');
-		$pageEnd = Math::add($this->getDimensions()->getHeight(), (string) $this->margins['top']);
+		$pageEnd = Math::add($this->getDimensions()->getHeight(), (string)$this->margins['top']);
 		if (Math::comp($tableWrapperBox->getCoordinates()->getY(), $pageEnd) >= 0) {
 			// if table is below page do nothing - it will be moved to the next page and then again checked
 			return $tableWrapperBox;
@@ -1079,7 +1079,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$newTableBox->appendChild($headers[0]->cloneWithChildren());
 		}
 		// clone row groups and rows
-		foreach ($tableWrapperBox->getFirstChild()->getChildren() as $tableRowGroupIndex => $tableRowGroup) {
+		foreach ($tableWrapperBox->getFirstChild()->getChildren() as $tableRowGroup) {
 			if (Math::comp($tableRowGroup->getCoordinates()->getEndY(), $pageEnd) < 0) {
 				continue;
 			}
@@ -1210,7 +1210,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function breakOverflow()
 	{
-		$atYPos = Math::add($this->getDimensions()->getHeight(), (string) $this->margins['top']);
+		$atYPos = Math::add($this->getDimensions()->getHeight(), (string)$this->margins['top']);
 		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($atYPos);
 		if (!isset($clonedBoxes[0])) {
 			return $this;

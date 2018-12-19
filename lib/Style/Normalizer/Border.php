@@ -25,9 +25,6 @@ class Border extends Normalizer
 		}
 		$matches = [];
 		preg_match('/([0-9]+)([a-z]+)\s+(solid|dashed|dotted|none)\s+(.+)?/ui', $ruleValue, $matches);
-		if (!isset($matches[1])) {
-			$test = 'test';
-		}
 		$originalSize = $matches[1];
 		$originalUnit = $matches[2];
 		if (isset($matches[3])) {

@@ -120,7 +120,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 * Close line box.
 	 *
 	 * @param \YetiForcePDF\Layout\LineBox|null $lineBox
-	 * @param bool                              $createNew
+	 * @param bool $createNew
 	 *
 	 * @return \YetiForcePDF\Layout\LineBox
 	 */
@@ -370,7 +370,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	public function mergeLineGroups(array $lineGroups)
 	{
 		$lines = [];
-		foreach ($lineGroups as $index => $lines) {
+		foreach ($lineGroups as $lines) {
 			if (isset($lines[0])) {
 				$currentLine = $this->getNewLineBox($lines[0]);
 				foreach ($lines as $line) {
@@ -564,11 +564,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			if ($child instanceof TextBox) {
 				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
 					$pageNumber = $this->document->getCurrentPage()->getPageNumber();
-					$child->setText(preg_replace('/{p}/ui', (string) $pageNumber, $child->getTextContent()));
+					$child->setText(preg_replace('/{p}/ui', (string)$pageNumber, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
 				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
-					$pages = (string) $this->document->getCurrentPage()->getPageCount();
+					$pages = (string)$this->document->getCurrentPage()->getPageCount();
 					$child->setText(preg_replace('/{a}/ui', $pages, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
