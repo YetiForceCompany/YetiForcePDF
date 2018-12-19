@@ -149,6 +149,10 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	public function setKeywords(array $keywords)
 	{
+		foreach ($keywords as &$keyword) {
+			$keyword = trim($keyword);
+		}
+		unset($keyword);
 		$this->keywords = $keywords;
 		return $this;
 	}

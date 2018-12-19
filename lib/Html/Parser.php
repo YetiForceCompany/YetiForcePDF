@@ -65,7 +65,7 @@ class Parser extends \YetiForcePDF\Base
 	{
 		$html = htmlspecialchars_decode($html, ENT_HTML5);
 		$this->html = $this->cleanUpHtml($html);
-		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', 'UTF-8');
+		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', $fromEncoding);
 		return $this;
 	}
 

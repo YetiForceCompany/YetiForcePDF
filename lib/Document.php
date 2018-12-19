@@ -647,12 +647,13 @@ class Document
 	/**
 	 * Load html string
 	 * @param string $html
-	 * @return \YetiForcePDF\Document
+	 * @param string $inputEncoding
+	 * @return $this
 	 */
-	public function loadHtml(string $html): \YetiForcePDF\Document
+	public function loadHtml(string $html, string $inputEncoding)
 	{
 		$this->htmlParser = (new \YetiForcePDF\Html\Parser())->setDocument($this)->init();
-		$this->htmlParser->loadHtml($html);
+		$this->htmlParser->loadHtml($html, $inputEncoding);
 		return $this;
 	}
 
