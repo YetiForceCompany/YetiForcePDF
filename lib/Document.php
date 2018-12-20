@@ -712,7 +712,7 @@ class Document
 	 *
 	 * @return $this
 	 */
-	public function loadHtml(string $html, string $inputEncoding)
+	public function loadHtml(string $html, string $inputEncoding = 'UTF-8')
 	{
 		$this->htmlParser = (new \YetiForcePDF\Html\Parser())->setDocument($this)->init();
 		$this->htmlParser->loadHtml($html, $inputEncoding);
