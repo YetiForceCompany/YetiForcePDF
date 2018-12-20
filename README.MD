@@ -95,6 +95,18 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - PT Serif
 - PT Mono
 
+### Custom fonts
+
+Upload your ttf font files to server and add following code at the beginning of your html.
+
+Each font weight and style could be defined if your font supports it.
+
+```php
+<div data-font data-family="Your Font Name" data-weight="400" data-style="normal"></div>
+<div data-font data-family="Your Font Name" data-weight="800" data-style="normal"></div>
+<div data-font data-family="Your Font Name" data-weight="400" data-style="italic"></div>
+<div data-font data-family="Your Font Name" data-weight="800" data-style="italic"></div>
+```
 
 ### TODO (crucial)
 
