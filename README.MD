@@ -152,6 +152,27 @@ If you have multiple page formats and orientations inside one pdf document you c
 ></div>
 ```
 
+### Page break
+
+When you want to add new page use `data-page-group` or set style on div element `page-break-after:always`.
+
+```php
+<div style="page-break-after:always;"></div>
+```
+
+### Page numbering
+
+When you want to place page number (in header or footer for example) you can do it by placing `{p}` or `{a}` text inside your html - it will be replaced by `{p}` page number or `{a}` all pages count.
+
+```php
+<div data-footer>
+    <div style="border:1px solid greenyellow;font-size:14px;margin:10px;">
+        <div style="text-align:center">Page {p} / {a}</div>
+    </div>
+</div>
+```
+
+
 ### TODO (later but important)
 - [ ] floats
 - [ ] barcode generation
