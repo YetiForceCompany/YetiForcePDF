@@ -108,15 +108,49 @@ Each font weight and style could be defined if your font supports it.
 <div data-font data-family="Your Font Name" data-weight="800" data-style="italic" data-file="/absolute/path/to/font/file/YourFontName-BoldItalic.ttf"></div>
 ```
 
-### TODO (crucial)
+### Headers, footers and watermarks
 
-- [x] ~~font-weight (font-family without specifying weight and variant)~~
-- [x] ~~basic html elements with default css rules (br, table, image, hr etc.)~~
-- [x] ~~tables~~
-- [x] ~~images~~
-- [x] ~~page headers / footers~~
-- [x] ~~alpha channel support for colors (rgba) and opacity~~
-- [x] ~~background watermarks~~
+You can define header, footer and watermark to be displayed inside pdf file
+
+```php
+<div data-header>
+    <table style="border:1px solid greenyellow;font-size:12px;margin:10px;background-color:yellow;width:100%">
+        <tr>
+            <td style="width:50%;border:1px solid red;">This is a page header</td>
+            <td style="text-align:right;border:1px solid red;">which could be table</td>
+        </tr>
+    </table>
+</div>
+<div data-footer>
+    <div style="border:1px solid greenyellow;font-size:14px;margin:10px;">
+        <div style="text-align:center">Footer</div>
+    </div>
+</div>
+<div data-watermark style="text-align:center;">
+    <div style="display:inline-block;font-size:20px;opacity:0.25;">
+        <img src="Image.jpg">
+    </div>
+</div>
+```
+
+### Page format, orientation and margins
+
+Page format, orientation and margins could be defined from YetiForcePDF instance or inside html code.
+
+If you have multiple page formats and orientations inside one pdf document you can insert multiple `data-page-group`s to your html.
+
+```php
+<div data-page-group
+     data-format="A4"
+     data-orientation="P"
+     data-margin-left="30"
+     data-margin-right="30"
+     data-margin-top="40"
+     data-margin-bottom="40"
+     data-header-top="10"
+     data-footer-bottom="10"
+></div>
+```
 
 ### TODO (later but important)
 - [ ] floats
