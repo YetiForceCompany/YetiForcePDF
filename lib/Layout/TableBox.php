@@ -455,63 +455,6 @@ class TableBox extends BlockBox
 	}
 
 	/**
-	 * Add to others (left space to auto/pixel columns).
-	 *
-	 * @param string $leftSpace
-	 * @param bool $withPreferred
-	 *
-	 * @return $this
-	 */
-	protected function addToOthers(string $leftSpace, bool $withPreferred = false)
-	{
-		// first of all try to redistribute space to columns that need it most (width is under preferred)
-		// left space is the space that we can add to other column types that needs extra space to preferred width
-		if ($withPreferred) {
-			$leftSpace = $this->addToPreferredOthers($leftSpace);
-		}
-
-		// ok, we've redistribute space to columns that needs it but if there is space left we must redistribute it
-		// to fulfill percentages
-		if (Math::comp($leftSpace, '0') === 0) {
-			return $this;
-		}
-		// first redistribute it to auto columns because they are most flexible ones
-		if (!empty($this->autoColumns)) {
-			$autoColumnsMaxWidth = $this->getAutoColumnsMaxWidth();
-			foreach ($this->autoColumns as $columnIndex => $columns) {
-				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
-				$add = Math::mul($leftSpace, $ratio);
-				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
-				foreach ($columns as $column) {
-					$colDmns = $column->getDimensions();
-					$colDmns->setWidth($colWidth);
-					$column->getFirstChild()->getDimensions()->setWidth($colDmns->getInnerWidth());
-				}
-				if (!$withPreferred) {
-					// if not to preferred it means that we adding to min widths
-					$this->minWidths[$columnIndex] = $colWidth;
-				}
-			}
-		} elseif ($count = count($this->pixelColumns)) {
-			// next redistribute left space to pixel columns if there where no auto columns
-			$add = Math::div($leftSpace, (string)$count);
-			foreach ($this->pixelColumns as $columnIndex => $columns) {
-				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
-				foreach ($columns as $column) {
-					$colDmns = $column->getDimensions();
-					$colDmns->setWidth($colWidth);
-					$column->getFirstChild()->getDimensions()->setWidth($colDmns->getInnerWidth());
-				}
-				if (!$withPreferred) {
-					// if not to preferred it means that we adding to min widths
-					$this->minWidths[$columnIndex] = $colWidth;
-				}
-			}
-		}
-		return $this;
-	}
-
-	/**
 	 * Get current others width (auto, pixel columns).
 	 *
 	 * @return string
@@ -614,22 +557,22 @@ class TableBox extends BlockBox
 	 */
 	protected function applyPercentage(string $availableSpace)
 	{
-		$currentRowWidth = '0';
+		$currentRowsWidth = '0';
 		if ($this->getParent()->getStyle()->getRules('width') === 'auto') {
 			foreach ($this->getRows()[0]->getChildren() as $columnIndex => $column) {
-				$currentRowWidth = Math::add($currentRowWidth, $column->getDimensions()->getInnerWidth());
+				$currentRowsWidth = Math::add($currentRowsWidth, $column->getDimensions()->getInnerWidth());
 			}
 		} else {
-			$currentRowWidth = $this->getParent()->getDimensions()->getInnerWidth();
+			$currentRowsWidth = $this->getParent()->getDimensions()->getInnerWidth();
 			if ($this->getStyle()->getRules('border-collapse') === 'separate') {
 				$rowStyle = $this->getRows()[0]->getStyle();
 				$spacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
-				$currentRowWidth = Math::sub($currentRowWidth, $spacing);
+				$currentRowsWidth = Math::sub($currentRowsWidth, $spacing);
 			}
 		}
 		$mustExpand = false;
 		foreach ($this->percentColumns as $columnIndex => $columns) {
-			$columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowWidth);
+			$columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowsWidth);
 			if (Math::comp($this->minWidths[$columnIndex], $columnWidth) > 0) {
 				// we need to expand proportionally
 				$mustExpand = true;
@@ -642,14 +585,15 @@ class TableBox extends BlockBox
 			// everything is ok we can resize percentages
 			$percentsWidth = '0';
 			foreach ($this->percentColumns as $columnIndex => $columns) {
-				$columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowWidth);
+				$columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowsWidth);
 				$percentsWidth = Math::add($percentsWidth, $columnWidth);
+				$columnWidth = Math::sub($columnWidth, $columns[0]->getStyle()->getHorizontalPaddingsWidth());
 				foreach ($columns as $column) {
 					$this->setColumnWidth($column, $columnWidth);
 				}
 			}
 			$totalPercentage = $this->getTotalPercentage();
-			if ($totalPercentage !== '100' && Math::comp($this->getCurrentOthersWidth(), '0') === 0) {
+			if (Math::comp($totalPercentage, '100') !== 0 && Math::comp($this->getCurrentOthersWidth(), '0') === 0) {
 				// we have some space available
 				$leftSpace = Math::sub($availableSpace, $percentsWidth);
 				$add = Math::div($leftSpace, (string)count($this->percentColumns));
@@ -1020,6 +964,63 @@ class TableBox extends BlockBox
 	}
 
 	/**
+	 * Add to others (left space to auto/pixel columns).
+	 *
+	 * @param string $leftSpace
+	 * @param bool $withPreferred
+	 *
+	 * @return $this
+	 */
+	protected function addToOthers(string $leftSpace, bool $withPreferred = false)
+	{
+		// first of all try to redistribute space to columns that need it most (width is under preferred)
+		// left space is the space that we can add to other column types that needs extra space to preferred width
+		if ($withPreferred) {
+			$leftSpace = $this->addToPreferredOthers($leftSpace);
+		}
+
+		// ok, we've redistribute space to columns that needs it but if there is space left we must redistribute it
+		// to fulfill percentages
+		if (Math::comp($leftSpace, '0') === 0) {
+			return $this;
+		}
+		// first redistribute it to auto columns because they are most flexible ones
+		if (!empty($this->autoColumns)) {
+			$autoColumnsMaxWidth = $this->getAutoColumnsMaxWidth();
+			foreach ($this->autoColumns as $columnIndex => $columns) {
+				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
+				$add = Math::sub(Math::mul($leftSpace, $ratio), $this->getStyle()->getRules('border-spacing'), $columns[0]->getStyle()->getVerticalBordersWidth());
+				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
+				foreach ($columns as $column) {
+					$colDmns = $column->getDimensions();
+					$colDmns->setWidth($colWidth);
+					$column->getFirstChild()->getDimensions()->setWidth($colDmns->getInnerWidth());
+				}
+				if (!$withPreferred) {
+					// if not to preferred it means that we adding to min widths
+					$this->minWidths[$columnIndex] = $colWidth;
+				}
+			}
+		} elseif ($count = count($this->pixelColumns)) {
+			// next redistribute left space to pixel columns if there where no auto columns
+			$add = Math::div($leftSpace, (string)$count);
+			foreach ($this->pixelColumns as $columnIndex => $columns) {
+				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
+				foreach ($columns as $column) {
+					$colDmns = $column->getDimensions();
+					$colDmns->setWidth($colWidth);
+					$column->getFirstChild()->getDimensions()->setWidth($colDmns->getInnerWidth());
+				}
+				if (!$withPreferred) {
+					// if not to preferred it means that we adding to min widths
+					$this->minWidths[$columnIndex] = $colWidth;
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * Try preferred width.
 	 *
 	 * @param string $leftSpace
@@ -1128,7 +1129,7 @@ class TableBox extends BlockBox
 		}
 		$rows = $this->rows = $this->getRows();
 		$this->setUpWidths($availableSpace);
-		$this->minContentGuess($rows, $availableSpace);
+		$this->minContentGuess($rows);
 		$this->minContentPercentageGuess($rows, $availableSpace);
 		if (!$this->willFit($availableSpace)) {
 			return $this->shrinkToFit($availableSpace, $step);
@@ -1145,7 +1146,8 @@ class TableBox extends BlockBox
 		if (!$this->willFit($availableSpace)) {
 			return $this->shrinkToFit($availableSpace, $step);
 		}
-		$leftSpace = Math::sub($availableSpace, $this->getDimensions()->getWidth());
+		$currentWidth = $this->getDimensions()->getWidth();
+		$leftSpace = Math::sub($availableSpace, $currentWidth);
 		if (Math::comp($leftSpace, '0') > 0) {
 			$this->tryPreferred($leftSpace, $outerWidthSet);
 		}
