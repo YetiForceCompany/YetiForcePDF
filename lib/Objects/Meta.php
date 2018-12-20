@@ -193,9 +193,15 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if ($this->subject) {
 			$this->addValue('Subject', $this->document->filterText($this->subject, 'UTF-16', true, true));
 		}
-		$this->addValue('Author', $this->document->filterText($this->author, 'UTF-16', true, true));
-		$this->addValue('Creator', $this->document->filterText($this->creator, 'UTF-16', true, true));
-		$this->addValue('Producer', $this->document->filterText($this->producer, 'UTF-16', true, true));
+		if ($this->author) {
+			$this->addValue('Author', $this->document->filterText($this->author, 'UTF-16', true, true));
+		}
+		if ($this->creator) {
+			$this->addValue('Creator', $this->document->filterText($this->creator, 'UTF-16', true, true));
+		}
+		if ($this->producer) {
+			$this->addValue('Producer', $this->document->filterText($this->producer, 'UTF-16', true, true));
+		}
 		if (isset($this->keywords[0])) {
 			$this->addValue('Keywords', $this->document->filterText(implode(', ', $this->keywords), 'UTF-16', true, true));
 		}
