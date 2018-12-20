@@ -476,7 +476,7 @@ class TableBox extends BlockBox
 			return $this;
 		}
 		// first redistribute it to auto columns because they are most flexible ones
-		if (isset($this->autoColumns[0])) {
+		if (!empty($this->autoColumns)) {
 			$autoColumnsMaxWidth = $this->getAutoColumnsMaxWidth();
 			foreach ($this->autoColumns as $columnIndex => $columns) {
 				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);

@@ -101,7 +101,7 @@ class Parser extends \YetiForcePDF\Base
 				$pageGroups[] = substr($html, $start);
 			}
 		}
-		if (!isset($pageGroups[0])) {
+		if (empty($pageGroups)) {
 			return [$html];
 		}
 		return $pageGroups;

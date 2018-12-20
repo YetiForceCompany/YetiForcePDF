@@ -97,7 +97,7 @@ class ElementBox extends Box
 			}
 			unset($wrapRowGroup);
 			$rowGroups = $tableBox->getChildren();
-			if (!isset($rowGroups[0])) {
+			if (empty($rowGroups)) {
 				$rowGroup = $tableBox->createRowGroupBox();
 				$row = $rowGroup->createRowBox();
 				$column = $row->createColumnBox();
@@ -105,7 +105,7 @@ class ElementBox extends Box
 			} else {
 				$columnsCount = 0;
 				foreach ($rowGroups as $rowGroup) {
-					if (!isset($rowGroup->getChildren()[0])) {
+					if (!$rowGroup->hasChildren()) {
 						$row = $rowGroup->createRowBox();
 						$column = $row->createColumnBox();
 						$column->createCellBox();

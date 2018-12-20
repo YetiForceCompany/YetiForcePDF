@@ -894,7 +894,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->setMargins(0, 0, 0, 0);
 		$box = $this->getBox();
 		$headers = $box->getBoxesByType('HeaderBox');
-		if (isset($headers[0])) {
+		if (!empty($headers)) {
 			$header = $headers[0];
 			$headerClone = $header->getParent()->removeChild($header)->cloneWithChildren();
 			$header->clearChildren();
@@ -904,7 +904,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$this->layoutHeader($this->document->getHeader());
 		}
 		$footers = $box->getBoxesByType('FooterBox');
-		if (isset($footers[0])) {
+		if (!empty($footers)) {
 			$footer = $footers[0];
 			$footerClone = $footer->getParent()->removeChild($footer)->cloneWithChildren();
 			$footer->clearChildren();
@@ -914,7 +914,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$this->layoutFooter($this->document->getFooter());
 		}
 		$watermarks = $box->getBoxesByType('WatermarkBox');
-		if (isset($watermarks[0])) {
+		if (!empty($watermarks)) {
 			$watermark = $watermarks[0];
 			$watermarkClone = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
 			$watermark->clearChildren();
@@ -1010,7 +1010,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 				}
 			}
 		}
-		if (!isset($boxes[0])) {
+		if (empty($boxes)) {
 			return null;
 		}
 		$clonedBoxes = [];
@@ -1071,11 +1071,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$newTableBox->clearChildren();
 		$newTableWrapperBox->appendChild($newTableBox);
 		$clonedFooters = $tableWrapperBox->getBoxesByType('TableFooterGroupBox', 'TableWrapperBox');
-		if (isset($clonedFooters[0])) {
+		if (!empty($clonedFooters)) {
 			$clonedFooter = $clonedFooters[0]->cloneWithChildren();
 		}
 		$headers = $tableWrapperBox->getBoxesByType('TableHeaderGroupBox', 'TableWrapperBox');
-		if (isset($headers[0])) {
+		if (!empty($headers)) {
 			$newTableBox->appendChild($headers[0]->cloneWithChildren());
 		}
 		// clone row groups and rows
@@ -1212,7 +1212,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$atYPos = Math::add($this->getDimensions()->getHeight(), (string)$this->margins['top']);
 		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($atYPos);
-		if (!isset($clonedBoxes[0])) {
+		if (empty($clonedBoxes)) {
 			return $this;
 		}
 		$newPage = $this->cloneCurrentPage();

@@ -371,7 +371,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	{
 		$lines = [];
 		foreach ($lineGroups as $lines) {
-			if (isset($lines[0])) {
+			if (!empty($lines)) {
 				$currentLine = $this->getNewLineBox($lines[0]);
 				foreach ($lines as $line) {
 					foreach ($line->getChildren() as $child) {
