@@ -20,7 +20,7 @@ use YetiForcePDF\Math;
  */
 class Font extends \YetiForcePDF\Objects\Resource
 {
-	protected $fontFiles = [
+	protected static $fontFiles = [
 		'Noto Sans Condensed' => [
 			'100' => [
 				'normal' => 'NotoSans-CondensedThin.ttf',
@@ -634,6 +634,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 			],
 		],
 	];
+
+	/**
+	 * @var array
+	 */
+	protected static $customFontFiles = [];
 	/**
 	 * @var string
 	 */
@@ -795,6 +800,23 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->setAddToDocument(false);
 		// do not init parent! we don't want to create resources etc.
 		return clone $alreadyExists;
+	}
+
+	/**
+	 * Add custom font.
+	 *
+	 * @param string $family
+	 * @param string $weight
+	 * @param string $style
+	 * @param string $fileName
+	 */
+	public static function addCustomFont(string $family, string $weight, string $style, string $fileName)
+	{
+		static::$customFontFiles[$family] = [
+			$weight => [
+				$style => $fileName
+			]
+		];
 	}
 
 	/**
@@ -1081,11 +1103,19 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Get font file name without extension.
 	 *
+	 * @throws \ErrorException
+	 *
 	 * @return string
 	 */
 	public function getFontFileName()
 	{
-		return $this->fontDir . $this->fontFiles[$this->family][$this->weight][$this->style];
+		if (isset(static::$fontFiles[$this->family])) {
+			return $this->fontDir . static::$fontFiles[$this->family][$this->weight][$this->style];
+		}
+		if (isset(static::$customFontFiles[$this->family])) {
+			return static::$customFontFiles[$this->family][$this->weight][$this->style];
+		}
+		throw new \ErrorException('Font file not found: ' . $this->family);
 	}
 
 	/**

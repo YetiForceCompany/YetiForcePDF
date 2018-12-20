@@ -120,7 +120,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 * Close line box.
 	 *
 	 * @param \YetiForcePDF\Layout\LineBox|null $lineBox
-	 * @param bool $createNew
+	 * @param bool                              $createNew
 	 *
 	 * @return \YetiForcePDF\Layout\LineBox
 	 */
@@ -248,6 +248,41 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$box->getStyle()->init();
 		$box->buildTree($box);
 		$box->setDisplayable(false);
+		return $box;
+	}
+
+	/**
+	 * Append font box.
+	 *
+	 * @param $childDomElement
+	 * @param $element
+	 * @param $style
+	 * @param $parentBlock
+	 *
+	 * @throws \InvalidArgumentException
+	 *
+	 * @return HeaderBox
+	 */
+	public function appendFontBox($childDomElement, $element, $style, $parentBlock)
+	{
+		if ($this->getCurrentLineBox()) {
+			$this->closeLine();
+		}
+		$box = (new FontBox())
+			->setDocument($this->document)
+			->setParent($this)
+			->setElement($element)
+			->setStyle($style)
+			->init();
+		$this->appendChild($box);
+		$box->getStyle()->init();
+		$box->setFontFamily($childDomElement->getAttribute('data-family'));
+		$box->setFontWeight($childDomElement->getAttribute('data-weight'));
+		$box->setFontStyle($childDomElement->getAttribute('data-style'));
+		$box->setFontFile($childDomElement->getAttribute('data-file'));
+		$box->loadFont();
+		$box->buildTree($box);
+		$box->setDisplayable(false)->setRenderable(false)->setForMeasurement(false);
 		return $box;
 	}
 
@@ -564,11 +599,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			if ($child instanceof TextBox) {
 				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
 					$pageNumber = $this->document->getCurrentPage()->getPageNumber();
-					$child->setText(preg_replace('/{p}/ui', (string)$pageNumber, $child->getTextContent()));
+					$child->setText(preg_replace('/{p}/ui', (string) $pageNumber, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
 				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
-					$pages = (string)$this->document->getCurrentPage()->getPageCount();
+					$pages = (string) $this->document->getCurrentPage()->getPageCount();
 					$child->setText(preg_replace('/{a}/ui', $pages, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}

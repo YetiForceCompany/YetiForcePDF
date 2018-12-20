@@ -232,6 +232,8 @@ class ElementBox extends Box
 							$this->appendFooterBox($childDomElement, $element, $style, $parentBlock);
 						} elseif ($childDomElement->hasAttribute('data-watermark')) {
 							$this->appendWatermarkBox($childDomElement, $element, $style, $parentBlock);
+						} elseif ($childDomElement->hasAttribute('data-font')) {
+							$this->appendFontBox($childDomElement, $element, $style, $parentBlock);
 						} else {
 							$this->appendBlockBox($childDomElement, $element, $style, $parentBlock);
 						}
