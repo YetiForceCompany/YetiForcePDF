@@ -587,7 +587,8 @@ class TableBox extends BlockBox
 			foreach ($this->percentColumns as $columnIndex => $columns) {
 				$columnWidth = Math::percent($this->percentages[$columnIndex], $currentRowsWidth);
 				$percentsWidth = Math::add($percentsWidth, $columnWidth);
-				$columnWidth = Math::sub($columnWidth, $columns[0]->getStyle()->getHorizontalPaddingsWidth());
+				$padding = $columns[0]->getStyle()->getHorizontalPaddingsWidth();
+				$columnWidth = Math::sub($columnWidth, $padding);
 				foreach ($columns as $column) {
 					$this->setColumnWidth($column, $columnWidth);
 				}
@@ -989,7 +990,8 @@ class TableBox extends BlockBox
 			$autoColumnsMaxWidth = $this->getAutoColumnsMaxWidth();
 			foreach ($this->autoColumns as $columnIndex => $columns) {
 				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
-				$add = Math::sub(Math::mul($leftSpace, $ratio), $this->getStyle()->getRules('border-spacing'), $columns[0]->getStyle()->getVerticalBordersWidth());
+				$add = Math::mul($leftSpace, $ratio);
+				$add = Math::sub($add, $this->getStyle()->getRules('border-spacing'), $columns[0]->getStyle()->getVerticalBordersWidth());
 				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
 				foreach ($columns as $column) {
 					$colDmns = $column->getDimensions();

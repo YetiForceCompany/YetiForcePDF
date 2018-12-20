@@ -48,7 +48,7 @@ class WatermarkBox extends BlockBox
 	/**
 	 * {@inheritdoc}
 	 */
-	public function measureHeight()
+	public function measureHeight(bool $afterPageDividing = false)
 	{
 		if (!$this->isRenderable()) {
 			return $this;

@@ -48,7 +48,7 @@ class FooterBox extends BlockBox
 	/**
 	 * {@inheritdoc}
 	 */
-	public function measureHeight()
+	public function measureHeight(bool $afterPageDividing = false)
 	{
 		if (!$this->isDisplayable()) {
 			return $this;

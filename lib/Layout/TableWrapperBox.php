@@ -91,7 +91,7 @@ class TableWrapperBox extends BlockBox
 	/**
 	 * {@inheritdoc}
 	 */
-	public function measureHeight()
+	public function measureHeight(bool $afterPageDividing = false)
 	{
 		$maxHeight = '0';
 		foreach ($this->getChildren() as $child) {

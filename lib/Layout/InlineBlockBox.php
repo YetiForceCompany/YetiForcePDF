@@ -49,7 +49,7 @@ class InlineBlockBox extends BlockBox
 	 *
 	 * @return $this
 	 */
-	public function measureHeight()
+	public function measureHeight(bool $afterPageDividing = false)
 	{
 		$height = '0';
 		foreach ($this->getChildren() as $child) {
