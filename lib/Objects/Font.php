@@ -812,11 +812,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public static function addCustomFont(string $family, string $weight, string $style, string $fileName)
 	{
-		static::$customFontFiles[$family] = [
-			$weight => [
-				$style => $fileName
-			]
-		];
+		$strWeight = (new \YetiForcePDF\Style\Normalizer\FontWeight())->normalize($weight)['font-weight'];
+		static::$customFontFiles[$family][$strWeight][$style] = $fileName;
 	}
 
 	/**
@@ -1101,6 +1098,53 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Match font to weights and styles - try other weighs/styles if not present.
+	 *
+	 *
+	 * @param bool $custom
+	 *
+	 * @throws \ErrorException
+	 *
+	 * @return string
+	 */
+	protected function matchFont(bool $custom = false)
+	{
+		if (!$custom) {
+			return static::$fontFiles[$this->family][$this->weight][$this->style];
+		}
+		if (isset(static::$customFontFiles[$this->family][$this->weight][$this->style])) {
+			return static::$customFontFiles[$this->family][$this->weight][$this->style];
+		}
+		$weight = '';
+		for ($currentWeight = (int) $this->weight; $currentWeight >= 0; $currentWeight -= 100) {
+			if (isset(static::$customFontFiles[$this->family][(string) $currentWeight])) {
+				$weight = (string) $currentWeight;
+				break;
+			}
+		}
+		if (!$weight) {
+			for ($currentWeight = (int) $this->weight; $currentWeight <= 900; $currentWeight += 100) {
+				if (isset(static::$customFontFiles[$this->family][(string) $currentWeight])) {
+					$weight = (string) $currentWeight;
+					break;
+				}
+			}
+		}
+		if (!$weight) {
+			throw new \ErrorException('Font file not found: ' . $this->family);
+		}
+		if (isset(static::$customFontFiles[$this->family][$weight][$this->style])) {
+			return static::$customFontFiles[$this->family][$weight][$this->style];
+		}
+		// inverse style
+		$style = $this->style === 'normal' ? 'italic' : 'normal';
+		if (isset(static::$customFontFiles[$this->family][$weight][$style])) {
+			return static::$customFontFiles[$this->family][$weight][$style];
+		}
+		throw new \ErrorException('Font file not found: ' . $this->family);
+	}
+
+	/**
 	 * Get font file name without extension.
 	 *
 	 * @throws \ErrorException
@@ -1110,10 +1154,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getFontFileName()
 	{
 		if (isset(static::$fontFiles[$this->family])) {
-			return $this->fontDir . static::$fontFiles[$this->family][$this->weight][$this->style];
+			return $this->fontDir . $this->matchFont();
 		}
 		if (isset(static::$customFontFiles[$this->family])) {
-			return static::$customFontFiles[$this->family][$this->weight][$this->style];
+			return $this->matchFont(true);
 		}
 		throw new \ErrorException('Font file not found: ' . $this->family);
 	}
