@@ -12,7 +12,7 @@
 [![sonarcloud.io security](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=security_rating)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
 [![sonarcloud.io vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
 
-## PDF generation library for PHP (work in progress)
+## PDF generation library for PHP
 
 ## Basic usage (for more take a look at examples folder)
 
@@ -22,7 +22,6 @@ $loader = require '../vendor/autoload.php';
 $document = (new YetiForcePDF\Document())->init();
 $document->loadHtml('<div style="text-align:center;">your html goes here</div>');
 $pdfFile = $document->render();
-// echo $pdfFile;
 file_put_contents('YourPDFD.pdf', $pdfFile);
 ```
 
