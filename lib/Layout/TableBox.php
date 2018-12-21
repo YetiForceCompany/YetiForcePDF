@@ -1134,15 +1134,13 @@ class TableBox extends BlockBox
 		$this->minContentPercentageGuess($rows, $availableSpace);
 		if (!$this->willFit($availableSpace)) {
 			return $this->shrinkToFit($availableSpace, $step);
-		} else {
-			$step = 1;
 		}
+		$step = 1;
 		$this->minContentSpecifiedGuess($rows, $availableSpace);
 		if (!$this->willFit($availableSpace)) {
 			return $this->shrinkToFit($availableSpace, $step);
-		} else {
-			$step = 2;
 		}
+		$step = 2;
 		$this->maxContentGuess($rows, $availableSpace);
 		if (!$this->willFit($availableSpace)) {
 			return $this->shrinkToFit($availableSpace, $step);
