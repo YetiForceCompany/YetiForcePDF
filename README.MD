@@ -173,3 +173,6 @@ When you want to place page number (in header or footer for example) you can do 
 - [ ] display: list-item
 - [ ] basic transformations (rotateXY, scaleXY, translateXY)
 - [ ] position (absolute, relative)
+
+### License
+YetiForce Public License v3
