@@ -6,11 +6,6 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2e8645f5091496089ed203d05a05d61)](https://app.codacy.com/app/mariuszkrzaczkowski/YetiForcePDF?utm_source=github.com&utm_medium=referral&utm_content=YetiForceCompany/YetiForcePDF&utm_campaign=Badge_Grade_Settings)
 [![Maintainability](https://api.codeclimate.com/v1/badges/af478ddd07cf7278841a/maintainability)](https://codeclimate.com/github/YetiForceCompany/YetiForcePDF/maintainability)
-[![sonarcloud.io status alert](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=alert_status)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
-[![sonarcloud.io bugs](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=bugs)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
-[![sonarcloud.io sqale](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
-[![sonarcloud.io security](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=security_rating)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
-[![sonarcloud.io vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=YetiForcePDF&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=YetiForcePDF)
 
 ## PDF generation library for PHP
 
