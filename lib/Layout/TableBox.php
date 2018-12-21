@@ -991,7 +991,6 @@ class TableBox extends BlockBox
 			foreach ($this->autoColumns as $columnIndex => $columns) {
 				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
 				$add = Math::mul($leftSpace, $ratio);
-				$add = Math::sub($add, $this->getStyle()->getRules('border-spacing'), $columns[0]->getStyle()->getVerticalBordersWidth());
 				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
 				foreach ($columns as $column) {
 					$colDmns = $column->getDimensions();
