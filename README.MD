@@ -8,6 +8,7 @@
 [![SymfonyInsight](https://insight.symfony.com/projects/d944b009-6a76-4957-8833-db95b010e5a5/big.png)](https://insight.symfony.com/projects/d944b009-6a76-4957-8833-db95b010e5a5)
 
 ## PDF generation library for PHP
+The best library in the world to generate PDF from HTML
 
 ## Basic usage (for more take a look at examples folder)
 
