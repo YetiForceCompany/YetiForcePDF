@@ -1071,7 +1071,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$newTableWrapperBox->appendChild($newTableBox);
 		$clonedFooters = $tableWrapperBox->getBoxesByType('TableFooterGroupBox', 'TableWrapperBox');
 		if (!empty($clonedFooters)) {
-			$clonedFooter = $clonedFooters[0]->cloneWithChildren();
+			$clonedFooter = $clonedFooters[0]->getParent()->removeChild($clonedFooters[0])->cloneWithChildren();
 		}
 		$headers = $tableWrapperBox->getBoxesByType('TableHeaderGroupBox', 'TableWrapperBox');
 		if (!empty($headers)) {
