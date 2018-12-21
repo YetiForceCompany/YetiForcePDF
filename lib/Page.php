@@ -1122,11 +1122,13 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if (isset($clonedFooter)) {
 			$newTableBox->appendChild($clonedFooter);
 		}
+		//remove empty rows
+		$tableBox->removeEmptyRows();
 		// remove original table if it was moved with all the content
-		$removeSource = !$tableBox->hasChildren() || !$tableBox->getFirstChild()->hasChildren();
+		$removeSource = !$tableBox->hasChildren() || !$tableBox->containContent();
 		$removeSource = $removeSource || ($tableBox->getFirstChild() instanceof TableHeaderGroupBox && count($tableBox->getChildren()) === 1);
 		if ($removeSource) {
-			$tableWrapperBox->setRenderable(false);
+			$tableWrapperBox->getParent()->removeChild($tableWrapperBox)->setRenderable(false)->setForMeasurement(false);
 		}
 		return $newTableWrapperBox;
 	}

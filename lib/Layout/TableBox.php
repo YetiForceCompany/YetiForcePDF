@@ -1276,4 +1276,25 @@ class TableBox extends BlockBox
 		$this->getDimensions()->setHeight(Math::add($tableHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth()));
 		return $this;
 	}
+
+	/**
+	 * Remove empty rows.
+	 *
+	 * @return $this
+	 */
+	public function removeEmptyRows()
+	{
+		foreach ($this->getChildren() as $rowGroup) {
+			if (!$rowGroup->containContent() || !$rowGroup->hasChildren()) {
+				$this->removeChild($rowGroup)->setRenderable(false)->setForMeasurement(false);
+			} else {
+				foreach ($rowGroup->getChildren() as $row) {
+					if (!$row->containContent() || !$row->hasChildren()) {
+						$rowGroup->removeChild($row)->setRenderable(false)->setForMeasurement(false);
+					}
+				}
+			}
+		}
+		return $this;
+	}
 }
