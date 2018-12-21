@@ -153,7 +153,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	public function createText($content, bool $sameId = false)
 	{
 		if ($sameId && $this->previousTextBox) {
-			$box = clone $this->previousTextBox;
+			$box = $this->previousTextBox->clone();
 		} else {
 			$box = (new TextBox())
 				->setDocument($this->document)
@@ -188,9 +188,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	/**
 	 * Add text.
 	 *
-	 * @param \DOMNode $childDomElement
-	 * @param Element $element
-	 * @param Style $style
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return $this

@@ -1156,7 +1156,6 @@ class Box extends \YetiForcePDF\Base
 		$this->coordinates->setBox($this);
 		$this->offset = clone $this->offset;
 		$this->offset->setBox($this);
-		$this->style = clone $this->style;
-		$this->style->setBox($this);
+		$this->style = $this->style->clone($this);
 	}
 }

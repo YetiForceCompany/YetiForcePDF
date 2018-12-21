@@ -1516,6 +1516,20 @@ class Style extends \YetiForcePDF\Base
 		return "1 0 0 1 $x $y cm";
 	}
 
+	/**
+	 * Clone.
+	 *
+	 * @param Box $box
+	 *
+	 * @return Style
+	 */
+	public function clone(Box $box)
+	{
+		$newStyle = clone $this;
+		$newStyle->setBox($box);
+		return $newStyle;
+	}
+
 	public function __clone()
 	{
 		$this->font = clone $this->font;

@@ -443,11 +443,13 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	/**
 	 * Save source lines before any dividing process (to get maximal width of the block for tables later).
 	 *
+	 * @param LineBox $line
+	 *
 	 * @return $this
 	 */
-	protected function saveSourceLine($line)
+	protected function saveSourceLine(LineBox $line)
 	{
-		$this->sourceLines[] = clone $line;
+		$this->sourceLines[] = $line->clone();
 		return $this;
 	}
 

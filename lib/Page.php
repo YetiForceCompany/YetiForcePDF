@@ -1082,7 +1082,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			if (Math::comp($tableRowGroup->getCoordinates()->getEndY(), $pageEnd) < 0) {
 				continue;
 			}
-			$moveRowGroup = clone $tableRowGroup;
+			$moveRowGroup = $tableRowGroup->clone();
 			$moveRowGroup->clearChildren();
 			foreach ($tableRowGroup->getChildren() as $rowIndex => $row) {
 				if (!$tableRowGroup instanceof TableFooterGroupBox) {
@@ -1223,7 +1223,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$newBox->appendChild($clonedBox->getParent()->removeChild($clonedBox));
 		}
 		$this->getBox()->getStyle()->fixTables(true);
-		$this->getBox()->measureHeight()->measureOffset()->measurePosition();
+		$this->getBox()->measureHeight()->measureOffset()->alignText()->measurePosition();
 		$newBox->layout(true);
 		$newBox->getStyle()->fixTables();
 		$this->document->setCurrentPage($newPage);
