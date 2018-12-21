@@ -46,9 +46,11 @@ class ImageBox extends InlineBlockBox
 	/**
 	 * Measure height.
 	 *
+	 * @param bool $afterPageDividing
+	 *
 	 * @return $this
 	 */
-	public function measureHeight()
+	public function measureHeight(bool $afterPageDividing = false)
 	{
 		$style = $this->getStyle();
 		if ($style->getRules('height') === 'auto') {
