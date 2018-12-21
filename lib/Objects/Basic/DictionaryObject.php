@@ -112,7 +112,7 @@ class DictionaryObject extends \YetiForcePDF\Objects\PdfObject
 			'<<'
 		];
 		foreach ($this->values as $value) {
-			$values[] = implode(' ', $value);
+			$values[] = '  ' . implode(' ', $value);
 		}
 		$values[] = ">>\nendobj";
 		return implode("\n", $values);

@@ -1333,7 +1333,7 @@ class Style extends \YetiForcePDF\Base
 							if ($rowIndex + $column->getRowSpan() < $rowsCount) {
 								$cellStyle->setRule('border-bottom-width', '0');
 							}
-							if ($columnIndex + 1 < $columnsCount) {
+							if ($columnIndex + $column->getColSpan() < $columnsCount) {
 								$cellStyle->setRule('border-right-width', '0');
 							}
 						}
