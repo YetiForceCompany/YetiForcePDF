@@ -1085,7 +1085,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$moveRowGroup = $tableRowGroup->clone();
 			$moveRowGroup->clearChildren();
 			foreach ($tableRowGroup->getChildren() as $rowIndex => $row) {
-				if (!$tableRowGroup instanceof TableFooterGroupBox) {
+				if (!$tableRowGroup instanceof TableFooterGroupBox && !$tableRowGroup instanceof TableHeaderGroupBox) {
 					$moveRow = false;
 					foreach ($row->getChildren() as $column) {
 						if (Math::comp($column->getCoordinates()->getEndY(), $pageEnd) >= 0) {
