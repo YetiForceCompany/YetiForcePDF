@@ -1296,25 +1296,33 @@ class Style extends \YetiForcePDF\Base
 	{
 		$box = $this->getBox();
 		$boxStyle = $box->getStyle();
-		if ($box instanceof TableBox) {
+		$boxes = [$box];
+		if (!$box instanceof TableBox) {
+			$boxes = $box->getBoxesByType('TableBox');
+		}
+		foreach ($boxes as $box) {
 			// max cell borders widths top,right,bottom,left
 			$cellBorders = ['0', '0', '0', '0'];
 			$rowGroups = $box->getChildren();
 			$rowGroupsCount = count($rowGroups);
 			foreach ($rowGroups as $rowGroupIndex => $rowGroup) {
 				$rows = $rowGroup->getChildren();
+				$rowsCount = count($rows);
 				foreach ($rows as $rowIndex => $row) {
 					$columns = $row->getChildren();
 					$columnsCount = count($columns);
-					$rowsCount = count($rows);
 					foreach ($columns as $columnIndex => $column) {
 						$rowStyle = $column->getParent()->getStyle();
 						$columnStyle = $column->getStyle();
 						if ($columnIndex + 1 < $columnsCount) {
 							$columnStyle->setRule('padding-right', '0');
 						}
-						if (!($rowIndex + 1 === $rowsCount && $rowGroupIndex + 1 === $rowGroupsCount)) {
+						if (!($rowIndex + $row->getRowSpan() === $rowsCount && $rowGroupIndex + 1 === $rowGroupsCount)) {
 							$columnStyle->setRule('padding-bottom', '0');
+						} elseif ($columnStyle->getRules('border-collapse') === 'separate') {
+							$columnStyle->setRule('padding-bottom', $columnStyle->getRules('border-spacing'));
+							$column->getParent()->measureHeight();
+							$column->getParent()->getParent()->measureHeight();
 						}
 						$cellBorders = [
 							Math::max($cellBorders[0], $rowStyle->getRules('border-top-width')),
