@@ -1154,7 +1154,21 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getFontFileName()
 	{
 		if (isset(static::$fontFiles[$this->family])) {
-			return $this->fontDir . $this->matchFont();
+			$match = $this->matchFont();
+			if (file_exists($this->fontDir . $match)) {
+				return $this->fontDir . $match;
+			}
+			if (defined('ROOT_DIRECTORY')) {
+				$path = ROOT_DIRECTORY;
+				$path .= DIRECTORY_SEPARATOR . 'public_html';
+				$path .= DIRECTORY_SEPARATOR . 'vendor';
+				$path .= DIRECTORY_SEPARATOR . 'yetiforce';
+				$path .= DIRECTORY_SEPARATOR . 'yetiforcepdf';
+				$path .= DIRECTORY_SEPARATOR . 'lib';
+				$path .= DIRECTORY_SEPARATOR . 'Fonts';
+				$path .= DIRECTORY_SEPARATOR . $match;
+				return $path;
+			}
 		}
 		if (isset(static::$customFontFiles[$this->family])) {
 			return $this->matchFont(true);
