@@ -319,16 +319,20 @@ class Box extends \YetiForcePDF\Base
 	 * Set style.
 	 *
 	 * @param \YetiForcePDF\Style\Style $style
+	 * @param bool                      $init
 	 *
 	 * @return $this
 	 */
-	public function setStyle(Style $style)
+	public function setStyle(Style $style, bool $init = true)
 	{
 		$this->style = $style;
 		if ($element = $style->getElement()) {
 			$element->setBox($this);
 		}
-		$style->setBox($this)->init();
+		$style->setBox($this);
+		if ($init) {
+			$style->init();
+		}
 		return $this;
 	}
 

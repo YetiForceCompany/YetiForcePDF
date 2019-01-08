@@ -25,9 +25,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Append block box element.
 	 *
-	 * @param \DOMNode $childDomElement
-	 * @param Element $element
-	 * @param Style $style
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\BlockBox
@@ -40,9 +40,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Append table block box element.
 	 *
-	 * @param \DOMNode $childDomElement
-	 * @param Element $element
-	 * @param Style $style
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\BlockBox
@@ -55,9 +55,9 @@ class LineBox extends Box implements BoxInterface
 	/**
 	 * Append inline block box element.
 	 *
-	 * @param \DOMNode $childDomElement
-	 * @param Element $element
-	 * @param Style $style
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBlockBox
@@ -86,11 +86,48 @@ class LineBox extends Box implements BoxInterface
 	}
 
 	/**
+	 * Append barcode box element.
+	 *
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param Style                              $style
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+	 *
+	 * @return \YetiForcePDF\Layout\InlineBlockBox
+	 */
+	public function appendBarcode($childDomElement, $element, $style, $parentBlock)
+	{
+		$box = (new BarcodeBox())
+			->setDocument($this->document)
+			->setElement($element)
+			->setParent($this)
+			->setStyle($style, false)
+			->init();
+		$this->appendChild($box);
+		if ($childDomElement->hasAttribute('data-barcode') && $childDomElement->getAttribute('data-barcode')) {
+			$box->setType($childDomElement->getAttribute('data-barcode'));
+		}
+		if ($childDomElement->hasAttribute('data-size') && $childDomElement->getAttribute('data-size')) {
+			$box->setSize($childDomElement->getAttribute('data-size'));
+		}
+		if ($childDomElement->hasAttribute('data-height') && $childDomElement->getAttribute('data-height')) {
+			$box->setHeight($childDomElement->getAttribute('data-height'));
+		}
+		if ($childDomElement->hasAttribute('data-code') && $childDomElement->getAttribute('data-code')) {
+			$box->setCode($childDomElement->getAttribute('data-code'));
+		}
+		$box->generateBarcodeImage();
+		$box->getStyle()->init();
+		$box->buildTree($box);
+		return $box;
+	}
+
+	/**
 	 * Add inline child (and split text to individual characters).
 	 *
-	 * @param \DOMNode $childDomElement
-	 * @param Element $element
-	 * @param Style $style
+	 * @param \DOMNode                           $childDomElement
+	 * @param Element                            $element
+	 * @param Style                              $style
 	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBox
@@ -344,7 +381,7 @@ class LineBox extends Box implements BoxInterface
 		foreach ($this->getChildren() as $child) {
 			$allChildren = [];
 			$child->getAllChildren($allChildren);
-			$maxLevel = Math::max($maxLevel, (string)count($allChildren));
+			$maxLevel = Math::max($maxLevel, (string) count($allChildren));
 			$allNestedChildren[] = $allChildren;
 		}
 		$clones = [];

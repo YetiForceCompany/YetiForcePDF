@@ -287,6 +287,28 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	}
 
 	/**
+	 * Append barcode box.
+	 *
+	 * @param $childDomElement
+	 * @param $element
+	 * @param $style
+	 * @param $parentBlock
+	 *
+	 * @throws \InvalidArgumentException
+	 *
+	 * @return HeaderBox
+	 */
+	public function appendBarcodeBox($childDomElement, $element, $style, $parentBlock)
+	{
+		if ($this->getCurrentLineBox()) {
+			$currentLineBox = $this->getCurrentLineBox();
+		} else {
+			$currentLineBox = $this->getNewLineBox();
+		}
+		return $currentLineBox->appendBarcode($childDomElement, $element, $style, $this);
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)

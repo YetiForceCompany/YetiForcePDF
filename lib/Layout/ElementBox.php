@@ -234,6 +234,8 @@ class ElementBox extends Box
 							$this->appendWatermarkBox($childDomElement, $element, $style, $parentBlock);
 						} elseif ($childDomElement->hasAttribute('data-font')) {
 							$this->appendFontBox($childDomElement, $element, $style, $parentBlock);
+						} elseif ($childDomElement->hasAttribute('data-barcode')) {
+							$this->appendBarcodeBox($childDomElement, $element, $style, $parentBlock);
 						} else {
 							$this->appendBlockBox($childDomElement, $element, $style, $parentBlock);
 						}

@@ -62,6 +62,11 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	 */
 	protected function convertToJpg(string $imageData)
 	{
+		if (substr($imageData, 0, 10) === 'data:image') {
+			$matches = [];
+			preg_match('/data:image\/[a-z]+;base64,(.*)/', $imageData, $matches);
+			$imageData = base64_decode($matches[1]);
+		}
 		$image = imagecreatefromstring($imageData);
 		$bg = imagecreatetruecolor(imagesx($image), imagesy($image));
 		imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
@@ -85,7 +90,9 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	 */
 	public function loadImage(string $fileName)
 	{
-		if (filter_var($fileName, FILTER_VALIDATE_URL)) {
+		if (substr($fileName, 0, 10) === 'data:image') {
+			$this->imageData = $this->convertToJpg($fileName);
+		} elseif (filter_var($fileName, FILTER_VALIDATE_URL)) {
 			try {
 				$client = new \GuzzleHttp\Client();
 				$res = $client->request('GET', $fileName, ['verify' => \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath()]);

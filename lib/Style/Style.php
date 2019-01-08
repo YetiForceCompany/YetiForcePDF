@@ -579,10 +579,11 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @param string|null $content
 	 *
-	 * @return \YetiForcePDF\Style\Style
+	 * @return $this
 	 */
-	public function setContent(string $content = null): self
+	public function setContent(string $content = null)
 	{
+		$content = preg_replace('/data:image\/([a-z]+);/', 'data_image/$1_', $content);
 		$this->content = $content;
 		return $this;
 	}
@@ -1102,6 +1103,12 @@ class Style extends \YetiForcePDF\Base
 		$this->backgroundImage->loadImage($src);
 		$imageName = $this->backgroundImage->getImageName();
 		$this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
+		if ($ruleParsed['width'] === 'auto') {
+			$ruleParsed['width'] = ((string) $this->backgroundImage->getWidth()) . 'px';
+		}
+		if ($ruleParsed['height'] === 'auto') {
+			$ruleParsed['height'] = ((string) $this->backgroundImage->getHeight()) . 'px';
+		}
 		return $ruleParsed;
 	}
 
@@ -1235,6 +1242,9 @@ class Style extends \YetiForcePDF\Base
 			$rule = trim($rule);
 			if ($rule !== '') {
 				$ruleExploded = explode(':', $rule);
+				foreach ($ruleExploded as &$exp) {
+					$exp = preg_replace('/data_image\/([a-z]+)_/', 'data:image/$1;', $exp);
+				}
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
 				$rulesParsed[$ruleName] = $ruleValue;
