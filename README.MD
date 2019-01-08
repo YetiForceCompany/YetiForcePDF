@@ -167,10 +167,14 @@ When you want to place page number (in header or footer for example) you can do 
 </div>
 ```
 
+### Barcodes
+
+```php
+<div data-barcode="EAN13" data-size="1" data-height="16" data-code="9780691147727"></div>
+```
 
 ### TODO (later but important)
 - [ ] floats
-- [ ] barcode generation
 - [ ] display: list-item
 - [ ] basic transformations (rotateXY, scaleXY, translateXY)
 - [ ] position (absolute, relative)
