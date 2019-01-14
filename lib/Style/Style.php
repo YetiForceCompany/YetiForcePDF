@@ -122,7 +122,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	protected $mandatoryRules = [
-		'font-family' => 'Noto Serif',
+		'font-family' => 'DejaVu Sans',
 		'font-size' => '12px',
 		'font-weight' => 'normal',
 		'font-style' => 'normal',
