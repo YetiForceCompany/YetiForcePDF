@@ -77,18 +77,9 @@ file_put_contents('YourPDFD.pdf', $pdfFile);
 - [x] rgb / rgba color
 
 
-### Available fonts
+### Available fonts by default
 
-- Noto Sans
-- Noto Serif
-- Noto Mono
-- Source Sans Pro
-- Source Serif Pro
-- Source Code Pro
-- PT Sans
-- PT Sans Narrow
-- PT Serif
-- PT Mono
+- DejaVu Sans
 
 ### Custom fonts
 
