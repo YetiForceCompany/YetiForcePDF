@@ -1145,6 +1145,29 @@ class Font extends \YetiForcePDF\Objects\Resource
 	}
 
 	/**
+	 * Load fonts from array.
+	 *
+	 * @param array $decoded
+	 *
+	 * @throws \ErrorException
+	 */
+	public static function loadFromArray(array $decoded)
+	{
+		if (!is_array($decoded)) {
+			throw new \ErrorException('Invalid fonts json structure.');
+		}
+		foreach ($decoded as $font) {
+			if (!is_array($font)) {
+				throw new \ErrorException('Invalid fonts json structure.');
+			}
+			if (empty($font['family']) || empty($font['weight']) || empty($font['style']) || empty($font['file'])) {
+				throw new \ErrorException('Invalid fonts json structure.');
+			}
+			static::addCustomFont($font['family'], $font['weight'], $font['style'], $font['file']);
+		}
+	}
+
+	/**
 	 * Get font file name without extension.
 	 *
 	 * @throws \ErrorException
