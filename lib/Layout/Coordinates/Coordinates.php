@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Layout\Coordinates
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 

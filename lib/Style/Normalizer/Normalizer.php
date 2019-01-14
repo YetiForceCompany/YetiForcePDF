@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Style\Normalizer
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -95,7 +95,7 @@ class Normalizer extends \YetiForcePDF\Base
 	/**
 	 * Normalize css rule.
 	 *
-	 * @param mixed $ruleValue
+	 * @param mixed  $ruleValue
 	 * @param string $ruleName
 	 *
 	 * @return array
@@ -181,7 +181,7 @@ class Normalizer extends \YetiForcePDF\Base
 	 * Normalize multi number values.
 	 *
 	 * @param string[] $ruleNames ['margin-top','margin-right','margin-bottom','margin-left']
-	 * @param string $ruleValue
+	 * @param string   $ruleValue
 	 *                            return array
 	 */
 	public function normalizeMultiValues(array $ruleNames, $ruleValue): array
