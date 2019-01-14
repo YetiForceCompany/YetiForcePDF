@@ -103,6 +103,31 @@ Each font weight and style could be defined if your font supports it.
 <div data-font data-family="Your Font Name" data-weight="800" data-style="italic" data-file="/absolute/path/to/font/file/YourFontName-BoldItalic.ttf"></div>
 ```
 
+You can also add fonts inside php like:
+
+```php
+\YetiForcePDF\Document::addFonts([
+	[
+		'family' => 'Pacifico',
+		'weight' => '400',
+		'style' => 'normal',
+		'file' => '/absolute/path/to/Pacifico/Pacifico-Regular.ttf'
+	],
+	[
+		'family' => 'Lobster Two',
+		'weight' => '400',
+		'style' => 'normal',
+		'file' => '/absolute/path/to/Lobster_Two/LobsterTwo-Regular.ttf'
+	],
+	[
+		'family' => 'Lobster Two',
+		'weight' => 'bold',
+		'style' => 'normal',
+		'file' => '/absolute/path/to/Lobster_Two/LobsterTwo-Bold.ttf'
+	],
+]);
+```
+
 ### Headers, footers and watermarks
 
 You can define header, footer and watermark to be displayed inside pdf file
