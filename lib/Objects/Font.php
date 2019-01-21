@@ -526,10 +526,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Match font to weights and styles - try other weighs/styles if not present.
 	 *
-	 *
 	 * @param bool $custom
-	 *
-	 * @throws \ErrorException
 	 *
 	 * @return string
 	 */
@@ -557,7 +554,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 			}
 		}
 		if (!$weight) {
-			throw new \ErrorException('Font file not found: ' . $this->family);
+			// font file not found return default one
+			return $this->fontDir . static::$fontFiles['DejaVu Sans'][$this->weight][$this->style];
 		}
 		if (isset(static::$customFontFiles[$this->family][$weight][$this->style])) {
 			return static::$customFontFiles[$this->family][$weight][$this->style];
@@ -567,7 +565,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 		if (isset(static::$customFontFiles[$this->family][$weight][$style])) {
 			return static::$customFontFiles[$this->family][$weight][$style];
 		}
-		throw new \ErrorException('Font file not found: ' . $this->family);
+		// font file not found - get default one
+		return $this->fontDir . static::$fontFiles['DejaVu Sans'][$this->weight][$this->style];
 	}
 
 	/**
@@ -619,10 +618,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 				return $path;
 			}
 		}
-		if (isset(static::$customFontFiles[$this->family])) {
-			return $this->matchFont(true);
-		}
-		throw new \ErrorException('Font file not found: ' . $this->family);
+		return $this->matchFont(true);
 	}
 
 	/**
