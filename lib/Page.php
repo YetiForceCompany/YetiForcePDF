@@ -1214,7 +1214,6 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$atYPos = Math::add($this->getDimensions()->getHeight(), (string)$this->margins['top']);
 		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($atYPos);
 		if (empty($clonedBoxes)) {
-			$this->getBox()->getStyle()->fixDomTree();
 			return $this;
 		}
 		$newPage = $this->cloneCurrentPage();
