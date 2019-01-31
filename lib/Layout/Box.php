@@ -278,11 +278,11 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Set cut.
 	 *
-	 * @param bool $cut
+	 * @param int $cut
 	 *
 	 * @return $this
 	 */
-	public function setCut(bool $cut)
+	public function setCut(int $cut)
 	{
 		$this->cut = $cut;
 		return $this;

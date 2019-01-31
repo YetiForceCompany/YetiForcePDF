@@ -75,6 +75,14 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	const ORIENTATION_LANDSCAPE = 'L';
 	/**
+	 * After page breaking box was cut below
+	 */
+	const CUT_BELOW = 1;
+	/**
+	 * After page breaking box was cut above
+	 */
+	const CUT_ABOVE = 2;
+	/**
 	 * Current page format.
 	 *
 	 * @var string
@@ -965,7 +973,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			->setRule('border-top-width', '0')
 			->setRule('padding-top', '0')
 			->setRule('margin-top', '0');
-		$child->setCut(true);
+		$child->setCut(static::CUT_ABOVE);
 		return $this;
 	}
 
@@ -989,7 +997,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			->setRule('border-bottom-width', '0')
 			->setRule('margin-bottom', '0')
 			->setRule('padding-bottom', '0');
-		$child->setCut(true);
+		$child->setCut(static::CUT_BELOW);
 		return $this;
 	}
 
@@ -1005,7 +1013,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if ($boxes === null) {
 			$boxes = [];
 			foreach ($this->getBox()->getChildren() as $child) {
-				if (Math::comp($child->getCoordinates()->getEndY(), $yPos) > 0) {
+				if (Math::comp($child->getCoordinates()->getEndY(), $yPos) >= 0) {
 					$boxes[] = $child;
 				}
 			}
@@ -1026,9 +1034,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 						continue;
 					}
 					$childCoords = $child->getCoordinates();
-					if (Math::comp($childCoords->getEndY(), $yPos) > 0) {
-						$boxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
-						foreach ($boxes as $childBox) {
+					if (Math::comp($childCoords->getEndY(), $yPos) >= 0) {
+						$childBoxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
+						foreach ($childBoxes as $childBox) {
 							$cloned->appendChild($childBox);
 						}
 					}
@@ -1039,6 +1047,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 				if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
 					$this->cutBelow($box, $yPos);
 					$this->cutAbove($cloned, $yPos);
+				} elseif (Math::comp($box->getCoordinates()->getY(), $yPos) >= 0) {
+					$box->setRenderable(false)->setForMeasurement(false);
 				}
 			}
 			$clonedBoxes[] = $cloned;
@@ -1223,7 +1233,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$newBox->appendChild($clonedBox->getParent()->removeChild($clonedBox));
 		}
 		$this->getBox()->getStyle()->fixDomTree();
-		$this->getBox()->measureHeight()->measureOffset()->alignText()->measurePosition();
+		$this->getBox()->measureHeight(true)->measureOffset()->alignText()->measurePosition();
 		$newBox->layout(true);
 		$this->document->setCurrentPage($newPage);
 		if (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
