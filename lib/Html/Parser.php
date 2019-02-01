@@ -146,37 +146,37 @@ class Parser extends \YetiForcePDF\Base
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-left')) {
-			$root->marginLeft = (float)$childDomElement->getAttribute('data-margin-left');
+			$root->marginLeft = (float) $childDomElement->getAttribute('data-margin-left');
 			if (!$root->marginLeft) {
 				$root->marginLeft = 30;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-right')) {
-			$root->marginRight = (float)$childDomElement->getAttribute('data-margin-right');
+			$root->marginRight = (float) $childDomElement->getAttribute('data-margin-right');
 			if (!$root->marginRight) {
 				$root->marginRight = 30;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-top')) {
-			$root->marginTop = (float)$childDomElement->getAttribute('data-margin-top');
+			$root->marginTop = (float) $childDomElement->getAttribute('data-margin-top');
 			if (!$root->marginTop) {
 				$root->marginTop = 40;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-margin-bottom')) {
-			$root->marginBottom = (float)$childDomElement->getAttribute('data-margin-bottom');
+			$root->marginBottom = (float) $childDomElement->getAttribute('data-margin-bottom');
 			if (!$root->marginBottom) {
 				$root->marginBottom = 40;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-header-top')) {
-			$root->headerTop = (float)$childDomElement->getAttribute('data-header-top');
+			$root->headerTop = (float) $childDomElement->getAttribute('data-header-top');
 			if (!$root->headerTop) {
 				$root->headerTop = 10;
 			}
 		}
 		if ($childDomElement->hasAttribute('data-footer-bottom')) {
-			$root->footerBottom = (float)$childDomElement->getAttribute('data-footer-bottom');
+			$root->footerBottom = (float) $childDomElement->getAttribute('data-footer-bottom');
 			if (!$root->footerBottom) {
 				$root->footerBottom = 10;
 			}
@@ -221,6 +221,7 @@ class Parser extends \YetiForcePDF\Base
 
 			$pageGroup->buildTree();
 			$pageGroup->fixTables();
+			$pageGroup->getStyle()->fixDomTree(false);
 			$pageGroup->layout();
 			$page->setBox($pageGroup);
 
