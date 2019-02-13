@@ -205,6 +205,12 @@ class Parser extends \YetiForcePDF\Base
 				->setDocument($this->document)
 				->setRoot(true)
 				->init();
+			$pageGroup->format = $this->document->getDefaultFormat();
+			$margins = $this->document->getDefaultMargins();
+			$pageGroup->marginLeft = $margins['left'];
+			$pageGroup->marginTop = $margins['top'];
+			$pageGroup->marginRight = $margins['right'];
+			$pageGroup->marginBottom = $margins['bottom'];
 			$pageGroup->orientation = $this->document->getDefaultOrientation();
 			$this->setGroupOptions($pageGroup, $domDocument);
 			$page = $this->document->addPage($pageGroup->format, $pageGroup->orientation);
