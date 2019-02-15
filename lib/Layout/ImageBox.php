@@ -53,18 +53,14 @@ class ImageBox extends InlineBlockBox
 	public function measureHeight(bool $afterPageDividing = false)
 	{
 		$style = $this->getStyle();
-		if ($style->getRules('height') === 'auto') {
-			$img = $style->getBackgroundImageStream();
-			$height = $img->getHeight();
-			if ($style->getRules('width') !== 'auto') {
-				$ratio = Math::div($img->getWidth(), $img->getHeight());
-				$height = Math::div($this->getDimensions()->getInnerWidth(), $ratio);
-			}
-			$height = Math::add($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
-			$this->getDimensions()->setHeight($height);
-		} else {
-			$this->applyStyleHeight();
+		$img = $style->getBackgroundImageStream();
+		$height = $img->getHeight();
+		if ($style->getRules('width') !== 'auto') {
+			$ratio = Math::div($img->getWidth(), $img->getHeight());
+			$height = Math::div($this->getDimensions()->getInnerWidth(), $ratio);
 		}
+		$height = Math::add($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
+		$this->getDimensions()->setHeight($height);
 		return $this;
 	}
 }
