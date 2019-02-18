@@ -17,7 +17,7 @@
   "require": {
     "php": ">=7.1",
     "ext-mbstring": "*",
-    "ext-dom ": "*",
+    "ext-dom": "*",
     "ext-libxml": "*",
     "ext-bcmath": "*",
     "ext-zlib": "*",
