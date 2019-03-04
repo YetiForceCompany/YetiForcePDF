@@ -36,6 +36,20 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	protected $sourceLines = [];
 
 	/**
+	 * Merged lines.
+	 *
+	 * @var LineBox[]
+	 */
+	public $mergedLines = [];
+
+	/**
+	 * Line groups.
+	 *
+	 * @var LineBox[]
+	 */
+	public $lineGroups=[];
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function init()
@@ -120,7 +134,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 * Close line box.
 	 *
 	 * @param \YetiForcePDF\Layout\LineBox|null $lineBox
-	 * @param bool $createNew
+	 * @param bool                              $createNew
 	 *
 	 * @return \YetiForcePDF\Layout\LineBox
 	 */
@@ -405,18 +419,21 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function groupLines()
 	{
-		$lineGroups = [];
+		if (!empty($this->lineGroups)) {
+			return $this->lineGroups;
+		}
+		$this->lineGroups = [];
 		$currentGroup = 0;
 		foreach ($this->getChildren() as $child) {
 			if ($child instanceof LineBox) {
-				$lineGroups[$currentGroup][] = $child;
+				$this->lineGroups[$currentGroup][] = $child;
 			} else {
-				if (isset($lineGroups[$currentGroup])) {
+				if (isset($this->lineGroups[$currentGroup])) {
 					$currentGroup++;
 				}
 			}
 		}
-		return $lineGroups;
+		return $this->lineGroups;
 	}
 
 	/**
@@ -426,7 +443,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function mergeLineGroups(array $lineGroups)
 	{
-		$lines = [];
+		if (!empty($this->mergedLines)) {
+			return $this->mergedLines;
+		}
 		foreach ($lineGroups as $lines) {
 			if (!empty($lines)) {
 				$currentLine = $this->getNewLineBox($lines[0]);
@@ -437,10 +456,10 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 					}
 					$this->removeChild($line);
 				}
-				$lines[] = $currentLine;
+				$this->mergedLines[] = $currentLine;
 			}
 		}
-		return $lines;
+		return $this->mergedLines;
 	}
 
 	/**
@@ -496,6 +515,9 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		foreach ($this->getChildren() as $child) {
 			if ($child instanceof LineBox) {
 				$lines = $child->divide();
+				if (count($lines)===1 && $child===$lines[0]) {
+					continue;
+				}
 				foreach ($lines as $line) {
 					$this->insertBefore($line, $child);
 					$line->getStyle()->init();
@@ -632,11 +654,11 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			if ($child instanceof TextBox) {
 				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
 					$pageNumber = $this->document->getCurrentPage()->getPageNumber();
-					$child->setText(preg_replace('/{p}/ui', (string)$pageNumber, $child->getTextContent()));
+					$child->setText(preg_replace('/{p}/ui', (string) $pageNumber, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
 				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
-					$pages = (string)$this->document->getCurrentPage()->getPageCount();
+					$pages = (string) $this->document->getCurrentPage()->getPageCount();
 					$child->setText(preg_replace('/{a}/ui', $pages, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}

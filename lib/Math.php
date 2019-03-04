@@ -18,7 +18,7 @@ namespace YetiForcePDF;
  */
 class Math
 {
-	public static $scale = 8;
+	public static $scale = 2;
 
 	/**
 	 * Add two numbers.

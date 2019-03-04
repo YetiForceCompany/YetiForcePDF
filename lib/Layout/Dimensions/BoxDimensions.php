@@ -165,21 +165,20 @@ class BoxDimensions extends Dimensions
 		if (!$box instanceof LineBox) {
 			$style = $this->getBox()->getStyle();
 			$childrenWidth = '0';
-			// if some of the children overflows
-			if ($box->getStyle()->getRules('display') === 'inline') {
-				foreach ($box->getChildren() as $child) {
-					$childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
-				}
-			} else {
-				foreach ($box->getChildren() as $child) {
-					$childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
-				}
-			}
 			if ($this->getWidth() !== null) {
 				$childrenWidth = Math::add($childrenWidth, $style->getHorizontalMarginsWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 				$width = Math::add($this->getWidth(), $style->getHorizontalMarginsWidth());
 				return Math::max($width, $childrenWidth);
 			} else {
+				if ($box->getStyle()->getRules('display') === 'inline') {
+					foreach ($box->getChildren() as $child) {
+						$childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
+					}
+				} else {
+					foreach ($box->getChildren() as $child) {
+						$childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
+					}
+				}
 				return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 			}
 		} else {

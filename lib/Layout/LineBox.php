@@ -198,6 +198,11 @@ class LineBox extends Box implements BoxInterface
 	 */
 	public function divide()
 	{
+		$width = $this->getDimensions()->getWidth();
+		$availableSpace = $this->getParent()->getDimensions()->computeAvailableSpace();
+		if (!empty($width) && !empty($availableSpace) && Math::comp($width, $availableSpace) <= 0) {
+			return [$this];
+		}
 		$lines = [];
 		$line = (new self())
 			->setDocument($this->document)
