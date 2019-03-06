@@ -1294,6 +1294,7 @@ class Style extends \YetiForcePDF\Base
 		}
 		$this->rules = $finalRules;
 		$this->parsed = true;
+		unset($finalRules,$rules,$parsed,$rulesParsed,$ruleParsed, $defaultRules, $inherited);
 		return $this;
 	}
 
@@ -1408,6 +1409,7 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
+		unset($rowGroup,$boxes,$rows,$columns);
 		return $this;
 	}
 

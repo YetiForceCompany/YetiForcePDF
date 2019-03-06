@@ -168,11 +168,19 @@ class BoxDimensions extends Dimensions
 			// if some of the children overflows
 			if ($box->getStyle()->getRules('display') === 'inline') {
 				foreach ($box->getChildren() as $child) {
-					$childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
+					if ($childWidth = $child->getDimensions()->getWidth()) {
+						$childrenWidth = Math::add($childrenWidth, $childWidth);
+					} else {
+						$childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
+					}
 				}
 			} else {
 				foreach ($box->getChildren() as $child) {
-					$childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
+					if ($childWidth = $child->getDimensions()->getWidth()) {
+						$childrenWidth = Math::max($childrenWidth, $childWidth);
+					} else {
+						$childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
+					}
 				}
 			}
 			if ($this->getWidth() !== null) {

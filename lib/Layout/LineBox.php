@@ -257,6 +257,7 @@ class LineBox extends Box implements BoxInterface
 			}
 			$line->forMeasurement = $isForMeasurement;
 		}
+		unset($children);
 		return $lines;
 	}
 
@@ -420,7 +421,11 @@ class LineBox extends Box implements BoxInterface
 		$width = '0';
 		foreach ($this->getChildren() as $childBox) {
 			if ($childBox->isForMeasurement()) {
-				$width = Math::add($width, $childBox->getDimensions()->getOuterWidth());
+				if ($childWidth = $childBox->getDimensions()->getWidth()) {
+					$width = Math::add($width, $childWidth);
+				} else {
+					$width = Math::add($width, $childBox->getDimensions()->getOuterWidth());
+				}
 			}
 		}
 		return $width;

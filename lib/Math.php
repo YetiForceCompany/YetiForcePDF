@@ -18,7 +18,7 @@ namespace YetiForcePDF;
  */
 class Math
 {
-	public static $scale = 8;
+	public static $scale = 2;
 
 	/**
 	 * Add two numbers.
@@ -29,11 +29,9 @@ class Math
 	 */
 	public static function add(string ...$numbers)
 	{
-		$numbers = array_reverse($numbers);
-		$result = array_pop($numbers);
-		$numbers = array_reverse($numbers);
-		foreach ($numbers as $number) {
-			$result = bcadd($result, $number, static::$scale);
+		$result = $numbers[0];
+		for ($i=1,$len=count($numbers); $i<$len; $i++) {
+			$result = bcadd($result, $numbers[$i], static::$scale);
 		}
 		return $result;
 	}
@@ -47,11 +45,9 @@ class Math
 	 */
 	public static function sub(string ...$numbers)
 	{
-		$numbers = array_reverse($numbers);
-		$result = array_pop($numbers);
-		$numbers = array_reverse($numbers);
-		foreach ($numbers as $number) {
-			$result = bcsub($result, $number, static::$scale);
+		$result = $numbers[0];
+		for ($i=1,$len=count($numbers); $i<$len; $i++) {
+			$result = bcsub($result, $numbers[$i], static::$scale);
 		}
 		return $result;
 	}
@@ -65,11 +61,9 @@ class Math
 	 */
 	public static function mul(string ...$numbers)
 	{
-		$numbers = array_reverse($numbers);
-		$result = array_pop($numbers);
-		$numbers = array_reverse($numbers);
-		foreach ($numbers as $number) {
-			$result = bcmul($result, $number, static::$scale);
+		$result = $numbers[0];
+		for ($i=1,$len=count($numbers); $i<$len; $i++) {
+			$result = bcmul($result, $numbers[$i], static::$scale);
 		}
 		return $result;
 	}
@@ -83,16 +77,12 @@ class Math
 	 */
 	public static function div(string ...$numbers)
 	{
-		foreach ($numbers as $number) {
-			if (static::comp($number, '0') === 0) {
+		$result = $numbers[0];
+		for ($i=1,$len=count($numbers); $i<$len; $i++) {
+			if ((float) $numbers[$i]===(float) 0) {
 				return '0';
 			}
-		}
-		$numbers = array_reverse($numbers);
-		$result = array_pop($numbers);
-		$numbers = array_reverse($numbers);
-		foreach ($numbers as $number) {
-			$result = bcdiv($result, $number, static::$scale);
+			$result = bcdiv($result, $numbers[$i], static::$scale);
 		}
 		return $result;
 	}
@@ -119,11 +109,9 @@ class Math
 	 */
 	public static function max(string ...$numbers)
 	{
-		$numbers = array_reverse($numbers);
-		$result = array_pop($numbers);
-		$numbers = array_reverse($numbers);
-		foreach ($numbers as $number) {
-			$result = static::comp($number, $result) >= 0 ? $number : $result;
+		$result = $numbers[0];
+		for ($i=1,$len=count($numbers); $i<$len; $i++) {
+			$result = bccomp($numbers[$i], $result, static::$scale) >= 0 ? $numbers[$i] : $result;
 		}
 		return $result;
 	}
@@ -137,11 +125,9 @@ class Math
 	 */
 	public static function min(string ...$numbers)
 	{
-		$numbers = array_reverse($numbers);
-		$result = array_pop($numbers);
-		$numbers = array_reverse($numbers);
-		foreach ($numbers as $number) {
-			$result = static::comp($result, $number) > 0 ? $number : $result;
+		$result = $numbers[0];
+		for ($i=1,$len=count($numbers); $i<$len; $i++) {
+			$result = bccomp($result, $numbers[$i], static::$scale) > 0 ? $numbers[$i] : $result;
 		}
 		return $result;
 	}

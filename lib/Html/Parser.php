@@ -59,7 +59,7 @@ class Parser extends \YetiForcePDF\Base
 	 *
 	 * @return \YetiForcePDF\Html\Parser
 	 */
-	public function loadHtml(string $html, string $fromEncoding = ''): \YetiForcePDF\Html\Parser
+	public function loadHtml(string $html, string $fromEncoding = ''): self
 	{
 		$html = htmlspecialchars_decode($html, ENT_HTML5);
 		$this->html = $this->cleanUpHtml($html);
@@ -240,7 +240,6 @@ class Parser extends \YetiForcePDF\Base
 			foreach ($this->document->getPages($groupIndex) as $page) {
 				$page->getBox()->spanAllRows();
 			}
-			$pageGroup->getStyle()->fixDomTree();
 			$this->document->fixPageNumbers();
 			foreach ($this->document->getPages($groupIndex) as $page) {
 				$this->document->setCurrentPage($page);
