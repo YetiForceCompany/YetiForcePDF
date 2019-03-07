@@ -319,7 +319,7 @@ class Box extends \YetiForcePDF\Base
 	 * Set style.
 	 *
 	 * @param \YetiForcePDF\Style\Style $style
-	 * @param bool $init
+	 * @param bool                      $init
 	 *
 	 * @return $this
 	 */
@@ -523,9 +523,6 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function appendChild(self $box)
 	{
-		if ($this instanceof LineBox && $box instanceof LineBox) {
-			throw new \InvalidArgumentException('LineBox cannot append another LineBox as child.');
-		}
 		$box->setParent($this);
 		$childrenCount = count($this->children);
 		if ($childrenCount > 0) {
@@ -623,8 +620,10 @@ class Box extends \YetiForcePDF\Base
 
 	/**
 	 * Get children.
+	 *
 	 * @param bool $onlyRenderable
 	 * @param bool $onlyForMeasurment
+	 *
 	 * @return Box[]
 	 */
 	public function getChildren(bool $onlyRenderable = false, bool $onlyForMeasurment = false): array
@@ -632,7 +631,7 @@ class Box extends \YetiForcePDF\Base
 		if (!$onlyRenderable && !$onlyForMeasurment) {
 			return $this->children;
 		}
-		return array_filter($this->children, function (Box $box) use ($onlyRenderable, $onlyForMeasurment) {
+		return array_filter($this->children, function (self $box) use ($onlyRenderable, $onlyForMeasurment) {
 			if ($onlyRenderable && $onlyForMeasurment) {
 				return $box->isRenderable() && $box->isForMeasurement();
 			}
@@ -647,7 +646,7 @@ class Box extends \YetiForcePDF\Base
 	 * Get all children.
 	 *
 	 * @param Box[] $allChildren
-	 * @param bool $withCurrent
+	 * @param bool  $withCurrent
 	 *
 	 * @return Box[]
 	 */
@@ -666,8 +665,8 @@ class Box extends \YetiForcePDF\Base
 	 * Iterate all children.
 	 *
 	 * @param callable $fn
-	 * @param bool $reverse
-	 * @param bool $deep
+	 * @param bool     $reverse
+	 * @param bool     $deep
 	 *
 	 * @return $this
 	 */
@@ -693,7 +692,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Get boxes by type.
 	 *
-	 * @param string $shortClassName
+	 * @param string      $shortClassName
 	 * @param string|null $until
 	 *
 	 * @return array
@@ -1027,7 +1026,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Add border instructions.
 	 *
-	 * @param array $element
+	 * @param array  $element
 	 * @param string $pdfX
 	 * @param string $pdfY
 	 * @param string $width

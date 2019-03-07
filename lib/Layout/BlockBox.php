@@ -29,6 +29,12 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 * @var \YetiForcePDF\Layout\LineBox
 	 */
 	protected $currentLineBox;
+	/**
+	 * Parent width cache.
+	 *
+	 * @var string
+	 */
+	protected $parentWidth = '0';
 
 	/**
 	 * @var LineBox[]
@@ -364,13 +370,20 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$dimensions = $this->getDimensions();
 		$parent = $this->getParent();
 		if ($parent) {
+			if ($this->parentWidth === $parent->getDimensions()->getWidth()) {
+				return $this;
+			}
+			$this->parentWidth = $parent->getDimensions()->getWidth();
+			$oldWidth = $this->getDimensions()->getWidth();
 			if ($parent->getDimensions()->getWidth() !== null) {
 				$dimensions->setWidth(Math::sub($parent->getDimensions()->getInnerWidth(), $this->getStyle()->getHorizontalMarginsWidth()));
 				$this->applyStyleWidth();
-				foreach ($this->getChildren() as $child) {
-					$child->measureWidth();
+				if ($oldWidth !== $this->getDimensions()->getWidth()) {
+					foreach ($this->getChildren() as $child) {
+						$child->measureWidth();
+					}
+					$this->divideLines();
 				}
-				$this->divideLines();
 				return $this;
 			}
 			// if parent doesn't have a width specified
@@ -389,12 +402,15 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			$this->applyStyleWidth();
 			return $this;
 		}
-		$dimensions->setWidth($this->document->getCurrentPage()->getDimensions()->getWidth());
-		$this->applyStyleWidth();
-		foreach ($this->getChildren() as $child) {
-			$child->measureWidth();
+		$width = $this->document->getCurrentPage()->getDimensions()->getWidth();
+		if ($this->getDimensions()->getWidth()!==$width) {
+			$dimensions->setWidth($width);
+			$this->applyStyleWidth();
+			foreach ($this->getChildren() as $child) {
+				$child->measureWidth();
+			}
+			$this->divideLines();
 		}
-		$this->divideLines();
 		return $this;
 	}
 

@@ -26,6 +26,18 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * @var \YetiForcePDF\Layout\TextBox
 	 */
 	protected $previousTextBox;
+	/**
+	 * Parent width cache.
+	 *
+	 * @var string
+	 */
+	protected $parentWidth ='0';
+	/**
+	 * Parent height cache.
+	 *
+	 * @var string
+	 */
+	protected $parentHeight ='0';
 
 	/**
 	 * Go up to Line box and clone and wrap element.
@@ -242,6 +254,14 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	public function measureWidth()
 	{
+		$style = $this->getStyle();
+		if ($this->parentWidth === $this->getParent()->getDimensions()->getWidth()) {
+			if (!$this->isForMeasurement()) {
+				$this->getDimensions()->setWidth(Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
+			}
+			return $this;
+		}
+		$this->parentWidth = $this->getParent()->getDimensions()->getWidth();
 		$width = '0';
 		if ($this->isForMeasurement()) {
 			foreach ($this->getChildren() as $child) {
@@ -249,7 +269,6 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 				$width = Math::add($width, $child->getDimensions()->getOuterWidth());
 			}
 		}
-		$style = $this->getStyle();
 		$width = Math::add($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 		$this->getDimensions()->setWidth($width);
 		$this->applyStyleWidth();
@@ -263,6 +282,9 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	public function measureHeight()
 	{
+		if ($this->getDimensions()->getHeight()!==null) {
+			return $this;
+		}
 		foreach ($this->getChildren() as $child) {
 			$child->measureHeight();
 		}

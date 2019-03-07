@@ -82,6 +82,12 @@ class TableBox extends BlockBox
 	 * @var TableRowGroupBox|null
 	 */
 	protected $anonymousRowGroup;
+	/**
+	 * Parent width cache.
+	 *
+	 * @var string
+	 */
+	protected $parentWidth = '0';
 
 	/**
 	 * We shouldn't append block box here.
@@ -1116,6 +1122,10 @@ class TableBox extends BlockBox
 	 */
 	public function measureWidth()
 	{
+		if ($this->parentWidth === $this->getParent()->getParent()->getDimensions()->getWidth()) {
+			return $this;
+		}
+		$this->parentWidth = $this->getParent()->getParent()->getDimensions()->getWidth();
 		foreach ($this->getCells() as $cell) {
 			$cell->measureWidth();
 		}

@@ -26,6 +26,13 @@ class TableCellBox extends BlockBox
 	protected $spanned = false;
 
 	/**
+	 * Parent width cache.
+	 *
+	 * @var string
+	 */
+	protected $parentWidth = '0';
+
+	/**
 	 * Set column spanned.
 	 *
 	 * @param bool $spanned
@@ -55,6 +62,10 @@ class TableCellBox extends BlockBox
 	 */
 	public function measureWidth()
 	{
+		if ($this->parentWidth === $this->getClosestByType('TableBox')->getDimensions()->getWidth()) {
+			return $this;
+		}
+		$this->parentWidth = $this->getClosestByType('TableBox')->getDimensions()->getWidth();
 		foreach ($this->getChildren() as $child) {
 			$child->measureWidth();
 		}
