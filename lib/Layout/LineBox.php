@@ -170,8 +170,8 @@ class LineBox extends Box implements BoxInterface
 	{
 		$childrenWidth = $this->getChildrenWidth();
 		$availableSpace = $this->getDimensions()->computeAvailableSpace();
-		$boxOuterWidth = $box->getDimensions()->getOuterWidth();
-		return Math::comp(Math::sub($availableSpace, $childrenWidth), $boxOuterWidth) >= 0;
+		$boxWidth = $box->getDimensions()->getWidth();
+		return Math::comp(Math::sub($availableSpace, $childrenWidth), $boxWidth) >= 0;
 	}
 
 	/**

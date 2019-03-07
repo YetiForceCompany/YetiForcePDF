@@ -134,6 +134,12 @@ class Document
 	 * @var bool
 	 */
 	protected $parsed = false;
+	/**
+	 * Characters int values cache for fonts.
+	 *
+	 * @var array
+	 */
+	protected $ordCache = [];
 
 	/**
 	 * Are we debugging?

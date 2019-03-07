@@ -199,6 +199,12 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 * @var string
 	 */
 	protected $fontPostscriptName;
+	/**
+	 * Text widths cache.
+	 *
+	 * @var array
+	 */
+	protected $textWidths=[];
 
 	/**
 	 * Initialisation.
@@ -250,7 +256,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 *
 	 * @return \YetiForcePDF\Objects\Font
 	 */
-	public function setNumber(string $number): \YetiForcePDF\Objects\Font
+	public function setNumber(string $number): self
 	{
 		$this->fontNumber = $number;
 		return $this;
@@ -388,6 +394,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function mbOrd($string)
 	{
+		if (isset($this->document->ordCache[$string])) {
+			return $this->document->ordCache[$string];
+		}
 		if (extension_loaded('mbstring') === true) {
 			mb_language('Neutral');
 			mb_internal_encoding('UTF-8');
@@ -397,7 +406,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 				return $result[1];
 			}
 		}
-		return ord($string);
+		return $this->document->ordCache[$string] = ord($string);
 	}
 
 	/**
@@ -409,14 +418,17 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getTextWidth(string $text): string
 	{
+		if (isset($this->textWidths[$text])) {
+			return $this->textWidths[$text];
+		}
 		$width = '0';
 		for ($i = 0, $len = mb_strlen($text); $i < $len; $i++) {
 			$char = mb_substr($text, $i, 1);
 			if (isset($this->widths[$this->mbOrd($char)])) {
-				$width = Math::add($width, (string)$this->widths[$this->mbOrd($char)]);
+				$width = Math::add($width, (string) $this->widths[$this->mbOrd($char)]);
 			}
 		}
-		return Math::div(Math::mul($this->size, $width), '1000');
+		return $this->textWidths[$text] = Math::div(Math::mul($this->size, $width), '1000');
 	}
 
 	/**
@@ -540,16 +552,16 @@ class Font extends \YetiForcePDF\Objects\Resource
 			return static::$customFontFiles[$this->family][$this->weight][$this->style];
 		}
 		$weight = '';
-		for ($currentWeight = (int)$this->weight; $currentWeight >= 0; $currentWeight -= 100) {
-			if (isset(static::$customFontFiles[$this->family][(string)$currentWeight])) {
-				$weight = (string)$currentWeight;
+		for ($currentWeight = (int) $this->weight; $currentWeight >= 0; $currentWeight -= 100) {
+			if (isset(static::$customFontFiles[$this->family][(string) $currentWeight])) {
+				$weight = (string) $currentWeight;
 				break;
 			}
 		}
 		if (!$weight) {
-			for ($currentWeight = (int)$this->weight; $currentWeight <= 900; $currentWeight += 100) {
-				if (isset(static::$customFontFiles[$this->family][(string)$currentWeight])) {
-					$weight = (string)$currentWeight;
+			for ($currentWeight = (int) $this->weight; $currentWeight <= 900; $currentWeight += 100) {
+				if (isset(static::$customFontFiles[$this->family][(string) $currentWeight])) {
+					$weight = (string) $currentWeight;
 					break;
 				}
 			}
@@ -643,25 +655,25 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$post = $font->getData('post');
 		$os2 = $font->getData('OS/2');
 		if (isset($head['unitsPerEm'])) {
-			$this->unitsPerEm = (string)$head['unitsPerEm'];
+			$this->unitsPerEm = (string) $head['unitsPerEm'];
 		}
 		$this->outputInfo['descriptor'] = [];
 		$this->outputInfo['descriptor']['FontBBox'] = '[' . implode(' ', [
-				$this->normalizeUnit((string)$head['xMin']),
-				$this->normalizeUnit((string)$head['yMin']),
-				$this->normalizeUnit((string)$head['xMax']),
-				$this->normalizeUnit((string)$head['yMax']),
+				$this->normalizeUnit((string) $head['xMin']),
+				$this->normalizeUnit((string) $head['yMin']),
+				$this->normalizeUnit((string) $head['xMax']),
+				$this->normalizeUnit((string) $head['yMax']),
 			]) . ']';
-		$this->outputInfo['descriptor']['Ascent'] = (string)$hhea['ascent'];
-		$this->outputInfo['descriptor']['Descent'] = (string)$hhea['descent'];
-		$this->ascender = (string)$this->outputInfo['descriptor']['Ascent'];
-		$this->descender = (string)$this->outputInfo['descriptor']['Descent'];
+		$this->outputInfo['descriptor']['Ascent'] = (string) $hhea['ascent'];
+		$this->outputInfo['descriptor']['Descent'] = (string) $hhea['descent'];
+		$this->ascender = (string) $this->outputInfo['descriptor']['Ascent'];
+		$this->descender = (string) $this->outputInfo['descriptor']['Descent'];
 		$this->outputInfo['descriptor']['MissingWidth'] = '500';
 		$this->outputInfo['descriptor']['StemV'] = '80';
 		if (isset($post['usWeightClass']) && $post['usWeightClass'] > 400) {
 			$this->outputInfo['descriptor']['StemV'] = '120';
 		}
-		$this->outputInfo['descriptor']['ItalicAngle'] = (string)$post['italicAngle'];
+		$this->outputInfo['descriptor']['ItalicAngle'] = (string) $post['italicAngle'];
 		$flags = 0;
 		if ($this->outputInfo['descriptor']['ItalicAngle'] !== '0') {
 			$flags += 2 ** 6;
@@ -670,7 +682,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 			$flags += 1;
 		}
 		$flags += 2 ** 5;
-		$this->outputInfo['descriptor']['Flags'] = (string)$flags;
+		$this->outputInfo['descriptor']['Flags'] = (string) $flags;
 		$this->outputInfo['font'] = [];
 		$widths = [];
 		$this->widths = [];
@@ -683,7 +695,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 				$cidToGid[$c * 2] = chr($glyph >> 8);
 				$cidToGid[$c * 2 + 1] = chr($glyph & 0xFF);
 			}
-			$width = $this->normalizeUnit(isset($hmtx[$glyph]) ? (string)$hmtx[$glyph][0] : (string)$hmtx[0][0]);
+			$width = $this->normalizeUnit(isset($hmtx[$glyph]) ? (string) $hmtx[$glyph][0] : (string) $hmtx[0][0]);
 			$widths[] = $c . ' [' . $width . ']';
 			$this->widths[$c] = $width;
 		}
@@ -694,9 +706,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->outputInfo['font']['Widths'] = $widths;
 		$this->outputInfo['font']['FirstChar'] = 0;
 		$this->outputInfo['font']['LastChar'] = count($widths) - 1;
-		$this->height = Math::sub((string)$hhea['ascent'], (string)$hhea['descent']);
+		$this->height = Math::sub((string) $hhea['ascent'], (string) $hhea['descent']);
 		if (isset($os2['typoLineGap'])) {
-			$this->height = Math::add($this->height, (string)$os2['typoLineGap']);
+			$this->height = Math::add($this->height, (string) $os2['typoLineGap']);
 		}
 		$this->fontType0 = (new \YetiForcePDF\Objects\Basic\DictionaryObject())
 			->setDocument($this->document)
