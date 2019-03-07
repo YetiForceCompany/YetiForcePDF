@@ -58,12 +58,22 @@ class Style extends \YetiForcePDF\Base
 	 * @var bool
 	 */
 	protected $parsed = false;
-	// @var string $elementName (nodeName)
+	/**
+	 * Element name.
+	 *
+	 * @var string
+	 */
 	protected $elementName = '';
 	/**
 	 * @var ImageStream
 	 */
 	protected $backgroundImage;
+	/**
+	 * Max line height cache.
+	 *
+	 * @var string
+	 */
+	protected $maxLineHeight;
 	/**
 	 * Css properties that are inherited by default.
 	 *
@@ -960,6 +970,9 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function getMaxLineHeight()
 	{
+		if ($this->maxLineHeight) {
+			return $this->maxLineHeight;
+		}
 		$box = $this->getBox();
 		$lineHeight = $this->rules['line-height'];
 		if (!$this->getRules('display') !== 'inline') {
@@ -968,6 +981,9 @@ class Style extends \YetiForcePDF\Base
 		foreach ($box->getChildren() as $child) {
 			$maxLineHeight = $child->getStyle()->getMaxLineHeight();
 			$lineHeight = Math::max($lineHeight, $maxLineHeight, $child->getDimensions()->getHeight());
+		}
+		if (!$box instanceof LineBox) {
+			$this->maxLineHeight = $lineHeight;
 		}
 		return $lineHeight;
 	}
@@ -1308,6 +1324,9 @@ class Style extends \YetiForcePDF\Base
 	public function fixTables(bool $removeBottomBorders)
 	{
 		$box = $this->getBox();
+		if ($box->wasCut()) {
+			return $this;
+		}
 		$boxStyle = $box->getStyle();
 		$boxes = [$box];
 		if (!$box instanceof TableBox) {
@@ -1422,6 +1441,9 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function fixDomTree(bool $removeBottomBorders = true)
 	{
+		if ($this->getBox()->wasCut()) {
+			return $this;
+		}
 		foreach ($this->box->getChildren() as $childBox) {
 			$childBox->getStyle()->fixTables($removeBottomBorders);
 			$childBox->getStyle()->fixDomTree($removeBottomBorders);

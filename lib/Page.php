@@ -1083,7 +1083,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$cells = $tableWrapperBox->getBoxesByType('TableCellBox');
 		foreach ($cells as $cell) {
-			if (Math::comp($cell->getCoordinates()->getEndY(), $yPos)>0) {
+			if (Math::comp($cell->getDimensions()->getHeight(), $this->getDimensions()->getHeight())>0) {
 				return true;
 			}
 		}

@@ -29,9 +29,12 @@ class Math
 	 */
 	public static function add(string ...$numbers)
 	{
-		$result = $numbers[0];
-		for ($i=1,$len=count($numbers); $i<$len; $i++) {
-			$result = bcadd($result, $numbers[$i], static::$scale);
+		if (!isset($numbers[2])) {
+			return bcadd($numbers[0], $numbers[1], static::$scale);
+		}
+		$result = '0';
+		foreach ($numbers as $number) {
+			$result = bcadd($result, $number, static::$scale);
 		}
 		return $result;
 	}
@@ -45,6 +48,9 @@ class Math
 	 */
 	public static function sub(string ...$numbers)
 	{
+		if (!isset($numbers[2])) {
+			return bcsub($numbers[0], $numbers[1], static::$scale);
+		}
 		$result = $numbers[0];
 		for ($i=1,$len=count($numbers); $i<$len; $i++) {
 			$result = bcsub($result, $numbers[$i], static::$scale);
@@ -61,9 +67,12 @@ class Math
 	 */
 	public static function mul(string ...$numbers)
 	{
-		$result = $numbers[0];
-		for ($i=1,$len=count($numbers); $i<$len; $i++) {
-			$result = bcmul($result, $numbers[$i], static::$scale);
+		if (!isset($numbers[2])) {
+			return bcmul($numbers[0], $numbers[1], static::$scale);
+		}
+		$result = '1';
+		foreach ($numbers as $number) {
+			$result = bcmul($result, $number, static::$scale);
 		}
 		return $result;
 	}
@@ -77,6 +86,13 @@ class Math
 	 */
 	public static function div(string ...$numbers)
 	{
+		if (!isset($numbers[2])) {
+			if ((float) $numbers[0]!==(float) 0 && (float) $numbers[1]!==(float) 0) {
+				return bcdiv($numbers[0], $numbers[1], static::$scale);
+			} else {
+				return '0';
+			}
+		}
 		$result = $numbers[0];
 		for ($i=1,$len=count($numbers); $i<$len; $i++) {
 			if ((float) $numbers[$i]===(float) 0) {
@@ -109,9 +125,9 @@ class Math
 	 */
 	public static function max(string ...$numbers)
 	{
-		$result = $numbers[0];
-		for ($i=1,$len=count($numbers); $i<$len; $i++) {
-			$result = bccomp($numbers[$i], $result, static::$scale) >= 0 ? $numbers[$i] : $result;
+		$result = '0';
+		foreach ($numbers as $number) {
+			$result = bccomp($number, $result, static::$scale) >= 0 ? $number : $result;
 		}
 		return $result;
 	}

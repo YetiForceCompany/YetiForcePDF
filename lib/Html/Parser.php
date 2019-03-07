@@ -240,6 +240,7 @@ class Parser extends \YetiForcePDF\Base
 			foreach ($this->document->getPages($groupIndex) as $page) {
 				$page->getBox()->spanAllRows();
 			}
+			$page->getBox()->getStyle()->fixDomTree();
 			$this->document->fixPageNumbers();
 			foreach ($this->document->getPages($groupIndex) as $page) {
 				$this->document->setCurrentPage($page);
