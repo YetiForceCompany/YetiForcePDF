@@ -1001,6 +1001,32 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		return $this;
 	}
 
+	public function cutBox($box, $yPos, $cloned)
+	{
+		foreach ($box->getChildren() as $child) {
+			if (!$child->isForMeasurement() || !$child->isRenderable()) {
+				continue;
+			}
+			$childCoords = $child->getCoordinates();
+			if (Math::comp($childCoords->getEndY(), $yPos) >= 0) {
+				$childBoxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
+				foreach ($childBoxes as $childBox) {
+					$cloned->appendChild($childBox);
+				}
+			}
+			if (Math::comp($childCoords->getY(), $yPos) >= 0) {
+				$child->setRenderable(false)->setForMeasurement(false);
+			}
+		}
+		if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
+			$this->cutBelow($box, $yPos);
+			$this->cutAbove($cloned, $yPos);
+		} elseif (Math::comp($box->getCoordinates()->getY(), $yPos) >= 0) {
+			$box->setRenderable(false)->setForMeasurement(false);
+		}
+		return $cloned;
+	}
+
 	/**
 	 * Group boxes by parent.
 	 *
@@ -1029,27 +1055,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			if ($box instanceof TableWrapperBox && Math::comp($boxCoords->getY(), $yPos) <= 0 && Math::comp($boxCoords->getEndY(), $yPos) > 0) {
 				$cloned = $this->divideTable($box);
 			} else {
-				foreach ($box->getChildren() as $child) {
-					if (!$child->isForMeasurement() || !$child->isRenderable()) {
-						continue;
-					}
-					$childCoords = $child->getCoordinates();
-					if (Math::comp($childCoords->getEndY(), $yPos) >= 0) {
-						$childBoxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
-						foreach ($childBoxes as $childBox) {
-							$cloned->appendChild($childBox);
-						}
-					}
-					if (Math::comp($childCoords->getY(), $yPos) >= 0) {
-						$child->setRenderable(false)->setForMeasurement(false);
-					}
-				}
-				if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
-					$this->cutBelow($box, $yPos);
-					$this->cutAbove($cloned, $yPos);
-				} elseif (Math::comp($box->getCoordinates()->getY(), $yPos) >= 0) {
-					$box->setRenderable(false)->setForMeasurement(false);
-				}
+				$cloned = $this->cutBox($box, $yPos, $cloned);
 			}
 			$clonedBoxes[] = $cloned;
 		}
@@ -1219,9 +1225,11 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Break overflow of the current page.
 	 *
+	 * @param int $level Is used to stop infinite loop if something goes wrong
+	 *
 	 * @return $this
 	 */
-	public function breakOverflow()
+	public function breakOverflow(int $level = 0)
 	{
 		$atYPos = Math::add($this->getDimensions()->getHeight(), (string) $this->margins['top']);
 		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($atYPos);
@@ -1238,8 +1246,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->getBox()->measureHeight(true)->measureOffset()->alignText()->measurePosition();
 		$newBox->layout(true);
 		$this->document->setCurrentPage($newPage);
-		if (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
-			$newPage->breakOverflow();
+		if (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0 && $level < 1024) {
+			$newPage->breakOverflow(++$level);
 		}
 		unset($clonedBoxes);
 		return $this;

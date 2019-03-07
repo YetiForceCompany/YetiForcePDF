@@ -671,7 +671,7 @@ class Document
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
-	public function addObject(PdfObject $object, $after = null): \YetiForcePDF\Document
+	public function addObject(PdfObject $object, $after = null): self
 	{
 		$afterIndex = count($this->objects);
 		if ($after) {
@@ -706,7 +706,7 @@ class Document
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
-	public function removeObject(\YetiForcePDF\Objects\PdfObject $object): \YetiForcePDF\Document
+	public function removeObject(\YetiForcePDF\Objects\PdfObject $object): self
 	{
 		$this->objects = array_filter($this->objects, function ($currentObject) use ($object) {
 			return $currentObject !== $object;
