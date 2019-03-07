@@ -70,7 +70,9 @@ class TableCellBox extends BlockBox
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
 	{
-		//$this->applyStyleWidth();
+		if ($this->wasCut()) {
+			return $this;
+		}
 		foreach ($this->getChildren() as $child) {
 			$child->measureHeight();
 		}

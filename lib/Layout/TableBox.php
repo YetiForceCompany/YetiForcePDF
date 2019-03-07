@@ -1158,6 +1158,9 @@ class TableBox extends BlockBox
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
 	{
+		if ($this->wasCut()) {
+			return $this;
+		}
 		foreach ($this->getCells() as $cell) {
 			$cell->measureHeight();
 		}

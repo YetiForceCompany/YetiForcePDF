@@ -1001,7 +1001,16 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		return $this;
 	}
 
-	public function cutBox($box, $yPos, $cloned)
+	/**
+	 * Cut box.
+	 *
+	 * @param Box    $box
+	 * @param string $yPos
+	 * @param Box    $cloned
+	 *
+	 * @return Box
+	 */
+	public function cutBox(Box $box, string $yPos, Box $cloned)
 	{
 		foreach ($box->getChildren() as $child) {
 			if (!$child->isForMeasurement() || !$child->isRenderable()) {
@@ -1032,7 +1041,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @param Box[]|null $boxes
 	 *
-	 * @return Box[] cloned boxes
+	 * @return Box[]|null cloned boxes
 	 */
 	public function cloneAndDivideChildrenAfterY(string $yPos, array $boxes = null)
 	{
@@ -1053,7 +1062,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$cloned->clearChildren();
 			$boxCoords = $box->getCoordinates();
 			if ($box instanceof TableWrapperBox && Math::comp($boxCoords->getY(), $yPos) <= 0 && Math::comp($boxCoords->getEndY(), $yPos) > 0) {
-				$cloned = $this->divideTable($box);
+				$cloned = $this->divideTable($box, $yPos, $cloned);
 			} else {
 				$cloned = $this->cutBox($box, $yPos, $cloned);
 			}
@@ -1063,15 +1072,39 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	}
 
 	/**
+	 * Treat table like div? - just cut.
+	 *
+	 * @param TableWrapperBox $tableWrapperBox
+	 * @param string          $yPos
+	 *
+	 * @return bool
+	 */
+	public function treatTableLikeDiv(TableWrapperBox $tableWrapperBox, string $yPos)
+	{
+		$cells = $tableWrapperBox->getBoxesByType('TableCellBox');
+		foreach ($cells as $cell) {
+			if (Math::comp($cell->getCoordinates()->getEndY(), $yPos)>0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Divide overflowed table.
 	 *
-	 * @param Box $tableChild
+	 * @param Box    $tableChild
+	 * @param string $yPos
+	 * @param Box    $cloned
 	 *
 	 * @return TableWrapperBox
 	 */
-	protected function divideTable(Box $tableChild)
+	protected function divideTable(Box $tableChild, string $yPos, Box $cloned)
 	{
 		$tableWrapperBox = $tableChild->getClosestByType('TableWrapperBox');
+		if ($this->treatTableLikeDiv($tableWrapperBox, $yPos)) {
+			return $this->cutBox($tableWrapperBox, $yPos, $cloned);
+		}
 		$pageEnd = Math::add($this->getDimensions()->getHeight(), (string) $this->margins['top']);
 		if (Math::comp($tableWrapperBox->getCoordinates()->getY(), $pageEnd) >= 0) {
 			// if table is below page do nothing - it will be moved to the next page and then again checked

@@ -93,6 +93,9 @@ class TableWrapperBox extends BlockBox
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
 	{
+		if ($this->wasCut()) {
+			return $this;
+		}
 		$maxHeight = '0';
 		foreach ($this->getChildren() as $child) {
 			$child->measureHeight();
