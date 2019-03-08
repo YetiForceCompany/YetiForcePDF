@@ -140,6 +140,12 @@ class Document
 	 * @var array
 	 */
 	protected $ordCache = [];
+	/**
+	 * Css selectors like classes ids.
+	 *
+	 * @var array
+	 */
+	protected $cssSelectors = [];
 
 	/**
 	 * Are we debugging?
@@ -876,5 +882,52 @@ class Document
 		$this->removeObject($trailer);
 
 		return $this->buffer;
+	}
+
+	/**
+	 * Get css selector rules.
+	 *
+	 * @param string $selector
+	 *
+	 * @return array
+	 */
+	public function getCssSelectorRules(string $selector)
+	{
+		$rules = [];
+		foreach(explode(' ',$selector) as $className){
+			if ($className && isset($this->cssSelectors[$className])) {
+				$rules = array_merge($rules,$this->cssSelectors[$className]);
+			}
+		}
+
+		return $rules;
+	}
+
+	/**
+	 * Get css selectors.
+	 *
+	 * @return array
+	 */
+	public function getCssSelectors()
+	{
+		return $this->cssSelectors;
+	}
+
+	/**
+	 * Add css selector rules.
+	 *
+	 * @param string $selector .className or #id
+	 * @param array  $rules
+	 *
+	 * @return $this
+	 */
+	public function addCssSelectorRules(string $selector, array $rules): self
+	{
+		if (isset($this->cssSelectors[$selector])) {
+			$this->cssSelectors[$selector] = array_merge($this->cssSelectors[$selector], $rules);
+		} else {
+			$this->cssSelectors[$selector] = $rules;
+		}
+		return $this;
 	}
 }

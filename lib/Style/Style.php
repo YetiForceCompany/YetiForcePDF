@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
+use Sabberworm\CSS\Parser as CSSParser;
 use YetiForcePDF\Html\Element;
 use YetiForcePDF\Layout\Box;
 use YetiForcePDF\Layout\InlineBox;
@@ -35,7 +36,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * CSS text to parse.
 	 *
-	 * @var string|null
+	 * @var null|string
 	 */
 	protected $content;
 	/**
@@ -74,6 +75,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var string
 	 */
 	protected $maxLineHeight;
+
 	/**
 	 * Css properties that are inherited by default.
 	 *
@@ -206,72 +208,99 @@ class Style extends \YetiForcePDF\Base
 			'color' => 'blue',
 		],
 		'a:visited:active' => [
-			'color' => 'blue', ],
+			'color' => 'blue',
+		],
 		'address' => [
 			'display' => 'block',
-			'font-style' => 'italic', ],
+			'font-style' => 'italic',
+		],
 		'area' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'article' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'aside' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'b' => [
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'bdo' => [
-			'unicode-bidi' => 'bidi-override', ],
+			'unicode-bidi' => 'bidi-override',
+		],
 		'blockquote' => [
 			'display' => 'block',
 			'margin-top' => '1em',
 			'margin-bottom' => '1em',
 			'margin-left' => '40px',
-			'margin-right' => '40px', ],
+			'margin-right' => '40px',
+		],
 		'body' => [
 			'display' => 'block',
-			'margin' => '8px', ],
+			'margin' => '8px',
+		],
 		'body:focus' => [
-			'outline' => 'none', ],
+			'outline' => 'none',
+		],
 		'br' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'button' => [
 			'display' => 'inline-block',
-			'padding' => '10px', ],
+			'padding' => '10px',
+		],
 		'caption' => [
 			'display' => 'table-caption',
-			'text-align' => 'center', ],
+			'text-align' => 'center',
+		],
 		'cite' => [
-			'font-style' => 'italic', ],
+			'font-style' => 'italic',
+		],
 		'code' => [
-			'font-family' => 'monospace', ],
+			'font-family' => 'monospace',
+		],
 		'col' => [
-			'display' => 'table-column', ],
+			'display' => 'table-column',
+		],
 		'colgroup' => [
-			'display:table-column-group', ],
+			'display:table-column-group',
+		],
 		'datalist' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'dd' => [
 			'display' => 'block',
-			'margin-left' => '40px', ],
+			'margin-left' => '40px',
+		],
 		'del' => [
-			'text-decoration' => 'line-through', ],
+			'text-decoration' => 'line-through',
+		],
 		'details' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'dfn' => [
-			'font-style' => 'italic', ],
+			'font-style' => 'italic',
+		],
 		'div' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'dl' => [
 			'display' => 'block',
 			'margin-top' => '1em',
 			'margin-bottom' => '1em',
 			'margin-left' => '0',
-			'margin-right' => '0', ],
+			'margin-right' => '0',
+		],
 		'dt' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'em' => [
-			'font-style' => 'italic', ],
+			'font-style' => 'italic',
+		],
 		'embed:focus' => [
-			'outline' => 'none', ],
+			'outline' => 'none',
+		],
 		'fieldset' => [
 			'display' => 'block',
 			'margin-left' => '2px',
@@ -282,18 +311,22 @@ class Style extends \YetiForcePDF\Base
 			'padding-right' => '0.75em',
 		],
 		'figcaption' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'figure' => [
 			'display' => 'block',
 			'margin-top' => '1em',
 			'margin-bottom' => '1em',
 			'margin-left' => '40px',
-			'margin-right' => '40px', ],
+			'margin-right' => '40px',
+		],
 		'footer' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'form' => [
 			'display' => 'block',
-			'margin-top' => '0em', ],
+			'margin-top' => '0em',
+		],
 		'h1' => [
 			'display' => 'block',
 			'font-size' => '2em',
@@ -301,7 +334,8 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '0.67em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'h2' => [
 			'display' => 'block',
 			'font-size' => '1.5em',
@@ -309,7 +343,8 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '0.83em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'h3' => [
 			'display' => 'block',
 			'font-size' => '1.17em',
@@ -317,14 +352,16 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '1em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'h4' => [
 			'display' => 'block',
 			'margin-top' => '1.33em',
 			'margin-bottom' => '1.33em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'h5' => [
 			'display' => 'block',
 			'font-size' => '.83em',
@@ -332,7 +369,8 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '1.67em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'h6' => [
 			'display' => 'block',
 			'font-size' => '.67em',
@@ -340,11 +378,14 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '2.33em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'head' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'header' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'hr' => [
 			'display' => 'block',
 			'margin-top' => '0.5em',
@@ -353,39 +394,54 @@ class Style extends \YetiForcePDF\Base
 			'margin-right' => '0px',
 			'border-style' => 'solid',
 			'border-color' => 'lightgray',
-			'border-top-width' => '1px', ],
+			'border-top-width' => '1px',
+		],
 		'html' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'html:focus' => [
-			'outline' => 'none', ],
+			'outline' => 'none',
+		],
 		'i' => [
-			'font-style' => 'italic', ],
+			'font-style' => 'italic',
+		],
 		'iframe:focus' => [
-			'outline' => 'none', ],
+			'outline' => 'none',
+		],
 		'iframe[seamless]' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'img' => [
-			'display' => 'inline-block', ],
+			'display' => 'inline-block',
+		],
 		'ins' => [
-			'text-decoration' => 'underline', ],
+			'text-decoration' => 'underline',
+		],
 		'kbd' => [
-			'font-family' => 'monospace', ],
+			'font-family' => 'monospace',
+		],
 		'label' => [
-			'cursor' => 'default', ],
+			'cursor' => 'default',
+		],
 		'legend' => [
 			'display' => 'block',
 			'padding-left' => '2px',
 			'padding-right' => '2px',
-			'border' => 'none', ],
+			'border' => 'none',
+		],
 		'li' => [
-			'display' => 'list-item', ],
+			'display' => 'list-item',
+		],
 		'link' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'map' => [
-			'display' => 'inline', ],
+			'display' => 'inline',
+		],
 		'mark' => [
 			'background-color' => 'yellow',
-			'color' => 'black', ],
+			'color' => 'black',
+		],
 		'menu' => [
 			'display' => 'block',
 			'list-style-type' => 'disc',
@@ -393,11 +449,14 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '1em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'padding-left' => '40px', ],
+			'padding-left' => '40px',
+		],
 		'nav' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'object:focus' => [
-			'outline' => 'none', ],
+			'outline' => 'none',
+		],
 		'ol' => [
 			'display' => 'block',
 			'list-style-type' => 'decimal',
@@ -405,71 +464,95 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '1em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'padding-left' => '40px', ],
+			'padding-left' => '40px',
+		],
 		'output' => [
-			'display' => 'inline', ],
+			'display' => 'inline',
+		],
 		'p' => [
 			'display' => 'block',
 			'margin-top' => '1em',
 			'margin-bottom' => '1em',
 			'margin-left' => '0',
-			'margin-right' => '0', ],
+			'margin-right' => '0',
+		],
 		'param' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'pre' => [
 			'display' => 'block',
 			'font-family' => 'monospace',
 			'white-space' => 'pre',
-			'margin' => '1em0', ],
+			'margin' => '1em0',
+		],
 		'q' => [
-			'display' => 'inline', ],
+			'display' => 'inline',
+		],
 		'q::before' => [
-			'content' => 'open-quote', ],
+			'content' => 'open-quote',
+		],
 		'q::after' => [
-			'content' => 'close-quote', ],
+			'content' => 'close-quote',
+		],
 		'rt' => [
-			'line-height' => 'normal', ],
+			'line-height' => 'normal',
+		],
 		's' => [
-			'text-decoration' => 'line-through', ],
+			'text-decoration' => 'line-through',
+		],
 		'samp' => [
-			'font-family' => 'monospace', ],
+			'font-family' => 'monospace',
+		],
 		'script' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'section' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'small' => [
-			'font-size' => 'smaller', ],
+			'font-size' => 'smaller',
+		],
 		'strike' => [
-			'text-decoration' => 'line-through', ],
+			'text-decoration' => 'line-through',
+		],
 		'strong' => [
-			'font-weight' => 'bold', ],
+			'font-weight' => 'bold',
+		],
 		'style' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'sub' => [
 			'vertical-align' => 'sub',
-			'font-size' => 'smaller', ],
+			'font-size' => 'smaller',
+		],
 		'summary' => [
-			'display' => 'block', ],
+			'display' => 'block',
+		],
 		'sup' => [
 			'vertical-align' => 'super',
-			'font-size' => 'smaller', ],
+			'font-size' => 'smaller',
+		],
 		'table' => [
 			'display' => 'table',
 			'border-collapse' => 'separate',
 			'border-spacing' => '2px',
-			'border-color' => 'gray', ],
+			'border-color' => 'gray',
+		],
 		'tbody' => [
 			'display' => 'table-row-group',
 			'vertical-align' => 'middle',
-			'border-color' => 'inherit', ],
+			'border-color' => 'inherit',
+		],
 		'td' => [
 			'display' => 'table-cell',
 			'vertical-align' => 'inherit',
-			'padding' => '1px', ],
+			'padding' => '1px',
+		],
 		'tfoot' => [
 			'display' => 'table-footer-group',
 			'vertical-align' => 'middle',
-			'border-color' => 'inherit', ],
+			'border-color' => 'inherit',
+		],
 		'th' => [
 			'display' => 'table-cell',
 			'vertical-align' => 'inherit',
@@ -481,15 +564,19 @@ class Style extends \YetiForcePDF\Base
 		'thead' => [
 			'display' => 'table-header-group',
 			'vertical-align' => 'middle',
-			'border-color' => 'inherit', ],
+			'border-color' => 'inherit',
+		],
 		'title' => [
-			'display' => 'none', ],
+			'display' => 'none',
+		],
 		'tr' => [
 			'display' => 'table-row',
 			'vertical-align' => 'inherit',
-			'border-color' => 'inherit', ],
+			'border-color' => 'inherit',
+		],
 		'u' => [
-			'text-decoration' => 'underline', ],
+			'text-decoration' => 'underline',
+		],
 		'ul' => [
 			'display' => 'block',
 			'list-style-type' => 'disc',
@@ -497,9 +584,11 @@ class Style extends \YetiForcePDF\Base
 			'margin-bottom' => '1em',
 			'margin-left' => '0',
 			'margin-right' => '0',
-			'padding-left' => '40px', ],
+			'padding-left' => '40px',
+		],
 		'var' => [
-			'font-style' => 'italic', ],
+			'font-style' => 'italic',
+		],
 	];
 
 	/**
@@ -634,7 +723,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Get parent style.
 	 *
-	 * @return Style|null
+	 * @return null|Style
 	 */
 	public function getParent()
 	{
@@ -1235,7 +1324,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @param string $ruleName
 	 *
-	 * @return string|null
+	 * @return null|string
 	 */
 	public function getParentOriginalValue(string $ruleName)
 	{
@@ -1247,6 +1336,20 @@ class Style extends \YetiForcePDF\Base
 
 			return $parent->getParentOriginalValue($ruleName);
 		}
+	}
+
+	/**
+	 * Import selector rules if exists.
+	 *
+	 * @param array $parsed rules
+	 */
+	protected function importSelectors()
+	{
+		$element = $this->getElement();
+		if($element && !empty($element->getClassNames())){
+			return $this->document->getCssSelectorRules($element->getClassNames());
+		}
+		return [];
 	}
 
 	/**
@@ -1303,6 +1406,7 @@ class Style extends \YetiForcePDF\Base
 		}
 		$rulesParsed = $this->parseImage($rulesParsed);
 		$rulesParsed = $this->parseGraphicState($rulesParsed, $inherited);
+		$selectorRules = $this->importSelectors();
 		$finalRules = [];
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
 			if (is_string($ruleValue) && strtolower($ruleValue) === 'inherit') {
@@ -1312,7 +1416,10 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 			$this->originalRules[$ruleName] = $ruleValue;
-			if (!isset($inherited[$ruleName])) {
+			if(isset($selectorRules[$ruleName])){
+				$ruleValue = $selectorRules[$ruleName];
+			}
+			if (!isset($inherited[$ruleName]) || isset($selectorRules[$ruleName])) {
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())
 					->setDocument($this->document)
@@ -1330,7 +1437,8 @@ class Style extends \YetiForcePDF\Base
 			$finalRules['margin-bottom'] = '0';
 		} elseif (in_array($finalRules['display'], [
 			'table-cell', 'table-row', 'table-row-group', 'table-column',
-			'table-column-group', 'table-header-group', 'table-footer-group'])) {
+			'table-column-group', 'table-header-group', 'table-footer-group'
+		])) {
 			$finalRules['margin-top'] = '0';
 			$finalRules['margin-bottom'] = '0';
 			$finalRules['margin-left'] = '0';
@@ -1338,7 +1446,7 @@ class Style extends \YetiForcePDF\Base
 		}
 		$this->rules = $finalRules;
 		$this->parsed = true;
-		unset($finalRules,$rules,$parsed,$rulesParsed,$ruleParsed, $defaultRules, $inherited);
+		unset($finalRules, $rules, $parsed, $rulesParsed, $ruleParsed, $defaultRules, $inherited);
 
 		return $this;
 	}
@@ -1457,7 +1565,7 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
-		unset($rowGroup,$boxes,$rows,$columns);
+		unset($rowGroup, $boxes, $rows, $columns);
 
 		return $this;
 	}
@@ -1574,6 +1682,29 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Parse css rules.
+	 *
+	 * @param string $cssString
+	 *
+	 * @return $this
+	 */
+	public function parseCss(string $cssString): self
+	{
+		$css = (new CSSParser($cssString))->parse();
+		foreach ($css->getAllRuleSets() as $ruleSet) {
+			$selector = implode(' ', $ruleSet->getSelector());
+			$selectorRules = (array) $ruleSet->getRules();
+			$rules = [];
+			foreach ($selectorRules as $rule) {
+				$rules[$rule->getRule()] = trim((string) $rule->getValue(), '" \'');
+			}
+			$this->document->addCssSelectorRules($selector, $rules);
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Get transformations.
 	 *
 	 * @return string
@@ -1602,7 +1733,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$this->font = clone $this->font;
 		if ($this->element) {
-			$this->elemet = clone $this->element;
+			$this->element = clone $this->element;
 		}
 	}
 }
