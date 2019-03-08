@@ -115,15 +115,15 @@ class Document
 	 */
 	protected $debugMode = false;
 	/**
-	 * @var HeaderBox|null
+	 * @var null|HeaderBox
 	 */
 	protected $header;
 	/**
-	 * @var FooterBox|null
+	 * @var null|FooterBox
 	 */
 	protected $footer;
 	/**
-	 * @var WatermarkBox|null
+	 * @var null|WatermarkBox
 	 */
 	protected $watermark;
 	/**
@@ -171,6 +171,7 @@ class Document
 		$this->catalog = (new \YetiForcePDF\Catalog())->setDocument($this)->init();
 		$this->pagesObject = $this->catalog->addChild((new Pages())->setDocument($this)->init());
 		$this->meta = (new Meta())->setDocument($this)->init();
+
 		return $this;
 	}
 
@@ -187,6 +188,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setFormat($defaultFormat);
 		}
+
 		return $this;
 	}
 
@@ -203,6 +205,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setOrientation($defaultOrientation);
 		}
+
 		return $this;
 	}
 
@@ -229,6 +232,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setMargins($left, $top, $right, $bottom);
 		}
+
 		return $this;
 	}
 
@@ -243,6 +247,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
 		}
+
 		return $this;
 	}
 
@@ -257,6 +262,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
 		}
+
 		return $this;
 	}
 
@@ -271,6 +277,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
 		}
+
 		return $this;
 	}
 
@@ -285,6 +292,7 @@ class Document
 		foreach ($this->pages as $page) {
 			$page->setMargins($this->defaultMargins['left'], $this->defaultMargins['top'], $this->defaultMargins['right'], $this->defaultMargins['bottom']);
 		}
+
 		return $this;
 	}
 
@@ -338,9 +346,10 @@ class Document
 	 *
 	 * @return $this
 	 */
-	public function setFontInstance(string $family, string $weight, string $style, \YetiForcePDF\Objects\Font $fontInstance)
+	public function setFontInstance(string $family, string $weight, string $style, Objects\Font $fontInstance)
 	{
 		$this->fontInstances[$family][$weight][$style] = $fontInstance;
+
 		return $this;
 	}
 
@@ -358,6 +367,7 @@ class Document
 		if (!empty($this->fontInstances[$family][$weight][$style])) {
 			return $this->fontInstances[$family][$weight][$style];
 		}
+
 		return null;
 	}
 
@@ -376,6 +386,7 @@ class Document
 				}
 			}
 		}
+
 		return $instances;
 	}
 
@@ -394,6 +405,7 @@ class Document
 		if (empty($this->fontsData[$family][$weight][$style])) {
 			$this->fontsData[$family][$weight][$style] = $font;
 		}
+
 		return $this;
 	}
 
@@ -404,13 +416,14 @@ class Document
 	 * @param string $weight
 	 * @param string $style
 	 *
-	 * @return \FontLib\Font|null
+	 * @return null|\FontLib\Font
 	 */
 	public function getFontData(string $family, string $weight, string $style)
 	{
 		if (!empty($this->fontsData[$family][$weight][$style])) {
 			return $this->fontsData[$family][$weight][$style];
 		}
+
 		return null;
 	}
 
@@ -429,7 +442,7 @@ class Document
 	 *
 	 * @return \YetiForcePDF\Pages
 	 */
-	public function getPagesObject(): \YetiForcePDF\Pages
+	public function getPagesObject(): Pages
 	{
 		return $this->pagesObject;
 	}
@@ -477,13 +490,14 @@ class Document
 			$header = $header->getParent()->removeChild($header);
 		}
 		$this->header = $header;
+
 		return $this;
 	}
 
 	/**
 	 * Get header.
 	 *
-	 * @return HeaderBox|null
+	 * @return null|HeaderBox
 	 */
 	public function getHeader()
 	{
@@ -503,13 +517,14 @@ class Document
 			$watermark = $watermark->getParent()->removeChild($watermark);
 		}
 		$this->watermark = $watermark;
+
 		return $this;
 	}
 
 	/**
 	 * Get watermark.
 	 *
-	 * @return WatermarkBox|null
+	 * @return null|WatermarkBox
 	 */
 	public function getWatermark()
 	{
@@ -529,13 +544,14 @@ class Document
 			$footer = $footer->getParent()->removeChild($footer);
 		}
 		$this->footer = $footer;
+
 		return $this;
 	}
 
 	/**
 	 * Get footer.
 	 *
-	 * @return FooterBox|null
+	 * @return null|FooterBox
 	 */
 	public function getFooter()
 	{
@@ -547,12 +563,12 @@ class Document
 	 *
 	 * @param string    $format      - optional format 'A4' for example
 	 * @param string    $orientation - optional orientation 'P' or 'L'
-	 * @param Page|null $page        - we can add cloned page or page from other document too
-	 * @param Page|null $after       - add page after this page
+	 * @param null|Page $page        - we can add cloned page or page from other document too
+	 * @param null|Page $after       - add page after this page
 	 *
 	 * @return \YetiForcePDF\Page
 	 */
-	public function addPage(string $format = '', string $orientation = '', Page $page = null, Page $after = null): \YetiForcePDF\Page
+	public function addPage(string $format = '', string $orientation = '', Page $page = null, Page $after = null): Page
 	{
 		if ($page === null) {
 			$page = (new Page())->setDocument($this)->init();
@@ -571,7 +587,7 @@ class Document
 					break;
 				}
 			}
-			$afterIndex++;
+			++$afterIndex;
 		}
 		$page->setPageNumber($afterIndex);
 		if ($after) {
@@ -582,6 +598,7 @@ class Document
 			$this->pages[] = $page;
 		}
 		$this->currentPageObject = $page;
+
 		return $page;
 	}
 
@@ -619,8 +636,10 @@ class Document
 					$pages[] = $page;
 				}
 			}
+
 			return $pages;
 		}
+
 		return $this->pages;
 	}
 
@@ -646,6 +665,7 @@ class Document
 				$page->setPageCount($pageCount);
 			}
 		}
+
 		return $this;
 	}
 
@@ -673,7 +693,7 @@ class Document
 	 * Add object to document.
 	 *
 	 * @param PdfObject      $object
-	 * @param PdfObject|null $after  - add after this element
+	 * @param null|PdfObject $after  - add after this element
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
@@ -686,10 +706,11 @@ class Document
 					break;
 				}
 			}
-			$afterIndex++;
+			++$afterIndex;
 		}
 		if (!$after) {
 			$this->objects[] = $object;
+
 			return $this;
 		}
 		$merge = array_splice($this->objects, $afterIndex);
@@ -697,11 +718,13 @@ class Document
 			if ($obj->getId() === $object->getId()) {
 				// id already exists (maybe we are merging with other doc) - generate new one
 				$object->setId($this->getActualId());
+
 				break;
 			}
 		}
 		$this->objects[] = $object;
 		$this->objects = array_merge($this->objects, $merge);
+
 		return $this;
 	}
 
@@ -712,11 +735,17 @@ class Document
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
-	public function removeObject(\YetiForcePDF\Objects\PdfObject $object): self
+	public function removeObject(PdfObject $object): self
 	{
-		$this->objects = array_filter($this->objects, function ($currentObject) use ($object) {
-			return $currentObject !== $object;
-		});
+		$objects = [];
+		foreach ($this->objects as $currentObject) {
+			if ($currentObject !== $object) {
+				$objects[] = $currentObject;
+			}
+		}
+		$this->objects = $objects;
+		unset($objects);
+
 		return $this;
 	}
 
@@ -732,6 +761,7 @@ class Document
 	{
 		$this->htmlParser = (new \YetiForcePDF\Html\Parser())->setDocument($this)->init();
 		$this->htmlParser->loadHtml($html, $inputEncoding);
+
 		return $this;
 	}
 
@@ -750,9 +780,10 @@ class Document
 		$typeCount = 0;
 		foreach ($this->objects as $object) {
 			if ($object->getName() === $name) {
-				$typeCount++;
+				++$typeCount;
 			}
 		}
+
 		return $typeCount;
 	}
 
@@ -768,9 +799,14 @@ class Document
 		if ($name === '') {
 			return $this->objects;
 		}
-		return array_filter($this->objects, function ($currentObject) use ($name) {
-			return $currentObject->getName() === $name;
-		});
+		$objects = [];
+		foreach ($this->objects as $object) {
+			if ($object->getName() === $name) {
+				$objects[] = $object;
+			}
+		}
+
+		return $objects;
 	}
 
 	/**
@@ -798,6 +834,7 @@ class Document
 		if ($withParenthesis) {
 			return '(' . $text . ')';
 		}
+
 		return $text;
 	}
 
@@ -812,6 +849,7 @@ class Document
 			$this->htmlParser->parse();
 			$this->parsed = true;
 		}
+
 		return $this;
 	}
 
@@ -836,6 +874,7 @@ class Document
 		}
 		$this->buffer .= $this->getDocumentFooter();
 		$this->removeObject($trailer);
+
 		return $this->buffer;
 	}
 }

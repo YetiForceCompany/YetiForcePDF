@@ -511,6 +511,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		parent::init();
 		$this->parse();
+
 		return $this;
 	}
 
@@ -524,6 +525,7 @@ class Style extends \YetiForcePDF\Base
 	public function setBox($box)
 	{
 		$this->box = $box;
+
 		return $this;
 	}
 
@@ -544,10 +546,11 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return \YetiForcePDF\Style\Style
 	 */
-	public function setElement(\YetiForcePDF\Html\Element $element): self
+	public function setElement(Element $element): self
 	{
 		$this->element = $element;
 		$this->setElementName($element->getDOMElement()->nodeName);
+
 		return $this;
 	}
 
@@ -571,6 +574,7 @@ class Style extends \YetiForcePDF\Base
 	public function setElementName(string $elementName)
 	{
 		$this->elementName = strtolower($elementName);
+
 		return $this;
 	}
 
@@ -587,7 +591,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Set content.
 	 *
-	 * @param string|null $content
+	 * @param null|string $content
 	 *
 	 * @return $this
 	 */
@@ -595,6 +599,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$content = preg_replace('/data:image\/([a-z]+);/', 'data_image/$1_', $content);
 		$this->content = $content;
+
 		return $this;
 	}
 
@@ -622,6 +627,7 @@ class Style extends \YetiForcePDF\Base
 		if ($left !== null) {
 			$this->rules['margin-left'] = $left;
 		}
+
 		return $this;
 	}
 
@@ -652,6 +658,7 @@ class Style extends \YetiForcePDF\Base
 		foreach ($this->box->getChildren() as $childBox) {
 			$childrenStyles[] = $childBox->getStyle();
 		}
+
 		return $childrenStyles;
 	}
 
@@ -692,7 +699,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Get rules (or concrete rule if specified).
 	 *
-	 * @param string|null $ruleName
+	 * @param null|string $ruleName
 	 *
 	 * @return array|string
 	 */
@@ -702,15 +709,17 @@ class Style extends \YetiForcePDF\Base
 			if (isset($this->rules[$ruleName])) {
 				return $this->rules[$ruleName];
 			}
+
 			return '';
 		}
+
 		return $this->rules;
 	}
 
 	/**
 	 * Get original rules (or concrete rule if specified).
 	 *
-	 * @param string|null $ruleName
+	 * @param null|string $ruleName
 	 *
 	 * @return array|mixed
 	 */
@@ -720,8 +729,10 @@ class Style extends \YetiForcePDF\Base
 			if (isset($this->originalRules[$ruleName])) {
 				return $this->originalRules[$ruleName];
 			}
+
 			return '';
 		}
+
 		return $this->originalRules;
 	}
 
@@ -736,6 +747,7 @@ class Style extends \YetiForcePDF\Base
 	public function setRule(string $ruleName, $ruleValue)
 	{
 		$this->rules[$ruleName] = $ruleValue;
+
 		return $this;
 	}
 
@@ -749,6 +761,7 @@ class Style extends \YetiForcePDF\Base
 	public function setRules(array $rules)
 	{
 		$this->rules = array_merge($this->rules, $rules);
+
 		return $this;
 	}
 
@@ -765,6 +778,7 @@ class Style extends \YetiForcePDF\Base
 				$inheritedRules[$ruleName] = $ruleValue;
 			}
 		}
+
 		return $inheritedRules;
 	}
 
@@ -931,6 +945,7 @@ class Style extends \YetiForcePDF\Base
 				if ($this->getParent()) {
 					return Math::mul($this->getParent()->getFont()->getTextHeight(), $size);
 				}
+
 				return Math::mul($this->getFont()->getTextHeight(), $size);
 		}
 	}
@@ -943,6 +958,7 @@ class Style extends \YetiForcePDF\Base
 	public function haveSpacing()
 	{
 		$spacing = Math::max($this->getHorizontalBordersWidth(), $this->getHorizontalPaddingsWidth());
+
 		return Math::comp($spacing, '0') > 0;
 	}
 
@@ -960,6 +976,7 @@ class Style extends \YetiForcePDF\Base
 		if ($box instanceof InlineBox) {
 			return Math::add($this->rules['line-height'], $this->getVerticalBordersWidth());
 		}
+
 		return Math::add($this->rules['line-height'], Math::add($this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth()));
 	}
 
@@ -985,6 +1002,7 @@ class Style extends \YetiForcePDF\Base
 		if (!$box instanceof LineBox) {
 			$this->maxLineHeight = $lineHeight;
 		}
+
 		return $lineHeight;
 	}
 
@@ -1013,6 +1031,7 @@ class Style extends \YetiForcePDF\Base
 				$rules[$ruleName] = $ruleValue;
 			}
 		}
+
 		return $rules;
 	}
 
@@ -1046,6 +1065,7 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		$this->rules = $rulesParsed;
+
 		return $this;
 	}
 
@@ -1060,7 +1080,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$finalRules = [];
 		foreach ($ruleParsed as $ruleName => $ruleValue) {
-			if (substr($ruleName, 0, 4) === 'font' && !array_key_exists($ruleName, $inherited)) {
+			if (substr($ruleName, 0, 4) === 'font' && !isset($inherited[$ruleName])) {
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())
 					->setDocument($this->document)
@@ -1086,6 +1106,7 @@ class Style extends \YetiForcePDF\Base
 			// size must be defined after initialisation because we could get cloned font that already exists
 			$this->font->setSize($finalRules['font-size']);
 		}
+
 		return $this;
 	}
 
@@ -1125,6 +1146,7 @@ class Style extends \YetiForcePDF\Base
 		if ($ruleParsed['height'] === 'auto') {
 			$ruleParsed['height'] = ((string) $this->backgroundImage->getHeight()) . 'px';
 		}
+
 		return $ruleParsed;
 	}
 
@@ -1155,6 +1177,7 @@ class Style extends \YetiForcePDF\Base
 			->init();
 		$this->graphicState->addValue('ca', $ruleParsed[$ruleName]);
 		$this->graphicState->addValue('CA', $ruleParsed[$ruleName]);
+
 		return $ruleParsed;
 	}
 
@@ -1178,6 +1201,7 @@ class Style extends \YetiForcePDF\Base
 				$rulesParsed['vertical-align'] = $this->getParent()->getRules('vertical-align');
 			}
 		}
+
 		return $rulesParsed;
 	}
 
@@ -1202,6 +1226,7 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 		}
+
 		return $rulesParsed;
 	}
 
@@ -1219,6 +1244,7 @@ class Style extends \YetiForcePDF\Base
 			if ($parentValue !== null) {
 				return $parentValue;
 			}
+
 			return $parent->getParentOriginalValue($ruleName);
 		}
 	}
@@ -1248,8 +1274,10 @@ class Style extends \YetiForcePDF\Base
 		if ($this->document->inDebugMode() && $this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
 			$this->content = 'border:1px solid red;';
 		}
+		$hasImages = false;
 		if ($this->content) {
 			$rules = explode(';', $this->content);
+			$hasBase64Images = strpos($this->content, 'data_image') > 0;
 		} else {
 			$rules = [];
 		}
@@ -1258,8 +1286,8 @@ class Style extends \YetiForcePDF\Base
 			$rule = trim($rule);
 			if ($rule !== '') {
 				$ruleExploded = explode(':', $rule);
-				foreach ($ruleExploded as &$exp) {
-					$exp = preg_replace('/data_image\/([a-z]+)_/', 'data:image/$1;', $exp);
+				if ($hasBase64Images && strpos($ruleExploded[1], 'data_image') > 0) {
+					$ruleExploded[1] = preg_replace('/data_image\/([a-z]+)_/', 'data:image/$1;', $ruleExploded[1]);
 				}
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
@@ -1284,7 +1312,7 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 			$this->originalRules[$ruleName] = $ruleValue;
-			if (!array_key_exists($ruleName, $inherited)) {
+			if (!isset($inherited[$ruleName])) {
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())
 					->setDocument($this->document)
@@ -1311,6 +1339,7 @@ class Style extends \YetiForcePDF\Base
 		$this->rules = $finalRules;
 		$this->parsed = true;
 		unset($finalRules,$rules,$parsed,$rulesParsed,$ruleParsed, $defaultRules, $inherited);
+
 		return $this;
 	}
 
@@ -1429,6 +1458,7 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		unset($rowGroup,$boxes,$rows,$columns);
+
 		return $this;
 	}
 
@@ -1448,6 +1478,7 @@ class Style extends \YetiForcePDF\Base
 			$childBox->getStyle()->fixTables($removeBottomBorders);
 			$childBox->getStyle()->fixDomTree($removeBottomBorders);
 		}
+
 		return $this;
 	}
 
@@ -1470,6 +1501,7 @@ class Style extends \YetiForcePDF\Base
 			$this->setRule('margin-top', '0');
 			$this->setRule('margin-bottom', '0');
 		}
+
 		return $this;
 	}
 
@@ -1501,6 +1533,7 @@ class Style extends \YetiForcePDF\Base
 			$this->setRule('margin-top', '0');
 			$this->setRule('margin-bottom', '0');
 		}
+
 		return $this;
 	}
 
@@ -1536,6 +1569,7 @@ class Style extends \YetiForcePDF\Base
 			$this->setRule('margin-top', '0');
 			$this->setRule('margin-bottom', '0');
 		}
+
 		return $this;
 	}
 
@@ -1546,7 +1580,7 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function getTransformations(string $x, string $y)
 	{
-		return "1 0 0 1 $x $y cm";
+		return "1 0 0 1 ${x} ${y} cm";
 	}
 
 	/**
@@ -1560,6 +1594,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$newStyle = clone $this;
 		$newStyle->setBox($box);
+
 		return $newStyle;
 	}
 
