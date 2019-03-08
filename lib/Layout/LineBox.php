@@ -328,7 +328,7 @@ class LineBox extends Box implements BoxInterface
 		$marginTop = '0';
 		$marginBottom = '0';
 		foreach ($allChildren as $child) {
-			if (!$child instanceof InlineBox) {
+			if ($child instanceof InlineBlockBox) {
 				$marginTop = Math::max($marginTop, $child->getStyle()->getRules('margin-top'));
 				$marginBottom = Math::max($marginBottom, $child->getStyle()->getRules('margin-bottom'));
 			}
