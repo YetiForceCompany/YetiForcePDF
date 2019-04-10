@@ -985,7 +985,7 @@ class TableBox extends BlockBox
 					$columnWidth = Math::mul($toPixelDisposition, $ratio);
 					foreach ($columns as $column) {
 						$columnDimensions = $column->getDimensions();
-						$columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizotnalPaddingsWidth()));
+						$columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth()));
 						$column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
 					}
 				}
