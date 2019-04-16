@@ -79,7 +79,7 @@ class TableBox extends BlockBox
 	 */
 	protected $rows = [];
 	/**
-	 * @var TableRowGroupBox|null
+	 * @var null|TableRowGroupBox
 	 */
 	protected $anonymousRowGroup;
 	/**
@@ -442,16 +442,16 @@ class TableBox extends BlockBox
 		foreach ($this->autoColumns as $columnIndex => $columns) {
 			$colDmns = $columns[0]->getDimensions();
 			$colWidth = $colDmns->getInnerWidth();
-			if (Math::comp($this->preferredWidth[$columnIndex], $colWidth) > 0) {
-				$autoNeeded[$columnIndex] = Math::sub($this->preferredWidth[$columnIndex], $colWidth);
+			if (Math::comp($this->preferredWidths[$columnIndex], $colWidth) > 0) {
+				$autoNeeded[$columnIndex] = Math::sub($this->preferredWidths[$columnIndex], $colWidth);
 				$autoNeededTotal = Math::add($autoNeededTotal, $autoNeeded[$columnIndex]);
 			}
 		}
 		foreach ($this->pixelColumns as $columnIndex => $columns) {
 			$colDmns = $columns[0]->getDimensions();
 			$colWidth = $colDmns->getInnerWidth();
-			if (Math::comp($this->preferredWidth[$columnIndex], $colWidth) > 0) {
-				$pixelNeeded[$columnIndex] = Math::sub($this->preferredWidth[$columnIndex], $colWidth);
+			if (Math::comp($this->preferredWidths[$columnIndex], $colWidth) > 0) {
+				$pixelNeeded[$columnIndex] = Math::sub($this->preferredWidths[$columnIndex], $colWidth);
 				$pixelNeededTotal = Math::add($pixelNeededTotal, $pixelNeeded[$columnIndex]);
 			}
 		}
