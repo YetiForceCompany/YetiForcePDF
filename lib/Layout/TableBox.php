@@ -1002,7 +1002,23 @@ class TableBox extends BlockBox
 			case 2:
 				// minimal stays minimal, pixels stays untouched, auto columns decreasing
 				$toAutoDisposition = Math::sub($nonPercentageSpace, $totalPixelWidth);
+				$nonMinWidthColumns = [];
 				foreach ($this->autoColumns as $columnIndex => $columns) {
+					$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
+					$columnWidth = Math::mul($toAutoDisposition, $ratio);
+					if (Math::comp($this->minWidths[$columnIndex], $columnWidth) > 0) {
+						$toAutoDisposition = Math::sub($toAutoDisposition, Math::sub($this->minWidths[$columnIndex], $columnWidth));
+						$columnWidth = $this->minWidths[$columnIndex];
+						foreach ($columns as $column) {
+							$columnDimensions = $column->getDimensions();
+							$columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth()));
+							$column->getFirstChild()->getDimensions()->setWidth($columnDimensions->getInnerWidth());
+						}
+					} else {
+						$nonMinWidthColumns[$columnIndex] = $columns;
+					}
+				}
+				foreach ($nonMinWidthColumns as $columnIndex => $columns) {
 					$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
 					$columnWidth = Math::mul($toAutoDisposition, $ratio);
 					foreach ($columns as $column) {
@@ -1140,7 +1156,6 @@ class TableBox extends BlockBox
 		$leftSpace = Math::sub($leftSpace, $addToPercents);
 		$leftPercent = Math::sub('100', $totalPercentages);
 		$restHave = $this->getCurrentOthersWidth();
-		// if 25% = $currentPercentsWidth
 		if (Math::comp($totalPercentages, '0') > 0) {
 			$onePercent = Math::div($currentPercentsWidth, $totalPercentages);
 			$restMustHave = Math::mul($leftPercent, $onePercent);

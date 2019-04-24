@@ -1346,7 +1346,7 @@ class Style extends \YetiForcePDF\Base
 	protected function importSelectors()
 	{
 		$element = $this->getElement();
-		if($element && !empty($element->getClassNames())){
+		if ($element && !empty($element->getClassNames())) {
 			return $this->document->getCssSelectorRules($element->getClassNames());
 		}
 		return [];
@@ -1416,7 +1416,7 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 			$this->originalRules[$ruleName] = $ruleValue;
-			if(isset($selectorRules[$ruleName])){
+			if (isset($selectorRules[$ruleName])) {
 				$ruleValue = $selectorRules[$ruleName];
 			}
 			if (!isset($inherited[$ruleName]) || isset($selectorRules[$ruleName])) {
