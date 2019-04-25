@@ -1346,6 +1346,42 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Inherite rule.
+	 *
+	 * @param string $ruleName
+	 *
+	 * @return string $ruleValue
+	 */
+	protected function inheriteRule(string $ruleName)
+	{
+		if (isset($this->originalRules[$ruleName]) && $this->originalRules[$ruleName] !== 'inherit') {
+			return $this->originalRules[$ruleName];
+		}
+		$parent = $this->getParent();
+		if ($parent) {
+			return $parent->inheriteRule($ruleName);
+		}
+		return $this->mandatoryRules[$ruleName];
+	}
+
+	/**
+	 * Inherite rules.
+	 *
+	 * @param array $rules
+	 *
+	 * @return array
+	 */
+	protected function inherite(array $rules)
+	{
+		foreach ($rules as $ruleName => $ruleValue) {
+			if ($ruleValue === 'inherit') {
+				$rules[$ruleName] = $this->inheriteRule($ruleName);
+			}
+		}
+		return $rules;
+	}
+
+	/**
 	 * Parse css style.
 	 *
 	 * @return $this
@@ -1382,6 +1418,7 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		$rulesParsed = array_merge($mandatory, $default, $inherited, $class, $inline);
+		$rulesParsed = $this->inherite($rulesParsed);
 		$this->originalRules = $rulesParsed;
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
 			if (strpos($ruleValue, 'data_image') > 0) {
