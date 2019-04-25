@@ -1382,6 +1382,7 @@ class Style extends \YetiForcePDF\Base
 			}
 		}
 		$rulesParsed = array_merge($mandatory, $default, $inherited, $class, $inline);
+		$this->originalRules = $rulesParsed;
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
 			if (strpos($ruleValue, 'data_image') > 0) {
 				$ruleValue = preg_replace('/data_image\/([a-z]+)_/', 'data:image/$1;', $ruleValue);
@@ -1402,7 +1403,6 @@ class Style extends \YetiForcePDF\Base
 					$ruleValue = $parentValue;
 				}
 			}
-			$this->originalRules[$ruleName] = $ruleValue;
 			$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 			$normalizer = (new $normalizerName())
 				->setDocument($this->document)
