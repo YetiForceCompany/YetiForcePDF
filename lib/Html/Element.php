@@ -41,9 +41,9 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $domElement;
 	/**
-	 * Class names for element
+	 * Class names for element.
 	 *
-	 * @var  string
+	 * @var string
 	 */
 	protected $classNames = '';
 
@@ -58,7 +58,7 @@ class Element extends \YetiForcePDF\Base
 		if (isset($this->domElement->tagName)) {
 			$this->name = $this->domElement->tagName;
 		} else {
-			$this->ame = $this->domElement->nodeName;
+			$this->name = $this->domElement->nodeName;
 		}
 		return $this;
 	}
@@ -134,6 +134,25 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Attach classes.
+	 *
+	 * @return self
+	 */
+	public function attachClasses()
+	{
+		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('class')) {
+			$classNames = [];
+			foreach (explode(' ', $this->domElement->getAttribute('class')) as $className) {
+				if (trim($className)) {
+					$classNames[] = '.' . $className;
+				}
+			}
+			$this->setClassNames(implode(' ', $classNames));
+		}
+		return $this;
+	}
+
+	/**
 	 * Parse element style.
 	 *
 	 * @return \YetiForcePDF\Style\Style
@@ -144,6 +163,7 @@ class Element extends \YetiForcePDF\Base
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
+		$this->attachClasses();
 		$style = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)
 			->setElement($this)
@@ -178,11 +198,11 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set class names for element
+	 * Set class names for element.
 	 *
-	 * @param  string  $classNames  Class names for element
+	 * @param string $classNames Class names for element
 	 *
-	 * @return  self
+	 * @return self
 	 */
 	public function setClassNames(string $classNames)
 	{
@@ -192,9 +212,9 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get class names for element
+	 * Get class names for element.
 	 *
-	 * @return  string[]
+	 * @return string[]
 	 */
 	public function getClassNames()
 	{

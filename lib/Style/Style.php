@@ -864,7 +864,7 @@ class Style extends \YetiForcePDF\Base
 		$inheritedRules = [];
 		foreach ($this->rules as $ruleName => $ruleValue) {
 			if (in_array($ruleName, $this->inherited)) {
-				$inheritedRules[$ruleName] = $ruleValue;
+				$inheritedRules[$ruleName] = $this->originalRules[$ruleName];
 			}
 		}
 
@@ -1161,15 +1161,15 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * First of all parse font for convertUnits method.
 	 *
-	 * @param array $ruleParsed
+	 * @param array $rulesParsed
 	 *
 	 * @return $this
 	 */
-	protected function parseFont(array $ruleParsed, array $inherited)
+	protected function parseFont(array $rulesParsed)
 	{
 		$finalRules = [];
-		foreach ($ruleParsed as $ruleName => $ruleValue) {
-			if (substr($ruleName, 0, 4) === 'font' && !isset($inherited[$ruleName])) {
+		foreach ($rulesParsed as $ruleName => $ruleValue) {
+			if (substr($ruleName, 0, 4) === 'font') {
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())
 					->setDocument($this->document)
@@ -1178,11 +1178,6 @@ class Style extends \YetiForcePDF\Base
 				foreach ($normalizer->normalize($ruleValue) as $name => $value) {
 					$finalRules[$name] = $value;
 				}
-			}
-		}
-		foreach (['font-family', 'font-size', 'font-weight', 'font-style'] as $ruleName) {
-			if (isset($inherited[$ruleName]) && !isset($finalRules[$ruleName])) {
-				$finalRules[$ruleName] = $inherited[$ruleName];
 			}
 		}
 		if (isset($finalRules['font-family'], $finalRules['font-weight'], $finalRules['font-style'], $finalRules['font-size'])) {
@@ -1195,32 +1190,31 @@ class Style extends \YetiForcePDF\Base
 			// size must be defined after initialisation because we could get cloned font that already exists
 			$this->font->setSize($finalRules['font-size']);
 		}
-
-		return $this;
+		return $rulesParsed;
 	}
 
 	/**
 	 * Parse and load image file.
 	 *
-	 * @param array $ruleParsed
+	 * @param array $rulesParsed
 	 *
 	 * @return array
 	 */
-	protected function parseImage(array $ruleParsed)
+	protected function parseImage(array $rulesParsed)
 	{
 		if ($element = $this->getElement()) {
 			if (($domElement = $element->getDOMElement()) && isset($domElement->tagName)) {
 				if ($domElement->tagName === 'img' && $domElement->getAttribute('src')) {
-					$ruleParsed['background-image'] = 'url(' . $domElement->getAttribute('src') . ');';
+					$rulesParsed['background-image'] = 'url(' . $domElement->getAttribute('src') . ');';
 				}
 			}
 		}
-		if (!isset($ruleParsed['background-image'])) {
-			return $ruleParsed;
+		if (!isset($rulesParsed['background-image'])) {
+			return $rulesParsed;
 		}
-		$src = $ruleParsed['background-image'];
+		$src = $rulesParsed['background-image'];
 		if (substr($src, 0, 3) !== 'url') {
-			return $ruleParsed;
+			return $rulesParsed;
 		}
 		$src = trim(substr($src, 3), ';)(\'\"');
 		$this->backgroundImage = (new ImageStream())
@@ -1229,45 +1223,45 @@ class Style extends \YetiForcePDF\Base
 		$this->backgroundImage->loadImage($src);
 		$imageName = $this->backgroundImage->getImageName();
 		$this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
-		if ($ruleParsed['width'] === 'auto') {
-			$ruleParsed['width'] = ((string) $this->backgroundImage->getWidth()) . 'px';
+		if ($rulesParsed['width'] === 'auto') {
+			$rulesParsed['width'] = ((string) $this->backgroundImage->getWidth()) . 'px';
 		}
-		if ($ruleParsed['height'] === 'auto') {
-			$ruleParsed['height'] = ((string) $this->backgroundImage->getHeight()) . 'px';
+		if ($rulesParsed['height'] === 'auto') {
+			$rulesParsed['height'] = ((string) $this->backgroundImage->getHeight()) . 'px';
 		}
 
-		return $ruleParsed;
+		return $rulesParsed;
 	}
 
 	/**
 	 * Parse graphic states.
 	 *
-	 * @param array $ruleParsed
+	 * @param array $rulesParsed
 	 *
 	 * @return array
 	 */
-	protected function parseGraphicState(array $ruleParsed, array $inherited)
+	protected function parseGraphicState(array $rulesParsed)
 	{
 		$ruleName = 'opacity';
-		if (!isset($ruleParsed[$ruleName])) {
+		if (!isset($rulesParsed[$ruleName])) {
 			return $this;
 		}
-		$ruleValue = $ruleParsed['opacity'];
+		$ruleValue = $rulesParsed['opacity'];
 		$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 		$normalizer = (new $normalizerName())
 			->setDocument($this->document)
 			->setStyle($this)
 			->init();
 		foreach ($normalizer->normalize($ruleValue, $ruleName) as $name => $value) {
-			$ruleParsed[$name] = $value;
+			$rulesParsed[$name] = $value;
 		}
 		$this->graphicState = (new GraphicState())
 			->setDocument($this->document)
 			->init();
-		$this->graphicState->addValue('ca', $ruleParsed[$ruleName]);
-		$this->graphicState->addValue('CA', $ruleParsed[$ruleName]);
+		$this->graphicState->addValue('ca', $rulesParsed[$ruleName]);
+		$this->graphicState->addValue('CA', $rulesParsed[$ruleName]);
 
-		return $ruleParsed;
+		return $rulesParsed;
 	}
 
 	/**
@@ -1278,12 +1272,11 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return array
 	 */
-	public function applyTextStyle($rulesParsed, &$inherited)
+	public function applyTextStyle($rulesParsed)
 	{
 		if ($this->getElement()->getDOMElement() instanceof \DOMText) {
 			$rulesParsed['display'] = 'inline';
 			$rulesParsed['line-height'] = '1';
-			unset($inherited['line-height']);
 			// if this is text node it's mean that it was wrapped by anonymous inline element
 			// so wee need to copy vertical align property (because it is not inherited by default)
 			if ($this->getParent()) {
@@ -1339,11 +1332,11 @@ class Style extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Import selector rules if exists.
+	 * Import class rules if exists.
 	 *
 	 * @param array $parsed rules
 	 */
-	protected function importSelectors()
+	protected function importClassRules()
 	{
 		$element = $this->getElement();
 		if ($element && !empty($element->getClassNames())) {
@@ -1362,52 +1355,49 @@ class Style extends \YetiForcePDF\Base
 		if ($this->parsed) {
 			return $this;
 		}
-		$parsed = [];
+		$mandatory = [];
 		foreach ($this->getMandatoryRules() as $mandatoryName => $mandatoryValue) {
-			$parsed[$mandatoryName] = $mandatoryValue;
+			$mandatory[$mandatoryName] = $mandatoryValue;
+		}
+		$default = $this->getDefaultRules();
+		if ($this->document->inDebugMode() && $this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
+			$this->content = 'border:1px solid red;';
 		}
 		$inherited = [];
 		if ($parent = $this->getParent()) {
 			$inherited = $parent->getInheritedRules();
-			$parsed = array_merge($parsed, $inherited);
 		}
-		$defaultRules = $this->getDefaultRules();
-		$inherited = array_diff_key($inherited, $defaultRules);
-		$parsed = array_merge($parsed, $defaultRules);
-		if ($this->document->inDebugMode() && $this->getBox() instanceof \YetiForcePDF\Layout\LineBox) {
-			$this->content = 'border:1px solid red;';
-		}
-		$hasImages = false;
+		$class = $this->importClassRules();
 		if ($this->content) {
-			$rules = explode(';', $this->content);
-			$hasBase64Images = strpos($this->content, 'data_image') > 0;
+			$inlineTemp = explode(';', $this->content);
 		} else {
-			$rules = [];
+			$inlineTemp = [];
 		}
-		$rulesParsed = [];
-		foreach ($rules as $rule) {
+		$inline = [];
+		foreach ($inlineTemp as $rule) {
 			$rule = trim($rule);
 			if ($rule !== '') {
 				$ruleExploded = explode(':', $rule);
-				if ($hasBase64Images && strpos($ruleExploded[1], 'data_image') > 0) {
-					$ruleExploded[1] = preg_replace('/data_image\/([a-z]+)_/', 'data:image/$1;', $ruleExploded[1]);
-				}
-				$ruleName = trim($ruleExploded[0]);
-				$ruleValue = trim($ruleExploded[1]);
-				$rulesParsed[$ruleName] = $ruleValue;
+				$inline[trim($ruleExploded[0])] = trim($ruleExploded[1]);
 			}
 		}
-		$inherited = array_diff_key($inherited, $rulesParsed);
-		$rulesParsed = array_merge($parsed, $rulesParsed);
-		$this->parseFont($rulesParsed, $inherited);
+		$rulesParsed = array_merge($mandatory, $default, $inherited, $class, $inline);
+		foreach ($rulesParsed as $ruleName => $ruleValue) {
+			if (strpos($ruleValue, 'data_image') > 0) {
+				$ruleValue = preg_replace('/data_image\/([a-z]+)_/', 'data:image/$1;', $ruleValue);
+			}
+		}
+		$this->parseFont($rulesParsed);
 		if ($this->getElement()) {
-			$rulesParsed = $this->applyTextStyle($rulesParsed, $inherited);
+			$rulesParsed = $this->applyTextStyle($rulesParsed);
 			$rulesParsed = $this->applyBorderSpacing($rulesParsed);
 		}
 		$rulesParsed = $this->parseImage($rulesParsed);
-		$rulesParsed = $this->parseGraphicState($rulesParsed, $inherited);
-		$selectorRules = $this->importSelectors();
+		$rulesParsed = $this->parseGraphicState($rulesParsed);
 		$finalRules = [];
+		if (!empty($inline)) {
+			$test = 'test';
+		}
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
 			if (is_string($ruleValue) && strtolower($ruleValue) === 'inherit') {
 				$parentValue = $this->getParentOriginalValue($ruleName);
@@ -1416,20 +1406,13 @@ class Style extends \YetiForcePDF\Base
 				}
 			}
 			$this->originalRules[$ruleName] = $ruleValue;
-			if (isset($selectorRules[$ruleName])) {
-				$ruleValue = $selectorRules[$ruleName];
-			}
-			if (!isset($inherited[$ruleName]) || isset($selectorRules[$ruleName])) {
-				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
-				$normalizer = (new $normalizerName())
-					->setDocument($this->document)
-					->setStyle($this)
-					->init();
-				foreach ($normalizer->normalize($ruleValue, $ruleName) as $name => $value) {
-					$finalRules[$name] = $value;
-				}
-			} else {
-				$finalRules[$ruleName] = $inherited[$ruleName];
+			$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
+			$normalizer = (new $normalizerName())
+				->setDocument($this->document)
+				->setStyle($this)
+				->init();
+			foreach ($normalizer->normalize($ruleValue, $ruleName) as $name => $value) {
+				$finalRules[$name] = $value;
 			}
 		}
 		if ($finalRules['display'] === 'inline') {
@@ -1446,8 +1429,7 @@ class Style extends \YetiForcePDF\Base
 		}
 		$this->rules = $finalRules;
 		$this->parsed = true;
-		unset($finalRules, $rules, $parsed, $rulesParsed, $ruleParsed, $defaultRules, $inherited);
-
+		unset($finalRules, $rules, $rulesParsed, $default, $inherited, $class, $inline, $inlineTemp);
 		return $this;
 	}
 

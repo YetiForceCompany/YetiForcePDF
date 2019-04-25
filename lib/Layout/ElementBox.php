@@ -227,15 +227,8 @@ class ElementBox extends Box
 						$style->setContent($childDomElement->getAttribute('style'));
 					} elseif ($childDomElement->nodeName === 'style') {
 						$style->parseCss($childDomElement->nodeValue);
-					}elseif ($childDomElement->hasAttribute('class')) {
-						$classNames = [];
-						foreach (explode(' ', $childDomElement->getAttribute('class')) as $className) {
-							if (trim($className)) {
-								$classNames[] = '.' . $className;
-							}
-						}
-						$element->setClassNames(implode(' ', $classNames));
 					}
+					$element->attachClasses();
 				}
 				$style = $style->parseInline();
 				$display = $style->getRules('display');
