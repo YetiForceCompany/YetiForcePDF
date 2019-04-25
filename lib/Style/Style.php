@@ -1190,7 +1190,7 @@ class Style extends \YetiForcePDF\Base
 			// size must be defined after initialisation because we could get cloned font that already exists
 			$this->font->setSize($finalRules['font-size']);
 		}
-		return $rulesParsed;
+		return array_merge($rulesParsed, $finalRules);
 	}
 
 	/**
@@ -1395,9 +1395,6 @@ class Style extends \YetiForcePDF\Base
 		$rulesParsed = $this->parseImage($rulesParsed);
 		$rulesParsed = $this->parseGraphicState($rulesParsed);
 		$finalRules = [];
-		if (!empty($inline)) {
-			$test = 'test';
-		}
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
 			if (is_string($ruleValue) && strtolower($ruleValue) === 'inherit') {
 				$parentValue = $this->getParentOriginalValue($ruleName);
