@@ -40,37 +40,28 @@ class NumericValue
 	 *
 	 * @var string
 	 */
-	private $converted;
+	private $converted = '0';
 	/**
 	 * Is this numeric value for font size?
 	 *
 	 * @var bool
 	 */
 	private $isFont;
-	/**
-	 * Style needed to convert values from 'em' to px for example.
-	 *
-	 * @var Style
-	 */
-	private $style;
 
 	/**
 	 * Initialize numeric value.
 	 *
 	 * @param string $value  css value 12px for example
-	 * @param Style  $style
 	 * @param bool   $isFont
 	 *
 	 * @return self
 	 */
-	public function init(string $value, Style $style, bool $isFont = false)
+	public function init(string $value, bool $isFont = false)
 	{
 		$this->original = $value;
 		$this->value = \YetiForcePDF\Style\Normalizer\Normalizer::getNumericValue($value);
 		$this->unit = \YetiForcePDF\Style\Normalizer\Normalizer::getNumericUnit($value);
-		$this->converted = $style->convertUnits($this->unit, $this->value, $isFont);
 		$this->isFont = $isFont;
-		$this->style = $style;
 		return $this;
 	}
 
@@ -83,13 +74,13 @@ class NumericValue
 	 *
 	 * @return any|NumericValue
 	 */
-	public static function get($value, Style $style, bool $isFont = false)
+	public static function get($value, bool $isFont = false)
 	{
 		if (!is_string($value)) {
 			return $value;
 		}
 		if (\YetiForcePDF\Style\Normalizer\Normalizer::getNumericValue($value) !== false) {
-			return (new self())->init($value, $style, $isFont);
+			return (new self())->init($value, $isFont);
 		}
 		return $value;
 	}
@@ -193,11 +184,13 @@ class NumericValue
 	/**
 	 * Convert unit.
 	 *
+	 * @param Style $style
+	 *
 	 * @return self
 	 */
-	public function convert()
+	public function convert(Style $style)
 	{
-		$this->converted = $this->style->convertUnits($this->unit, $this->value, $this->isFont);
+		$this->converted = $style->convertUnits($this->unit, $this->value, $this->isFont);
 		return $this;
 	}
 
@@ -228,45 +221,5 @@ class NumericValue
 	public function __toString()
 	{
 		return $this->converted;
-	}
-
-	/**
-	 * Get style needed to convert values from 'em' to px for example.
-	 *
-	 * @return Style
-	 */
-	public function getStyle(): Style
-	{
-		return $this->style;
-	}
-
-	/**
-	 * Set style needed to convert values from 'em' to px for example.
-	 *
-	 * @param Style $style Style needed to convert values from 'em' to px for example.
-	 *
-	 * @return self
-	 */
-	public function setStyle(Style $style)
-	{
-		$this->style = $style;
-
-		return $this;
-	}
-
-	public function __get($param)
-	{
-		if (empty($param)) {
-			return $this->converted;
-		}
-		return $this->{$param};
-	}
-
-	public function __set($param, $value)
-	{
-		$this->original = $value . 'px';
-		$this->value = $value;
-		$this->unit = 'px';
-		$this->converted = $value;
 	}
 }

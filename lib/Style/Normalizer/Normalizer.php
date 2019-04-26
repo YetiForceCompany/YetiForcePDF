@@ -92,8 +92,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setValue($originalSize)
 				->setOriginal($originalSize . $originalUnit)
 				->setIsFont($isFont)
-				->setStyle($this->style)
-				->convert()
+				->convert($this->style)
 		];
 		$matchesCount = count($matches);
 		if ($matchesCount >= 2) {
@@ -102,8 +101,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setValue($matches[1][2])
 				->setOriginal($matches[1][2] . $matches[1][3])
 				->setIsFont($isFont)
-				->setStyle($this->style)
-				->convert();
+				->convert($this->style);
 		}
 		if ($matchesCount >= 3) {
 			$multi[] = (new NumericValue())
@@ -111,8 +109,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setValue($matches[2][2])
 				->setOriginal($matches[2][2] . $matches[2][3])
 				->setIsFont($isFont)
-				->setStyle($this->style)
-				->convert();
+				->convert($this->style);
 		}
 		if ($matchesCount === 4) {
 			$multi[] = (new NumericValue())
@@ -120,8 +117,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setValue($matches[3][2])
 				->setOriginal($matches[3][2] . $matches[3][3])
 				->setIsFont($isFont)
-				->setStyle($this->style)
-				->convert();
+				->convert($this->style);
 		}
 		return $multi;
 	}

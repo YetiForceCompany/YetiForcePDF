@@ -166,7 +166,7 @@ class Style extends \YetiForcePDF\Base
 		'height' => 'auto',
 		'overflow' => 'visible',
 		'vertical-align' => 'baseline',
-		'line-height' => '1.2',
+		'line-height' => '1.2em',
 		'background-color' => 'transparent',
 		'color' => '#000000',
 		'word-wrap' => 'normal',
@@ -1036,16 +1036,11 @@ class Style extends \YetiForcePDF\Base
 				return Math::div($size, '72');
 			case '%':
 				return $size . '%'; // percent values are calculated later
-			default: // em too
+			case 'em':
+			default:
 				if ($parent = $this->getParent()) {
 					$font = $parent->getFont()->getClosestWithUnit('px');
-					if (!$isFont) {
-						return Math::mul($font->getTextHeight(), $size);
-					}
 					return Math::mul($font->getSize()->getConverted(), $size);
-				}
-				if (!$isFont) {
-					return Math::mul($this->getFont()->getTextHeight(), $size);
 				}
 				return Math::mul($this->getFont()->getSize()->getConverted(), $size);
 		}
@@ -1092,7 +1087,7 @@ class Style extends \YetiForcePDF\Base
 			return $this->maxLineHeight;
 		}
 		$box = $this->getBox();
-		$lineHeight = (string) $this->rules['line-height'];
+		$lineHeight = $this->getRules('line-height');
 		if (!$this->getRules('display') !== 'inline') {
 			$lineHeight = Math::add($lineHeight, $this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth());
 		}
@@ -1103,7 +1098,6 @@ class Style extends \YetiForcePDF\Base
 		if (!$box instanceof LineBox) {
 			$this->maxLineHeight = $lineHeight;
 		}
-
 		return $lineHeight;
 	}
 
