@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace YetiForcePDF\Objects;
 
 use YetiForcePDF\Math;
+use YetiForcePDF\Style\NumericValue;
 
 /**
  * Class Font.
@@ -108,9 +109,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Font size.
 	 *
-	 * @var string
+	 * @var NumericValue
 	 */
-	protected $size = '12px';
+	protected $size;
 	/**
 	 * Font height.
 	 *
@@ -369,15 +370,13 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Set Font size.
 	 *
-	 * @param string $size
+	 * @param NumericValue $size
 	 *
 	 * @return $this
 	 */
-	public function setSize(string $size)
+	public function setSize(NumericValue $size)
 	{
 		$this->size = $size;
-		$this->textHeight = Math::div(Math::mul($this->size, $this->height), $this->unitsPerEm);
-
 		return $this;
 	}
 
@@ -386,9 +385,24 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 *
 	 * @return string
 	 */
-	public function getSize(): string
+	public function getSize(): NumericValue
 	{
 		return $this->size;
+	}
+
+	/**
+	 * Get closest value with specified unit - not converted.
+	 *
+	 * @param string $unit
+	 *
+	 * @return Font
+	 */
+	public function getClosestWithUnit(string $unit)
+	{
+		if ($this->getSize()->getUnit() === $unit) {
+			return $this;
+		}
+		return $this->getParent()->getClosestWithUnit($unit);
 	}
 
 	/**
@@ -436,7 +450,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 			}
 		}
 
-		return $this->textWidths[$text] = Math::div(Math::mul($this->size, $width), '1000');
+		return $this->textWidths[$text] = Math::div(Math::mul($this->size->getConverted(), $width), '1000');
 	}
 
 	/**
@@ -449,7 +463,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function getTextHeight(string $text = null): string
 	{
 		if ($this->textHeight === null) {
-			$this->textHeight = Math::div(Math::mul($this->size, $this->height), $this->unitsPerEm);
+			$this->textHeight = Math::div(Math::mul($this->size->getConverted(), $this->height), $this->unitsPerEm);
 		}
 
 		return $this->textHeight;
@@ -462,7 +476,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getAscender(): string
 	{
-		return Math::div(Math::mul($this->size, $this->ascender), $this->unitsPerEm);
+		return Math::div(Math::mul($this->size->getConverted(), $this->ascender), $this->unitsPerEm);
 	}
 
 	/**
@@ -472,7 +486,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function getDescender(): string
 	{
-		return Math::div(Math::mul($this->size, $this->descender), $this->unitsPerEm);
+		return Math::div(Math::mul($this->size->getConverted(), $this->descender), $this->unitsPerEm);
 	}
 
 	/**

@@ -3,6 +3,10 @@
     border: 1px solid blue;
     border-collapse: collapse;
   }
+  .table-separate {
+    border: 1px solid blue;
+    border-collapse: separate;
+  }
   .thead {
     background: black;
     color: yellowgreen;
@@ -48,8 +52,25 @@ DIV<br />
   </div>
 </div>
 <br />
-TABLE<br />
+TABLE collapsed<br />
 <table class="table">
+  <thead class="thead">
+    <tr class="theadrow">
+      <th class="theadcol">.theadcol</th>
+      <th class="theadcol red">.theadcol .red</th>
+      <th class="theadcol red" style="font-weight:400;">.theadcol .red inline-normal</th>
+    </tr>
+  </thead>
+  <tbody class="tbody">
+    <tr class="tbodyrow">
+      <td class="tbodycol">.tbodycol</td>
+      <td class="tbodycol green">.tbodycol .green</td>
+      <td class="tbodycol green" style="font-weight: bold;">.tbodycol .green inline-bold</td>
+    </tr>
+  </tbody>
+</table>
+TABLE separated<br />
+<table class="table-separated">
   <thead class="thead">
     <tr class="theadrow">
       <th class="theadcol">.theadcol</th>

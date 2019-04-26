@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style\Normalizer;
 
+use YetiForcePDF\Style\NumericValue;
 use YetiForcePDF\Style\Style;
 
 /**
@@ -25,9 +26,15 @@ class Normalizer extends \YetiForcePDF\Base
 	 */
 	protected $style;
 	/**
-	 * @var array|null normalized value
+	 * @var null|array normalized value
 	 */
 	protected $normalized;
+	/**
+	 * Regex used to parse numeric values.
+	 *
+	 * @var string
+	 */
+	public static $numericRegex = '/(([0-9.?]+)([a-z%]+)?\s?)/ui';
 
 	/**
 	 * Set style.
@@ -62,34 +69,97 @@ class Normalizer extends \YetiForcePDF\Base
 	/**
 	 * Get number value from style.
 	 *
-	 * @param $ruleValue
+	 * @param NumericValue|string $ruleValue
+	 * @param bool                $isFont
 	 *
 	 * @return string[]
 	 */
-	public function getNumberValues($ruleValue)
+	public function getNumberValues($ruleValue, bool $isFont = false)
 	{
+		if ($ruleValue instanceof NumericValue) {
+			return $ruleValue;
+		}
 		$matches = [];
-		preg_match_all('/(([0-9.?]+)([a-z%]+)?\s?)/ui', $ruleValue, $matches, PREG_SET_ORDER);
+		preg_match_all(static::$numericRegex, $ruleValue, $matches, PREG_SET_ORDER);
 		$originalSize = $matches[0][2];
+		$originalUnit = 'em';
 		if (isset($matches[0][3])) {
 			$originalUnit = $matches[0][3];
-		} else {
-			$originalUnit = 'em';
 		}
 		$multi = [
-			$this->style->convertUnits($originalUnit, $originalSize),
+			(new NumericValue())
+				->setUnit($originalUnit)
+				->setValue($originalSize)
+				->setOriginal($originalSize . $originalUnit)
+				->setIsFont($isFont)
+				->setStyle($this->style)
+				->convert()
 		];
 		$matchesCount = count($matches);
 		if ($matchesCount >= 2) {
-			$multi[] = $this->style->convertUnits($matches[1][3], $matches[1][2]);
+			$multi[] = (new NumericValue())
+				->setUnit($matches[1][3])
+				->setValue($matches[1][2])
+				->setOriginal($matches[1][2] . $matches[1][3])
+				->setIsFont($isFont)
+				->setStyle($this->style)
+				->convert();
 		}
 		if ($matchesCount >= 3) {
-			$multi[] = $this->style->convertUnits($matches[2][3], $matches[2][2]);
+			$multi[] = (new NumericValue())
+				->setUnit($matches[2][3])
+				->setValue($matches[2][2])
+				->setOriginal($matches[2][2] . $matches[2][3])
+				->setIsFont($isFont)
+				->setStyle($this->style)
+				->convert();
 		}
 		if ($matchesCount === 4) {
-			$multi[] = $this->style->convertUnits($matches[3][3], $matches[3][2]);
+			$multi[] = (new NumericValue())
+				->setUnit($matches[3][3])
+				->setValue($matches[3][2])
+				->setOriginal($matches[3][2] . $matches[3][3])
+				->setIsFont($isFont)
+				->setStyle($this->style)
+				->convert();
 		}
 		return $multi;
+	}
+
+	/**
+	 * Get numeric unit from css value.
+	 *
+	 * @param string $value       value from css 12px for example
+	 * @param string $defaultUnit
+	 *
+	 * @return string
+	 */
+	public static function getNumericUnit(string $value, string $defaultUnit): string
+	{
+		$matches = [];
+		preg_match_all(static::$numericRegex, $value, $matches, PREG_SET_ORDER);
+		$unit = $defaultUnit;
+		if (isset($matches[0][3])) {
+			$unit = $matches[0][3];
+		}
+		return $unit;
+	}
+
+	/**
+	 * Is numeric value.
+	 *
+	 * @param string $value
+	 *
+	 * @return bool|string
+	 */
+	public static function getNumericValue(string $value)
+	{
+		$matches = [];
+		preg_match_all(static::$numericRegex, $value, $matches, PREG_SET_ORDER);
+		if (isset($matches[0][2])) {
+			return $matches[0][2];
+		}
+		return false;
 	}
 
 	/**

@@ -248,12 +248,12 @@ class Color
 	/**
 	 * Convert css color definition to rgba values.
 	 *
-	 * @param string $colorInput
-	 * @param bool   $inPDFColorSpace
+	 * @param array|string $colorInput
+	 * @param bool         $inPDFColorSpace
 	 *
 	 * @return int[]
 	 */
-	public static function toRGBA(string $colorInput, bool $inPDFColorSpace = false)
+	public static function toRGBA($colorInput, bool $inPDFColorSpace = false)
 	{
 		$colorInput = trim(strtolower($colorInput));
 		if ($colorInput) {

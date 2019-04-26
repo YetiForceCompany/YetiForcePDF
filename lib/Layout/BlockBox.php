@@ -617,7 +617,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 				}
 			}
 		}
-		$top = Math::add($top, $marginTop);
+		$top = Math::add($top, (string) $marginTop);
 		$left = Math::add($left, $this->getStyle()->getRules('margin-left'));
 		$this->getOffset()->setTop($top);
 		$this->getOffset()->setLeft($left);

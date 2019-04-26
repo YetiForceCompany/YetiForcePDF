@@ -31,13 +31,13 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 *
 	 * @var string
 	 */
-	protected $parentWidth ='0';
+	protected $parentWidth = '0';
 	/**
 	 * Parent height cache.
 	 *
 	 * @var string
 	 */
-	protected $parentHeight ='0';
+	protected $parentHeight = '0';
 
 	/**
 	 * Go up to Line box and clone and wrap element.
@@ -203,7 +203,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
+	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
 	 *
 	 * @return $this
 	 */
@@ -255,7 +255,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	public function measureWidth()
 	{
 		$style = $this->getStyle();
-		if ($this->parentWidth === $this->getParent()->getDimensions()->getWidth() && $this->getDimensions()->getWidth()!==null) {
+		if ($this->parentWidth === $this->getParent()->getDimensions()->getWidth() && $this->getDimensions()->getWidth() !== null) {
 			if (!$this->isForMeasurement()) {
 				$this->getDimensions()->setWidth(Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
 			}
@@ -282,7 +282,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	public function measureHeight()
 	{
-		if ($this->getDimensions()->getHeight()!==null) {
+		if ($this->getDimensions()->getHeight() !== null) {
 			return $this;
 		}
 		foreach ($this->getChildren() as $child) {
@@ -314,7 +314,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		}
 		// margin top inside inline and inline block doesn't affect relative to line top position
 		// it only affects line margins
-		$left = $rules['margin-left'];
+		$left = (string) $rules['margin-left'];
 		if ($previous = $this->getPrevious()) {
 			$left = Math::add($left, $previous->getOffset()->getLeft(), $previous->getDimensions()->getWidth(), $previous->getStyle()->getRules('margin-right'));
 		} else {

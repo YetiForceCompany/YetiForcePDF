@@ -174,7 +174,7 @@ class PdfObject extends \YetiForcePDF\Base
 					break;
 				}
 			}
-			$afterIndex++;
+			++$afterIndex;
 		}
 		if (in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
 			$child->setParent($this);
@@ -190,13 +190,23 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
+	 * Get parent.
+	 *
+	 * @return mixed
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
 	 * Set parent object.
 	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $parent
 	 *
 	 * @return \YetiForcePDF\Objects\PdfObject
 	 */
-	public function setParent(\YetiForcePDF\Objects\PdfObject $parent): \YetiForcePDF\Objects\PdfObject
+	public function setParent(self $parent): self
 	{
 		$this->parent = $parent;
 		return $this;

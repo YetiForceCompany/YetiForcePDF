@@ -1082,7 +1082,7 @@ class Box extends \YetiForcePDF\Base
 		if ($this->getStyle()->getRules('display') === 'none') {
 			return $element;
 		}
-		$rules = $this->style->getRules();
+		$style = $this->style;
 		$graphicState = $this->style->getGraphicState();
 		$graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
 		$x1 = '0';
@@ -1090,17 +1090,17 @@ class Box extends \YetiForcePDF\Base
 		$y1 = $height;
 		$y2 = '0';
 		$element[] = '% start border';
-		if ($rules['border-top-width'] && $rules['border-top-style'] !== 'none' && $rules['border-top-color'] !== 'transparent') {
+		if ($style->getRules('border-top-width') && $style->getRules('border-top-style') !== 'none' && $style->getRules('border-top-color') !== 'transparent') {
 			$path = implode(" l\n", [
 				implode(' ', [$x2, $y1]),
-				implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::sub($y1, $rules['border-top-width'])]),
-				implode(' ', [Math::add($x1, $rules['border-left-width']), Math::sub($y1, $rules['border-top-width'])]),
+				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
+				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
 				implode(' ', [$x1, $y1])
 			]);
 			$borderTop = [
 				'q',
 				$graphicStateStr,
-				"{$rules['border-top-color'][0]} {$rules['border-top-color'][1]} {$rules['border-top-color'][2]} rg",
+				"{$style->getRules('border-top-color')[0]} {$style->getRules('border-top-color')[1]} {$style->getRules('border-top-color')[2]} rg",
 				"1 0 0 1 $pdfX $pdfY cm",
 				"$x1 $y1 m", // move to start point
 				$path . ' l h',
@@ -1109,18 +1109,18 @@ class Box extends \YetiForcePDF\Base
 			];
 			$element = array_merge($element, $borderTop);
 		}
-		if ($rules['border-right-width'] && $rules['border-right-style'] !== 'none' && $rules['border-right-color'] !== 'transparent') {
+		if ($style->getRules('border-right-width') && $style->getRules('border-right-style') !== 'none' && $style->getRules('border-right-color') !== 'transparent') {
 			$path = implode(" l\n", [
 				implode(' ', [$x2, $y2]),
-				implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::add($y2, $rules['border-bottom-width'])]),
-				implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::sub($y1, $rules['border-top-width'])]),
+				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),
+				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
 				implode(' ', [$x2, $y1]),
 			]);
 			$borderTop = [
 				'q',
 				$graphicStateStr,
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-right-color'][0]} {$rules['border-right-color'][1]} {$rules['border-right-color'][2]} rg",
+				"{$style->getRules('border-right-color')[0]} {$style->getRules('border-right-color')[1]} {$style->getRules('border-right-color')[2]} rg",
 				"$x2 $y1 m",
 				$path . ' l h',
 				'f',
@@ -1128,18 +1128,18 @@ class Box extends \YetiForcePDF\Base
 			];
 			$element = array_merge($element, $borderTop);
 		}
-		if ($rules['border-bottom-width'] && $rules['border-bottom-style'] !== 'none' && $rules['border-bottom-color'] !== 'transparent') {
+		if ($style->getRules('border-bottom-width') && $style->getRules('border-bottom-style') !== 'none' && $style->getRules('border-bottom-color') !== 'transparent') {
 			$path = implode(" l\n", [
 				implode(' ', [$x2, $y2]),
-				implode(' ', [Math::sub($x2, $rules['border-right-width']), Math::add($y2, $rules['border-bottom-width'])]),
-				implode(' ', [Math::add($x1, $rules['border-left-width']), Math::add($y2, $rules['border-bottom-width'])]),
+				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),
+				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),
 				implode(' ', [$x1, $y2]),
 			]);
 			$borderTop = [
 				'q',
 				$graphicStateStr,
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-bottom-color'][0]} {$rules['border-bottom-color'][1]} {$rules['border-bottom-color'][2]} rg",
+				"{$style->getRules('border-bottom-color')[0]} {$style->getRules('border-bottom-color')[1]} {$style->getRules('border-bottom-color')[2]} rg",
 				"$x1 $y2 m",
 				$path . ' l h',
 				'f',
@@ -1147,10 +1147,10 @@ class Box extends \YetiForcePDF\Base
 			];
 			$element = array_merge($element, $borderTop);
 		}
-		if ($rules['border-left-width'] && $rules['border-left-style'] !== 'none' && $rules['border-left-color'] !== 'transparent') {
+		if ($style->getRules('border-left-width') && $style->getRules('border-left-style') !== 'none' && $style->getRules('border-left-color') !== 'transparent') {
 			$path = implode(" l\n", [
-				implode(' ', [Math::add($x1, $rules['border-left-width']), Math::sub($y1, $rules['border-top-width'])]),
-				implode(' ', [Math::add($x1, $rules['border-left-width']), Math::add($y2, $rules['border-bottom-width'])]),
+				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
+				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),
 				implode(' ', [$x1, $y2]),
 				implode(' ', [$x1, $y1]),
 			]);
@@ -1158,7 +1158,7 @@ class Box extends \YetiForcePDF\Base
 				'q',
 				$graphicStateStr,
 				"1 0 0 1 $pdfX $pdfY cm",
-				"{$rules['border-left-color'][0]} {$rules['border-left-color'][1]} {$rules['border-left-color'][2]} rg",
+				"{$style->getRules('border-left-color')[0]} {$style->getRules('border-left-color')[1]} {$style->getRules('border-left-color')[2]} rg",
 				"$x1 $y1 m",
 				$path . ' l h',
 				'f',
