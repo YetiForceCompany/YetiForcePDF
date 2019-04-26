@@ -186,7 +186,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	/**
 	 * Get previous sibling inline-level element text.
 	 *
-	 * @return string|null
+	 * @return null|string
 	 */
 	protected function getPreviousText()
 	{
@@ -302,11 +302,11 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		$top = $parent->getStyle()->getOffsetTop();
 		$lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
 		if ($rules['vertical-align'] === 'bottom') {
-			$top = Math::sub($lineHeight, $this->getDimensions()->getHeight());
+			$top = Math::sub($lineHeight, $this->getStyle()->getFont()->getTextHeight());
 		} elseif ($rules['vertical-align'] === 'top') {
-			$top = '0';
+			$top = $this->getStyle()->getFont()->getDescender();
 		} elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
-			$height = $this->getDimensions()->getHeight();
+			$height = $this->getStyle()->getFont()->getTextHeight();
 			$top = Math::sub(Math::div($lineHeight, '2'), Math::div($height, '2'));
 		}
 		// margin top inside inline and inline block doesn't affect relative to line top position
