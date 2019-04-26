@@ -282,9 +282,6 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 */
 	public function measureHeight()
 	{
-		if ($this->getDimensions()->getHeight() !== null) {
-			return $this;
-		}
 		foreach ($this->getChildren() as $child) {
 			$child->measureHeight();
 		}
