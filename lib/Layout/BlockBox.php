@@ -396,6 +396,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$parent = $this->getParent();
 		if ($parent) {
 			if ($this->parentWidth === $parent->getDimensions()->getWidth()) {
+				$this->divideLines();
 				return $this;
 			}
 			$this->parentWidth = $parent->getDimensions()->getWidth();
