@@ -796,15 +796,12 @@ class TableBox extends BlockBox
 								$padding = Math::div($toDisposition, '2');
 								$cellStyle->setRule('padding-top', $padding);
 								$cellStyle->setRule('padding-bottom', $padding);
-
 								break;
 							case 'top':
 								$cellStyle->setRule('padding-bottom', $toDisposition);
-
 								break;
 							case 'bottom':
 								$cellStyle->setRule('padding-top', $toDisposition);
-
 								break;
 						}
 						$cell->measureWidth();
@@ -1318,13 +1315,19 @@ class TableBox extends BlockBox
 				foreach ($row->getChildren() as $column) {
 					$column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
 					$cell = $column->getFirstChild();
-					$height = $column->getDimensions()->getInnerHeight();
-					$height = Math::div($height, (string) $column->getRowSpan());
+					$cellStyle = $cell->getStyle();
+					if ($cellStyle->getRules('height') !== 'auto') {
+						$cellStyle->getRules()['height']->convert($cellStyle);
+						$height = $cellStyle->getRules('height');
+					} else {
+						$height = $column->getDimensions()->getInnerHeight();
+						$height = Math::div($height, (string) $column->getRowSpan());
+					}
 					$cellChildrenHeight = '0';
 					foreach ($cell->getChildren() as $cellChild) {
 						$cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
 					}
-					$cellStyle = $cell->getStyle();
+
 					$cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
 					$cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
 					$cellChildrenHeight = Math::div($cellChildrenHeight, (string) $column->getRowSpan());
