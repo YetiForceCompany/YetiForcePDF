@@ -731,7 +731,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return \YetiForcePDF\Page
 	 */
-	public function addResource(string $groupName, string $resourceName, \YetiForcePDF\Objects\PdfObject $resource): self
+	public function addResource(string $groupName, string $resourceName, Objects\PdfObject $resource): self
 	{
 		if (!isset($this->resources[$groupName])) {
 			$this->resources[$groupName] = [];
@@ -778,7 +778,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function getContentStream(): \YetiForcePDF\Objects\Basic\StreamObject
+	public function getContentStream(): StreamObject
 	{
 		return $this->contentStream;
 	}
@@ -788,7 +788,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return \YetiForcePDF\Layout\Dimensions\Dimensions
 	 */
-	public function getDimensions(): \YetiForcePDF\Layout\Dimensions\Dimensions
+	public function getDimensions(): Dimensions
 	{
 		return $this->dimensions;
 	}
@@ -798,7 +798,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return \YetiForcePDF\Layout\Dimensions\Dimensions
 	 */
-	public function getOuterDimensions(): \YetiForcePDF\Layout\Dimensions\Dimensions
+	public function getOuterDimensions(): Dimensions
 	{
 		return $this->outerDimensions;
 	}
@@ -1039,9 +1039,9 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Group boxes by parent.
 	 *
-	 * @param Box[]|null $boxes
+	 * @param null|Box[] $boxes
 	 *
-	 * @return Box[]|null cloned boxes
+	 * @return null|Box[] cloned boxes
 	 */
 	public function cloneAndDivideChildrenAfterY(string $yPos, array $boxes = null)
 	{
@@ -1083,7 +1083,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$cells = $tableWrapperBox->getBoxesByType('TableCellBox');
 		foreach ($cells as $cell) {
-			if (Math::comp($cell->getDimensions()->getHeight(), $this->getDimensions()->getHeight())>0) {
+			if (Math::comp($cell->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
 				return true;
 			}
 		}
@@ -1146,13 +1146,13 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 						if ($row->getRowSpanUp() > 0) {
 							$move = [];
 							// copy spanned rows too
-							for ($i = $row->getRowSpanUp(); $i >= 0; $i--) {
+							for ($i = $row->getRowSpanUp(); $i >= 0; --$i) {
 								$spannedRowIndex = $rowIndex - $i;
 								$move[] = $tableRowGroup->getChildren()[$spannedRowIndex];
 							}
 							// copy all next rows
 							$rows = $tableRowGroup->getChildren();
-							for ($i = $rowIndex, $len = count($rows); $i < $len; $i++) {
+							for ($i = $rowIndex, $len = count($rows); $i < $len; ++$i) {
 								$nextRow = $rows[$i];
 								$move[] = $nextRow;
 							}
@@ -1160,9 +1160,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 								$moveRowGroup->appendChild($mr->getParent()->removeChild($mr));
 							}
 							break;
-						} else {
-							$moveRowGroup->appendChild($row->getParent()->removeChild($row));
 						}
+						$moveRowGroup->appendChild($row->getParent()->removeChild($row));
 					}
 				}
 			}

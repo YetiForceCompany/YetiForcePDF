@@ -103,7 +103,7 @@ class Parser extends \YetiForcePDF\Base
 		preg_match_all('/\<div\s+data-page-group\s?/ui', $html, $matches, PREG_OFFSET_CAPTURE);
 		$matches = $matches[0];
 		$groupsCount = count($matches);
-		for ($i = 0; $i < $groupsCount; $i++) {
+		for ($i = 0; $i < $groupsCount; ++$i) {
 			$start = $matches[$i][1];
 			if (isset($matches[$i + 1])) {
 				$stop = $matches[$i + 1][1];

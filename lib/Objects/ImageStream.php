@@ -49,6 +49,12 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	 */
 	protected $height = '0';
 	/**
+	 * Width / Height ratio.
+	 *
+	 * @var string
+	 */
+	protected $ratio = '0';
+	/**
 	 * @var int bits per component
 	 */
 	protected $bitsPerComponent = 8;
@@ -112,6 +118,9 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			$this->bitsPerComponent = (string) $info['bits'];
 			$this->width = (string) $info[0];
 			$this->height = (string) $info[1];
+			$this->displayWidth = $this->width;
+			$this->displayHeight = $this->height;
+			$this->ratio = \YetiForcePDF\Math::div($this->getWidth(), $this->getHeight());
 		}
 		return $this;
 	}
@@ -169,5 +178,74 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			'endstream',
 			'endobj'
 		]);
+	}
+
+	/**
+	 * Get width / Height ratio.
+	 *
+	 * @return string
+	 */
+	public function getRatio()
+	{
+		return $this->ratio;
+	}
+
+	/**
+	 * Set width / Height ratio.
+	 *
+	 * @param string $ratio Width / Height ratio.
+	 *
+	 * @return self
+	 */
+	public function setRatio(string $ratio)
+	{
+		$this->ratio = $ratio;
+		return $this;
+	}
+
+	/**
+	 * Get display width.
+	 *
+	 * @return string
+	 */
+	public function getDisplayWidth()
+	{
+		return $this->displayWidth;
+	}
+
+	/**
+	 * Set display width.
+	 *
+	 * @param string $displayWidth Display width
+	 *
+	 * @return self
+	 */
+	public function setDisplayWidth(string $displayWidth)
+	{
+		$this->displayWidth = $displayWidth;
+		return $this;
+	}
+
+	/**
+	 * Get display height.
+	 *
+	 * @return string
+	 */
+	public function getDisplayHeight()
+	{
+		return $this->displayHeight;
+	}
+
+	/**
+	 * Set display height.
+	 *
+	 * @param string $displayHeight Display height
+	 *
+	 * @return self
+	 */
+	public function setDisplayHeight(string $displayHeight)
+	{
+		$this->displayHeight = $displayHeight;
+		return $this;
 	}
 }
