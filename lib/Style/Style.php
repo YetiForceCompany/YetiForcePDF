@@ -1232,13 +1232,6 @@ class Style extends \YetiForcePDF\Base
 		$this->backgroundImage->loadImage($src);
 		$imageName = $this->backgroundImage->getImageName();
 		$this->document->getCurrentPage()->addResource('XObject', $imageName, $this->backgroundImage);
-		if ($rulesParsed['width'] === 'auto') {
-			$rulesParsed['width'] = ((string) $this->backgroundImage->getWidth()) . 'px';
-		}
-		if ($rulesParsed['height'] === 'auto') {
-			$rulesParsed['height'] = ((string) $this->backgroundImage->getHeight()) . 'px';
-		}
-
 		return $rulesParsed;
 	}
 
