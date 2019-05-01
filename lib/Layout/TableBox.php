@@ -1147,20 +1147,12 @@ class TableBox extends BlockBox
 			$currentPercentsWidth = Math::add($currentPercentsWidth, $colDmns->getInnerWidth());
 		}
 		// we've added space to percentage columns, now we must calculate how much space we need to add (to have 100%)
-		$leftSpace = Math::sub($leftSpace, $addToPercents);
-		$leftPercent = Math::sub('100', $totalPercentages);
-		$restHave = $this->getCurrentOthersWidth();
-		if (Math::comp($totalPercentages, '0') > 0) {
-			$onePercent = Math::div($currentPercentsWidth, $totalPercentages);
-			$restMustHave = Math::mul($leftPercent, $onePercent);
-			$leftSpace = Math::min($leftSpace, Math::sub($restMustHave, $restHave));
-		}
-
-		if (Math::comp($leftSpace, '0') === 0) {
+		$leftSpace2 = Math::sub($leftSpace, $addToPercents);
+		if (Math::comp($leftSpace2, '0') === 0) {
 			return $this->setRowsWidth();
 		}
 		// left space MUST be redistributed to fulfill new percentages
-		$this->addToOthers($leftSpace, true);
+		$this->addToOthers($leftSpace2, true);
 		// percent columns were redistributed in the first step so we don't need to do anything
 		$this->setRowsWidth();
 
