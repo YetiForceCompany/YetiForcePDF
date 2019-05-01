@@ -241,6 +241,7 @@ class Parser extends \YetiForcePDF\Base
 				$page->getBox()->spanAllRows();
 			}
 			$page->getBox()->getStyle()->fixDomTree();
+			//$page->getBox()->getStyle()->fixRowSpansSpacing();
 			$this->document->fixPageNumbers();
 			foreach ($this->document->getPages($groupIndex) as $page) {
 				$this->document->setCurrentPage($page);

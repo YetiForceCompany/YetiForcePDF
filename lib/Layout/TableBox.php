@@ -772,9 +772,6 @@ class TableBox extends BlockBox
 							$spanHeight = Math::add($spanHeight, $spanColumn->getDimensions()->getHeight());
 							$toRemove[] = $spanColumn;
 						}
-						if ($rowIndex + $i === count($this->rows) && $column->getStyle()->getRules('border-collapse') === 'separate') {
-							$spanHeight = Math::sub($spanHeight, $this->getStyle()->getRules('border-spacing'));
-						}
 						$colDmns = $column->getDimensions();
 						$colDmns->setHeight(Math::add($colDmns->getHeight(), $spanHeight));
 						$cell = $column->getFirstChild();
@@ -814,7 +811,7 @@ class TableBox extends BlockBox
 			}
 		}
 		foreach ($toRemove as $remove) {
-			$remove->setRenderable(false);
+			$remove->getParent()->removeChild($remove)->setRenderable(false)->setForMeasurement(false);
 		}
 
 		return $this;
@@ -1306,9 +1303,11 @@ class TableBox extends BlockBox
 			}
 		}
 		$tableHeight = '0';
-		foreach ($this->getChildren() as $rowGroupIndex => $rowGroup) {
+		$rowGroups = $this->getChildren();
+		foreach ($rowGroups as $rowGroupIndex => $rowGroup) {
 			$rowGroupHeight = '0';
-			foreach ($rowGroup->getChildren() as $rowIndex => $row) {
+			$rows = $rowGroup->getChildren();
+			foreach ($rows as $rowIndex => $row) {
 				$rowStyle = $row->getStyle();
 				$row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowGroupIndex][$rowIndex], $rowStyle->getVerticalBordersWidth(), $rowStyle->getVerticalPaddingsWidth()));
 				$rowGroupHeight = Math::add($rowGroupHeight, $row->getDimensions()->getHeight());
@@ -1327,7 +1326,6 @@ class TableBox extends BlockBox
 					foreach ($cell->getChildren() as $cellChild) {
 						$cellChildrenHeight = Math::add($cellChildrenHeight, $cellChild->getDimensions()->getOuterHeight());
 					}
-
 					$cellVerticalSize = Math::add($cellStyle->getVerticalBordersWidth(), $cellStyle->getVerticalPaddingsWidth());
 					$cellChildrenHeight = Math::add($cellChildrenHeight, $cellVerticalSize);
 					$cellChildrenHeight = Math::div($cellChildrenHeight, (string) $column->getRowSpan());
@@ -1339,12 +1337,10 @@ class TableBox extends BlockBox
 							case 'top':
 								$freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-bottom'));
 								$cellStyle->setRule('padding-bottom', $freeSpace);
-
 								break;
 							case 'bottom':
 								$freeSpace = Math::add($freeSpace, $cellStyle->getRules('padding-top'));
 								$cellStyle->setRule('padding-top', $freeSpace);
-
 								break;
 							case 'baseline':
 							case 'middle':
@@ -1354,7 +1350,6 @@ class TableBox extends BlockBox
 								$paddingBottom = Math::add($cellStyle->getRules('padding-bottom'), $disposition);
 								$cellStyle->setRule('padding-top', $paddingTop);
 								$cellStyle->setRule('padding-bottom', $paddingBottom);
-
 								break;
 						}
 					}
@@ -1362,6 +1357,7 @@ class TableBox extends BlockBox
 					$cell->getDimensions()->setHeight($height);
 				}
 			}
+			$rowGroupHeight = Math::add($rowGroupHeight, $row->getStyle()->getRules('border-spacing'));
 			$rowGroup->getDimensions()->setHeight($rowGroupHeight);
 			$tableHeight = Math::add($tableHeight, $rowGroupHeight);
 		}

@@ -1506,13 +1506,7 @@ class Style extends \YetiForcePDF\Base
 						if ($columnIndex + 1 < $columnsCount) {
 							$columnStyle->setRule('padding-right', '0');
 						}
-						if (!($rowIndex + $row->getRowSpan() === $rowsCount && $rowGroupIndex + 1 === $rowGroupsCount)) {
-							$columnStyle->setRule('padding-bottom', '0');
-						} elseif ($columnStyle->getRules('border-collapse') === 'separate') {
-							$columnStyle->setRule('padding-bottom', $columnStyle->getRules('border-spacing'));
-							$column->getParent()->measureHeight();
-							$column->getParent()->getParent()->measureHeight();
-						}
+						$columnStyle->setRule('padding-bottom', '0');
 						$cellBorders = [
 							Math::max($cellBorders[0], $rowStyle->getRules('border-top-width')),
 							Math::max($cellBorders[1], $rowStyle->getRules('border-right-width')),
@@ -1587,6 +1581,41 @@ class Style extends \YetiForcePDF\Base
 		}
 		unset($rowGroup, $boxes, $rows, $columns);
 
+		return $this;
+	}
+
+	/**
+	 * Add border spacing to last column that was spanned.
+	 *
+	 * @return self
+	 */
+	public function fixRowSpansSpacing()
+	{
+		$box = $this->getBox();
+		if (!$box instanceof TableBox) {
+			$boxes = $box->getBoxesByType('TableBox');
+		}
+		foreach ($boxes as $box) {
+			$rowGroups = $box->getChildren(true, true);
+			$rowGroupsCount = count($rowGroups);
+			foreach ($rowGroups as $rowGroupIndex => $rowGroup) {
+				$columnHeightChanged = false;
+				$rows = $rowGroup->getChildren(true, true);
+				$rowsCount = count($rows);
+				foreach ($rows as $rowIndex => $row) {
+					$columns = $row->getChildren(true, true);
+					foreach ($columns as $columnIndex => $column) {
+						$columnStyle = $column->getStyle();
+						if ($columnStyle->getRules('border-collapse') === 'separate' && $rowIndex + $column->getRowSpan() === $rowsCount && $rowGroupIndex + 1 === $rowGroupsCount) {
+							$spacing = $columnStyle->getRules('border-spacing');
+							$columnStyle->setRule('padding-bottom', $spacing);
+							$column->measureHeight();
+							$rowGroup->measureHeight();
+						}
+					}
+				}
+			}
+		}
 		return $this;
 	}
 
