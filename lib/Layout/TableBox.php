@@ -1349,7 +1349,9 @@ class TableBox extends BlockBox
 					$cell->getDimensions()->setHeight($height);
 				}
 			}
-			$rowGroupHeight = Math::add($rowGroupHeight, $row->getStyle()->getRules('border-spacing'));
+			if ($row->getStyle()->getRules('border-collapse') === 'separate') {
+				$rowGroupHeight = Math::add($rowGroupHeight, $row->getStyle()->getRules('border-spacing'));
+			}
 			$rowGroup->getDimensions()->setHeight($rowGroupHeight);
 			$tableHeight = Math::add($tableHeight, $rowGroupHeight);
 		}

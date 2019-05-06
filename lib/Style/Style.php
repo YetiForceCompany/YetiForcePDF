@@ -166,7 +166,7 @@ class Style extends \YetiForcePDF\Base
 		'height' => 'auto',
 		'overflow' => 'visible',
 		'vertical-align' => 'baseline',
-		'line-height' => '1.2em',
+		'line-height' => '1.4em',
 		'background-color' => 'transparent',
 		'color' => '#000000',
 		'word-wrap' => 'normal',
@@ -561,7 +561,8 @@ class Style extends \YetiForcePDF\Base
 			'font-weight' => 'bold',
 			'text-align' => 'center',
 			'padding' => '1px',
-			'background-color' => '#ddd'
+			'background-color' => '#ddd',
+			'line-height' => '1.6em'
 		],
 		'thead' => [
 			'display' => 'table-header-group',
@@ -1581,41 +1582,6 @@ class Style extends \YetiForcePDF\Base
 		}
 		unset($rowGroup, $boxes, $rows, $columns);
 
-		return $this;
-	}
-
-	/**
-	 * Add border spacing to last column that was spanned.
-	 *
-	 * @return self
-	 */
-	public function fixRowSpansSpacing()
-	{
-		$box = $this->getBox();
-		if (!$box instanceof TableBox) {
-			$boxes = $box->getBoxesByType('TableBox');
-		}
-		foreach ($boxes as $box) {
-			$rowGroups = $box->getChildren(true, true);
-			$rowGroupsCount = count($rowGroups);
-			foreach ($rowGroups as $rowGroupIndex => $rowGroup) {
-				$columnHeightChanged = false;
-				$rows = $rowGroup->getChildren(true, true);
-				$rowsCount = count($rows);
-				foreach ($rows as $rowIndex => $row) {
-					$columns = $row->getChildren(true, true);
-					foreach ($columns as $columnIndex => $column) {
-						$columnStyle = $column->getStyle();
-						if ($columnStyle->getRules('border-collapse') === 'separate' && $rowIndex + $column->getRowSpan() === $rowsCount && $rowGroupIndex + 1 === $rowGroupsCount) {
-							$spacing = $columnStyle->getRules('border-spacing');
-							$columnStyle->setRule('padding-bottom', $spacing);
-							$column->measureHeight();
-							$rowGroup->measureHeight();
-						}
-					}
-				}
-			}
-		}
 		return $this;
 	}
 
