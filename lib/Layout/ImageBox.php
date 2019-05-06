@@ -35,8 +35,10 @@ class ImageBox extends InlineBlockBox
 				$width = $this->getParent()->getDimensions()->computeAvailableSpace();
 			}
 			if ($style->getRules('height') !== 'auto') {
+				Math::setAccurate(true);
 				$ratio = $img->getRatio();
 				$width = Math::mul($ratio, $this->getDimensions()->getStyleHeight());
+				Math::setAccurate(false);
 			}
 			$width = Math::add($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 			$this->getDimensions()->setWidth($width);
@@ -57,8 +59,10 @@ class ImageBox extends InlineBlockBox
 	{
 		$style = $this->getStyle();
 		$img = $style->getBackgroundImageStream();
+		Math::setAccurate(true);
 		$ratio = $img->getRatio();
 		$height = Math::div($this->getDimensions()->getInnerWidth(), $ratio);
+		Math::setAccurate(false);
 		$height = Math::add($height, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
 		$this->getDimensions()->setHeight($height);
 		return $this;

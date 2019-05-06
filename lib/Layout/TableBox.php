@@ -459,15 +459,19 @@ class TableBox extends BlockBox
 		$totalNeeded = Math::add($autoNeededTotal, $pixelNeededTotal);
 		$totalToAdd = Math::min($leftSpace, $totalNeeded);
 		// we know how much we can distribute
+		Math::setAccurate(true);
 		$autoTotalRatio = Math::div($autoNeededTotal, $totalNeeded);
 		$addToAutoTotal = Math::mul($autoTotalRatio, $totalToAdd);
+		Math::setAccurate(false);
 		$addToPixelTotal = Math::sub($totalToAdd, $addToAutoTotal);
 		// we know how much space we can add to each column type (auto and pixel)
 		// now we must distribute this space according to concrete column needs
 		foreach ($this->autoColumns as $columnIndex => $columns) {
 			if (isset($autoNeeded[$columnIndex])) {
+				Math::setAccurate(true);
 				$neededRatio = Math::div($autoNeeded[$columnIndex], $autoNeededTotal);
 				$add = Math::mul($neededRatio, $addToAutoTotal);
+				Math::setAccurate(false);
 				$columnWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
 				foreach ($columns as $column) {
 					$colDmns = $column->getDimensions();
@@ -478,8 +482,10 @@ class TableBox extends BlockBox
 		}
 		foreach ($this->pixelColumns as $columnIndex => $columns) {
 			if (isset($pixelNeeded[$columnIndex])) {
+				Math::setAccurate(true);
 				$neededRatio = Math::div($pixelNeeded[$columnIndex], $pixelNeededTotal);
 				$add = Math::mul($neededRatio, $addToPixelTotal);
+				Math::setAccurate(false);
 				$columnWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
 				foreach ($columns as $column) {
 					$colDmns = $column->getDimensions();
@@ -500,7 +506,6 @@ class TableBox extends BlockBox
 	protected function getCurrentOthersWidth()
 	{
 		$currentOthersWidth = '0';
-
 		foreach ($this->autoColumns as $columns) {
 			$currentOthersWidth = Math::add($currentOthersWidth, $columns[0]->getDimensions()->getInnerWidth());
 		}
@@ -555,7 +560,9 @@ class TableBox extends BlockBox
 		$maxPercentRatioIndex = 0;
 		$ratioPercent = '0';
 		foreach ($this->percentages as $columnIndex => $percent) {
+			Math::setAccurate(true);
 			$ratio = Math::div($this->minWidths[$columnIndex], $percent);
+			Math::setAccurate(false);
 			if (Math::comp($ratio, $maxPercentRatio) > 0) {
 				$maxPercentRatio = $ratio;
 				$maxPercentRatioIndex = $columnIndex;
@@ -975,8 +982,10 @@ class TableBox extends BlockBox
 				// minimal stays minimal, decreasing pixels
 				$toPixelDisposition = Math::sub($nonPercentageSpace, $autoColumnsMinWidth);
 				foreach ($this->pixelColumns as $columnIndex => $columns) {
+					Math::setAccurate(true);
 					$ratio = Math::div($this->preferredWidths[$columnIndex], $totalPixelWidth);
 					$columnWidth = Math::mul($toPixelDisposition, $ratio);
+					Math::setAccurate(false);
 					foreach ($columns as $column) {
 						$columnDimensions = $column->getDimensions();
 						$columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth()));
@@ -998,8 +1007,10 @@ class TableBox extends BlockBox
 				$toAutoDisposition = Math::sub($nonPercentageSpace, $totalPixelWidth);
 				$nonMinWidthColumns = [];
 				foreach ($this->autoColumns as $columnIndex => $columns) {
+					Math::setAccurate(true);
 					$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
 					$columnWidth = Math::mul($toAutoDisposition, $ratio);
+					Math::setAccurate(false);
 					if (Math::comp($this->minWidths[$columnIndex], $columnWidth) > 0) {
 						$toAutoDisposition = Math::sub($toAutoDisposition, Math::sub($this->minWidths[$columnIndex], $columnWidth));
 						$columnWidth = $this->minWidths[$columnIndex];
@@ -1013,8 +1024,10 @@ class TableBox extends BlockBox
 					}
 				}
 				foreach ($nonMinWidthColumns as $columnIndex => $columns) {
+					Math::setAccurate(true);
 					$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
 					$columnWidth = Math::mul($toAutoDisposition, $ratio);
+					Math::setAccurate(false);
 					foreach ($columns as $column) {
 						$columnDimensions = $column->getDimensions();
 						$columnDimensions->setWidth(Math::add($columnWidth, $column->getStyle()->getHorizontalPaddingsWidth()));
@@ -1061,8 +1074,10 @@ class TableBox extends BlockBox
 		if (!empty($this->autoColumns)) {
 			$autoColumnsMaxWidth = $this->getAutoColumnsMaxWidth();
 			foreach ($this->autoColumns as $columnIndex => $columns) {
+				Math::setAccurate(true);
 				$ratio = Math::div($this->contentWidths[$columnIndex], $autoColumnsMaxWidth);
 				$add = Math::mul($leftSpace, $ratio);
+				Math::setAccurate(false);
 				$colWidth = Math::add($columns[0]->getDimensions()->getWidth(), $add);
 				foreach ($columns as $column) {
 					$colDmns = $column->getDimensions();
@@ -1130,8 +1145,10 @@ class TableBox extends BlockBox
 		$addToPercents = Math::min($neededTotal, $forPercentages);
 		foreach ($this->percentColumns as $columnIndex => $columns) {
 			if (Math::comp($addToPercents, $neededTotal) < 0) {
+				Math::setAccurate(true);
 				$ratio = Math::div($this->percentages[$columnIndex], $totalPercentages);
 				$add = Math::mul($ratio, $addToPercents);
+				Math::setAccurate(false);
 			} else {
 				if (isset($needed[$columnIndex])) {
 					$add = $needed[$columnIndex];

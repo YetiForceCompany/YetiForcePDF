@@ -18,7 +18,40 @@ namespace YetiForcePDF;
  */
 class Math
 {
+	/**
+	 * Current scale = precision.
+	 *
+	 * @var int
+	 */
 	public static $scale = 2;
+
+	/**
+	 * Standard scale = precision.
+	 *
+	 * @var int
+	 */
+	public static $standardScale = 2;
+
+	/**
+	 * High scale for more accurate calculations when needed (ratio for example).
+	 *
+	 * @var int
+	 */
+	public static $highScale = 12;
+
+	/**
+	 * Set more accurate calculation.
+	 *
+	 * @param bool $accurate
+	 */
+	public static function setAccurate(bool $accurate)
+	{
+		if ($accurate) {
+			static::$scale = static::$highScale;
+		} else {
+			static::$scale = static::$standardScale;
+		}
+	}
 
 	/**
 	 * Add two numbers.

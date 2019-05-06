@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Objects;
 
+use YetiForcePDF\Math;
+
 /**
  * Class ImageStream.
  */
@@ -120,7 +122,9 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			$this->height = (string) $info[1];
 			$this->displayWidth = $this->width;
 			$this->displayHeight = $this->height;
-			$this->ratio = \YetiForcePDF\Math::div($this->getWidth(), $this->getHeight());
+			Math::setAccurate(true);
+			$this->ratio = Math::div($this->getWidth(), $this->getHeight());
+			Math::setAccurate(false);
 		}
 		return $this;
 	}
