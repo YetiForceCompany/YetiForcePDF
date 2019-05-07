@@ -819,7 +819,7 @@ class TableBox extends BlockBox
 			}
 		}
 		foreach ($toRemove as $remove) {
-			$remove->setDisplayable(false)->setRenderable(false);
+			$remove->setDisplayable(false)->setRenderable(false)->setForMeasurement(false);
 		}
 
 		return $this;
@@ -1247,7 +1247,7 @@ class TableBox extends BlockBox
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
 	{
-		if ($this->wasCut() || $afterPageDividing) {
+		if ($this->wasCut()) {
 			return $this;
 		}
 		foreach ($this->getCells() as $cell) {
@@ -1322,6 +1322,9 @@ class TableBox extends BlockBox
 				$row->getDimensions()->setHeight(Math::add($maxRowHeights[$rowGroupIndex][$rowIndex], $rowStyle->getVerticalBordersWidth(), $rowStyle->getVerticalPaddingsWidth()));
 				$rowGroupHeight = Math::add($rowGroupHeight, $row->getDimensions()->getHeight());
 				foreach ($row->getChildren() as $column) {
+					if ($column->getRowSpan() > 1 && $afterPageDividing) {
+						continue;
+					}
 					$column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
 					$cell = $column->getFirstChild();
 					$cellStyle = $cell->getStyle();

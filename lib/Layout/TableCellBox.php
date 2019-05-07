@@ -33,6 +33,18 @@ class TableCellBox extends BlockBox
 	protected $parentWidth = '0';
 
 	/**
+	 * Initial borders width - because borders are modified couple of times when rearranging.
+	 *
+	 * @var array
+	 */
+	protected $initialBordersWidths = [
+		'top' => '0',
+		'right' => '0',
+		'bottom' => '0',
+		'left' => '0'
+	];
+
+	/**
 	 * Set column spanned.
 	 *
 	 * @param bool $spanned
@@ -140,6 +152,50 @@ class TableCellBox extends BlockBox
 		foreach ($this->getChildren() as $child) {
 			$child->measurePosition();
 		}
+		return $this;
+	}
+
+	/**
+	 * Get initial borders width - because borders are modified couple of times when rearranging.
+	 *
+	 * @return array
+	 */
+	public function getInitialBordersWidths()
+	{
+		return $this->initialBordersWidths;
+	}
+
+	/**
+	 * Get initial border width.
+	 *
+	 * @param string $which top, right, bottom, left
+	 *
+	 * @return string width
+	 */
+	public function getInitialBordersWidth(string $which)
+	{
+		return $this->initialBordersWidths[$which];
+	}
+
+	/**
+	 * Set initial borders width - because borders are modified couple of times when rearranging.
+	 *
+	 * @param string $top
+	 * @param string $right
+	 * @param string $bottom
+	 * @param string $left
+	 *
+	 * @return self
+	 */
+	public function setInitialBordersWidths(string $top, string $right, string $bottom, string $left)
+	{
+		$this->initialBordersWidths = [
+			'top' => $top,
+			'right' => $right,
+			'bottom' => $bottom,
+			'left' => $left
+		];
+
 		return $this;
 	}
 }
