@@ -235,10 +235,10 @@ class Parser extends \YetiForcePDF\Base
 				$page->getBox()->breakPageAfter();
 			}
 			foreach ($this->document->getPages($groupIndex) as $page) {
-				$page->breakOverflow();
+				$page->getBox()->spanAllRows();
 			}
 			foreach ($this->document->getPages($groupIndex) as $page) {
-				$page->getBox()->spanAllRows();
+				$page->breakOverflow();
 			}
 			$page->getBox()->getStyle()->fixDomTree();
 			$this->document->fixPageNumbers();
