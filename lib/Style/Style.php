@@ -1483,11 +1483,9 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Fix tables.
 	 *
-	 * @param bool $removeBottomBorders
-	 *
 	 * @return $this
 	 */
-	public function fixTables(bool $removeBottomBorders)
+	public function fixTables()
 	{
 		$box = $this->getBox();
 		if ($box->wasCut()) {
@@ -1530,9 +1528,9 @@ class Style extends \YetiForcePDF\Base
 								Math::max($cellBorders[2], $cellStyle->getRules('border-bottom-width')),
 								Math::max($cellBorders[3], $cellStyle->getRules('border-left-width')),
 							];
-							if ($rowIndex + $column->getRowSpan() < $rowsCount && $removeBottomBorders) {
+							if ($rowIndex + $column->getRowSpan() < $rowsCount) {
 								$cellStyle->setRule('border-bottom-width', '0');
-							}elseif(Math::comp($cellStyle->getRules('border-bottom-width'), '0') === 0){
+							} elseif (Math::comp($cellStyle->getRules('border-bottom-width'), '0') === 0) {
 								$cellStyle->setRule('border-bottom-width', $this->getInitialRules('border-bottom-width'));
 							}
 							if ($columnIndex + $column->getColSpan() < $columnsCount) {
@@ -1568,7 +1566,7 @@ class Style extends \YetiForcePDF\Base
 				if ($boxStyle->getRules('border-collapse') === 'collapse') {
 					$rowsCount = count($rows) - 1;
 					foreach ($rows as $rowIndex => $row) {
-						if ($rowIndex < $rowsCount && $removeBottomBorders) {
+						if ($rowIndex < $rowsCount) {
 							$row->getStyle()->setRule('border-bottom-width', '0');
 						}
 					}
@@ -1597,18 +1595,16 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Fix dom tree - after dom tree is parsed we must clean up or add some rules.
 	 *
-	 * @param bool $removeBottomBorders
-	 *
 	 * @return $this
 	 */
-	public function fixDomTree(bool $removeBottomBorders = true)
+	public function fixDomTree()
 	{
 		if ($this->getBox()->wasCut()) {
 			return $this;
 		}
 		foreach ($this->box->getChildren() as $childBox) {
-			$childBox->getStyle()->fixTables($removeBottomBorders);
-			$childBox->getStyle()->fixDomTree($removeBottomBorders);
+			$childBox->getStyle()->fixTables();
+			$childBox->getStyle()->fixDomTree();
 		}
 
 		return $this;

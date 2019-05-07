@@ -227,7 +227,7 @@ class Parser extends \YetiForcePDF\Base
 
 			$pageGroup->buildTree();
 			$pageGroup->fixTables();
-			$pageGroup->getStyle()->fixDomTree(false);
+			$pageGroup->getStyle()->fixDomTree();
 			$pageGroup->layout();
 			$page->setBox($pageGroup);
 
