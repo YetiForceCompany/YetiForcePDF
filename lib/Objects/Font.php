@@ -121,7 +121,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Text height with ascender and descender.
 	 *
-	 * @var null|string
+	 * @var string|null
 	 */
 	protected $textHeight;
 	/**
@@ -214,9 +214,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function init()
 	{
-		$this->fontDir = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fonts') . DIRECTORY_SEPARATOR;
+		$this->fontDir = realpath(__DIR__ . \DIRECTORY_SEPARATOR . '..' . \DIRECTORY_SEPARATOR . 'Fonts') . \DIRECTORY_SEPARATOR;
 		$alreadyExists = $this->document->getFontInstance($this->family, $this->weight, $this->style);
-		if ($alreadyExists === null) {
+		if (null === $alreadyExists) {
 			parent::init();
 			$this->document->setFontInstance($this->family, $this->weight, $this->style, $this);
 			$this->fontNumber = 'F' . $this->document->getActualFontId();
@@ -417,17 +417,17 @@ class Font extends \YetiForcePDF\Objects\Resource
 		if (isset($this->document->ordCache[$string])) {
 			return $this->document->ordCache[$string];
 		}
-		if (extension_loaded('mbstring') === true) {
+		if (true === \extension_loaded('mbstring')) {
 			mb_language('Neutral');
 			mb_internal_encoding('UTF-8');
 			mb_detect_order(['UTF-8', 'ISO-8859-15', 'ISO-8859-1', 'ASCII']);
 			$result = unpack('N', mb_convert_encoding($string, 'UCS-4BE', 'UTF-8'));
-			if (is_array($result) === true) {
+			if (true === \is_array($result)) {
 				return $result[1];
 			}
 		}
 
-		return $this->document->ordCache[$string] = ord($string);
+		return $this->document->ordCache[$string] = \ord($string);
 	}
 
 	/**
@@ -456,13 +456,13 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Get text height.
 	 *
-	 * @param null|string $text
+	 * @param string|null $text
 	 *
 	 * @return string
 	 */
 	public function getTextHeight(string $text = null): string
 	{
-		if ($this->textHeight === null) {
+		if (null === $this->textHeight) {
 			$this->textHeight = Math::add($this->getAscender(), Math::mul($this->getDescender(), '-1'));
 		}
 
@@ -599,7 +599,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 			return static::$customFontFiles[$this->family][$weight][$this->style];
 		}
 		// inverse style
-		$style = $this->style === 'normal' ? 'italic' : 'normal';
+		$style = 'normal' === $this->style ? 'italic' : 'normal';
 		if (isset(static::$customFontFiles[$this->family][$weight][$style]) && file_exists(static::$customFontFiles[$this->family][$weight][$style])) {
 			return static::$customFontFiles[$this->family][$weight][$style];
 		}
@@ -616,11 +616,11 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public static function loadFromArray(array $decoded)
 	{
-		if (!is_array($decoded)) {
+		if (!\is_array($decoded)) {
 			throw new \ErrorException('Invalid fonts json structure.');
 		}
 		foreach ($decoded as $font) {
-			if (!is_array($font)) {
+			if (!\is_array($font)) {
 				throw new \ErrorException('Invalid fonts json structure.');
 			}
 			if (empty($font['family']) || empty($font['weight']) || empty($font['style']) || empty($font['file'])) {
@@ -644,15 +644,15 @@ class Font extends \YetiForcePDF\Objects\Resource
 			if (file_exists($this->fontDir . $match)) {
 				return $this->fontDir . $match;
 			}
-			if (defined('ROOT_DIRECTORY')) {
+			if (\defined('ROOT_DIRECTORY')) {
 				$path = ROOT_DIRECTORY;
-				$path .= DIRECTORY_SEPARATOR . 'public_html';
-				$path .= DIRECTORY_SEPARATOR . 'vendor';
-				$path .= DIRECTORY_SEPARATOR . 'yetiforce';
-				$path .= DIRECTORY_SEPARATOR . 'yetiforcepdf';
-				$path .= DIRECTORY_SEPARATOR . 'lib';
-				$path .= DIRECTORY_SEPARATOR . 'Fonts';
-				$path .= DIRECTORY_SEPARATOR . $match;
+				$path .= \DIRECTORY_SEPARATOR . 'public_html';
+				$path .= \DIRECTORY_SEPARATOR . 'vendor';
+				$path .= \DIRECTORY_SEPARATOR . 'yetiforce';
+				$path .= \DIRECTORY_SEPARATOR . 'yetiforcepdf';
+				$path .= \DIRECTORY_SEPARATOR . 'lib';
+				$path .= \DIRECTORY_SEPARATOR . 'Fonts';
+				$path .= \DIRECTORY_SEPARATOR . $match;
 				if (file_exists($path)) {
 					return $path;
 				}
@@ -667,7 +667,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 *
 	 * @throws \FontLib\Exception\FontNotFoundException
 	 *
-	 * @return null|\FontLib\TrueType\File
+	 * @return \FontLib\TrueType\File|null
 	 */
 	protected function loadFontData()
 	{
@@ -701,10 +701,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 		}
 		$this->outputInfo['descriptor']['ItalicAngle'] = (string) $post['italicAngle'];
 		$flags = 0;
-		if ($this->outputInfo['descriptor']['ItalicAngle'] !== '0') {
+		if ('0' !== $this->outputInfo['descriptor']['ItalicAngle']) {
 			$flags += 2 ** 6;
 		}
-		if ($post['isFixedPitch'] === true) {
+		if (true === $post['isFixedPitch']) {
 			++$flags;
 		}
 		$flags += 2 ** 5;
@@ -718,8 +718,8 @@ class Font extends \YetiForcePDF\Objects\Resource
 		foreach ($this->charMap as $c => $glyph) {
 			// Set values in CID to GID map
 			if ($c >= 0 && $c < 0xFFFF && $glyph) {
-				$cidToGid[$c * 2] = chr($glyph >> 8);
-				$cidToGid[$c * 2 + 1] = chr($glyph & 0xFF);
+				$cidToGid[$c * 2] = \chr($glyph >> 8);
+				$cidToGid[$c * 2 + 1] = \chr($glyph & 0xFF);
 			}
 			$width = $this->normalizeUnit(isset($hmtx[$glyph]) ? (string) $hmtx[$glyph][0] : (string) $hmtx[0][0]);
 			$widths[] = $c . ' [' . $width . ']';
@@ -731,7 +731,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		$this->cidToGid->addRawContent($cidToGid)->setFilter('FlateDecode');
 		$this->outputInfo['font']['Widths'] = $widths;
 		$this->outputInfo['font']['FirstChar'] = 0;
-		$this->outputInfo['font']['LastChar'] = count($widths) - 1;
+		$this->outputInfo['font']['LastChar'] = \count($widths) - 1;
 		$this->height = Math::sub((string) $hhea['ascent'], (string) $hhea['descent']);
 		if (isset($os2['typoLineGap'])) {
 			$this->height = Math::add($this->height, (string) $os2['typoLineGap']);

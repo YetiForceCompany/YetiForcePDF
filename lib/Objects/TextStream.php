@@ -62,7 +62,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 *
 	 * @return \YetiForcePDF\Objects\Basic\TextStream
 	 */
-	public function setText(string $text): \YetiForcePDF\Objects\TextStream
+	public function setText(string $text): self
 	{
 		$this->text = $this->escape($text);
 		return $this;
@@ -75,7 +75,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setFont(\YetiForcePDF\Objects\Font $font): \YetiForcePDF\Objects\TextStream
+	public function setFont(Font $font): self
 	{
 		$this->font = $font;
 		return $this;
@@ -88,7 +88,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setFontSize(float $fontSize): \YetiForcePDF\Objects\TextStream
+	public function setFontSize(float $fontSize): self
 	{
 		$this->fontSize = $fontSize;
 		return $this;
@@ -101,7 +101,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setX(float $x): \YetiForcePDF\Objects\TextStream
+	public function setX(float $x): self
 	{
 		$this->x = $x;
 		return $this;
@@ -114,7 +114,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setY(float $y): \YetiForcePDF\Objects\TextStream
+	public function setY(float $y): self
 	{
 		$this->y = $y;
 		return $this;
@@ -129,7 +129,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 */
 	public function escape(string $str): string
 	{
-		return strtr($str, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
+		return strtr($str, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', \chr(13) => '\r']);
 	}
 
 	/**
@@ -151,7 +151,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 		return implode("\n", [
 			$this->getRawId() . ' obj',
 			'<<',
-			'  /Length ' . strlen($stream),
+			'  /Length ' . \strlen($stream),
 			'>>',
 			'stream',
 			$stream,

@@ -49,6 +49,8 @@ class InlineBlockBox extends BlockBox
 	/**
 	 * Measure height.
 	 *
+	 * @param bool $afterPageDividing
+	 *
 	 * @return $this
 	 */
 	public function measureHeight(bool $afterPageDividing = false)

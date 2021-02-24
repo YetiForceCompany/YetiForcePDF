@@ -23,6 +23,11 @@ class TableRowGroupBox extends BlockBox
 {
 	/**
 	 * We shouldn't append block box here.
+	 *
+	 * @param mixed $childDomElement
+	 * @param mixed $element
+	 * @param mixed $style
+	 * @param mixed $parentBlock
 	 */
 	public function appendBlockBox($childDomElement, $element, $style, $parentBlock)
 	{
@@ -30,6 +35,11 @@ class TableRowGroupBox extends BlockBox
 
 	/**
 	 * We shouldn't append table wrapper here.
+	 *
+	 * @param mixed $childDomElement
+	 * @param mixed $element
+	 * @param mixed $style
+	 * @param mixed $parentBlock
 	 */
 	public function appendTableWrapperBox($childDomElement, $element, $style, $parentBlock)
 	{
@@ -37,6 +47,11 @@ class TableRowGroupBox extends BlockBox
 
 	/**
 	 * We shouldn't append inline block box here.
+	 *
+	 * @param mixed $childDomElement
+	 * @param mixed $element
+	 * @param mixed $style
+	 * @param mixed $parentBlock
 	 */
 	public function appendInlineBlockBox($childDomElement, $element, $style, $parentBlock)
 	{
@@ -44,6 +59,11 @@ class TableRowGroupBox extends BlockBox
 
 	/**
 	 * We shouldn't append inline box here.
+	 *
+	 * @param mixed $childDomElement
+	 * @param mixed $element
+	 * @param mixed $style
+	 * @param mixed $parentBlock
 	 */
 	public function appendInlineBox($childDomElement, $element, $style, $parentBlock)
 	{

@@ -28,7 +28,7 @@ class Base
 	 *
 	 * @param \YetiForcePDF\Document $document
 	 */
-	public function setDocument(\YetiForcePDF\Document $document)
+	public function setDocument(Document $document)
 	{
 		$this->document = $document;
 		return $this;
@@ -39,7 +39,7 @@ class Base
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
-	public function getDocument(): \YetiForcePDF\Document
+	public function getDocument(): Document
 	{
 		return $this->document;
 	}

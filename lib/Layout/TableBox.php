@@ -79,7 +79,7 @@ class TableBox extends BlockBox
 	 */
 	protected $rows = [];
 	/**
-	 * @var null|TableRowGroupBox
+	 * @var TableRowGroupBox|null
 	 */
 	protected $anonymousRowGroup;
 	/**
@@ -306,7 +306,7 @@ class TableBox extends BlockBox
 						$minColumnWidth = Math::div($minColumnWidth, (string) $column->getColSpan());
 					}
 					$this->minWidths[$columnIndex] = Math::max($this->minWidths[$columnIndex] ?? '0', $minColumnWidth);
-					if ($styleWidth !== 'auto' && strpos($styleWidth, '%') === false) {
+					if ('auto' !== $styleWidth && false === strpos($styleWidth, '%')) {
 						if ($column->getColSpan() > 1) {
 							$styleWidth = Math::div($styleWidth, (string) $column->getColSpan());
 						}
@@ -326,9 +326,9 @@ class TableBox extends BlockBox
 				$this->preferredWidth = Math::add($this->preferredWidth, $this->preferredWidths[$columnIndex]);
 			}
 		}
-		if ($this->getParent()->getStyle()->getRules('border-collapse') !== 'collapse') {
+		if ('collapse' !== $this->getParent()->getStyle()->getRules('border-collapse')) {
 			$spacing = $this->getStyle()->getRules('border-spacing');
-			$this->cellSpacingWidth = Math::mul((string) (count($columns) + 1), $spacing);
+			$this->cellSpacingWidth = Math::mul((string) (\count($columns) + 1), $spacing);
 		}
 	}
 
@@ -346,7 +346,7 @@ class TableBox extends BlockBox
 			$columnStyleWidth = $column->getStyle()->getRules('width');
 			if (strpos($columnStyleWidth, '%') > 0) {
 				$columnSizingTypes[$columnIndex] = 'percent';
-			} elseif ($columnStyleWidth !== 'auto') {
+			} elseif ('auto' !== $columnStyleWidth) {
 				$columnSizingTypes[$columnIndex] = 'pixel';
 			} else {
 				$columnSizingTypes[$columnIndex] = 'auto';
@@ -358,9 +358,9 @@ class TableBox extends BlockBox
 		foreach ($this->getChildren() as $rowGroup) {
 			foreach ($rowGroup->getChildren() as $row) {
 				foreach ($row->getChildren() as $columnIndex => $column) {
-					if ($columnSizingTypes[$columnIndex] === 'percent') {
+					if ('percent' === $columnSizingTypes[$columnIndex]) {
 						$this->percentColumns[$columnIndex][] = $column;
-					} elseif ($columnSizingTypes[$columnIndex] === 'pixel') {
+					} elseif ('pixel' === $columnSizingTypes[$columnIndex]) {
 						$this->pixelColumns[$columnIndex][] = $column;
 					} else {
 						$this->autoColumns[$columnIndex][] = $column;
@@ -392,7 +392,7 @@ class TableBox extends BlockBox
 		foreach ($this->rows as $row) {
 			$rowStyle = $row->getStyle();
 			$rowWidth = $width;
-			if ($this->getStyle()->getRules('border-collapse') === 'separate') {
+			if ('separate' === $this->getStyle()->getRules('border-collapse')) {
 				$rowSpacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
 				$rowWidth = Math::add($rowWidth, $rowSpacing);
 			}
@@ -607,13 +607,13 @@ class TableBox extends BlockBox
 	protected function applyPercentage(string $availableSpace)
 	{
 		$currentRowsWidth = '0';
-		if ($this->getParent()->getStyle()->getRules('width') === 'auto') {
+		if ('auto' === $this->getParent()->getStyle()->getRules('width')) {
 			foreach ($this->getRows()[0]->getChildren() as $columnIndex => $column) {
 				$currentRowsWidth = Math::add($currentRowsWidth, $column->getDimensions()->getInnerWidth());
 			}
 		} else {
 			$currentRowsWidth = $this->getParent()->getDimensions()->getInnerWidth();
-			if ($this->getStyle()->getRules('border-collapse') === 'separate') {
+			if ('separate' === $this->getStyle()->getRules('border-collapse')) {
 				$rowStyle = $this->getRows()[0]->getStyle();
 				$spacing = Math::add($rowStyle->getHorizontalPaddingsWidth(), $rowStyle->getHorizontalBordersWidth());
 				$currentRowsWidth = Math::sub($currentRowsWidth, $spacing);
@@ -644,10 +644,10 @@ class TableBox extends BlockBox
 				}
 			}
 			$totalPercentage = $this->getTotalPercentage();
-			if (Math::comp($totalPercentage, '100') !== 0 && Math::comp($this->getCurrentOthersWidth(), '0') === 0) {
+			if (0 !== Math::comp($totalPercentage, '100') && 0 === Math::comp($this->getCurrentOthersWidth(), '0')) {
 				// we have some space available
 				$leftSpace = Math::sub($availableSpace, $percentsWidth);
-				$add = Math::div($leftSpace, (string) count($this->percentColumns));
+				$add = Math::div($leftSpace, (string) \count($this->percentColumns));
 				foreach ($this->percentColumns as $columnIndex => $columns) {
 					foreach ($columns as $column) {
 						$columnWidth = Math::add($column->getDimensions()->getWidth(), $add);
@@ -790,7 +790,7 @@ class TableBox extends BlockBox
 						}
 						$columnStyle = $column->getStyle();
 						$cellStyle = $column->getFirstChild()->getStyle();
-						if ($columnStyle->getRules('border-collapse') === 'collapse' && $rowIndex + $i === count($this->getChildren())) {
+						if ('collapse' === $columnStyle->getRules('border-collapse') && $rowIndex + $i === \count($this->getChildren())) {
 							// TODO: store original border widths inside cell
 							$cellStyle->setRule('border-bottom-width', $cellStyle->getRules('border-top-width'));
 						}
@@ -841,7 +841,7 @@ class TableBox extends BlockBox
 		$this->getDimensions()->setWidth($width);
 		$parent = $this->getParent();
 		$parentStyle = $parent->getStyle();
-		if ($parentStyle->getRules('width') === 'auto') {
+		if ('auto' === $parentStyle->getRules('width')) {
 			$parentSpacing = Math::add($parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
 			$width = Math::add($width, $parentSpacing);
 			$parent->getDimensions()->setWidth($width);
@@ -1068,7 +1068,7 @@ class TableBox extends BlockBox
 
 		// ok, we've redistribute space to columns that needs it but if there is space left we must redistribute it
 		// to fulfill percentages
-		if (Math::comp($leftSpace, '0') === 0) {
+		if (0 === Math::comp($leftSpace, '0')) {
 			return $this;
 		}
 		// first redistribute it to auto columns because they are most flexible ones
@@ -1090,7 +1090,7 @@ class TableBox extends BlockBox
 					$this->minWidths[$columnIndex] = $colWidth;
 				}
 			}
-		} elseif ($count = count($this->pixelColumns)) {
+		} elseif ($count = \count($this->pixelColumns)) {
 			// next redistribute left space to pixel columns if there where no auto columns
 			$add = Math::div($leftSpace, (string) $count);
 			foreach ($this->pixelColumns as $columnIndex => $columns) {
@@ -1139,7 +1139,7 @@ class TableBox extends BlockBox
 				$neededTotal = Math::add($neededTotal, $needed[$columnIndex]);
 			}
 		}
-		if (Math::comp($neededTotal, '0') === 0 && !$outerWidthSet) {
+		if (0 === Math::comp($neededTotal, '0') && !$outerWidthSet) {
 			return $this->setRowsWidth();
 		}
 		$currentPercentsWidth = '0';
@@ -1166,7 +1166,7 @@ class TableBox extends BlockBox
 		}
 		// we've added space to percentage columns, now we must calculate how much space we need to add (to have 100%)
 		$leftSpace2 = Math::sub($leftSpace, $addToPercents);
-		if (Math::comp($leftSpace2, '0') === 0) {
+		if (0 === Math::comp($leftSpace2, '0')) {
 			return $this->setRowsWidth();
 		}
 		// left space MUST be redistributed to fulfill new percentages
@@ -1211,7 +1211,7 @@ class TableBox extends BlockBox
 		$this->setUpSizingTypes();
 		$availableSpace = $this->getParent()->getDimensions()->computeAvailableSpace();
 		$outerWidthSet = false;
-		if ($this->getParent()->getStyle()->getRules('width') !== 'auto') {
+		if ('auto' !== $this->getParent()->getStyle()->getRules('width')) {
 			$this->getParent()->applyStyleWidth();
 			$availableSpace = Math::min($availableSpace, $this->getParent()->getDimensions()->getInnerWidth());
 			$outerWidthSet = true;
@@ -1280,7 +1280,7 @@ class TableBox extends BlockBox
 					$columnVerticalSize = Math::add($columnStyle->getVerticalMarginsWidth(), $columnStyle->getVerticalPaddingsWidth(), $columnStyle->getVerticalBordersWidth());
 					$columnHeight = Math::add($cell->getDimensions()->getOuterHeight(), $columnVerticalSize);
 					// for now ignore height of column that have span greater than 1
-					if ($column->getRowSpan() === 1) {
+					if (1 === $column->getRowSpan()) {
 						$maxRowHeights[$rowGroupIndex][$rowIndex] = Math::max($maxRowHeights[$rowGroupIndex][$rowIndex], $columnHeight);
 					}
 				}
@@ -1328,7 +1328,7 @@ class TableBox extends BlockBox
 					$column->getDimensions()->setHeight($row->getDimensions()->getInnerHeight());
 					$cell = $column->getFirstChild();
 					$cellStyle = $cell->getStyle();
-					if ($cellStyle->getRules('height') !== 'auto') {
+					if ('auto' !== $cellStyle->getRules('height')) {
 						$cellStyle->getRules()['height']->convert($cellStyle);
 						$height = $cellStyle->getRules('height');
 					} else {
@@ -1370,7 +1370,7 @@ class TableBox extends BlockBox
 					$cell->getDimensions()->setHeight($height);
 				}
 			}
-			if (isset($row) && $row->getStyle()->getRules('border-collapse') === 'separate') {
+			if (isset($row) && 'separate' === $row->getStyle()->getRules('border-collapse')) {
 				$rowGroupHeight = Math::add($rowGroupHeight, $row->getStyle()->getRules('border-spacing'));
 			}
 			$rowGroup->getDimensions()->setHeight($rowGroupHeight);

@@ -59,6 +59,7 @@ class TableRowBox extends BlockBox
 	 * Set row span up.
 	 *
 	 * @param int $rowSpan
+	 * @param int $rowSpanUp
 	 *
 	 * @return $this
 	 */
@@ -170,28 +171,28 @@ class TableRowBox extends BlockBox
 				$colSpans[] = $spans;
 			}
 		}
-		$colSpansCount = count($colSpans);
+		$colSpansCount = \count($colSpans);
 		foreach ($colSpans as $index => $columns) {
 			$source = array_shift($columns);
 			$spannedWidth = '0';
 			foreach ($columns as $column) {
-				if (isset($column) && $column !== null) {
+				if (isset($column) && null !== $column) {
 					$spannedWidth = Math::add($spannedWidth, $column->getDimensions()->getWidth());
 				}
 			}
-			$tableAuto = $this->getParent()->getParent()->getParent()->getStyle()->getRules('width') === 'auto';
-			if ($column !== null) {
-				$separate = $column->getStyle()->getRules('border-collapse') === 'separate';
+			$tableAuto = 'auto' === $this->getParent()->getParent()->getParent()->getStyle()->getRules('width');
+			if (null !== $column) {
+				$separate = 'separate' === $column->getStyle()->getRules('border-collapse');
 				if ($separate && $tableAuto) {
-					$spannedWidth = Math::add($spannedWidth, Math::mul((string) (count($columns)), $column->getStyle()->getRules('border-spacing')));
+					$spannedWidth = Math::add($spannedWidth, Math::mul((string) (\count($columns)), $column->getStyle()->getRules('border-spacing')));
 				}
-				if ($separate && $column->getNext() === null && !$tableAuto) {
+				if ($separate && null === $column->getNext() && !$tableAuto) {
 					$spannedWidth = Math::sub($spannedWidth, $column->getStyle()->getRules('border-spacing'));
 				}
 				foreach ($columns as $column) {
 					$column->setColSpanned($colSpansCount - $index)->setRenderable(false);
 				}
-				if ($source->getNext() === null) {
+				if (null === $source->getNext()) {
 					$cell = $source->getFirstChild();
 					$cellStyle = $cell->getStyle();
 					$cellStyle->setRule('border-right-width', $cellStyle->getRules('border-left-width'));

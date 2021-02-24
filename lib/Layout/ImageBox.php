@@ -23,18 +23,20 @@ class ImageBox extends InlineBlockBox
 	/**
 	 * Measure width.
 	 *
+	 * @param bool $afterPageDividing
+	 *
 	 * @return $this
 	 */
 	public function measureWidth(bool $afterPageDividing = false)
 	{
 		$style = $this->getStyle();
-		if ($style->getRules('width') === 'auto') {
+		if ('auto' === $style->getRules('width')) {
 			$img = $style->getBackgroundImageStream();
 			$width = $img->getWidth();
 			if (Math::comp($width, $this->getParent()->getDimensions()->computeAvailableSpace()) > 0) {
 				$width = $this->getParent()->getDimensions()->computeAvailableSpace();
 			}
-			if ($style->getRules('height') !== 'auto') {
+			if ('auto' !== $style->getRules('height')) {
 				Math::setAccurate(true);
 				$ratio = $img->getRatio();
 				$width = Math::mul($ratio, $this->getDimensions()->getStyleHeight());

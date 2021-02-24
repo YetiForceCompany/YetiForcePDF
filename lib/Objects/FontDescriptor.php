@@ -30,7 +30,7 @@ class FontDescriptor extends \YetiForcePDF\Objects\Resource
 	 *
 	 * @return $this
 	 */
-	public function setFont(\YetiForcePDF\Objects\Font $font)
+	public function setFont(Font $font)
 	{
 		$this->font = $font;
 		return $this;

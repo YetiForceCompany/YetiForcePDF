@@ -114,7 +114,7 @@ class ElementBox extends Box
 					}
 					foreach ($rowGroup->getChildren() as $rowIndex => $row) {
 						$columns = $row->getChildren();
-						$columnsCount = max($columnsCount, count($columns));
+						$columnsCount = max($columnsCount, \count($columns));
 						foreach ($columns as $columnIndex => $column) {
 							if ($column->getRowSpan() > 1) {
 								$rowSpans = $column->getRowSpan();
@@ -139,7 +139,7 @@ class ElementBox extends Box
 					}
 					foreach ($rowGroup->getChildren() as $row) {
 						$columns = $row->getChildren();
-						$missing = $columnsCount - count($columns);
+						$missing = $columnsCount - \count($columns);
 						for ($i = 0; $i < $missing; ++$i) {
 							$column = $row->createColumnBox();
 							$column->createCellBox();
@@ -225,7 +225,7 @@ class ElementBox extends Box
 					if ($childDomElement->hasAttribute('style')) {
 						// for now only basic style is used - from current element only (with defaults)
 						$style->setContent($childDomElement->getAttribute('style'));
-					} elseif ($childDomElement->nodeName === 'style') {
+					} elseif ('style' === $childDomElement->nodeName) {
 						$style->parseCss($childDomElement->nodeValue);
 					}
 					$element->attachClasses();
@@ -280,7 +280,7 @@ class ElementBox extends Box
 
 						break;
 						case 'none':
-							if ($childDomElement->nodeName === 'style') {
+							if ('style' === $childDomElement->nodeName) {
 								$this->appendStyleBox($childDomElement, $element, $style, $parentBlock);
 							}
 

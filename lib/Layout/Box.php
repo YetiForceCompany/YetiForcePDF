@@ -47,7 +47,7 @@ class Box extends \YetiForcePDF\Base
 	 * @var Box
 	 */
 	protected $previous;
-	// @var box dimensions
+	/** @var box dimensions */
 	protected $dimensions;
 	/**
 	 * @var Coordinates
@@ -154,7 +154,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Set parent.
 	 *
-	 * @param null|\YetiForcePDF\Layout\Box $parent
+	 * @param \YetiForcePDF\Layout\Box|null $parent
 	 *
 	 * @return $this
 	 */
@@ -178,7 +178,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Set next.
 	 *
-	 * @param null|\YetiForcePDF\Layout\Box $next
+	 * @param \YetiForcePDF\Layout\Box|null $next
 	 *
 	 * @return $this
 	 */
@@ -202,7 +202,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Set previous.
 	 *
-	 * @param null|\YetiForcePDF\Layout\Box $previous
+	 * @param \YetiForcePDF\Layout\Box|null $previous
 	 *
 	 * @return $this
 	 */
@@ -383,6 +383,7 @@ class Box extends \YetiForcePDF\Base
 	 * Set for measurement - enable or disable this box measurement.
 	 *
 	 * @param bool $forMeasure
+	 * @param bool $forMeasurement
 	 *
 	 * @return $this
 	 */
@@ -501,15 +502,15 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function containContent()
 	{
-		if ($this instanceof TextBox && trim($this->getTextContent()) === '') {
+		if ($this instanceof TextBox && '' === trim($this->getTextContent())) {
 			return false;
 		}
 		// we are not text node - traverse further
 		$children = $this->getChildren();
-		if (count($children) === 0 && !$this instanceof LineBox) {
+		if (0 === \count($children) && !$this instanceof LineBox) {
 			return true; // we are the content
 		}
-		if (count($children) === 0 && $this instanceof LineBox) {
+		if (0 === \count($children) && $this instanceof LineBox) {
 			return false; // we are the content
 		}
 		$childrenContent = false;
@@ -540,7 +541,7 @@ class Box extends \YetiForcePDF\Base
 	public function appendChild(self $box)
 	{
 		$box->setParent($this);
-		$childrenCount = count($this->children);
+		$childrenCount = \count($this->children);
 		if ($childrenCount > 0) {
 			$previous = $this->children[$childrenCount - 1];
 			$box->setPrevious($previous);
@@ -710,7 +711,7 @@ class Box extends \YetiForcePDF\Base
 			$allChildren = array_reverse($allChildren);
 		}
 		foreach ($allChildren as $child) {
-			if ($fn($child) === false) {
+			if (false === $fn($child)) {
 				break;
 			}
 		}
@@ -722,7 +723,7 @@ class Box extends \YetiForcePDF\Base
 	 * Get boxes by type.
 	 *
 	 * @param string      $shortClassName
-	 * @param null|string $until
+	 * @param string|null $until
 	 *
 	 * @return array
 	 */
@@ -740,7 +741,7 @@ class Box extends \YetiForcePDF\Base
 			if ($reflectShortClassName === $until) {
 				++$untilWas;
 			}
-			if ($reflectShortClassName === $until && $untilWas === 2) {
+			if ($reflectShortClassName === $until && 2 === $untilWas) {
 				break;
 			}
 		}
@@ -757,7 +758,7 @@ class Box extends \YetiForcePDF\Base
 	 */
 	public function getClosestByType(string $className)
 	{
-		if (substr($className, 0, 9) !== 'YetiForce') {
+		if ('YetiForce' !== substr($className, 0, 9)) {
 			$className = 'YetiForcePDF\\Layout\\' . $className;
 		}
 		if ($this instanceof $className) {
@@ -786,7 +787,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Get first child.
 	 *
-	 * @return null|\YetiForcePDF\Layout\Box
+	 * @return \YetiForcePDF\Layout\Box|null
 	 */
 	public function getFirstChild()
 	{
@@ -798,11 +799,11 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Get last child.
 	 *
-	 * @return null|\YetiForcePDF\Layout\Box
+	 * @return \YetiForcePDF\Layout\Box|null
 	 */
 	public function getLastChild()
 	{
-		if ($count = count($this->children)) {
+		if ($count = \count($this->children)) {
 			return $this->children[$count - 1];
 		}
 	}
@@ -877,7 +878,7 @@ class Box extends \YetiForcePDF\Base
 		if ($this->isRoot()) {
 			return $this;
 		}
-		if ($this->getParent() !== null) {
+		if (null !== $this->getParent()) {
 			$box = $this->getParent();
 			if ($box->isRoot()) {
 				return $this;
@@ -909,7 +910,7 @@ class Box extends \YetiForcePDF\Base
 	/**
 	 * Get first child text box.
 	 *
-	 * @return null|\YetiForcePDF\Layout\TextBox
+	 * @return \YetiForcePDF\Layout\TextBox|null
 	 */
 	public function getFirstTextBox()
 	{
@@ -998,7 +999,7 @@ class Box extends \YetiForcePDF\Base
 	public function applyStyleWidth()
 	{
 		$styleWidth = $this->getDimensions()->getStyleWidth();
-		if ($styleWidth !== null) {
+		if (null !== $styleWidth) {
 			$this->getDimensions()->setWidth($styleWidth);
 		}
 
@@ -1013,14 +1014,14 @@ class Box extends \YetiForcePDF\Base
 	public function applyStyleHeight()
 	{
 		$height = $this->getStyle()->getRules('height');
-		if ($height === 'auto') {
+		if ('auto' === $height) {
 			return $this;
 		}
 		$percentPos = strpos($height, '%');
-		if ($percentPos !== false) {
+		if (false !== $percentPos) {
 			$heightInPercent = substr($height, 0, $percentPos);
 			$parentDimensions = $this->getParent()->getDimensions();
-			if ($parentDimensions->getHeight() !== null) {
+			if (null !== $parentDimensions->getHeight()) {
 				$parentHeight = $this->getParent()->getDimensions()->getInnerHeight();
 				if ($parentHeight) {
 					$calculatedHeight = Math::mul(Math::div($parentHeight, '100'), $heightInPercent);
@@ -1046,12 +1047,12 @@ class Box extends \YetiForcePDF\Base
 	{
 		if ($this instanceof LineBox) {
 			$textAlign = $this->getParent()->getStyle()->getRules('text-align');
-			if ($textAlign === 'right') {
+			if ('right' === $textAlign) {
 				$offset = Math::sub($this->getDimensions()->computeAvailableSpace(), $this->getChildrenWidth());
 				foreach ($this->getChildren() as $childBox) {
 					$childBox->getOffset()->setLeft(Math::add($childBox->getOffset()->getLeft(), $offset));
 				}
-			} elseif ($textAlign === 'center') {
+			} elseif ('center' === $textAlign) {
 				$offset = Math::sub(Math::div($this->getDimensions()->computeAvailableSpace(), '2'), Math::div($this->getChildrenWidth(), '2'));
 				foreach ($this->getChildren() as $childBox) {
 					$childBox->getOffset()->setLeft(Math::add($childBox->getOffset()->getLeft(), $offset));
@@ -1079,7 +1080,7 @@ class Box extends \YetiForcePDF\Base
 	 */
 	protected function addBorderInstructions(array $element, string $pdfX, string $pdfY, string $width, string $height)
 	{
-		if ($this->getStyle()->getRules('display') === 'none') {
+		if ('none' === $this->getStyle()->getRules('display')) {
 			return $element;
 		}
 		$style = $this->style;
@@ -1090,7 +1091,7 @@ class Box extends \YetiForcePDF\Base
 		$y1 = $height;
 		$y2 = '0';
 		$element[] = '% start border';
-		if ($style->getRules('border-top-width') && $style->getRules('border-top-style') !== 'none' && $style->getRules('border-top-color') !== 'transparent') {
+		if ($style->getRules('border-top-width') && 'none' !== $style->getRules('border-top-style') && 'transparent' !== $style->getRules('border-top-color')) {
 			$path = implode(" l\n", [
 				implode(' ', [$x2, $y1]),
 				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
@@ -1109,7 +1110,7 @@ class Box extends \YetiForcePDF\Base
 			];
 			$element = array_merge($element, $borderTop);
 		}
-		if ($style->getRules('border-right-width') && $style->getRules('border-right-style') !== 'none' && $style->getRules('border-right-color') !== 'transparent') {
+		if ($style->getRules('border-right-width') && 'none' !== $style->getRules('border-right-style') && 'transparent' !== $style->getRules('border-right-color')) {
 			$path = implode(" l\n", [
 				implode(' ', [$x2, $y2]),
 				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),
@@ -1128,7 +1129,7 @@ class Box extends \YetiForcePDF\Base
 			];
 			$element = array_merge($element, $borderTop);
 		}
-		if ($style->getRules('border-bottom-width') && $style->getRules('border-bottom-style') !== 'none' && $style->getRules('border-bottom-color') !== 'transparent') {
+		if ($style->getRules('border-bottom-width') && 'none' !== $style->getRules('border-bottom-style') && 'transparent' !== $style->getRules('border-bottom-color')) {
 			$path = implode(" l\n", [
 				implode(' ', [$x2, $y2]),
 				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),
@@ -1147,7 +1148,7 @@ class Box extends \YetiForcePDF\Base
 			];
 			$element = array_merge($element, $borderTop);
 		}
-		if ($style->getRules('border-left-width') && $style->getRules('border-left-style') !== 'none' && $style->getRules('border-left-color') !== 'transparent') {
+		if ($style->getRules('border-left-width') && 'none' !== $style->getRules('border-left-style') && 'transparent' !== $style->getRules('border-left-color')) {
 			$path = implode(" l\n", [
 				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
 				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::add($y2, $style->getRules('border-bottom-width'))]),

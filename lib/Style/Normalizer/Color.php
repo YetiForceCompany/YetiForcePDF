@@ -20,10 +20,10 @@ class Color extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null && $ruleValue !== 'transparent') {
+		if (null === $this->normalized && 'transparent' !== $ruleValue) {
 			return $this->normalized = ['color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
 		}
-		if ($ruleValue === 'trasparent') {
+		if ('trasparent' === $ruleValue) {
 			return $this->normalized = ['color' => 'transparent'];
 		}
 		return $this->normalized;

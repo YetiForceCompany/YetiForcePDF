@@ -39,7 +39,7 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	/**
 	 * Filter used to decode stream.
 	 *
-	 * @var null|string
+	 * @var string|null
 	 */
 	protected $filter;
 
@@ -59,10 +59,11 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 * Add raw content instructions as string.
 	 *
 	 * @param string $content
+	 * @param string $filter
 	 *
 	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function addRawContent(string $content, string $filter = ''): \YetiForcePDF\Objects\Basic\StreamObject
+	public function addRawContent(string $content, string $filter = ''): self
 	{
 		$this->content[] = $content;
 		if ($filter) {
@@ -91,7 +92,7 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	{
 		$stream = trim(implode("\n", $this->content), "\n");
 		$sizeBefore = mb_strlen($stream, '8bit');
-		if ($this->filter === 'FlateDecode') {
+		if ('FlateDecode' === $this->filter) {
 			$stream = gzcompress($stream);
 		}
 		$filter = $this->filter ? '  /Filter /' . $this->filter : '';

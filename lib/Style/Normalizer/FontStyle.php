@@ -20,11 +20,11 @@ class FontStyle extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
 		$ruleValue = strtolower($ruleValue);
-		if (!in_array($ruleValue, ['normal', 'italic'])) {
+		if (!\in_array($ruleValue, ['normal', 'italic'])) {
 			$ruleValue = 'normal';
 		}
 		return $this->normalized = ['font-style' => $ruleValue];

@@ -141,7 +141,8 @@ class PdfObject extends \YetiForcePDF\Base
 	/**
 	 * Get children elements (pages etc).
 	 *
-	 * @param bool $all - do we want all children from tree (flat structure)?
+	 * @param bool  $all     - do we want all children from tree (flat structure)?
+	 * @param array $current
 	 */
 	public function getChildren(bool $all = false, array &$current = []): array
 	{
@@ -167,7 +168,7 @@ class PdfObject extends \YetiForcePDF\Base
 	 */
 	public function addChild(self $child, self $after = null): self
 	{
-		$afterIndex = count($this->children);
+		$afterIndex = \count($this->children);
 		if ($after) {
 			foreach ($this->children as $afterIndex => $childObject) {
 				if ($after === $childObject) {
@@ -176,7 +177,7 @@ class PdfObject extends \YetiForcePDF\Base
 			}
 			++$afterIndex;
 		}
-		if (in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
+		if (\in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
 			$child->setParent($this);
 			if (!$after) {
 				return $this->children[] = $child;

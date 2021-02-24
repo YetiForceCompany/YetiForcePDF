@@ -20,7 +20,7 @@ class BorderRightWidth extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null) {
+		if (null === $this->normalized) {
 			return $this->normalized = ['border-right-width' => $this->getNumberValues($ruleValue)[0]];
 		}
 		return $this->normalized;

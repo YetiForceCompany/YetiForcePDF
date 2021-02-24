@@ -20,7 +20,7 @@ class FontFamily extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
 		return $this->normalized = ['font-family' => str_replace(['\'', '"'], '', $ruleValue)];

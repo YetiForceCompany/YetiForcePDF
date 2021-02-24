@@ -91,6 +91,8 @@ class TableCellBox extends BlockBox
 	/**
 	 * Measure height.
 	 *
+	 * @param bool $afterPageDividing
+	 *
 	 * @return $this
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
@@ -135,6 +137,8 @@ class TableCellBox extends BlockBox
 
 	/**
 	 * Position.
+	 *
+	 * @param bool $afterPageDividing
 	 *
 	 * @return $this
 	 */

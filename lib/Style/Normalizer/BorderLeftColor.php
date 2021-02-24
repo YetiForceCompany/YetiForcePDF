@@ -20,7 +20,7 @@ class BorderLeftColor extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null) {
+		if (null === $this->normalized) {
 			return $this->normalized = ['border-left-color' => \YetiForcePDF\Style\Color::toRGBA($ruleValue, true)];
 		}
 		return $this->normalized;

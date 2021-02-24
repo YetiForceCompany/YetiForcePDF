@@ -543,7 +543,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		$this->format = $format;
 		$dimensions = self::$pageFormats[$this->format];
-		if ($this->orientation === 'L') {
+		if ('L' === $this->orientation) {
 			$dimensions = array_reverse($dimensions);
 		}
 		$this->dimensions = (new Dimensions())
@@ -749,7 +749,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 * @param string $groupName
 	 * @param string $resourceName
 	 *
-	 * @return null|\YetiForcePDF\Objects\PdfObject
+	 * @return \YetiForcePDF\Objects\PdfObject|null
 	 */
 	public function getResource(string $groupName, string $resourceName)
 	{
@@ -1039,13 +1039,14 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Group boxes by parent.
 	 *
-	 * @param null|Box[] $boxes
+	 * @param Box[]|null $boxes
+	 * @param string     $yPos
 	 *
-	 * @return null|Box[] cloned boxes
+	 * @return Box[]|null cloned boxes
 	 */
 	public function cloneAndDivideChildrenAfterY(string $yPos, array $boxes = null)
 	{
-		if ($boxes === null) {
+		if (null === $boxes) {
 			$boxes = [];
 			foreach ($this->getBox()->getChildren() as $child) {
 				if (Math::comp($child->getCoordinates()->getEndY(), $yPos) >= 0) {
@@ -1152,7 +1153,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 							}
 							// copy all next rows
 							$rows = $tableRowGroup->getChildren();
-							for ($i = $rowIndex, $len = count($rows); $i < $len; ++$i) {
+							for ($i = $rowIndex, $len = \count($rows); $i < $len; ++$i) {
 								$nextRow = $rows[$i];
 								$move[] = $nextRow;
 							}
@@ -1174,7 +1175,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$tableBox->removeEmptyRows();
 		// remove original table if it was moved with all the content
 		$removeSource = !$tableBox->hasChildren() || !$tableBox->containContent();
-		$removeSource = $removeSource || ($tableBox->getFirstChild() instanceof TableHeaderGroupBox && count($tableBox->getChildren()) === 1);
+		$removeSource = $removeSource || ($tableBox->getFirstChild() instanceof TableHeaderGroupBox && 1 === \count($tableBox->getChildren()));
 		if ($removeSource) {
 			$tableWrapperBox->setDisplayable(false)->setRenderable(false)->setForMeasurement(false);
 		}
@@ -1297,7 +1298,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Resources <<',
 		];
 		foreach ($this->resources as $groupName => $resourceGroup) {
-			if (!in_array($groupName, $this->doNotGroup)) {
+			if (!\in_array($groupName, $this->doNotGroup)) {
 				$rendered[] = "    /$groupName <<";
 				foreach ($resourceGroup as $resourceName => $resourceObject) {
 					$rendered[] = "      /$resourceName " . $resourceObject->getReference();

@@ -20,10 +20,10 @@ class VerticalAlign extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
-		if (in_array($ruleValue, ['top', 'bottom', 'middle', 'baseline'])) {
+		if (\in_array($ruleValue, ['top', 'bottom', 'middle', 'baseline'])) {
 			$normalized = ['vertical-align' => $ruleValue];
 		} else {
 			$normalized = ['vertical-align' => 'baseline'];

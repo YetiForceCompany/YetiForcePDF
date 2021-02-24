@@ -20,10 +20,10 @@ class WordWrap extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
-		if (in_array($ruleValue, ['normal', 'break-word'])) {
+		if (\in_array($ruleValue, ['normal', 'break-word'])) {
 			$normalized = ['word-wrap' => $ruleValue];
 		} else {
 			$normalized = ['word-wrap' => 'normal'];

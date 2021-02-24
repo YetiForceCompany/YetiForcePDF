@@ -20,8 +20,8 @@ class BorderStyle extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null) {
-			if (in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {
+		if (null === $this->normalized) {
+			if (\in_array($ruleValue, ['none', 'solid', 'dashed', 'dotted'])) {
 				$style = $ruleValue;
 			} else {
 				$style = 'none';

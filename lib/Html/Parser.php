@@ -102,7 +102,7 @@ class Parser extends \YetiForcePDF\Base
 		$matches = [];
 		preg_match_all('/\<div\s+data-page-group\s?/ui', $html, $matches, PREG_OFFSET_CAPTURE);
 		$matches = $matches[0];
-		$groupsCount = count($matches);
+		$groupsCount = \count($matches);
 		for ($i = 0; $i < $groupsCount; ++$i) {
 			$start = $matches[$i][1];
 			if (isset($matches[$i + 1])) {
@@ -189,7 +189,7 @@ class Parser extends \YetiForcePDF\Base
 	 */
 	public function parse()
 	{
-		if ($this->html === '') {
+		if ('' === $this->html) {
 			return null;
 		}
 		$this->html = $this->removeComments($this->html);

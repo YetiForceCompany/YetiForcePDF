@@ -46,7 +46,7 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $root
 	 */
-	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root): \YetiForcePDF\Objects\Trailer
+	public function setRootObject(PdfObject $root): self
 	{
 		$this->root = $root;
 		return $this;
@@ -59,7 +59,7 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 *
 	 * @return \YetiForcePDF\Objects\Trailer
 	 */
-	public function setSize(int $size): \YetiForcePDF\Objects\Trailer
+	public function setSize(int $size): self
 	{
 		$this->size = $size;
 		return $this;

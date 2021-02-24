@@ -28,7 +28,7 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\BlockBox
 	 */
@@ -43,7 +43,7 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\BlockBox
 	 */
@@ -58,13 +58,13 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBlockBox
 	 */
 	public function appendInlineBlock($childDomElement, $element, $style, $parentBlock)
 	{
-		if ($childDomElement->tagName === 'img') {
+		if ('img' === $childDomElement->tagName) {
 			$box = (new ImageBox())
 				->setDocument($this->document)
 				->setElement($element)
@@ -92,7 +92,7 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBlockBox
 	 */
@@ -130,7 +130,7 @@ class LineBox extends Box implements BoxInterface
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return \YetiForcePDF\Layout\InlineBox
 	 */
@@ -399,7 +399,7 @@ class LineBox extends Box implements BoxInterface
 		foreach ($this->getChildren() as $child) {
 			$allChildren = [];
 			$child->getAllChildren($allChildren);
-			$maxLevel = Math::max($maxLevel, (string) count($allChildren));
+			$maxLevel = Math::max($maxLevel, (string) \count($allChildren));
 			$allNestedChildren[] = $allChildren;
 		}
 		$clones = [];
@@ -412,10 +412,10 @@ class LineBox extends Box implements BoxInterface
 			}
 		}
 		foreach ($clones as $row => $cloneArray) {
-			$count = count($cloneArray);
+			$count = \count($cloneArray);
 			if ($count > 1) {
 				foreach ($cloneArray as $index => $clone) {
-					if ($index === 0) {
+					if (0 === $index) {
 						$clone->getStyle()->clearFirstInline();
 					} elseif ($index === $count - 1) {
 						$clone->getStyle()->clearLastInline();

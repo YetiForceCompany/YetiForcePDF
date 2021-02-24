@@ -43,7 +43,7 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return $this
 	 */
-	public function addProcSet(\YetiForcePDF\Objects\Basic\ArrayObject $procSet)
+	public function addProcSet(Objects\Basic\ArrayObject $procSet)
 	{
 		$this->procSet = $procSet;
 		return $this;
@@ -60,7 +60,7 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		}
 		$this->clearValues()
 			->addValue('Type', '/Pages')
-			->addValue('Count', (string) count($kids))
+			->addValue('Count', (string) \count($kids))
 			->addValue('Kids', '[' . implode("\n    ", $kids) . ']');
 		if ($this->procSet) {
 			$this->addValue('ProcSet', $this->procSet->getReference());

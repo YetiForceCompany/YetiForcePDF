@@ -115,15 +115,15 @@ class Document
 	 */
 	protected $debugMode = false;
 	/**
-	 * @var null|HeaderBox
+	 * @var HeaderBox|null
 	 */
 	protected $header;
 	/**
-	 * @var null|FooterBox
+	 * @var FooterBox|null
 	 */
 	protected $footer;
 	/**
-	 * @var null|WatermarkBox
+	 * @var WatermarkBox|null
 	 */
 	protected $watermark;
 	/**
@@ -261,6 +261,7 @@ class Document
 	 * Set default top margin.
 	 *
 	 * @param float $left
+	 * @param float $top
 	 */
 	public function setDefaultTopMargin(float $top)
 	{
@@ -276,6 +277,7 @@ class Document
 	 * Set default right margin.
 	 *
 	 * @param float $left
+	 * @param float $right
 	 */
 	public function setDefaultRightMargin(float $right)
 	{
@@ -291,6 +293,7 @@ class Document
 	 * Set default bottom margin.
 	 *
 	 * @param float $left
+	 * @param float $bottom
 	 */
 	public function setDefaultBottomMargin(float $bottom)
 	{
@@ -366,7 +369,7 @@ class Document
 	 * @param string $weight
 	 * @param string $style
 	 *
-	 * @return null|\YetiForcePDF\Objects\Font
+	 * @return \YetiForcePDF\Objects\Font|null
 	 */
 	public function getFontInstance(string $family, string $weight, string $style)
 	{
@@ -422,7 +425,7 @@ class Document
 	 * @param string $weight
 	 * @param string $style
 	 *
-	 * @return null|\FontLib\Font
+	 * @return \FontLib\Font|null
 	 */
 	public function getFontData(string $family, string $weight, string $style)
 	{
@@ -503,7 +506,7 @@ class Document
 	/**
 	 * Get header.
 	 *
-	 * @return null|HeaderBox
+	 * @return HeaderBox|null
 	 */
 	public function getHeader()
 	{
@@ -530,7 +533,7 @@ class Document
 	/**
 	 * Get watermark.
 	 *
-	 * @return null|WatermarkBox
+	 * @return WatermarkBox|null
 	 */
 	public function getWatermark()
 	{
@@ -557,7 +560,7 @@ class Document
 	/**
 	 * Get footer.
 	 *
-	 * @return null|FooterBox
+	 * @return FooterBox|null
 	 */
 	public function getFooter()
 	{
@@ -569,14 +572,14 @@ class Document
 	 *
 	 * @param string    $format      - optional format 'A4' for example
 	 * @param string    $orientation - optional orientation 'P' or 'L'
-	 * @param null|Page $page        - we can add cloned page or page from other document too
-	 * @param null|Page $after       - add page after this page
+	 * @param Page|null $page        - we can add cloned page or page from other document too
+	 * @param Page|null $after       - add page after this page
 	 *
 	 * @return \YetiForcePDF\Page
 	 */
 	public function addPage(string $format = '', string $orientation = '', Page $page = null, Page $after = null): Page
 	{
-		if ($page === null) {
+		if (null === $page) {
 			$page = (new Page())->setDocument($this)->init();
 		}
 		if (!$format) {
@@ -586,7 +589,7 @@ class Document
 			$orientation = $this->defaultOrientation;
 		}
 		$page->setOrientation($orientation)->setFormat($format);
-		$afterIndex = count($this->pages);
+		$afterIndex = \count($this->pages);
 		if ($after) {
 			foreach ($this->pages as $afterIndex => $childPage) {
 				if ($childPage === $after) {
@@ -631,6 +634,8 @@ class Document
 	/**
 	 * Get all pages.
 	 *
+	 * @param int|null $groupIndex
+	 *
 	 * @return Page[]
 	 */
 	public function getPages(int $groupIndex = null)
@@ -665,7 +670,7 @@ class Document
 			$groups[$page->getGroup()][] = $page;
 		}
 		foreach ($groups as $pages) {
-			$pageCount = count($pages);
+			$pageCount = \count($pages);
 			foreach ($pages as $index => $page) {
 				$page->setPageNumber($index + 1);
 				$page->setPageCount($pageCount);
@@ -699,13 +704,13 @@ class Document
 	 * Add object to document.
 	 *
 	 * @param PdfObject      $object
-	 * @param null|PdfObject $after  - add after this element
+	 * @param PdfObject|null $after  - add after this element
 	 *
 	 * @return \YetiForcePDF\Document
 	 */
 	public function addObject(PdfObject $object, $after = null): self
 	{
-		$afterIndex = count($this->objects);
+		$afterIndex = \count($this->objects);
 		if ($after) {
 			foreach ($this->objects as $afterIndex => $obj) {
 				if ($after === $obj) {
@@ -780,8 +785,8 @@ class Document
 	 */
 	public function countObjects(string $name = ''): int
 	{
-		if ($name === '') {
-			return count($this->objects);
+		if ('' === $name) {
+			return \count($this->objects);
 		}
 		$typeCount = 0;
 		foreach ($this->objects as $object) {
@@ -802,7 +807,7 @@ class Document
 	 */
 	public function getObjects(string $name = ''): array
 	{
-		if ($name === '') {
+		if ('' === $name) {
 			return $this->objects;
 		}
 		$objects = [];
@@ -833,9 +838,9 @@ class Document
 		$text = preg_replace('/^\s+|\s+$/u', '', $text);
 		$text = preg_replace('/\s+/u', ' ', $text);
 		$text = mb_convert_encoding($text, $encoding, mb_detect_encoding($text));
-		$text = strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
+		$text = strtr($text, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', \chr(13) => '\r']);
 		if ($prependBom) {
-			$text = chr(254) . chr(255) . $text;
+			$text = \chr(254) . \chr(255) . $text;
 		}
 		if ($withParenthesis) {
 			return '(' . $text . ')';
@@ -872,9 +877,9 @@ class Document
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)
 			->init();
-		$trailer->setRootObject($this->catalog)->setSize(count($this->objects) - 1);
+		$trailer->setRootObject($this->catalog)->setSize(\count($this->objects) - 1);
 		foreach ($this->objects as $object) {
-			if (in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer', 'Array'])) {
+			if (\in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer', 'Array'])) {
 				$this->buffer .= $object->render() . "\n";
 			}
 		}
@@ -894,9 +899,9 @@ class Document
 	public function getCssSelectorRules(string $selector)
 	{
 		$rules = [];
-		foreach(explode(' ',$selector) as $className){
+		foreach (explode(' ', $selector) as $className) {
 			if ($className && isset($this->cssSelectors[$className])) {
-				$rules = array_merge($rules,$this->cssSelectors[$className]);
+				$rules = array_merge($rules, $this->cssSelectors[$className]);
 			}
 		}
 

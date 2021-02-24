@@ -202,21 +202,21 @@ class Color
 	public static function fromHash(string $hashColor)
 	{
 		$color = substr($hashColor, 1);
-		if (strlen($color) === 3) {
+		if (3 === \strlen($color)) {
 			$r = substr($color, 0, 1);
 			$g = substr($color, 1, 1);
 			$b = substr($color, 2, 1);
 			$a = 'F';
 			$color = "$r$r$g$g$b$b$a$a";
 		}
-		if (strlen($color) === 4) {
+		if (4 === \strlen($color)) {
 			$r = substr($color, 0, 1);
 			$g = substr($color, 1, 1);
 			$b = substr($color, 2, 1);
 			$a = substr($color, 3, 1);
 			$color = "$r$r$g$g$b$b$a$a";
 		}
-		if (strlen($color) === 6) {
+		if (6 === \strlen($color)) {
 			$color .= 'FF';
 		}
 		$r = (string) hexdec(substr($color, 0, 2));
@@ -237,7 +237,7 @@ class Color
 	{
 		$matches = [];
 		preg_match_all('/rgb\(([0-9]+)\s?\,\s?([0-9]+)\s?\,\s?([0-9]+)\s?([0-9]+)?\s?\)/ui', str_replace("\n\t\r ", '', $rgbColor), $matches);
-		if (isset($matches[4]) && $matches[4][0] !== '') {
+		if (isset($matches[4]) && '' !== $matches[4][0]) {
 			$alpha = $matches[4][0];
 		} else {
 			$alpha = '1';
@@ -257,11 +257,11 @@ class Color
 	{
 		$colorInput = trim(strtolower($colorInput));
 		if ($colorInput) {
-			if ($colorInput[0] === '#') {
+			if ('#' === $colorInput[0]) {
 				$color = static::fromHash($colorInput);
-			} elseif (strncmp($colorInput, 'rgb', 3) === 0) {
+			} elseif (0 === strncmp($colorInput, 'rgb', 3)) {
 				$color = static::fromRGBA($colorInput);
-			} elseif (array_key_exists($colorInput, static::$colorNames)) {
+			} elseif (\array_key_exists($colorInput, static::$colorNames)) {
 				$color = static::fromName($colorInput);
 			}
 			$r = $inPDFColorSpace ? Math::div($color[0], '255') : $color[0];

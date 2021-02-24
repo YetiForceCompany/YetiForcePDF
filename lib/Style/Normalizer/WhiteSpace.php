@@ -20,10 +20,10 @@ class WhiteSpace extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
-		if (in_array($ruleValue, ['normal', 'pre', 'nowrap'])) {
+		if (\in_array($ruleValue, ['normal', 'pre', 'nowrap'])) {
 			$normalized = ['white-space' => $ruleValue];
 		} else {
 			$normalized = ['white-space' => 'normal'];

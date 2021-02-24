@@ -23,7 +23,7 @@ class Margin extends Normalizer
 	 */
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
 		return $this->normalized = $this->normalizeMultiValues(['margin-top', 'margin-right', 'margin-bottom', 'margin-left'], $ruleValue);

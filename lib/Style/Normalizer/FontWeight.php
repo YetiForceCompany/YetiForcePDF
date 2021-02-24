@@ -20,11 +20,11 @@ class FontWeight extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized !== null) {
+		if (null !== $this->normalized) {
 			return $this->normalized;
 		}
 		$ruleValue = strtolower($ruleValue);
-		if (!in_array($ruleValue, ['100', '200', '300', '400', '500', '600', '700', '800', '900'])) {
+		if (!\in_array($ruleValue, ['100', '200', '300', '400', '500', '600', '700', '800', '900'])) {
 			switch ($ruleValue) {
 				case 'normal':
 					$ruleValue = '400';

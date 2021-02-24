@@ -58,6 +58,8 @@ class Math
 	 *
 	 * @params string[] $numbers
 	 *
+	 * @param string[] $numbers
+	 *
 	 * @return string
 	 */
 	public static function add(string ...$numbers)
@@ -78,6 +80,8 @@ class Math
 	 *
 	 * @params string[] $numbers
 	 *
+	 * @param string[] $numbers
+	 *
 	 * @return string
 	 */
 	public static function sub(string ...$numbers)
@@ -86,7 +90,7 @@ class Math
 			return bcsub($numbers[0], $numbers[1], static::$scale);
 		}
 		$result = $numbers[0];
-		for ($i = 1,$len = count($numbers); $i < $len; ++$i) {
+		for ($i = 1,$len = \count($numbers); $i < $len; ++$i) {
 			$result = bcsub($result, $numbers[$i], static::$scale);
 		}
 
@@ -118,6 +122,8 @@ class Math
 	 *
 	 * @params string[] $numbers
 	 *
+	 * @param string[] $numbers
+	 *
 	 * @return string
 	 */
 	public static function div(string ...$numbers)
@@ -130,7 +136,7 @@ class Math
 			return '0';
 		}
 		$result = $numbers[0];
-		for ($i = 1,$len = count($numbers); $i < $len; ++$i) {
+		for ($i = 1,$len = \count($numbers); $i < $len; ++$i) {
 			if ((float) $numbers[$i] === (float) 0) {
 				return '0';
 			}
@@ -164,7 +170,7 @@ class Math
 	{
 		$result = '0';
 		foreach ($numbers as $number) {
-			$result = bccomp($number, $result, static::$scale) === 1 ? $number : $result;
+			$result = 1 === bccomp($number, $result, static::$scale) ? $number : $result;
 		}
 
 		return $result;
@@ -180,8 +186,8 @@ class Math
 	public static function min(string ...$numbers)
 	{
 		$result = $numbers[0];
-		for ($i = 1,$len = count($numbers); $i < $len; ++$i) {
-			$result = bccomp($result, $numbers[$i], static::$scale) === 1 ? $numbers[$i] : $result;
+		for ($i = 1,$len = \count($numbers); $i < $len; ++$i) {
+			$result = 1 === bccomp($result, $numbers[$i], static::$scale) ? $numbers[$i] : $result;
 		}
 
 		return $result;

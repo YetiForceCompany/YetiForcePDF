@@ -26,7 +26,7 @@ class Normalizer extends \YetiForcePDF\Base
 	 */
 	protected $style;
 	/**
-	 * @var null|array normalized value
+	 * @var array|null normalized value
 	 */
 	protected $normalized;
 	/**
@@ -94,7 +94,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setIsFont($isFont)
 				->convert($this->style)
 		];
-		$matchesCount = count($matches);
+		$matchesCount = \count($matches);
 		if ($matchesCount >= 2) {
 			$multi[] = (new NumericValue())
 				->setUnit($matches[1][3])
@@ -111,7 +111,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setIsFont($isFont)
 				->convert($this->style);
 		}
-		if ($matchesCount === 4) {
+		if (4 === $matchesCount) {
 			$multi[] = (new NumericValue())
 				->setUnit($matches[3][3])
 				->setValue($matches[3][2])
@@ -253,7 +253,7 @@ class Normalizer extends \YetiForcePDF\Base
 	public function normalizeMultiValues(array $ruleNames, $ruleValue): array
 	{
 		$numberValues = $this->getNumberValues($ruleValue);
-		switch (count($numberValues)) {
+		switch (\count($numberValues)) {
 			case 1:
 				return $this->oneValue($ruleNames, $numberValues);
 			case 2:

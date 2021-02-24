@@ -20,8 +20,8 @@ class TextAlign extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null) {
-			if (in_array($ruleValue, ['left', 'right', 'center'])) {
+		if (null === $this->normalized) {
+			if (\in_array($ruleValue, ['left', 'right', 'center'])) {
 				return $this->normalized = ['text-align' => $ruleValue];
 			}
 			return $this->normalized = ['text-align' => 'left'];

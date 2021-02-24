@@ -76,10 +76,10 @@ class NumericValue
 	 */
 	public static function get($value, bool $isFont = false)
 	{
-		if (!is_string($value)) {
+		if (!\is_string($value)) {
 			return $value;
 		}
-		if (\YetiForcePDF\Style\Normalizer\Normalizer::getNumericValue($value) !== false) {
+		if (false !== \YetiForcePDF\Style\Normalizer\Normalizer::getNumericValue($value)) {
 			return (new self())->init($value, $isFont);
 		}
 		return $value;

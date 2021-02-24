@@ -70,7 +70,7 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	 */
 	protected function convertToJpg(string $imageData)
 	{
-		if (substr($imageData, 0, 10) === 'data:image') {
+		if ('data:image' === substr($imageData, 0, 10)) {
 			$matches = [];
 			preg_match('/data:image\/[a-z]+;base64,(.*)/', $imageData, $matches);
 			$imageData = base64_decode($matches[1]);
@@ -98,13 +98,13 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	 */
 	public function loadImage(string $fileName)
 	{
-		if (substr($fileName, 0, 10) === 'data:image') {
+		if ('data:image' === substr($fileName, 0, 10)) {
 			$this->imageData = $this->convertToJpg($fileName);
 		} elseif (filter_var($fileName, FILTER_VALIDATE_URL)) {
 			try {
 				$client = new \GuzzleHttp\Client();
 				$res = $client->request('GET', $fileName, ['verify' => \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath()]);
-				if ($res->getStatusCode() === 200) {
+				if (200 === $res->getStatusCode()) {
 					$res->getHeader('content-type');
 					$this->imageData = $this->convertToJpg((string) $res->getBody());
 				}
@@ -174,7 +174,7 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			'  /Width ' . $this->width,
 			'  /Height ' . $this->height,
 			'  /BitsPerComponent ' . $this->bitsPerComponent,
-			'  /Length  ' . strlen($stream),
+			'  /Length  ' . \strlen($stream),
 			'  /Filter /DCTDecode',
 			'>>',
 			'stream',

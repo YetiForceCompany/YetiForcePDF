@@ -95,7 +95,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function shouldBreakPage()
 	{
-		return $this->getStyle()->getRules('break-page-after') === 'always';
+		return 'always' === $this->getStyle()->getRules('break-page-after');
 	}
 
 	/**
@@ -111,7 +111,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			->setDocument($this->document)
 			->setParent($this)
 			->init();
-		if ($before !== null) {
+		if (null !== $before) {
 			$this->insertBefore($this->currentLineBox, $before);
 		} else {
 			$this->appendChild($this->currentLineBox);
@@ -128,7 +128,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	/**
 	 * Close line box.
 	 *
-	 * @param null|\YetiForcePDF\Layout\LineBox $lineBox
+	 * @param \YetiForcePDF\Layout\LineBox|null $lineBox
 	 * @param bool                              $createNew
 	 *
 	 * @return \YetiForcePDF\Layout\LineBox
@@ -403,7 +403,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 			}
 			$this->parentWidth = $parent->getDimensions()->getWidth();
 			$oldWidth = $this->getDimensions()->getWidth();
-			if ($parent->getDimensions()->getWidth() !== null) {
+			if (null !== $parent->getDimensions()->getWidth()) {
 				$dimensions->setWidth(Math::sub($parent->getDimensions()->getInnerWidth(), $this->getStyle()->getHorizontalMarginsWidth()));
 				$this->applyStyleWidth();
 				if ($oldWidth !== $this->getDimensions()->getWidth()) {
@@ -469,6 +469,8 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 
 	/**
 	 * Merge line groups into one line (reverse divide - reorganize).
+	 *
+	 * @param array $lineGroups
 	 *
 	 * @return LineBox[]
 	 */
@@ -573,7 +575,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function measureHeight(bool $afterPageDividing = false)
 	{
-		if ($this->wasCut() === \YetiForcePDF\Page::CUT_BELOW) {
+		if (\YetiForcePDF\Page::CUT_BELOW === $this->wasCut()) {
 			return $this;
 		}
 		$this->applyStyleHeight();
@@ -601,7 +603,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function measureOffset(bool $afterPageDividing = false)
 	{
-		if ($this->wasCut() === \YetiForcePDF\Page::CUT_BELOW) {
+		if (\YetiForcePDF\Page::CUT_BELOW === $this->wasCut()) {
 			return $this;
 		}
 		$top = $this->document->getCurrentPage()->getCoordinates()->getY();
@@ -615,7 +617,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 				if ($previous->getOffset()->getTop()) {
 					$top = Math::add($previous->getOffset()->getTop(), $previous->getDimensions()->getHeight());
 				}
-				if ($previous->getStyle()->getRules('display') === 'block') {
+				if ('block' === $previous->getStyle()->getRules('display')) {
 					$marginTop = Math::comp($marginTop, $previous->getStyle()->getRules('margin-bottom')) > 0 ? $marginTop : $previous->getStyle()->getRules('margin-bottom');
 				} elseif (!$previous instanceof LineBox) {
 					$marginTop = Math::add($marginTop, $previous->getStyle()->getRules('margin-bottom'));
@@ -642,7 +644,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function measurePosition(bool $afterPageDividing = false)
 	{
-		if ($this->wasCut() === \YetiForcePDF\Page::CUT_BELOW) {
+		if (\YetiForcePDF\Page::CUT_BELOW === $this->wasCut()) {
 			return $this;
 		}
 		$x = $this->document->getCurrentPage()->getCoordinates()->getX();
@@ -691,12 +693,12 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$this->getAllChildren($allChildren);
 		foreach ($allChildren as $child) {
 			if ($child instanceof TextBox) {
-				if (mb_stripos($child->getTextContent(), '{p}') !== false) {
+				if (false !== mb_stripos($child->getTextContent(), '{p}')) {
 					$pageNumber = $this->document->getCurrentPage()->getPageNumber();
 					$child->setText(preg_replace('/{p}/ui', (string) $pageNumber, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
 				}
-				if (mb_stripos($child->getTextContent(), '{a}') !== false) {
+				if (false !== mb_stripos($child->getTextContent(), '{a}')) {
 					$pages = (string) $this->document->getCurrentPage()->getPageCount();
 					$child->setText(preg_replace('/{a}/ui', $pages, $child->getTextContent()));
 					$child->getClosestByType('BlockBox')->layout();
@@ -721,13 +723,13 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function addBackgroundColorInstructions(array $element, $pdfX, $pdfY, $width, $height)
 	{
-		if ($this->getStyle()->getRules('display') === 'none') {
+		if ('none' === $this->getStyle()->getRules('display')) {
 			return $element;
 		}
 		$rules = $this->style->getRules();
 		$graphicState = $this->style->getGraphicState();
 		$graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
-		if ($rules['background-color'] !== 'transparent') {
+		if ('transparent' !== $rules['background-color']) {
 			$bgColor = [
 				'q',
 				$graphicStateStr,
@@ -756,13 +758,13 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function addBackgroundImageInstructions(array $element, $pdfX, $pdfY, $width, $height)
 	{
-		if ($this->getStyle()->getBackgroundImageStream() === null) {
+		if (null === $this->getStyle()->getBackgroundImageStream()) {
 			return $element;
 		}
 		$rules = $this->style->getRules();
 		$graphicState = $this->style->getGraphicState();
 		$graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
-		if ($rules['background-image'] !== 'transparent') {
+		if ('transparent' !== $rules['background-image']) {
 			$bgColor = [
 				'q',
 				$graphicStateStr,
@@ -788,7 +790,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 		$allChildren = [];
 		$this->getAllChildren($allChildren);
 		foreach ($allChildren as $child) {
-			if ($child->getStyle()->getRules('page-break-after') === 'always') {
+			if ('always' === $child->getStyle()->getRules('page-break-after')) {
 				$breakAfter[] = $child;
 			}
 		}
@@ -806,7 +808,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 	 */
 	public function getInstructions(): string
 	{
-		if ($this->getStyle()->getRules('display') === 'none') {
+		if ('none' === $this->getStyle()->getRules('display')) {
 			return '';
 		}
 		$coordinates = $this->getCoordinates();

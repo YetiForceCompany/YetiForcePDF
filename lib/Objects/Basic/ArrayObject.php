@@ -49,7 +49,7 @@ class ArrayObject extends \YetiForcePDF\Objects\PdfObject
 		return $this;
 	}
 
-	public function addItem($item): \YetiForcePDF\Objects\Basic\ArrayObject
+	public function addItem($item): self
 	{
 		$this->items[] = $item;
 		return $this;

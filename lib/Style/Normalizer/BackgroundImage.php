@@ -20,10 +20,10 @@ class BackgroundImage extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null && $ruleValue !== 'transparent') {
+		if (null === $this->normalized && 'transparent' !== $ruleValue) {
 			return $this->normalized = ['background-image' => $ruleValue];
 		}
-		if ($ruleValue === 'transparent') {
+		if ('transparent' === $ruleValue) {
 			return $this->normalized = ['background-image' => 'transparent'];
 		}
 		return $this->normalized;

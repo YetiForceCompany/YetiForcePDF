@@ -20,7 +20,7 @@ class PaddingLeft extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null) {
+		if (null === $this->normalized) {
 			return $this->normalized = ['padding-left' => $this->getNumberValues($ruleValue)[0]];
 		}
 		return $this->normalized;

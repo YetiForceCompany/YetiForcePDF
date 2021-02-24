@@ -20,7 +20,7 @@ class MarginTop extends Normalizer
 {
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		if ($this->normalized === null) {
+		if (null === $this->normalized) {
 			return $this->normalized = ['margin-top' => $this->getNumberValues($ruleValue)[0]];
 		}
 		return $this->normalized;

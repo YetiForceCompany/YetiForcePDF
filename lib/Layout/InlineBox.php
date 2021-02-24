@@ -159,6 +159,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * Create text.
 	 *
 	 * @param $content
+	 * @param bool $sameId
 	 *
 	 * @return $this
 	 */
@@ -186,7 +187,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	/**
 	 * Get previous sibling inline-level element text.
 	 *
-	 * @return null|string
+	 * @return string|null
 	 */
 	protected function getPreviousText()
 	{
@@ -203,7 +204,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	 * @param \DOMNode                           $childDomElement
 	 * @param Element                            $element
 	 * @param Style                              $style
-	 * @param null|\YetiForcePDF\Layout\BlockBox $parentBlock
+	 * @param \YetiForcePDF\Layout\BlockBox|null $parentBlock
 	 *
 	 * @return $this
 	 */
@@ -220,13 +221,13 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 				$text = preg_replace('/ +/u', ' ', $text);
 				break;
 		}
-		if ($text !== '') {
-			if ($whiteSpace === 'normal') {
+		if ('' !== $text) {
+			if ('normal' === $whiteSpace) {
 				$words = preg_split('/ /u', $text, 0);
-				$count = count($words);
+				$count = \count($words);
 				if ($count) {
 					foreach ($words as $index => $word) {
-						if ($word !== '') {
+						if ('' !== $word) {
 							$this->createText($word);
 							$parent = $this->getParent();
 							$anonymous = ($parent instanceof self && $parent->isAnonymous()) || $parent instanceof LineBox;
@@ -240,7 +241,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 				} else {
 					$this->createText(' ', true);
 				}
-			} elseif ($whiteSpace === 'nowrap') {
+			} elseif ('nowrap' === $whiteSpace) {
 				$this->createText($text, true);
 			}
 		}
@@ -257,7 +258,7 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 	public function measureWidth(bool $afterPageDividing = false)
 	{
 		$style = $this->getStyle();
-		if ($this->parentWidth === $this->getParent()->getDimensions()->getWidth() && $this->getDimensions()->getWidth() !== null) {
+		if ($this->parentWidth === $this->getParent()->getDimensions()->getWidth() && null !== $this->getDimensions()->getWidth()) {
 			if (!$this->isForMeasurement()) {
 				$this->getDimensions()->setWidth(Math::add($style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth()));
 			}
@@ -307,11 +308,11 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 		$parent = $this->getParent();
 		$top = $parent->getStyle()->getOffsetTop();
 		$lineHeight = $this->getClosestLineBox()->getDimensions()->getHeight();
-		if ($rules['vertical-align'] === 'bottom') {
+		if ('bottom' === $rules['vertical-align']) {
 			$top = Math::sub($lineHeight, $this->getStyle()->getFont()->getTextHeight());
-		} elseif ($rules['vertical-align'] === 'top') {
+		} elseif ('top' === $rules['vertical-align']) {
 			$top = $this->getStyle()->getFont()->getDescender();
-		} elseif ($rules['vertical-align'] === 'middle' || $rules['vertical-align'] === 'baseline') {
+		} elseif ('middle' === $rules['vertical-align'] || 'baseline' === $rules['vertical-align']) {
 			$height = $this->getStyle()->getFont()->getTextHeight();
 			$top = Math::sub(Math::div($lineHeight, '2'), Math::div($height, '2'));
 		}
@@ -367,13 +368,13 @@ class InlineBox extends ElementBox implements BoxInterface, BuildTreeInterface, 
 
 	public function addBackgroundColorInstructions(array $element, $pdfX, $pdfY, $width, $height)
 	{
-		if ($this->getStyle()->getRules('display') === 'none') {
+		if ('none' === $this->getStyle()->getRules('display')) {
 			return $element;
 		}
 		$rules = $this->style->getRules();
 		$graphicState = $this->style->getGraphicState();
 		$graphicStateStr = '/' . $graphicState->getNumber() . ' gs';
-		if ($rules['background-color'] !== 'transparent') {
+		if ('transparent' !== $rules['background-color']) {
 			$bgColor = [
 				'q',
 				$graphicStateStr,

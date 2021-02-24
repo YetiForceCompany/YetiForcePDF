@@ -116,7 +116,7 @@ class BoxDimensions extends Dimensions
 		}
 		$style = $box->getStyle();
 		$width = $this->getWidth();
-		if ($width === null) {
+		if (null === $width) {
 			return '0';
 		}
 		return Math::sub($width, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
@@ -138,7 +138,7 @@ class BoxDimensions extends Dimensions
 		}
 		$style = $box->getStyle();
 		$height = $this->getHeight();
-		if ($height === null) {
+		if (null === $height) {
 			$height = '0';
 			$element = $box->getElement();
 			if ($element && $element->getDOMElement() instanceof \DOMText) {
@@ -166,7 +166,7 @@ class BoxDimensions extends Dimensions
 			$style = $this->getBox()->getStyle();
 			$childrenWidth = '0';
 			// if some of the children overflows
-			if ($box->getStyle()->getRules('display') === 'inline') {
+			if ('inline' === $box->getStyle()->getRules('display')) {
 				foreach ($box->getChildren() as $child) {
 					if ($childWidth = $child->getDimensions()->getWidth()) {
 						$childrenWidth = Math::add($childrenWidth, $childWidth);
@@ -183,16 +183,14 @@ class BoxDimensions extends Dimensions
 					}
 				}
 			}
-			if ($this->getWidth() !== null) {
+			if (null !== $this->getWidth()) {
 				$childrenWidth = Math::add($childrenWidth, $style->getHorizontalMarginsWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 				$width = Math::add($this->getWidth(), $style->getHorizontalMarginsWidth());
 				return Math::max($width, $childrenWidth);
-			} else {
-				return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 			}
-		} else {
-			return $this->getBox()->getChildrenWidth();
+			return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 		}
+		return $this->getBox()->getChildrenWidth();
 	}
 
 	/**
@@ -213,7 +211,7 @@ class BoxDimensions extends Dimensions
 		if (!$box instanceof LineBox) {
 			$childrenHeight = '0';
 			// if some of the children overflows
-			if ($box->getStyle()->getRules('display') === 'inline') {
+			if ('inline' === $box->getStyle()->getRules('display')) {
 				foreach ($box->getChildren() as $child) {
 					$childrenHeight = Math::add($childrenHeight, $child->getDimensions()->getOuterHeight());
 				}
@@ -222,15 +220,13 @@ class BoxDimensions extends Dimensions
 					$childrenHeight = Math::max($childrenHeight, $child->getDimensions()->getOuterHeight());
 				}
 			}
-			if ($this->getHeight() !== null) {
+			if (null !== $this->getHeight()) {
 				$height = Math::add($this->getHeight(), $style->getVerticalMarginsWidth());
 				return Math::max($height, $childrenHeight);
-			} else {
-				return Math::add($childrenHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
 			}
-		} else {
-			return Math::add($this->getHeight(), $style->getHorizontalMarginsWidth());
+			return Math::add($childrenHeight, $style->getVerticalBordersWidth(), $style->getVerticalPaddingsWidth());
 		}
+		return Math::add($this->getHeight(), $style->getHorizontalMarginsWidth());
 	}
 
 	/**
@@ -278,11 +274,11 @@ class BoxDimensions extends Dimensions
 			$style = $this->getBox()->getStyle();
 			$childrenWidth = '0';
 			// if some of the children overflows
-			if ($box->getStyle()->getRules('display') === 'inline') {
+			if ('inline' === $box->getStyle()->getRules('display')) {
 				foreach ($box->getChildren() as $child) {
 					$childrenWidth = Math::add($childrenWidth, $child->getDimensions()->getOuterWidth());
 				}
-			} elseif (count($box->getSourceLines())) {
+			} elseif (\count($box->getSourceLines())) {
 				foreach ($box->getSourceLines() as $line) {
 					$childrenWidth = Math::max($childrenWidth, $line->getChildrenWidth());
 				}
@@ -297,16 +293,14 @@ class BoxDimensions extends Dimensions
 					$childrenWidth = Math::max($childrenWidth, $child->getDimensions()->getOuterWidth());
 				}
 			}
-			if ($this->getWidth() !== null) {
+			if (null !== $this->getWidth()) {
 				$childrenWidth = Math::add($childrenWidth, $style->getHorizontalMarginsWidth(), $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 				$width = Math::add($this->getWidth(), $style->getHorizontalMarginsWidth());
 				return Math::max($width, $childrenWidth);
-			} else {
-				return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 			}
-		} else {
-			return $this->getBox()->getChildrenWidth();
+			return Math::add($childrenWidth, $style->getHorizontalBordersWidth(), $style->getHorizontalPaddingsWidth());
 		}
+		return $this->getBox()->getChildrenWidth();
 	}
 
 	/**
@@ -384,20 +378,18 @@ class BoxDimensions extends Dimensions
 		}
 		if ($parent = $this->getBox()->getParent()) {
 			$parentStyle = $parent->getStyle();
-			if ($parent->getDimensions()->getWidth() === null) {
+			if (null === $parent->getDimensions()->getWidth()) {
 				return Math::sub($parent->getDimensions()->computeAvailableSpace(), $parentStyle->getHorizontalBordersWidth(), $parentStyle->getHorizontalPaddingsWidth());
-			} else {
-				return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
 			}
-		} else {
-			return $this->document->getCurrentPage()->getDimensions()->getWidth();
+			return $this->getBox()->getParent()->getDimensions()->getInnerWidth();
 		}
+		return $this->document->getCurrentPage()->getDimensions()->getWidth();
 	}
 
 	/**
 	 * Calculate width from style width:10%.
 	 *
-	 * @return mixed|null|string
+	 * @return mixed|string|null
 	 */
 	public function getStyleWidth()
 	{
@@ -405,14 +397,14 @@ class BoxDimensions extends Dimensions
 			return '0';
 		}
 		$width = $this->getBox()->getStyle()->getRules('width');
-		if ($width === 'auto') {
+		if ('auto' === $width) {
 			return null;
 		}
 		$percentPos = strpos($width, '%');
-		if ($percentPos !== false) {
+		if (false !== $percentPos) {
 			$widthInPercent = substr($width, 0, $percentPos);
 			$closestBoxDimensions = $this->getBox()->getClosestBox()->getDimensions();
-			if ($closestBoxDimensions->getWidth() !== null) {
+			if (null !== $closestBoxDimensions->getWidth()) {
 				$parentWidth = $closestBoxDimensions->getInnerWidth();
 				$style = $this->getBox()->getStyle();
 				$parentWidth = Math::sub($parentWidth, $style->getHorizontalMarginsWidth());
@@ -429,7 +421,7 @@ class BoxDimensions extends Dimensions
 	/**
 	 * Calculate height from style width:10%.
 	 *
-	 * @return mixed|null|string
+	 * @return mixed|string|null
 	 */
 	public function getStyleHeight()
 	{
@@ -437,14 +429,14 @@ class BoxDimensions extends Dimensions
 			return '0';
 		}
 		$height = $this->getBox()->getStyle()->getRules('height');
-		if ($height === 'auto') {
+		if ('auto' === $height) {
 			return null;
 		}
 		$percentPos = strpos($height, '%');
-		if ($percentPos !== false) {
+		if (false !== $percentPos) {
 			$widthInPercent = substr($height, 0, $percentPos);
 			$closestBoxDimensions = $this->getBox()->getClosestBox()->getDimensions();
-			if ($closestBoxDimensions->getHeight() !== null) {
+			if (null !== $closestBoxDimensions->getHeight()) {
 				$parentHeight = $closestBoxDimensions->getInnerHeight();
 				if ($parentHeight) {
 					return Math::percent($widthInPercent, $parentHeight);

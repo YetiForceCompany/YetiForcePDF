@@ -202,7 +202,7 @@ class Meta extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		if ($this->producer) {
 			$this->addValue('Producer', $this->document->filterText($this->producer, 'UTF-16', true, true));
 		}
-		if (!empty($this->keywords) && trim(implode('', $this->keywords)) !== '') {
+		if (!empty($this->keywords) && '' !== trim(implode('', $this->keywords))) {
 			$this->addValue('Keywords', $this->document->filterText(implode(', ', $this->keywords), 'UTF-16', true, true));
 		}
 		return parent::render();
