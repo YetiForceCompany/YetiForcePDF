@@ -61,7 +61,10 @@ class Font extends \YetiForcePDF\Objects\Resource
 			],
 		],
 	];
-
+	/**
+	 * @var string
+	 */
+	public static $defaultFontFamily = 'DejaVu Sans';
 	/**
 	 * @var array
 	 */
@@ -87,7 +90,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 *
 	 * @var string
 	 */
-	protected $family = 'DejaVu Sans';
+	protected $family = '';
 	/**
 	 * Font weight.
 	 *
@@ -214,6 +217,9 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 */
 	public function init()
 	{
+		if (empty($this->family)) {
+			$this->family = self::$defaultFontFamily;
+		}
 		$this->fontDir = realpath(__DIR__ . \DIRECTORY_SEPARATOR . '..' . \DIRECTORY_SEPARATOR . 'Fonts') . \DIRECTORY_SEPARATOR;
 		$alreadyExists = $this->document->getFontInstance($this->family, $this->weight, $this->style);
 		if (null === $alreadyExists) {
@@ -229,7 +235,6 @@ class Font extends \YetiForcePDF\Objects\Resource
 			foreach ($this->document->getObjects('Page') as $page) {
 				$page->synchronizeFonts();
 			}
-
 			return $this;
 		}
 		$this->setAddToDocument(false);
@@ -593,7 +598,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 		}
 		if (!$weight) {
 			// font file not found return default one
-			return $this->fontDir . static::$fontFiles['DejaVu Sans'][$this->weight][$this->style];
+			return $this->fontDir . static::$fontFiles[static::$defaultFontFamily][$this->weight][$this->style];
 		}
 		if (isset(static::$customFontFiles[$this->family][$weight][$this->style]) && file_exists(static::$customFontFiles[$this->family][$weight][$this->style])) {
 			return static::$customFontFiles[$this->family][$weight][$this->style];
@@ -604,7 +609,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 			return static::$customFontFiles[$this->family][$weight][$style];
 		}
 		// font file not found - get default one
-		return $this->fontDir . static::$fontFiles['DejaVu Sans'][$this->weight][$this->style];
+		return $this->fontDir . static::$fontFiles[static::$defaultFontFamily][$this->weight][$this->style];
 	}
 
 	/**

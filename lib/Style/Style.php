@@ -134,7 +134,7 @@ class Style extends \YetiForcePDF\Base
 	 * @var array
 	 */
 	protected $mandatoryRules = [
-		'font-family' => 'DejaVu Sans',
+		'font-family' => '',
 		'font-size' => '12px',
 		'font-weight' => 'normal',
 		'font-style' => 'normal',
@@ -610,7 +610,6 @@ class Style extends \YetiForcePDF\Base
 	{
 		parent::init();
 		$this->parse();
-
 		return $this;
 	}
 
@@ -1401,6 +1400,7 @@ class Style extends \YetiForcePDF\Base
 		if ($this->parsed) {
 			return $this;
 		}
+		$this->mandatoryRules['font-family'] = Font::$defaultFontFamily;
 		$mandatory = [];
 		foreach ($this->getMandatoryRules() as $mandatoryName => $mandatoryValue) {
 			$mandatory[$mandatoryName] = $mandatoryValue;
