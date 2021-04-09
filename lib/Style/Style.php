@@ -695,9 +695,10 @@ class Style extends \YetiForcePDF\Base
 	 */
 	public function setContent(string $content = null)
 	{
-		$content = preg_replace('/data:image\/([a-z]+);/', 'data_image/$1_', $content);
+		if ($content) {
+			$content = preg_replace('/data:image\/([a-z]+);/', 'data_image/$1_', $content);
+		}
 		$this->content = $content;
-
 		return $this;
 	}
 
