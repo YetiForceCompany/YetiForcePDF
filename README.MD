@@ -197,3 +197,6 @@ When you want to place page number (in header or footer for example) you can do 
 
 ### License
 YetiForce Public License v3
+=======
+file_put_contents('test.pdf', $pdfFile);
+```
