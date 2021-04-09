@@ -1,29 +1,32 @@
 <?php
+
 declare(strict_types=1);
 /**
- * StringObject class
+ * StringObject class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class StringObject
+ * Class StringObject.
  */
 class StringObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'String';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'String';

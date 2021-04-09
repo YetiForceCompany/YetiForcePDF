@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Page class
+ * Page class.
  *
  * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF;
 
 /**
- * Class Pages
+ * Class Pages.
  */
 class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
@@ -22,10 +23,31 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 */
 	protected $dictionaryType = 'Pages';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Pages';
+
+	/**
+	 * Proc Set.
+	 *
+	 * @var \YetiForcePDF\Objects\Basic\ArrayObject
+	 */
+	protected $procSet;
+
+	/**
+	 * Add proc set.
+	 *
+	 * @param \YetiForcePDF\Objects\Basic\ArrayObject $procSet
+	 *
+	 * @return $this
+	 */
+	public function addProcSet(Objects\Basic\ArrayObject $procSet)
+	{
+		$this->procSet = $procSet;
+		return $this;
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -36,14 +58,13 @@ class Pages extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		foreach ($this->children as $child) {
 			$kids[] = $child->getReference();
 		}
-		return implode("\n", [
-			$this->getRawId() . ' obj',
-			'<<',
-			'  /Type /Pages',
-			'  /Count ' . count($kids),
-			'  /Kids [' . implode("\n    ", $kids) . ']',
-			'>>',
-			'endobj'
-		]);
+		$this->clearValues()
+			->addValue('Type', '/Pages')
+			->addValue('Count', (string) \count($kids))
+			->addValue('Kids', '[' . implode("\n    ", $kids) . ']');
+		if ($this->procSet) {
+			$this->addValue('ProcSet', $this->procSet->getReference());
+		}
+		return parent::render();
 	}
 }

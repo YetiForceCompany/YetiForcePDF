@@ -1,120 +1,140 @@
 <?php
+
 declare(strict_types=1);
 /**
- * TextStream class
+ * TextStream class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Objects;
 
 /**
- * Class TextStream
+ * Class TextStream.
  */
 class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 {
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'TextStream';
 	/**
-	 * Text stream
+	 * Text stream.
+	 *
 	 * @var string
 	 */
 	protected $text = '';
 	/**
-	 * Font for text stream
+	 * Font for text stream.
+	 *
 	 * @var \YetiForcePDF\Objects\Font
 	 */
 	protected $font;
 	/**
-	 * Font size
+	 * Font size.
+	 *
 	 * @var float
 	 */
 	protected $fontSize = 10;
 	/**
-	 * Text x position at current page
+	 * Text x position at current page.
+	 *
 	 * @var int
 	 */
 	protected $x = 0;
 	/**
-	 * Text y position at current page
+	 * Text y position at current page.
+	 *
 	 * @var int
 	 */
 	protected $y = 0;
 
 	/**
-	 * Set text
+	 * Set text.
+	 *
 	 * @param string $text
+	 *
 	 * @return \YetiForcePDF\Objects\Basic\TextStream
 	 */
-	public function setText(string $text): \YetiForcePDF\Objects\TextStream
+	public function setText(string $text): self
 	{
 		$this->text = $this->escape($text);
 		return $this;
 	}
 
 	/**
-	 * Set font
+	 * Set font.
+	 *
 	 * @param \YetiForcePDF\Objects\Font $font
+	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setFont(\YetiForcePDF\Objects\Font $font): \YetiForcePDF\Objects\TextStream
+	public function setFont(Font $font): self
 	{
 		$this->font = $font;
 		return $this;
 	}
 
 	/**
-	 * Set font size
+	 * Set font size.
+	 *
 	 * @param float $fontSize
+	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setFontSize(float $fontSize): \YetiForcePDF\Objects\TextStream
+	public function setFontSize(float $fontSize): self
 	{
 		$this->fontSize = $fontSize;
 		return $this;
 	}
 
 	/**
-	 * Set text x position inside current page
+	 * Set text x position inside current page.
+	 *
 	 * @param float $x
+	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setX(float $x): \YetiForcePDF\Objects\TextStream
+	public function setX(float $x): self
 	{
 		$this->x = $x;
 		return $this;
 	}
 
 	/**
-	 * Set text x position inside current page
+	 * Set text x position inside current page.
+	 *
 	 * @param float $y
+	 *
 	 * @return \YetiForcePDF\Objects\TextStream
 	 */
-	public function setY(float $y): \YetiForcePDF\Objects\TextStream
+	public function setY(float $y): self
 	{
 		$this->y = $y;
 		return $this;
 	}
 
 	/**
-	 * Escape string
+	 * Escape string.
+	 *
 	 * @param string $str
+	 *
 	 * @return string
 	 */
 	public function escape(string $str): string
 	{
-		return strtr($str, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r']);
+		return strtr($str, [')' => '\\)', '(' => '\\(', '\\' => '\\\\', \chr(13) => '\r']);
 	}
 
 	/**
-	 * Get raw text stream
+	 * Get raw text stream.
+	 *
 	 * @return string
 	 */
 	public function getRawStream(): string
@@ -130,14 +150,13 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 		$stream = $this->getRawStream();
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			"<<",
-			"  /Length " . strlen($stream),
-			">>",
-			"stream",
+			'<<',
+			'  /Length ' . \strlen($stream),
+			'>>',
+			'stream',
 			$stream,
-			"endstream",
-			"endobj"
+			'endstream',
+			'endobj'
 		]);
 	}
-
 }

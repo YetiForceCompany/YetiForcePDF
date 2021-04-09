@@ -1,25 +1,28 @@
 <?php
+
 declare(strict_types=1);
 /**
- * FontFamily class
+ * FontFamily class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class FontFamily
+ * Class FontFamily.
  */
 class FontFamily extends Normalizer
 {
-	public function normalize(string $ruleValue): array
+	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		$normalized = ['font-family' => $ruleValue];
-		return $normalized;
+		if (null !== $this->normalized) {
+			return $this->normalized;
+		}
+		return $this->normalized = ['font-family' => str_replace(['\'', '"'], '', $ruleValue)];
 	}
 }

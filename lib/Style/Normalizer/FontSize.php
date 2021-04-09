@@ -1,29 +1,28 @@
 <?php
+
 declare(strict_types=1);
 /**
- * FontSize class
+ * FontSize class.
  *
  * @package   YetiForcePDF\Style\Normalizer
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Style\Normalizer;
 
 /**
- * Class FontSize
+ * Class FontSize.
  */
 class FontSize extends Normalizer
 {
-	public function normalize(string $ruleValue): array
+	public function normalize($ruleValue, string $ruleName = ''): array
 	{
-		$matches = [];
-		preg_match_all('/([0-9]+)([a-z]+)/', $ruleValue, $matches);
-		$originalSize = (float)$matches[1][0];
-		$originalUnit = $matches[2][0];
-		$normalized = ['font-size' => $this->document->convertUnits($originalUnit, $originalSize)];
-		return $normalized;
+		if (null === $this->normalized) {
+			return $this->normalized = ['font-size' => $this->getNumberValues($ruleValue, true)[0]];
+		}
+		return $this->normalized;
 	}
 }

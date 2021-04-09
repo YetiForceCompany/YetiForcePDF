@@ -1,39 +1,44 @@
 <?php
+
 declare(strict_types=1);
 /**
- * PdfObject class
+ * PdfObject class.
  *
  * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Objects;
 
 /**
- * Class PdfObject
+ * Class PdfObject.
  */
 class PdfObject extends \YetiForcePDF\Base
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = '';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'PdfObject';
 	/**
-	 * Id of the current object
+	 * Id of the current object.
+	 *
 	 * @var int
 	 */
 	protected $id = 1;
 	/**
 	 * Add object to document objects?
+	 *
 	 * @var bool
 	 */
 	protected $addToDocument = true;
@@ -42,18 +47,21 @@ class PdfObject extends \YetiForcePDF\Base
 	 */
 	protected $document;
 	/**
-	 * Children elements - referenced
+	 * Children elements - referenced.
+	 *
 	 * @var array
 	 */
 	protected $children = [];
 	/**
-	 * Parent object
+	 * Parent object.
+	 *
 	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $parent;
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -65,8 +73,10 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Set addToDocument variable
+	 * Set addToDocument variable.
+	 *
 	 * @param bool $addToDocument
+	 *
 	 * @return $this
 	 */
 	public function setAddToDocument(bool $addToDocument = true)
@@ -76,7 +86,21 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object id
+	 * Set id.
+	 *
+	 * @param $id
+	 *
+	 * @return $this
+	 */
+	public function setId($id)
+	{
+		$this->id = $id;
+		return $this;
+	}
+
+	/**
+	 * Get object id.
+	 *
 	 * @return int
 	 */
 	public function getId(): int
@@ -85,7 +109,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object name
+	 * Get object name.
+	 *
 	 * @return string
 	 */
 	public function getName(): string
@@ -94,7 +119,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get raw id (that will exists in pdf file)
+	 * Get raw id (that will exists in pdf file).
+	 *
 	 * @return string
 	 */
 	public function getRawId(): string
@@ -103,7 +129,8 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get object basic type (integer,string, boolean, dictionary etc..)
+	 * Get object basic type (integer,string, boolean, dictionary etc..).
+	 *
 	 * @return string
 	 */
 	public function getBasicType(): string
@@ -112,8 +139,10 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get children elements (pages etc)
-	 * @param bool $all - do we want all children from tree (flat structure)?
+	 * Get children elements (pages etc).
+	 *
+	 * @param bool  $all     - do we want all children from tree (flat structure)?
+	 * @param array $current
 	 */
 	public function getChildren(bool $all = false, array &$current = []): array
 	{
@@ -128,33 +157,65 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Add child object
-	 * @param \YetiForcePDF\Objects\PdfObject $child
-	 * @return \YetiForcePDF\Objects\PdfObject
+	 * Add child object.
+	 *
+	 * @param PdfObject $child
+	 * @param PdfObject $after - add after this element
+	 *
 	 * @throws \InvalidArgumentException
+	 *
+	 * @return PdfObject
 	 */
-	public function addChild(\YetiForcePDF\Objects\PdfObject $child): \YetiForcePDF\Objects\PdfObject
+	public function addChild(self $child, self $after = null): self
 	{
-		if (in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
+		$afterIndex = \count($this->children);
+		if ($after) {
+			foreach ($this->children as $afterIndex => $childObject) {
+				if ($after === $childObject) {
+					break;
+				}
+			}
+			++$afterIndex;
+		}
+		if (\in_array($this->getBasicType(), ['Dictionary', 'Array'])) {
 			$child->setParent($this);
-			return $this->children[] = $child;
+			if (!$after) {
+				return $this->children[] = $child;
+			}
+			$merge = array_splice($this->children, $afterIndex);
+			$this->children[] = $child;
+			$this->children = array_merge($this->children, $merge);
+			return $child;
 		}
 		throw new \InvalidArgumentException("Object of basic type '{$this->basicType}' cannot have a child.");
 	}
 
 	/**
-	 * Set parent object
+	 * Get parent.
+	 *
+	 * @return mixed
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * Set parent object.
+	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $parent
+	 *
 	 * @return \YetiForcePDF\Objects\PdfObject
 	 */
-	public function setParent(\YetiForcePDF\Objects\PdfObject $parent): \YetiForcePDF\Objects\PdfObject
+	public function setParent(self $parent): self
 	{
 		$this->parent = $parent;
 		return $this;
 	}
 
 	/**
-	 * Get object reference string
+	 * Get object reference string.
+	 *
 	 * @return string
 	 */
 	public function getReference(): string
@@ -163,12 +224,12 @@ class PdfObject extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Render current object
+	 * Layout current object.
+	 *
 	 * @return string
 	 */
 	public function render(): string
 	{
 		return '';
 	}
-
 }

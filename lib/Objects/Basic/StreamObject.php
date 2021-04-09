@@ -1,40 +1,51 @@
 <?php
+
 declare(strict_types=1);
 /**
- * StreamObject class
+ * StreamObject class.
  *
  * @package   YetiForcePDF\Objects\Basic
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Objects\Basic;
 
 /**
- * Class StreamObject
+ * Class StreamObject.
  */
 class StreamObject extends \YetiForcePDF\Objects\PdfObject
 {
 	/**
-	 * Basic object type (integer, string, boolean, dictionary etc..)
+	 * Basic object type (integer, string, boolean, dictionary etc..).
+	 *
 	 * @var string
 	 */
 	protected $basicType = 'Stream';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Stream';
 	/**
-	 * Content of the stream as string instructions
+	 * Content of the stream as string instructions.
+	 *
 	 * @var string[]
 	 */
 	protected $content = [];
+	/**
+	 * Filter used to decode stream.
+	 *
+	 * @var string|null
+	 */
+	protected $filter;
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
@@ -45,13 +56,32 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	}
 
 	/**
-	 * Add raw content instructions as string
+	 * Add raw content instructions as string.
+	 *
 	 * @param string $content
+	 * @param string $filter
+	 *
 	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function addRawContent(string $content): \YetiForcePDF\Objects\Basic\StreamObject
+	public function addRawContent(string $content, string $filter = ''): self
 	{
 		$this->content[] = $content;
+		if ($filter) {
+			$this->filter = $filter;
+		}
+		return $this;
+	}
+
+	/**
+	 * Set filter.
+	 *
+	 * @param string $filter
+	 *
+	 * @return $this
+	 */
+	public function setFilter(string $filter)
+	{
+		$this->filter = $filter;
 		return $this;
 	}
 
@@ -60,16 +90,23 @@ class StreamObject extends \YetiForcePDF\Objects\PdfObject
 	 */
 	public function render(): string
 	{
-		$stream = implode("\n", $this->content);
+		$stream = trim(implode("\n", $this->content), "\n");
+		$sizeBefore = mb_strlen($stream, '8bit');
+		if ('FlateDecode' === $this->filter) {
+			$stream = gzcompress($stream);
+		}
+		$filter = $this->filter ? '  /Filter /' . $this->filter : '';
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			"<<",
-			"  /Length " . \strlen($stream),
-			">>",
-			"stream",
+			'<<',
+			'  /Length ' . mb_strlen($stream, '8bit'),
+			'  /Lenght1 ' . $sizeBefore,
+			$filter,
+			'>>',
+			'stream',
 			$stream,
-			"endstream",
-			"endobj"
+			'endstream',
+			'endobj'
 		]);
 	}
 }

@@ -1,35 +1,39 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Resource class
+ * Resource class.
  *
  * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Objects;
 
 /**
- * Class Resource
+ * Class Resource.
  */
 class Resource extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
 	/**
-	 * Resource type
+	 * Resource type.
+	 *
 	 * @var string
 	 */
 	protected $resourceType = 'Resource';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Resource';
 
 	/**
-	 * Get resource type
+	 * Get resource type.
+	 *
 	 * @return string
 	 */
 	public function getResourceType(): string

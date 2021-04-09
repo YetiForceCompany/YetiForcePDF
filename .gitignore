@@ -1,2 +1,5 @@
 .idea/
 vendor/
+.vscode/
+.sonarlint/
+.history/

@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Trailer class
+ * Trailer class.
  *
  * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Objects;
 
 /**
- * Class Font
+ * Class Font.
  */
 class Trailer extends \YetiForcePDF\Objects\PdfObject
 {
@@ -22,23 +23,45 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $basicType = 'Trailer';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Trailer';
 	/**
-	 * Root element
+	 * Root element.
+	 *
 	 * @var \YetiForcePDF\Objects\PdfObject
 	 */
 	protected $root;
+	/**
+	 * Number of objects in the document.
+	 *
+	 * @var int
+	 */
+	protected $size = 0;
 
 	/**
-	 * Set root object
+	 * Set root object.
+	 *
 	 * @param \YetiForcePDF\Objects\PdfObject $root
 	 */
-	public function setRootObject(\YetiForcePDF\Objects\PdfObject $root)
+	public function setRootObject(PdfObject $root): self
 	{
 		$this->root = $root;
+		return $this;
+	}
+
+	/**
+	 * Set document size - number of objects.
+	 *
+	 * @param int $size
+	 *
+	 * @return \YetiForcePDF\Objects\Trailer
+	 */
+	public function setSize(int $size): self
+	{
+		$this->size = $size;
 		return $this;
 	}
 
@@ -47,6 +70,13 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 	 */
 	public function render(): string
 	{
-		return "trailer\n<< /Root " . $this->root->getReference() . " >>\n";
+		return implode("\n", [
+			'trailer',
+			'<<',
+			'  /Root ' . $this->root->getReference(),
+			'  /Size ' . $this->size,
+			'  /Info ' . $this->document->getMeta()->getReference(),
+			'>>'
+		]);
 	}
 }

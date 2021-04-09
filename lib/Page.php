@@ -1,59 +1,137 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Page class
+ * Page class.
  *
  * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF;
 
+use YetiForcePDF\Layout\Box;
+use YetiForcePDF\Layout\Coordinates\Coordinates;
+use YetiForcePDF\Layout\Dimensions\BoxDimensions;
+use YetiForcePDF\Layout\Dimensions\Dimensions;
+use YetiForcePDF\Layout\FooterBox;
+use YetiForcePDF\Layout\HeaderBox;
+use YetiForcePDF\Layout\TableFooterGroupBox;
+use YetiForcePDF\Layout\TableHeaderGroupBox;
+use YetiForcePDF\Layout\TableWrapperBox;
+use YetiForcePDF\Layout\TextBox;
+use YetiForcePDF\Layout\WatermarkBox;
+use YetiForcePDF\Objects\Basic\StreamObject;
+
 /**
- * Class Page
+ * Class Page.
  */
 class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 {
+	/**
+	 * @var int
+	 */
+	protected $group = 0;
 	/**
 	 * {@inheritdoc}
 	 */
 	protected $dictionaryType = 'Page';
 	/**
-	 * Object name
+	 * Object name.
+	 *
 	 * @var string
 	 */
 	protected $name = 'Page';
+
 	/**
-	 * Page resources
+	 * @var int page number
+	 */
+	protected $pageNumber = 1;
+	/**
+	 * @var int page count
+	 */
+	protected $pageCount = 1;
+	/**
+	 * Page resources.
+	 *
 	 * @var array
 	 */
 	protected $resources = [];
 	/**
-	 * Page content streams
-	 * @var \YetiForcePDF\Objects\Basic\StreamObject
+	 * Page content streams.
+	 *
+	 * @var StreamObject
 	 */
 	protected $contentStream;
 	/**
-	 * Portrait page orientation
+	 * Portrait page orientation.
 	 */
 	const ORIENTATION_PORTRAIT = 'P';
 	/**
-	 * Landscape page orientation
+	 * Landscape page orientation.
 	 */
 	const ORIENTATION_LANDSCAPE = 'L';
 	/**
-	 * Current page format
-	 * @var string $format
+	 * After page breaking box was cut below.
 	 */
-	protected $format = 'A4';
+	const CUT_BELOW = 1;
 	/**
-	 * Current page orientation
-	 * @var string $orientation
+	 * After page breaking box was cut above.
 	 */
-	protected $orientation = 'P';
+	const CUT_ABOVE = 2;
+	/**
+	 * Current page format.
+	 *
+	 * @var string
+	 */
+	protected $format;
+	/**
+	 * Current page orientation.
+	 *
+	 * @var string
+	 */
+	protected $orientation;
+	/**
+	 * User unit - to calculate page dpi.
+	 *
+	 * @var float
+	 */
+	protected $userUnit = 1.0;
+	/**
+	 * Page margins.
+	 *
+	 * @var array
+	 */
+	protected $margins;
+	/**
+	 * Page dimensions.
+	 *
+	 * @var BoxDimensions
+	 */
+	protected $dimensions;
+	/**
+	 * Page outer dimensions.
+	 *
+	 * @var BoxDimensions
+	 */
+	protected $outerDimensions;
+	/**
+	 * @var Coordinates
+	 */
+	protected $coordinates;
+	/**
+	 * Don't group this 'group' names.
+	 *
+	 * @var string[]
+	 */
+	protected $doNotGroup = [];
+	/**
+	 * @var Box main box with content
+	 */
+	protected $box;
 
 	public static $pageFormats = [
 		// ISO 216 A Series + 2 SIS 014711 extensions
@@ -407,7 +485,8 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	];
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this|\YetiForcePDF\Objects\PdfObject
 	 */
 	public function init()
@@ -416,59 +495,801 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		$this->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
 			->setDocument($this->document)
 			->init();
+		if (!$this->margins) {
+			$this->margins = $this->document->getDefaultMargins();
+		}
+		if (!$this->format) {
+			$this->setFormat($this->document->getDefaultFormat());
+		}
+		if (!$this->orientation) {
+			$this->setOrientation($this->document->getDefaultOrientation());
+		}
 		$this->document->getPagesObject()->addChild($this);
+		$this->synchronizeFonts();
 		return $this;
 	}
 
 	/**
-	 * Set page format
-	 * @param string $format
-	 * @return \YetiForcePDF\Page
+	 * Set page group.
+	 *
+	 * @param int $group
+	 *
+	 * @return $this
 	 */
-	public function setFormat(string $format): \YetiForcePDF\Page
+	public function setGroup(int $group)
+	{
+		$this->group = $group;
+		return $this;
+	}
+
+	/**
+	 * Get page group.
+	 *
+	 * @return int
+	 */
+	public function getGroup()
+	{
+		return $this->group;
+	}
+
+	/**
+	 * Set page format.
+	 *
+	 * @param string $format
+	 *
+	 * @return $this
+	 */
+	public function setFormat(string $format)
 	{
 		$this->format = $format;
+		$dimensions = self::$pageFormats[$this->format];
+		if ('L' === $this->orientation) {
+			$dimensions = array_reverse($dimensions);
+		}
+		$this->dimensions = (new Dimensions())
+			->setDocument($this->document)
+			->init();
+		$this->dimensions
+			->setWidth(Math::sub((string) $dimensions[0], Math::add((string) $this->margins['left'], (string) $this->margins['right'])))
+			->setHeight(Math::sub((string) $dimensions[1], Math::add((string) $this->margins['top'], (string) $this->margins['bottom'])));
+		$this->outerDimensions = (new Dimensions())
+			->setDocument($this->document)
+			->init();
+		$this->outerDimensions->setWidth((string) $dimensions[0])->setHeight((string) $dimensions[1]);
+		$this->coordinates = (new Coordinates())
+			->setDocument($this->document)
+			->init();
+		$this->coordinates->setX((string) $this->margins['left'])->setY((string) $this->margins['top'])->init();
 		return $this;
 	}
 
 	/**
-	 * Set page orientation
+	 * Get format.
+	 *
+	 * @return string
+	 */
+	public function getFormat()
+	{
+		return $this->format;
+	}
+
+	/**
+	 * Set page orientation.
+	 *
 	 * @param string $orientation
+	 *
 	 * @return \YetiForcePDF\Page
 	 */
-	public function setOrientation(string $orientation): \YetiForcePDF\Page
+	public function setOrientation(string $orientation): self
 	{
 		$this->orientation = $orientation;
 		return $this;
 	}
 
 	/**
-	 * Add page resource
+	 * Get orientation.
+	 *
+	 * @return string
+	 */
+	public function getOrientation()
+	{
+		return $this->orientation;
+	}
+
+	/**
+	 * Set page number.
+	 *
+	 * @param int $number
+	 *
+	 * @return $this
+	 */
+	public function setPageNumber(int $number)
+	{
+		$this->pageNumber = $number;
+		return $this;
+	}
+
+	/**
+	 * Get page number.
+	 *
+	 * @return int
+	 */
+	public function getPageNumber()
+	{
+		return $this->pageNumber;
+	}
+
+	/**
+	 * Set page count.
+	 *
+	 * @param int $pageCount
+	 *
+	 * @return $this
+	 */
+	public function setPageCount(int $pageCount)
+	{
+		$this->pageCount = $pageCount;
+		return $this;
+	}
+
+	/**
+	 * Get page count.
+	 *
+	 * @return mixed
+	 */
+	public function getPageCount()
+	{
+		return $this->pageCount;
+	}
+
+	/**
+	 * Get page margins.
+	 *
+	 * @return array
+	 */
+	public function getMargins(): array
+	{
+		return $this->margins;
+	}
+
+	/**
+	 * Set page margins.
+	 *
+	 * @param float $left
+	 * @param float $top
+	 * @param float $right
+	 * @param float $bottom
+	 *
+	 * @return $this
+	 */
+	public function setMargins(float $left, float $top, float $right, float $bottom)
+	{
+		$this->margins = [
+			'left' => $left,
+			'top' => $top,
+			'right' => $right,
+			'bottom' => $bottom,
+			'horizontal' => $left + $right,
+			'vertical' => $top + $bottom
+		];
+		$this->setFormat($this->format);
+		return $this;
+	}
+
+	/**
+	 * Get page coordinates - content area basing on margins.
+	 *
+	 * @return \YetiForcePDF\Layout\Coordinates\Coordinates
+	 */
+	public function getCoordinates()
+	{
+		return $this->coordinates;
+	}
+
+	/**
+	 * Set main box for the page.
+	 *
+	 * @param Box $box
+	 *
+	 * @return $this
+	 */
+	public function setBox(Box $box)
+	{
+		$this->box = $box;
+		return $this;
+	}
+
+	/**
+	 * Get main box for the page.
+	 *
+	 * @return Box
+	 */
+	public function getBox()
+	{
+		return $this->box;
+	}
+
+	/**
+	 * Set user unit (scale of the DPI $userUnit * 72).
+	 *
+	 * @param float $userUnit
+	 *
+	 * @return \YetiForcePDF\Page
+	 */
+	public function setUserUnit(float $userUnit): self
+	{
+		$this->userUnit = $userUnit;
+		return $this;
+	}
+
+	/**
+	 * Add page resource.
+	 *
 	 * @param string                          $groupName
 	 * @param string                          $resourceName
 	 * @param \YetiForcePDF\Objects\PdfObject $resource
+	 *
 	 * @return \YetiForcePDF\Page
 	 */
-	public function addResource(string $groupName, string $resourceName, \YetiForcePDF\Objects\PdfObject $resource): \YetiForcePDF\Page
+	public function addResource(string $groupName, string $resourceName, Objects\PdfObject $resource): self
 	{
 		if (!isset($this->resources[$groupName])) {
 			$this->resources[$groupName] = [];
 		}
 		$this->resources[$groupName][$resourceName] = $resource;
+		if (!$resourceName) {
+			$this->doNotGroup[] = $groupName;
+		}
 		return $this;
 	}
 
 	/**
-	 * Get page content stream
+	 * Get resource.
+	 *
+	 * @param string $groupName
+	 * @param string $resourceName
+	 *
+	 * @return \YetiForcePDF\Objects\PdfObject|null
+	 */
+	public function getResource(string $groupName, string $resourceName)
+	{
+		if (!empty($this->resources[$groupName][$resourceName])) {
+			return $this->resources[$groupName][$resourceName];
+		}
+		return null;
+	}
+
+	/**
+	 * Synchronize fonts with document fonts.
+	 */
+	public function synchronizeFonts()
+	{
+		// add all existing fonts
+		foreach ($this->document->getAllFontInstances() as $fontInstance) {
+			$fontNumber = $fontInstance->getNumber();
+			if (!$this->getResource('Font', $fontNumber)) {
+				$this->addResource('Font', $fontNumber, $fontInstance->getType0Font());
+			}
+		}
+	}
+
+	/**
+	 * Get page content stream.
+	 *
 	 * @return \YetiForcePDF\Objects\Basic\StreamObject
 	 */
-	public function getContentStream(): \YetiForcePDF\Objects\Basic\StreamObject
+	public function getContentStream(): StreamObject
 	{
 		return $this->contentStream;
 	}
 
 	/**
-	 * Render page resources
+	 * Get page dimensions.
+	 *
+	 * @return \YetiForcePDF\Layout\Dimensions\Dimensions
+	 */
+	public function getDimensions(): Dimensions
+	{
+		return $this->dimensions;
+	}
+
+	/**
+	 * Get page dimensions.
+	 *
+	 * @return \YetiForcePDF\Layout\Dimensions\Dimensions
+	 */
+	public function getOuterDimensions(): Dimensions
+	{
+		return $this->outerDimensions;
+	}
+
+	/**
+	 * Layout header.
+	 *
+	 * @param HeaderBox $header
+	 *
+	 * @return $this
+	 */
+	protected function layoutHeader(HeaderBox $header)
+	{
+		$header = $header->cloneWithChildren();
+		$box = $this->getBox();
+		if (!$box->hasChildren()) {
+			return $this;
+		}
+		$box->insertBefore($header, $box->getFirstChild());
+		$outerWidth = $this->getOuterDimensions()->getWidth();
+		$outerHeight = $this->getOuterDimensions()->getHeight();
+		$header->getDimensions()->resetWidth()->resetHeight();
+		$this->getDimensions()->setWidth($outerWidth);
+		$this->getBox()->getDimensions()->setWidth($outerWidth);
+		$this->getDimensions()->setHeight($outerHeight);
+		$this->getBox()->getDimensions()->setWidth($outerHeight);
+		$header->getDimensions()->setWidth($outerWidth);
+		$header->setDisplayable(true);
+		$header->layout();
+		return $this;
+	}
+
+	/**
+	 * Layout footer.
+	 *
+	 * @param FooterBox $footer
+	 *
+	 * @return $this
+	 */
+	protected function layoutFooter(FooterBox $footer)
+	{
+		$footer = $footer->cloneWithChildren();
+		$box = $this->getBox();
+		if (!$box->hasChildren()) {
+			return $this;
+		}
+		$box->insertBefore($footer, $box->getFirstChild());
+		$outerWidth = $this->getOuterDimensions()->getWidth();
+		$outerHeight = $this->getOuterDimensions()->getHeight();
+		$footer->getDimensions()->resetWidth()->resetHeight();
+		$this->getDimensions()->setWidth($outerWidth);
+		$this->getBox()->getDimensions()->setWidth($outerWidth);
+		$this->getDimensions()->setHeight($outerHeight);
+		$this->getBox()->getDimensions()->setWidth($outerHeight);
+		$footer->getDimensions()->setWidth($outerWidth);
+		$footer->setDisplayable(true);
+		$footer->layout();
+		return $this;
+	}
+
+	/**
+	 * Layout watermark.
+	 *
+	 * @param WatermarkBox $watermark
+	 *
+	 * @return $this
+	 */
+	protected function layoutWatermark(WatermarkBox $watermark)
+	{
+		$watermark = $watermark->cloneWithChildren();
+		$box = $this->getBox();
+		if (!$box->hasChildren()) {
+			return $this;
+		}
+		$box->insertBefore($watermark, $box->getFirstChild());
+		$outerWidth = $this->getOuterDimensions()->getWidth();
+		$outerHeight = $this->getOuterDimensions()->getHeight();
+		$watermark->getDimensions()->resetWidth()->resetHeight();
+		$this->getDimensions()->setWidth($outerWidth);
+		$this->getBox()->getDimensions()->setWidth($outerWidth);
+		$this->getDimensions()->setHeight($outerHeight);
+		$this->getBox()->getDimensions()->setWidth($outerHeight);
+		$watermark->getDimensions()->setWidth($outerWidth);
+		$watermark->setDisplayable(true);
+		$watermark->layout();
+		return $this;
+	}
+
+	/**
+	 * Set up absolute positioned boxes like header,footer, watermark.
+	 *
+	 * @return $this
+	 */
+	public function setUpAbsoluteBoxes()
+	{
+		$this->document->setCurrentPage($this);
+		$this->getBox()->getOffset()->setLeft('0');
+		$this->getBox()->getOffset()->setTop('0');
+		$this->getBox()->getCoordinates()->setX('0');
+		$this->getBox()->getCoordinates()->setY('0');
+		$this->setMargins(0, 0, 0, 0);
+		$box = $this->getBox();
+		$headers = $box->getBoxesByType('HeaderBox');
+		if (!empty($headers)) {
+			$header = $headers[0];
+			$headerClone = $header->getParent()->removeChild($header)->cloneWithChildren();
+			$header->clearChildren();
+			$this->document->setHeader($headerClone);
+			$this->layoutHeader($headerClone);
+		} elseif ($this->document->getHeader()) {
+			$this->layoutHeader($this->document->getHeader());
+		}
+		$footers = $box->getBoxesByType('FooterBox');
+		if (!empty($footers)) {
+			$footer = $footers[0];
+			$footerClone = $footer->getParent()->removeChild($footer)->cloneWithChildren();
+			$footer->clearChildren();
+			$this->document->setFooter($footerClone);
+			$this->layoutFooter($footerClone);
+		} elseif ($this->document->getFooter()) {
+			$this->layoutFooter($this->document->getFooter());
+		}
+		$watermarks = $box->getBoxesByType('WatermarkBox');
+		if (!empty($watermarks)) {
+			$watermark = $watermarks[0];
+			$watermarkClone = $watermark->getParent()->removeChild($watermark)->cloneWithChildren();
+			$watermark->clearChildren();
+			$this->document->setWatermark($watermarkClone);
+			$this->layoutWatermark($watermarkClone);
+		} elseif ($this->document->getWatermark()) {
+			$this->layoutWatermark($this->document->getWatermark());
+		}
+		return $this;
+	}
+
+	/**
+	 * Get boxes that are laid out after specified y position of the current page.
+	 *
+	 * @param string $yPos
+	 *
+	 * @return Box[]
+	 */
+	public function getRootChildsAfterY(string $yPos)
+	{
+		$boxes = [];
+		$box = $this->getBox();
+		$endY = $box->getCoordinates()->getEndY();
+		if (Math::comp($endY, $yPos) <= 0) {
+			return $boxes;
+		}
+		foreach ($box->getChildren() as $childBox) {
+			if (Math::comp($childBox->getCoordinates()->getEndY(), $yPos) > 0) {
+				$boxes[] = $childBox;
+			}
+		}
+		return $boxes;
+	}
+
+	/**
+	 * Cut box above specified position.
+	 *
+	 * @param Box    $child
+	 * @param string $yPos
+	 *
+	 * @return $this
+	 */
+	public function cutAbove(Box $child, string $yPos)
+	{
+		$height = Math::sub($child->getCoordinates()->getEndY(), $yPos);
+		$child->getDimensions()->setHeight($height);
+		$child->getStyle()
+			->setRule('border-top-width', '0')
+			->setRule('padding-top', '0')
+			->setRule('margin-top', '0');
+		$child->setCut(static::CUT_ABOVE);
+		return $this;
+	}
+
+	/**
+	 * Cut box below specified position.
+	 *
+	 * @param Box    $child
+	 * @param string $yPos
+	 *
+	 * @return $this
+	 */
+	public function cutBelow(Box $child, string $yPos)
+	{
+		if ($child instanceof TextBox) {
+			$child->setRenderable(false);
+			return $this;
+		}
+		$height = Math::sub($yPos, $child->getCoordinates()->getY());
+		$child->getDimensions()->setHeight($height);
+		$child->getStyle()
+			->setRule('border-bottom-width', '0')
+			->setRule('margin-bottom', '0')
+			->setRule('padding-bottom', '0');
+		$child->setCut(static::CUT_BELOW);
+		return $this;
+	}
+
+	/**
+	 * Cut box.
+	 *
+	 * @param Box    $box
+	 * @param string $yPos
+	 * @param Box    $cloned
+	 *
+	 * @return Box
+	 */
+	public function cutBox(Box $box, string $yPos, Box $cloned)
+	{
+		foreach ($box->getChildren() as $child) {
+			if (!$child->isForMeasurement() || !$child->isRenderable()) {
+				continue;
+			}
+			$childCoords = $child->getCoordinates();
+			if (Math::comp($childCoords->getEndY(), $yPos) >= 0) {
+				$childBoxes = $this->cloneAndDivideChildrenAfterY($yPos, [$child]);
+				foreach ($childBoxes as $childBox) {
+					$cloned->appendChild($childBox);
+				}
+			}
+			if (Math::comp($childCoords->getY(), $yPos) >= 0) {
+				$child->setRenderable(false)->setForMeasurement(false);
+			}
+		}
+		if (Math::comp($box->getCoordinates()->getY(), $yPos) < 0 && Math::comp($box->getCoordinates()->getEndY(), $yPos) > 0) {
+			$this->cutBelow($box, $yPos);
+			$this->cutAbove($cloned, $yPos);
+		} elseif (Math::comp($box->getCoordinates()->getY(), $yPos) >= 0) {
+			$box->setRenderable(false)->setForMeasurement(false);
+		}
+		return $cloned;
+	}
+
+	/**
+	 * Group boxes by parent.
+	 *
+	 * @param Box[]|null $boxes
+	 * @param string     $yPos
+	 *
+	 * @return Box[]|null cloned boxes
+	 */
+	public function cloneAndDivideChildrenAfterY(string $yPos, array $boxes = null)
+	{
+		if (null === $boxes) {
+			$boxes = [];
+			foreach ($this->getBox()->getChildren() as $child) {
+				if (Math::comp($child->getCoordinates()->getEndY(), $yPos) >= 0) {
+					$boxes[] = $child;
+				}
+			}
+		}
+		if (empty($boxes)) {
+			return null;
+		}
+		$clonedBoxes = [];
+		foreach ($boxes as $box) {
+			$cloned = $box->clone();
+			$cloned->clearChildren();
+			$boxCoords = $box->getCoordinates();
+			if ($box instanceof TableWrapperBox && Math::comp($boxCoords->getY(), $yPos) <= 0 && Math::comp($boxCoords->getEndY(), $yPos) > 0) {
+				$cloned = $this->divideTable($box, $yPos, $cloned);
+			} else {
+				$cloned = $this->cutBox($box, $yPos, $cloned);
+			}
+			$clonedBoxes[] = $cloned;
+		}
+		return $clonedBoxes;
+	}
+
+	/**
+	 * Treat table like div? - just cut.
+	 *
+	 * @param TableWrapperBox $tableWrapperBox
+	 * @param string          $yPos
+	 *
+	 * @return bool
+	 */
+	public function treatTableLikeDiv(TableWrapperBox $tableWrapperBox, string $yPos)
+	{
+		$cells = $tableWrapperBox->getBoxesByType('TableCellBox');
+		foreach ($cells as $cell) {
+			if (Math::comp($cell->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Divide overflowed table.
+	 *
+	 * @param Box    $tableChild
+	 * @param string $yPos
+	 * @param Box    $cloned
+	 *
+	 * @return TableWrapperBox
+	 */
+	protected function divideTable(Box $tableChild, string $yPos, Box $cloned)
+	{
+		$tableWrapperBox = $tableChild->getClosestByType('TableWrapperBox');
+		if ($this->treatTableLikeDiv($tableWrapperBox, $yPos)) {
+			return $this->cutBox($tableWrapperBox, $yPos, $cloned);
+		}
+		$pageEnd = Math::add($this->getDimensions()->getHeight(), (string) $this->margins['top']);
+		if (Math::comp($tableWrapperBox->getCoordinates()->getY(), $pageEnd) >= 0) {
+			// if table is below page do nothing - it will be moved to the next page and then again checked
+			return $tableWrapperBox;
+		}
+		$newTableWrapperBox = $tableWrapperBox->clone();
+		$newTableWrapperBox->getStyle()->setBox($newTableWrapperBox);
+		$newTableWrapperBox->clearChildren();
+		$tableBox = $tableWrapperBox->getFirstChild();
+		$newTableBox = $tableBox->clone();
+		$newTableBox->getStyle()->setBox($newTableBox);
+		$newTableBox->clearChildren();
+		$newTableWrapperBox->appendChild($newTableBox);
+		$clonedFooters = $tableWrapperBox->getBoxesByType('TableFooterGroupBox', 'TableWrapperBox');
+		if (!empty($clonedFooters)) {
+			$clonedFooter = $clonedFooters[0]->getParent()->removeChild($clonedFooters[0])->cloneWithChildren();
+		}
+		$headers = $tableWrapperBox->getBoxesByType('TableHeaderGroupBox', 'TableWrapperBox');
+		if (!empty($headers)) {
+			$newTableBox->appendChild($headers[0]->cloneWithChildren());
+		}
+		// clone row groups and rows
+		foreach ($tableWrapperBox->getFirstChild()->getChildren() as $tableRowGroup) {
+			if (Math::comp($tableRowGroup->getCoordinates()->getEndY(), $pageEnd) < 0) {
+				continue;
+			}
+			$moveRowGroup = $tableRowGroup->clone();
+			$moveRowGroup->clearChildren();
+			foreach ($tableRowGroup->getChildren() as $rowIndex => $row) {
+				if (!$tableRowGroup instanceof TableFooterGroupBox && !$tableRowGroup instanceof TableHeaderGroupBox) {
+					$moveRow = false;
+					foreach ($row->getChildren() as $column) {
+						if (Math::comp($column->getCoordinates()->getEndY(), $pageEnd) >= 0) {
+							$moveRow = true;
+							break;
+						}
+					}
+					if ($moveRow) {
+						if ($row->getRowSpanUp() > 0) {
+							$move = [];
+							// copy spanned rows too
+							for ($i = $row->getRowSpanUp(); $i >= 0; --$i) {
+								$spannedRowIndex = $rowIndex - $i;
+								$move[] = $tableRowGroup->getChildren()[$spannedRowIndex];
+							}
+							// copy all next rows
+							$rows = $tableRowGroup->getChildren();
+							for ($i = $rowIndex, $len = \count($rows); $i < $len; ++$i) {
+								$nextRow = $rows[$i];
+								$move[] = $nextRow;
+							}
+							foreach ($move as $mr) {
+								$moveRowGroup->appendChild($mr->getParent()->removeChild($mr));
+							}
+							break;
+						}
+						$moveRowGroup->appendChild($row->getParent()->removeChild($row));
+					}
+				}
+			}
+			$newTableBox->appendChild($moveRowGroup);
+		}
+		if (isset($clonedFooter)) {
+			$newTableBox->appendChild($clonedFooter);
+		}
+		//remove empty rows
+		$tableBox->removeEmptyRows();
+		// remove original table if it was moved with all the content
+		$removeSource = !$tableBox->hasChildren() || !$tableBox->containContent();
+		$removeSource = $removeSource || ($tableBox->getFirstChild() instanceof TableHeaderGroupBox && 1 === \count($tableBox->getChildren()));
+		if ($removeSource) {
+			$tableWrapperBox->setDisplayable(false)->setRenderable(false)->setForMeasurement(false);
+		}
+		return $newTableWrapperBox;
+	}
+
+	/**
+	 * Clone current page.
+	 *
+	 * @throws \InvalidArgumentException
+	 *
+	 * @return Page
+	 */
+	public function cloneCurrentPage()
+	{
+		$newPage = clone $this;
+		$newPage->setId($this->document->getActualId());
+		$newPage->setPageNumber($this->getPageNumber() + 1);
+		$newPage->contentStream = (new \YetiForcePDF\Objects\Basic\StreamObject())
+			->setDocument($this->document)
+			->init();
+		$newPage->document->getPagesObject()->addChild($newPage, $this);
+		$this->document->addPage($this->format, $this->orientation, $newPage, $this);
+		$this->document->addObject($newPage, $this);
+		return $newPage;
+	}
+
+	/**
+	 * Break page after specified box.
+	 *
+	 * @param Box $box
+	 *
+	 * @return $this
+	 */
+	public function breakAfter(Box $box)
+	{
+		$box = $box->getFirstRootChild();
+		if ($box->getParent()->getLastChild() === $box) {
+			return $this;
+		}
+		$contentBoxes = [];
+		$break = false;
+		foreach ($box->getParent()->getChildren() as $child) {
+			if ($child === $box) {
+				$break = true;
+			}
+			if ($break && $child !== $box) {
+				$contentBoxes[] = $child;
+			}
+		}
+		$haveContent = false;
+		foreach ($contentBoxes as $contentBox) {
+			if ($contentBox->containContent()) {
+				$haveContent = true;
+				break;
+			}
+		}
+		if (!$haveContent) {
+			return $this;
+		}
+		$newPage = $this->cloneCurrentPage();
+		$newBox = $newPage->getBox()->clone();
+		$newBox->clearChildren();
+		$newPage->setBox($newBox);
+		$break = false;
+		foreach ($box->getParent()->getChildren() as $child) {
+			if ($child === $box) {
+				$break = true;
+			}
+			if ($break && $child !== $box) {
+				$newBox->appendChild($child->getParent()->removeChild($child));
+			}
+		}
+		$newBox->layout(true);
+		$this->document->setCurrentPage($newPage);
+		unset($contentBoxes);
+		return $this;
+	}
+
+	/**
+	 * Break overflow of the current page.
+	 *
+	 * @param int $level Is used to stop infinite loop if something goes wrong
+	 *
+	 * @return $this
+	 */
+	public function breakOverflow(int $level = 0)
+	{
+		$atYPos = Math::add($this->getDimensions()->getHeight(), (string) $this->margins['top']);
+		$clonedBoxes = $this->cloneAndDivideChildrenAfterY($atYPos);
+		if (empty($clonedBoxes)) {
+			return $this;
+		}
+		$newPage = $this->cloneCurrentPage();
+		$newBox = $newPage->getBox();
+		$newBox->clearChildren();
+		foreach ($clonedBoxes as $clonedBox) {
+			$newBox->appendChild($clonedBox->getParent()->removeChild($clonedBox));
+		}
+		$this->getBox()->getStyle()->fixDomTree();
+		$this->getBox()->measureHeight(true)->measureOffset(true)->alignText()->measurePosition(true);
+		$newBox->layout(true);
+		$newBox->getStyle()->fixDomTree();
+		$this->document->setCurrentPage($newPage);
+		if (Math::comp($newBox->getDimensions()->getHeight(), $this->getDimensions()->getHeight()) > 0 && $level < 1024) {
+			$newPage->breakOverflow(++$level);
+		}
+		unset($clonedBoxes);
+		return $this;
+	}
+
+	/**
+	 * Layout page resources.
+	 *
 	 * @return string
 	 */
 	public function renderResources(): string
@@ -477,32 +1298,38 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Resources <<',
 		];
 		foreach ($this->resources as $groupName => $resourceGroup) {
-			$rendered[] = "    /$groupName <<";
-			foreach ($resourceGroup as $resourceName => $resourceObject) {
-				$rendered[] = "      /$resourceName " . $resourceObject->getReference();
+			if (!\in_array($groupName, $this->doNotGroup)) {
+				$rendered[] = "    /$groupName <<";
+				foreach ($resourceGroup as $resourceName => $resourceObject) {
+					$rendered[] = "      /$resourceName " . $resourceObject->getReference();
+				}
+				$rendered[] = '    >>';
+			} else {
+				$str = "    /$groupName ";
+				foreach ($resourceGroup as $resourceName => $resourceObject) {
+					$str .= $resourceObject->getReference();
+				}
+				$rendered[] = $str;
 			}
-			$rendered[] = "    >>";
 		}
 		$rendered[] = '  >>';
 		return implode("\n", $rendered);
 	}
-
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function render(): string
 	{
-		$dimensions = self::$pageFormats[$this->format];
-		if ($this->orientation === 'L') {
-			$dimensions = array_reverse($dimensions);
-		}
+		$dimensions = $this->getOuterDimensions();
 		return implode("\n", [
-			$this->getRawId() . " obj",
+			$this->getRawId() . ' obj',
 			'<<',
 			'  /Type /Page',
 			'  /Parent ' . $this->parent->getReference(),
-			'  /MediaBox [0 0 ' . $dimensions[0] . ' ' . $dimensions[1] . ']',
+			'  /MediaBox [0 0 ' . $dimensions->getWidth() . ' ' . $dimensions->getHeight() . ']',
+			'  /BleedBox [' . $this->margins['left'] . ' ' . $this->margins['top'] . ' ' . $dimensions->getWidth() . ' ' . $dimensions->getHeight() . ']',
+			'  /UserUnit ' . $this->userUnit,
 			'  /Rotate 0',
 			$this->renderResources(),
 			'  /Contents ' . $this->contentStream->getReference(),
@@ -511,4 +1338,20 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 		]);
 	}
 
+	public function __clone()
+	{
+		$this->box = clone $this->box->cloneWithChildren();
+		$this->coordinates = clone $this->coordinates;
+		$this->coordinates->setBox($this->box);
+		$this->contentStream = clone $this->contentStream;
+		$this->dimensions = clone $this->dimensions;
+		$this->outerDimensions = clone $this->dimensions;
+		$currentResources = $this->resources;
+		$this->resources = [];
+		foreach ($currentResources as $groupName => $resources) {
+			foreach ($resources as $resourceName => $resource) {
+				$this->resources[$groupName][$resourceName] = clone $resource;
+			}
+		}
+	}
 }

@@ -1,29 +1,34 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Element class
+ * BoxDimensions class.
  *
  * @package   YetiForcePDF\Html
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF\Html;
 
 /**
- * Class Element
+ * Class BoxDimensions.
  */
 class Element extends \YetiForcePDF\Base
 {
 	/**
-	 * Unique internal element id
-	 * @var string
+	 * @var Box
 	 */
-	protected $elementId;
+	protected $box;
 	/**
-	 * DOMElement tagName
+	 * @var Box
+	 */
+	protected $parentBox;
+	/**
+	 * DOMElement tagName.
+	 *
 	 * @var string
 	 */
 	protected $name;
@@ -36,83 +41,91 @@ class Element extends \YetiForcePDF\Base
 	 */
 	protected $domElement;
 	/**
-	 * @var \YetiForcePDF\Style\Style
+	 * Class names for element.
+	 *
+	 * @var string
 	 */
-	protected $style;
-	/**
-	 * @var null|\YetiForcePDF\Html\Element
-	 */
-	protected $parent;
-	/**
-	 * @var \YetiForcePDF\Html\Element[]
-	 */
-	protected $children = [];
-	/**
-	 * PDF graphic / text stream instructions
-	 * @var string[]
-	 */
-	protected $instructions = [];
-	/**
-	 * Element X position
-	 * @var float
-	 */
-	protected $x = 0.0;
-	/**
-	 * Element Y position
-	 * @var float
-	 */
-	protected $y = 0.0;
+	protected $classNames = '';
 
 	/**
-	 * Initialisation
+	 * Initialisation.
+	 *
 	 * @return $this
 	 */
 	public function init()
 	{
-		$this->elementId = uniqid();
-		$this->name = $this->domElement->tagName;
-		$this->style = $this->parseStyle();
-		if ($this->domElement->hasChildNodes()) {
-			foreach ($this->domElement->childNodes as $childNode) {
-				if ($childNode instanceof \DOMText) {
-
-				} else {
-					$childElement = (new Element())
-						->setDocument($this->document)
-						->setElement($childNode)
-						->setParent($this)
-						->init();
-					$this->addChild($childElement);
-				}
-			}
+		parent::init();
+		if (isset($this->domElement->tagName)) {
+			$this->name = $this->domElement->tagName;
+		} else {
+			$this->name = $this->domElement->nodeName;
 		}
 		return $this;
 	}
 
 	/**
-	 * Set element
+	 * Set box for this element (element is always inside box).
+	 *
+	 * @param \YetiForcePDF\Html\Box $box
+	 *
+	 * @return $this
+	 */
+	public function setBox($box)
+	{
+		$this->box = $box;
+		return $this;
+	}
+
+	/**
+	 * Get box.
+	 *
+	 * @return \YetiForcePDF\Html\Box
+	 */
+	public function getBox()
+	{
+		return $this->box;
+	}
+
+	/**
+	 * Get parent element (from parent box).
+	 *
+	 * @return mixed
+	 */
+	public function getParent()
+	{
+		if ($this->box) {
+			if ($parentBox = $this->box->getParent()) {
+				return $parentBox->getElement();
+			}
+		}
+	}
+
+	/**
+	 * Set dom element (only for parsing dom tree - domElement should not be used anywhere else).
+	 *
 	 * @param $element
+	 *
 	 * @return \YetiForcePDF\Html\Element
 	 */
-	public function setElement($element): Element
+	public function setDOMElement($element): self
 	{
 		$this->domElement = $element;
-		$this->domElement->normalize();
 		return $this;
 	}
 
 	/**
-	 * Set parent
-	 * @param \YetiForcePDF\Html\Element $parent
+	 * Get dom element.
+	 *
+	 * @return \DOMElement
 	 */
-	public function setParent(Element $parent)
+	public function getDOMElement()
 	{
-		$this->parent = $parent;
-		return $this;
+		return $this->domElement;
 	}
 
 	/**
-	 * Get element internal unique id
+	 * Get element internal unique id.
+	 *
 	 * @return string
 	 */
 	public function getElementId(): string
@@ -121,38 +134,49 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Get dom element
-	 * @return \DOMElement|\DOMText
+	 * Attach classes.
+	 *
+	 * @return self
 	 */
-	public function getDOMElement()
+	public function attachClasses()
 	{
-		return $this->domElement;
+		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('class')) {
+			$classNames = [];
+			foreach (explode(' ', $this->domElement->getAttribute('class')) as $className) {
+				if (trim($className)) {
+					$classNames[] = '.' . $className;
+				}
+			}
+			$this->setClassNames(implode(' ', $classNames));
+		}
+		return $this;
 	}
 
 	/**
-	 * Parse element style
+	 * Parse element style.
+	 *
 	 * @return \YetiForcePDF\Style\Style
 	 */
-	protected function parseStyle(): \YetiForcePDF\Style\Style
+	public function parseStyle(): \YetiForcePDF\Style\Style
 	{
 		$styleStr = null;
-		$parentStyle = null;
-		if ($this->parent !== null) {
-			$parentStyle = $this->parent->getStyle();
-		}
 		if ($this->domElement instanceof \DOMElement && $this->domElement->hasAttribute('style')) {
 			$styleStr = $this->domElement->getAttribute('style');
 		}
-		return (new \YetiForcePDF\Style\Style())
+		$this->attachClasses();
+		$style = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)
 			->setElement($this)
-			->setContent($styleStr)
-			->setParent($parentStyle)
-			->init();
+			->setContent($styleStr);
+		if ($this->box) {
+			$style->setBox($this->box);
+		}
+		return $style->init();
 	}
 
 	/**
-	 * Get element style
+	 * Get element style.
+	 *
 	 * @return \YetiForcePDF\Style\Style
 	 */
 	public function getStyle(): \YetiForcePDF\Style\Style
@@ -161,51 +185,39 @@ class Element extends \YetiForcePDF\Base
 	}
 
 	/**
-	 * Add child element
-	 * @param \YetiForcePDF\Html\Element $child
-	 * @return \YetiForcePDF\Html\Element
+	 * Is this text node?
+	 *
+	 * @return bool
 	 */
-	public function addChild(\YetiForcePDF\Html\Element $child): \YetiForcePDF\Html\Element
+	public function isTextNode()
 	{
-		$this->children[] = $child;
+		if ($this->domElement instanceof \DOMText) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Set class names for element.
+	 *
+	 * @param string $classNames Class names for element
+	 *
+	 * @return self
+	 */
+	public function setClassNames(string $classNames)
+	{
+		$this->classNames = $classNames;
+
 		return $this;
 	}
 
 	/**
-	 * Get child elements
-	 * @return \YetiForcePDF\Html\Element[]
+	 * Get class names for element.
+	 *
+	 * @return string[]
 	 */
-	public function getChildren(): array
+	public function getClassNames()
 	{
-		return $this->children;
-	}
-
-	/**
-	 * Calculate element position
-	 */
-	public function calculatePosition()
-	{
-		$rules = $this->style->getRules();
-		$this->x = $rules['margin-left'];
-		$this->y = $rules['margin-bottom'];
-	}
-
-	/**
-	 * Get element PDF instructions to use in content stream
-	 * @return string
-	 */
-	public function getInstructions(): string
-	{
-		$textContent = $this->getDOMElement()->textContent;
-		$font = $this->style->getFont();
-		$fontStr = '/' . $font->getNumber() . ' ' . $font->getSize() . ' Tf';
-		$this->calculatePosition();
-		return implode("\n", [
-			'BT',
-			$fontStr,
-			"1 0 0 1 {$this->x} {$this->y} Tm",
-			"($textContent) Tj",
-			'ET'
-		]);
+		return $this->classNames;
 	}
 }

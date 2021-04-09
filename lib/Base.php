@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 /**
- * Base class
+ * Base class.
  *
  * @package   YetiForcePDF
  *
  * @copyright YetiForce Sp. z o.o
- * @license   MIT
+ * @license   YetiForce Public License v3
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
 namespace YetiForcePDF;
 
 /**
- * Class Base
+ * Class Base.
  */
 class Base
 {
@@ -22,28 +23,30 @@ class Base
 	 */
 	protected $document;
 
-
 	/**
-	 * Set document
+	 * Set document.
+	 *
 	 * @param \YetiForcePDF\Document $document
 	 */
-	public function setDocument(\YetiForcePDF\Document $document)
+	public function setDocument(Document $document)
 	{
 		$this->document = $document;
 		return $this;
 	}
 
 	/**
-	 * Get document
+	 * Get document.
+	 *
 	 * @return \YetiForcePDF\Document
 	 */
-	public function getDocument(): \YetiForcePDF\Document
+	public function getDocument(): Document
 	{
 		return $this->document;
 	}
 
 	/**
-	 * Initialisation instead of constructor
+	 * Initialisation instead of constructor.
+	 *
 	 * @param array $args - associative array of values - might be helpful
 	 */
 	public function init()
