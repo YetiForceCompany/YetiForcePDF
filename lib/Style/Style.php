@@ -492,7 +492,7 @@ class Style extends \YetiForcePDF\Base
 			'display' => 'block',
 			'font-family' => 'monospace',
 			'white-space' => 'pre',
-			'margin' => '1em0',
+			'margin' => '1em',
 		],
 		'q' => [
 			'display' => 'inline',
