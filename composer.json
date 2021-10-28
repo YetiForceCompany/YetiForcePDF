@@ -1,6 +1,7 @@
 {
   "name": "yetiforce/yetiforcepdf",
   "description": "Library that generate pdf files from html.",
+  "license": "MIT",
   "type": "library",
   "keywords": [
     "pdf",
@@ -11,7 +12,7 @@
   "authors": [
     {
       "name": "YetiForceCompany",
-      "email": "info@yetiforce.com",
+      "email": "devs@yetiforce.com",
       "homepage": "https://yetiforce.com/"
     }
   ],

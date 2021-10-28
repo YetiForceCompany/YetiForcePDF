@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -670,7 +670,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'right' => $right,
 			'bottom' => $bottom,
 			'horizontal' => $left + $right,
-			'vertical' => $top + $bottom
+			'vertical' => $top + $bottom,
 		];
 		$this->setFormat($this->format);
 		return $this;
@@ -1334,7 +1334,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			$this->renderResources(),
 			'  /Contents ' . $this->contentStream->getReference(),
 			'>>',
-			'endobj'
+			'endobj',
 		]);
 	}
 

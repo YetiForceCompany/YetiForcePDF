@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Style\Normalizer
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -92,7 +92,7 @@ class Normalizer extends \YetiForcePDF\Base
 				->setValue($originalSize)
 				->setOriginal($originalSize . $originalUnit)
 				->setIsFont($isFont)
-				->convert($this->style)
+				->convert($this->style),
 		];
 		$matchesCount = \count($matches);
 		if ($matchesCount >= 2) {

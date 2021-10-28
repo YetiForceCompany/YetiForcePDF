@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -148,7 +148,7 @@ class TextBox extends ElementBox implements BoxInterface
 			$fontStr,
 			"$textContent Tj",
 			'ET',
-			'Q'
+			'Q',
 		];
 		$this->drawTextOutline = false;
 		if ($this->drawTextOutline) {
@@ -159,7 +159,7 @@ class TextBox extends ElementBox implements BoxInterface
 				"1 0 0 1 $pdfX $pdfY cm",
 				"0 0 $textWidth $textHeight re",
 				'S',
-				'Q'
+				'Q',
 			]);
 		}
 		return implode("\n", $element);

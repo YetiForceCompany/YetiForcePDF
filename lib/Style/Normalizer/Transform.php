@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Style\Normalizer
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -24,7 +24,7 @@ class Transform extends Normalizer
 			return $this->normalized;
 		}
 		$normalized = [
-			'transform' => []
+			'transform' => [],
 		];
 		$operations = preg_split('/\s+/i', $ruleValue);
 		foreach ($operations as $operation) {

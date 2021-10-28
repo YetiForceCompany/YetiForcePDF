@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Style
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -173,7 +173,7 @@ class Style extends \YetiForcePDF\Base
 		'max-width' => 'none',
 		'min-width' => '0',
 		'white-space' => 'normal',
-		'opacity' => '1'
+		'opacity' => '1',
 	];
 
 	/**
@@ -492,7 +492,7 @@ class Style extends \YetiForcePDF\Base
 			'display' => 'block',
 			'font-family' => 'monospace',
 			'white-space' => 'pre',
-			'margin' => '1em0',
+			'margin' => '1em',
 		],
 		'q' => [
 			'display' => 'inline',
@@ -569,7 +569,7 @@ class Style extends \YetiForcePDF\Base
 			'text-align' => 'center',
 			'padding' => '1px',
 			'background-color' => '#ddd',
-			'line-height' => '1.6em'
+			'line-height' => '1.6em',
 		],
 		'thead' => [
 			'display' => 'table-header-group',
@@ -1467,7 +1467,7 @@ class Style extends \YetiForcePDF\Base
 			$finalRules['margin-bottom'] = '0';
 		} elseif (\in_array($finalRules['display'], [
 			'table-cell', 'table-row', 'table-row-group', 'table-column',
-			'table-column-group', 'table-header-group', 'table-footer-group'
+			'table-column-group', 'table-header-group', 'table-footer-group',
 		])) {
 			$finalRules['margin-top'] = '0';
 			$finalRules['margin-bottom'] = '0';

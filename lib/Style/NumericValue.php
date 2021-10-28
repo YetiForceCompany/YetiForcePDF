@@ -6,7 +6,7 @@ declare(strict_types=1);
  * NumericValue class.
  *
  * @copyright YetiForce Sp. z o.o.
- * @license YetiForce Public License 3.0 (licenses/LicenseEN.txt or yetiforce.com)
+ * @license   MIT
  * @author Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 

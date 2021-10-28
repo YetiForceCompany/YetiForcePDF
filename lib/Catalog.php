@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Document
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -46,7 +46,7 @@ class Catalog extends \YetiForcePDF\Objects\Basic\DictionaryObject
 			'  /Type /Catalog',
 			'  /Pages ' . $this->document->getPagesObject()->getReference(),
 			'>>',
-			'endobj'
+			'endobj',
 		]);
 	}
 }

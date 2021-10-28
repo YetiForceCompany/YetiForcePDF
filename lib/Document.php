@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -76,7 +76,7 @@ class Document
 		'left' => 40,
 		'top' => 40,
 		'right' => 40,
-		'bottom' => 40
+		'bottom' => 40,
 	];
 	/**
 	 * All objects inside document.
@@ -233,7 +233,7 @@ class Document
 			'right' => $right,
 			'bottom' => $bottom,
 			'horizontal' => $left + $right,
-			'vertical' => $top + $bottom
+			'vertical' => $top + $bottom,
 		];
 		foreach ($this->pages as $page) {
 			$page->setMargins($left, $top, $right, $bottom);
