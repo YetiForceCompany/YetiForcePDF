@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -737,7 +737,7 @@ class BlockBox extends ElementBox implements BoxInterface, AppendChildInterface,
 				"{$rules['background-color'][0]} {$rules['background-color'][1]} {$rules['background-color'][2]} rg",
 				"0 0 $width $height re",
 				'f',
-				'Q'
+				'Q',
 			];
 			$element = array_merge($element, $bgColor);
 		}

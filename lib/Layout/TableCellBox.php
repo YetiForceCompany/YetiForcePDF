@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -41,7 +41,7 @@ class TableCellBox extends BlockBox
 		'top' => '0',
 		'right' => '0',
 		'bottom' => '0',
-		'left' => '0'
+		'left' => '0',
 	];
 
 	/**
@@ -197,7 +197,7 @@ class TableCellBox extends BlockBox
 			'top' => $top,
 			'right' => $right,
 			'bottom' => $bottom,
-			'left' => $left
+			'left' => $left,
 		];
 
 		return $this;

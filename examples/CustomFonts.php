@@ -7,19 +7,19 @@ $loader = require '../vendor/autoload.php';
 		'family' => 'Pacifico',
 		'weight' => '400',
 		'style' => 'normal',
-		'file' => 'd:\fonts\Pacifico\Pacifico-Regular.ttf'
+		'file' => 'd:\fonts\Pacifico\Pacifico-Regular.ttf',
 	],
 	[
 		'family' => 'Lobster Two',
 		'weight' => '400',
 		'style' => 'normal',
-		'file' => 'd:\fonts\Lobster_Two\LobsterTwo-Regular.ttf'
+		'file' => 'd:\fonts\Lobster_Two\LobsterTwo-Regular.ttf',
 	],
 	[
 		'family' => 'Lobster Two',
 		'weight' => 'bold',
 		'style' => 'normal',
-		'file' => 'd:\fonts\Lobster_Two\LobsterTwo-Bold.ttf'
+		'file' => 'd:\fonts\Lobster_Two\LobsterTwo-Bold.ttf',
 	],
 ]);
 

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Style
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -173,7 +173,7 @@ class Color
 		'white' => '#ffffff',
 		'whitesmoke' => '#f5f5f5',
 		'yellow' => '#ffff00',
-		'yellowgreen' => '#9acd32'
+		'yellowgreen' => '#9acd32',
 	];
 
 	/**

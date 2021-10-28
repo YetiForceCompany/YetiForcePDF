@@ -4,7 +4,6 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2e8645f5091496089ed203d05a05d61)](https://app.codacy.com/app/mariuszkrzaczkowski/YetiForcePDF?utm_source=github.com&utm_medium=referral&utm_content=YetiForceCompany/YetiForcePDF&utm_campaign=Badge_Grade_Settings)
 [![Maintainability](https://api.codeclimate.com/v1/badges/af478ddd07cf7278841a/maintainability)](https://codeclimate.com/github/YetiForceCompany/YetiForcePDF/maintainability)
-[![SymfonyInsight](https://insight.symfony.com/projects/d944b009-6a76-4957-8833-db95b010e5a5/big.png)](https://insight.symfony.com/projects/d944b009-6a76-4957-8833-db95b010e5a5)
 
 ## PDF generation library for PHP
 The best library in the world to generate PDF from HTML
@@ -195,7 +194,7 @@ When you want to place page number (in header or footer for example) you can do 
 - [ ] position (absolute, relative)
 
 ### License
-YetiForce Public License v3
+MIT
 =======
 file_put_contents('test.pdf', $pdfFile);
 ```

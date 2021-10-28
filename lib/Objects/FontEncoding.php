@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Objects
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -36,7 +36,7 @@ class FontEncoding extends \YetiForcePDF\Objects\Resource
 			'  /Type Encoding',
 			'  /BaseEncoding /' . $this->encoding,
 			'>>',
-			'endobj'
+			'endobj',
 		]);
 	}
 }

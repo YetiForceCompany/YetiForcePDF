@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @package   YetiForcePDF\Layout
  *
  * @copyright YetiForce Sp. z o.o
- * @license   YetiForce Public License v3
+ * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
  */
 
@@ -459,7 +459,7 @@ class Box extends \YetiForcePDF\Base
 			'border-top-width' => '0',
 			'border-right-width' => '0',
 			'border-bottom-width' => '0',
-			'border-left-width' => '0'
+			'border-left-width' => '0',
 		]);
 		$this->getDimensions()->setWidth('0');
 		$this->getDimensions()->setHeight('0');
@@ -1096,7 +1096,7 @@ class Box extends \YetiForcePDF\Base
 				implode(' ', [$x2, $y1]),
 				implode(' ', [Math::sub($x2, $style->getRules('border-right-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
 				implode(' ', [Math::add($x1, $style->getRules('border-left-width')), Math::sub($y1, $style->getRules('border-top-width'))]),
-				implode(' ', [$x1, $y1])
+				implode(' ', [$x1, $y1]),
 			]);
 			$borderTop = [
 				'q',
@@ -1106,7 +1106,7 @@ class Box extends \YetiForcePDF\Base
 				"$x1 $y1 m", // move to start point
 				$path . ' l h',
 				'f',
-				'Q'
+				'Q',
 			];
 			$element = array_merge($element, $borderTop);
 		}
@@ -1125,7 +1125,7 @@ class Box extends \YetiForcePDF\Base
 				"$x2 $y1 m",
 				$path . ' l h',
 				'f',
-				'Q'
+				'Q',
 			];
 			$element = array_merge($element, $borderTop);
 		}
@@ -1144,7 +1144,7 @@ class Box extends \YetiForcePDF\Base
 				"$x1 $y2 m",
 				$path . ' l h',
 				'f',
-				'Q'
+				'Q',
 			];
 			$element = array_merge($element, $borderTop);
 		}
@@ -1163,7 +1163,7 @@ class Box extends \YetiForcePDF\Base
 				"$x1 $y1 m",
 				$path . ' l h',
 				'f',
-				'Q'
+				'Q',
 			];
 			$element = array_merge($element, $borderTop);
 		}
