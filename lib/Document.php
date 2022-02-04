@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @copyright YetiForce Sp. z o.o
  * @license   MIT
  * @author    Rafal Pospiech <r.pospiech@yetiforce.com>
+ * @author    Mariusz Krzaczkowski <m.krzaczkowski@yetiforce.com>
  */
 
 namespace YetiForcePDF;
@@ -871,21 +872,34 @@ class Document
 	 */
 	public function render(): string
 	{
-		$this->buffer = '';
+		$xref = $this->buffer = '';
 		$this->buffer .= $this->getDocumentHeader();
 		$this->parse();
-		$trailer = (new \YetiForcePDF\Objects\Trailer())
-			->setDocument($this)
-			->init();
-		$trailer->setRootObject($this->catalog)->setSize(\count($this->objects) - 1);
+		$objectSize = 0;
 		foreach ($this->objects as $object) {
-			if (\in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Trailer', 'Array'])) {
+			if (\in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Array'])) {
+				$xref .= sprintf("%010d 00000 n \n", \strlen($this->buffer));
 				$this->buffer .= $object->render() . "\n";
+				++$objectSize;
 			}
 		}
+		$offset = \strlen($this->buffer);
+		$this->buffer .= implode("\n", [
+			'xref',
+			'0 ' . ($objectSize + 1),
+			'0000000000 65535 f ',
+			$xref,
+		]);
+		$trailer = (new \YetiForcePDF\Objects\Trailer())
+			->setDocument($this)->setRootObject($this->catalog)->setSize($objectSize);
+		$this->buffer .= $trailer->render() . "\n";
+		$this->buffer .= implode("\n", [
+			'startxref',
+			$offset,
+			'',
+		]);
 		$this->buffer .= $this->getDocumentFooter();
 		$this->removeObject($trailer);
-
 		return $this->buffer;
 	}
 
