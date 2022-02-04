@@ -16,7 +16,7 @@ $loader = require '../vendor/autoload.php';
 $document = (new YetiForcePDF\Document())->init();
 $document->loadHtml('<div style="text-align:center;">your html goes here</div>');
 $pdfFile = $document->render();
-file_put_contents('YourPDFD.pdf', $pdfFile);
+file_put_contents('YourPDF.pdf', $pdfFile);
 ```
 
 ### Supported css rules
@@ -193,8 +193,6 @@ When you want to place page number (in header or footer for example) you can do 
 - [ ] basic transformations (rotateXY, scaleXY, translateXY)
 - [ ] position (absolute, relative)
 
-### License
-MIT
-=======
-file_put_contents('test.pdf', $pdfFile);
-```
+## License
+
+Distributed under the MIT license. See LICENSE for details.
