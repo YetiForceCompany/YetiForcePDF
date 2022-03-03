@@ -75,7 +75,7 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 			preg_match('/data:image\/[a-z]+;base64,(.*)/', $imageData, $matches);
 			$imageData = base64_decode($matches[1]);
 		}
-		$image = imagecreatefromstring($imageData);
+		$image = @imagecreatefromstring($imageData);
 		$bg = imagecreatetruecolor(imagesx($image), imagesy($image));
 		imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
 		imagealphablending($bg, true);
