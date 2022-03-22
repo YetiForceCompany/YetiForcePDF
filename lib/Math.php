@@ -71,7 +71,6 @@ class Math
 		foreach ($numbers as $number) {
 			$result = bcadd($result, $number, static::$scale);
 		}
-
 		return $result;
 	}
 
@@ -172,7 +171,6 @@ class Math
 		foreach ($numbers as $number) {
 			$result = 1 === bccomp($number, $result, static::$scale) ? $number : $result;
 		}
-
 		return $result;
 	}
 

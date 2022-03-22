@@ -60,7 +60,7 @@ class NumericValue
 	{
 		$this->original = $value;
 		$this->value = \YetiForcePDF\Style\Normalizer\Normalizer::getNumericValue($value);
-		$this->unit = \YetiForcePDF\Style\Normalizer\Normalizer::getNumericUnit($value);
+		$this->unit = \YetiForcePDF\Style\Normalizer\Normalizer::getNumericUnit($value, 'px');
 		$this->isFont = $isFont;
 		return $this;
 	}
