@@ -28,8 +28,8 @@
     "phenx/php-font-lib": "^0.5.1",
     "guzzlehttp/guzzle": "^7.0",
     "composer/ca-bundle": "^1.1",
-    "milon/barcode": "^8.0.0",
-    "sabberworm/php-css-parser": "^8.3"
+    "milon/barcode": "^9.0.0",
+    "sabberworm/php-css-parser": "^8.4"
   },
   "autoload": {
     "psr-4": {
