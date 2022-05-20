@@ -21,7 +21,11 @@ class MarginLeft extends Normalizer
 	public function normalize($ruleValue, string $ruleName = ''): array
 	{
 		if (null === $this->normalized) {
-			return $this->normalized = ['margin-left' => $this->getNumberValues($ruleValue)[0]];
+			$css = [];
+			if ($number = $this->getNumberValues($ruleValue)) {
+				$css = ['margin-left' => $number[0]];
+			}
+			$this->normalized = $css;
 		}
 		return $this->normalized;
 	}

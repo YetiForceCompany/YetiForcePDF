@@ -20,11 +20,7 @@ use YetiForcePDF\Math;
  */
 class Color
 {
-	/**
-	 * Color names hash values.
-	 *
-	 * @var array
-	 */
+	/** @var string[] Color names hash values. */
 	protected static $colorNames = [
 		'aliceblue' => '#f0f8ff',
 		'antiquewhite' => '#faebd7',
@@ -176,6 +172,11 @@ class Color
 		'yellowgreen' => '#9acd32',
 	];
 
+	/** @var array Color names rgba values. */
+	protected static $colorCustomNames = [
+		'transparent' => [0, 0, 0, 0.1]
+	];
+
 	/**
 	 * Get rgba array from color name.
 	 *
@@ -183,7 +184,7 @@ class Color
 	 *
 	 * @return string[]
 	 */
-	public static function fromName(string $colorName)
+	public static function fromName(string $colorName): array
 	{
 		$colorName = strtolower($colorName);
 		if (isset(static::$colorNames[$colorName])) {
@@ -199,7 +200,7 @@ class Color
 	 *
 	 * @return string[]
 	 */
-	public static function fromHash(string $hashColor)
+	public static function fromHash(string $hashColor): array
 	{
 		$color = substr($hashColor, 1);
 		if (3 === \strlen($color)) {
@@ -233,7 +234,7 @@ class Color
 	 *
 	 * @return string[] rgb/a
 	 */
-	public static function fromRGBA(string $rgbColor)
+	public static function fromRGBA(string $rgbColor): array
 	{
 		$matches = [];
 		preg_match_all('/rgb\(([0-9]+)\s?\,\s?([0-9]+)\s?\,\s?([0-9]+)\s?([0-9]+)?\s?\)/ui', str_replace("\n\t\r ", '', $rgbColor), $matches);
@@ -253,7 +254,7 @@ class Color
 	 *
 	 * @return int[]
 	 */
-	public static function toRGBA($colorInput, bool $inPDFColorSpace = false)
+	public static function toRGBA($colorInput, bool $inPDFColorSpace = false): array
 	{
 		$colorInput = trim(strtolower($colorInput));
 		if ($colorInput) {
@@ -263,6 +264,8 @@ class Color
 				$color = static::fromRGBA($colorInput);
 			} elseif (\array_key_exists($colorInput, static::$colorNames)) {
 				$color = static::fromName($colorInput);
+			} elseif (isset(static::$colorCustomNames[$colorInput])) {
+				return static::$colorCustomNames[$colorInput];
 			}
 			$r = $inPDFColorSpace ? Math::div($color[0], '255') : $color[0];
 			$g = $inPDFColorSpace ? Math::div($color[1], '255') : $color[1];
@@ -280,7 +283,7 @@ class Color
 	 *
 	 * @return string
 	 */
-	public static function toPdfString(string $colorInput)
+	public static function toPdfString(string $colorInput): string
 	{
 		$color = static::toRGBA($colorInput);
 		return "{$color[0]} {$color[1]} {$color[2]} RG";
