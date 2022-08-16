@@ -32,8 +32,7 @@ class FontEncoding extends \YetiForcePDF\Objects\Resource
 	{
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			'<<',
-			'  /Type Encoding',
+			'<</Type Encoding',
 			'  /BaseEncoding /' . $this->encoding,
 			'>>',
 			'endobj',

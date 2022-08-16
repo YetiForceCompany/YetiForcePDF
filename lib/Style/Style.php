@@ -1096,7 +1096,11 @@ class Style extends \YetiForcePDF\Base
 		}
 		$box = $this->getBox();
 		$lineHeight = $this->getRules('line-height');
-		if ('inline' !== !$this->getRules('display')) {
+		if (false !== strpos($lineHeight, '%')) {
+			// TODO: Add percentage support
+			$lineHeight = '0.00';
+		}
+		if ('inline' !== $this->getRules('display') && '0.00' !== $this->getVerticalPaddingsWidth() && '0.00' !== $this->getVerticalBordersWidth()) {
 			$lineHeight = Math::add($lineHeight, $this->getVerticalPaddingsWidth(), $this->getVerticalBordersWidth());
 		}
 		foreach ($box->getChildren() as $child) {
@@ -1154,7 +1158,7 @@ class Style extends \YetiForcePDF\Base
 		$rulesParsed = [];
 		foreach ($rules as $rule) {
 			$rule = trim($rule);
-			if ('' !== $rule) {
+			if ('' !== $rule && false !== strpos($rule, ':')) {
 				$ruleExploded = explode(':', $rule);
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
@@ -1423,7 +1427,7 @@ class Style extends \YetiForcePDF\Base
 		$inline = [];
 		foreach ($inlineTemp as $rule) {
 			$rule = trim($rule);
-			if ('' !== $rule) {
+			if ('' !== $rule && false !== strpos($rule, ':')) {
 				$ruleExploded = explode(':', $rule);
 				$inline[trim($ruleExploded[0])] = trim($ruleExploded[1]);
 			}

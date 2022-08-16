@@ -79,8 +79,10 @@ class Normalizer extends \YetiForcePDF\Base
 		if ($ruleValue instanceof NumericValue) {
 			return $ruleValue;
 		}
-		$matches = [];
 		preg_match_all(static::$numericRegex, $ruleValue, $matches, PREG_SET_ORDER);
+		if (!$matches) {
+			$matches = [['0', '0', '0']];
+		}
 		$originalSize = $matches[0][2];
 		$originalUnit = 'em';
 		if (isset($matches[0][3])) {
@@ -97,25 +99,25 @@ class Normalizer extends \YetiForcePDF\Base
 		$matchesCount = \count($matches);
 		if ($matchesCount >= 2) {
 			$multi[] = (new NumericValue())
-				->setUnit($matches[1][3])
+				->setUnit($matches[1][3] ?? $originalUnit)
 				->setValue($matches[1][2])
-				->setOriginal($matches[1][2] . $matches[1][3])
+				->setOriginal($matches[1][2] . ($matches[1][3] ?? $originalUnit))
 				->setIsFont($isFont)
 				->convert($this->style);
 		}
 		if ($matchesCount >= 3) {
 			$multi[] = (new NumericValue())
-				->setUnit($matches[2][3])
+				->setUnit($matches[2][3] ?? $originalUnit)
 				->setValue($matches[2][2])
-				->setOriginal($matches[2][2] . $matches[2][3])
+				->setOriginal($matches[2][2] . ($matches[2][3] ?? $originalUnit))
 				->setIsFont($isFont)
 				->convert($this->style);
 		}
 		if (4 === $matchesCount) {
 			$multi[] = (new NumericValue())
-				->setUnit($matches[3][3])
+				->setUnit($matches[3][3] ?? $originalUnit)
 				->setValue($matches[3][2])
-				->setOriginal($matches[3][2] . $matches[3][3])
+				->setOriginal($matches[3][2] . ($matches[3][3] ?? $originalUnit))
 				->setIsFont($isFont)
 				->convert($this->style);
 		}
