@@ -25,11 +25,11 @@
     "ext-zlib": "*",
     "ext-gd": "*",
     "ext-filter": "*",
-    "phenx/php-font-lib": "^0.5.1",
-    "guzzlehttp/guzzle": "^7.0",
-    "composer/ca-bundle": "^1.1",
-    "milon/barcode": "^9.0.0",
-    "sabberworm/php-css-parser": "^8.4"
+    "phenx/php-font-lib": "^0.5",
+    "guzzlehttp/guzzle": "^7",
+    "composer/ca-bundle": "^1",
+    "milon/barcode": "^9",
+    "sabberworm/php-css-parser": "^8"
   },
   "autoload": {
     "psr-4": {
