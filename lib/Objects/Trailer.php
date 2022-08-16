@@ -74,8 +74,8 @@ class Trailer extends \YetiForcePDF\Objects\PdfObject
 			'trailer',
 			'<<',
 			'  /Root ' . $this->root->getReference(),
-			'  /Size ' . $this->size,
 			'  /Info ' . $this->document->getMeta()->getReference(),
+			'  /Size ' . $this->size,
 			'>>',
 		]);
 	}

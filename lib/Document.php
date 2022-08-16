@@ -688,7 +688,7 @@ class Document
 	 */
 	protected function getDocumentHeader(): string
 	{
-		return "%PDF-1.7\n%âăĎÓ\n";
+		return "%PDF-1.4\n%âăĎÓ\n";
 	}
 
 	/**
@@ -893,11 +893,11 @@ class Document
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)->setRootObject($this->catalog)->setSize($objectSize);
 		$this->buffer .= $trailer->render() . "\n";
-		$this->buffer .= implode("\n", [
-			'startxref',
-			$offset,
-			'',
-		]);
+		// $this->buffer .= implode("\n", [
+		// 	'startxref',
+		// 	$offset,
+		// 	'',
+		// ]);
 		$this->buffer .= $this->getDocumentFooter();
 		$this->removeObject($trailer);
 		return $this->buffer;

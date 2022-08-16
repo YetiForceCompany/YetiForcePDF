@@ -42,10 +42,7 @@ class Catalog extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	{
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			'<<',
-			'  /Type /Catalog',
-			'  /Pages ' . $this->document->getPagesObject()->getReference(),
-			'>>',
+			'<</Type /Catalog/Pages ' . $this->document->getPagesObject()->getReference() . '>>',
 			'endobj',
 		]);
 	}

@@ -777,9 +777,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	public function render(): string
 	{
 		return implode("\n", [$this->getRawId() . ' obj',
-			'<<',
-			'  /Type /Font',
-			'  /Subtype /CIDFontType2',
+			'<</Type /Font/Subtype /CIDFontType2',
 			'  /BaseFont /' . $this->getFullName(),
 			'  /FontDescriptor ' . $this->fontDescriptor->getReference(),
 			'  /DW 500',

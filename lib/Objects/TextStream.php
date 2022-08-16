@@ -150,10 +150,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 		$stream = $this->getRawStream();
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			'<<',
-			'  /Length ' . \strlen($stream),
-			'>>',
-			'stream',
+			'<</Length ' . \strlen($stream) . '>>stream',
 			$stream,
 			'endstream',
 			'endobj',
