@@ -487,7 +487,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	/**
 	 * Initialisation.
 	 *
-	 * @return $this|\YetiForcePDF\Objects\PdfObject
+	 * @return $this
 	 */
 	public function init()
 	{
