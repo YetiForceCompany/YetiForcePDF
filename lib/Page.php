@@ -1147,7 +1147,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 						if ($row->getRowSpanUp() > 0) {
 							$move = [];
 							// copy spanned rows too
-							for ($i = $row->getRowSpanUp(); $i >= 0; --$i) {
+							for ($i = $row->getRowSpanUp(); $i > 0; --$i) {
 								$spannedRowIndex = $rowIndex - $i;
 								$move[] = $tableRowGroup->getChildren()[$spannedRowIndex];
 							}
