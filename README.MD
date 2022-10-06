@@ -8,6 +8,9 @@
 ## PDF generation library for PHP
 The best library in the world to generate PDF from HTML
 
+## Issues & bugs
+Report errors related to PDF in https://github.com/YetiForceCompany/YetiForceCRM/issues
+
 ## Basic usage (for more take a look at examples folder)
 
 ```php
