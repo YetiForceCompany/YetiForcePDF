@@ -198,3 +198,12 @@ When you want to place page number (in header or footer for example) you can do 
 ## License
 
 Distributed under the MIT license. See LICENSE for details.
+
+## 👥 Contributors
+
+This project exists thanks to all the people who contribute. 
+
+<a href="https://github.com/YetiForceCompany/YetiForcePDF/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=YetiForceCompany/YetiForcePDF" />
+</a>
+
