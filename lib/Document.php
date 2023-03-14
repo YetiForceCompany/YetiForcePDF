@@ -893,11 +893,11 @@ class Document
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)->setRootObject($this->catalog)->setSize($objectSize);
 		$this->buffer .= $trailer->render() . "\n";
-		// $this->buffer .= implode("\n", [
-		// 	'startxref',
-		// 	$offset,
-		// 	'',
-		// ]);
+		$this->buffer .= implode("\n", [
+			'startxref',
+			$offset,
+			'',
+		]);
 		$this->buffer .= $this->getDocumentFooter();
 		$this->removeObject($trailer);
 		return $this->buffer;
