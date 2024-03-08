@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * TextBox class.
  *
@@ -20,10 +21,12 @@ use YetiForcePDF\Math;
  */
 class TextBox extends ElementBox implements BoxInterface
 {
+	public bool $drawTextOutline = false;
+
 	/**
 	 * @var string
 	 */
-	protected $text;
+	protected string $text;
 
 	/**
 	 * {@inheritdoc}
@@ -31,10 +34,12 @@ class TextBox extends ElementBox implements BoxInterface
 	public function init()
 	{
 		parent::init();
+
 		$this->style = (new \YetiForcePDF\Style\Style())
 			->setDocument($this->document)
 			->setBox($this)
 			->init();
+
 		return $this;
 	}
 
@@ -45,7 +50,7 @@ class TextBox extends ElementBox implements BoxInterface
 	 *
 	 * @return $this
 	 */
-	public function setText(string $text)
+	public function setText(string $text): self
 	{
 		$this->text = $text;
 		return $this;
@@ -56,7 +61,7 @@ class TextBox extends ElementBox implements BoxInterface
 	 *
 	 * @return string
 	 */
-	public function getText()
+	public function getText(): string
 	{
 		return $this->text;
 	}
@@ -66,9 +71,10 @@ class TextBox extends ElementBox implements BoxInterface
 	 *
 	 * @return $this
 	 */
-	public function measureWidth()
+	public function measureWidth(): self
 	{
 		$this->getDimensions()->setWidth($this->getStyle()->getFont()->getTextWidth($this->getText()));
+
 		return $this;
 	}
 
@@ -77,9 +83,10 @@ class TextBox extends ElementBox implements BoxInterface
 	 *
 	 * @return $this
 	 */
-	public function measureHeight()
+	public function measureHeight(): self
 	{
 		$this->getDimensions()->setHeight($this->getStyle()->getFont()->getTextHeight($this->getText()));
+
 		return $this;
 	}
 
@@ -88,10 +95,11 @@ class TextBox extends ElementBox implements BoxInterface
 	 *
 	 * @return $this
 	 */
-	public function measureOffset()
+	public function measureOffset(): self
 	{
 		$this->getOffset()->setLeft('0');
 		$this->getOffset()->setTop('0');
+
 		return $this;
 	}
 
@@ -100,11 +108,12 @@ class TextBox extends ElementBox implements BoxInterface
 	 *
 	 * @return $this
 	 */
-	public function measurePosition()
+	public function measurePosition(): self
 	{
 		$parent = $this->getParent();
 		$this->getCoordinates()->setX(Math::add($parent->getCoordinates()->getX(), $this->getOffset()->getLeft()));
 		$this->getCoordinates()->setY(Math::add($parent->getCoordinates()->getY(), $this->getOffset()->getTop()));
+
 		return $this;
 	}
 
@@ -139,6 +148,7 @@ class TextBox extends ElementBox implements BoxInterface
 		$textHeight = $style->getFont()->getTextHeight();
 		$textContent = $this->document->filterText($this->getText());
 		$transform = $style->getTransformations($pdfX, $baseLineY);
+
 		$element = [
 			'q',
 			$graphicStateStr,
@@ -150,7 +160,7 @@ class TextBox extends ElementBox implements BoxInterface
 			'ET',
 			'Q',
 		];
-		$this->drawTextOutline = false;
+
 		if ($this->drawTextOutline) {
 			$element = array_merge($element, [
 				'q',
@@ -162,6 +172,7 @@ class TextBox extends ElementBox implements BoxInterface
 				'Q',
 			]);
 		}
+
 		return implode("\n", $element);
 	}
 }
