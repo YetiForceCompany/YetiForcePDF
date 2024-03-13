@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * Parser class.
  *
@@ -24,14 +25,17 @@ class Parser extends \YetiForcePDF\Base
 	 * @var \DOMDocument
 	 */
 	protected $domDocument;
+
 	/**
 	 * @var string
 	 */
 	protected $html = '';
+
 	/**
 	 * @var array page groups with html content divided
 	 */
 	protected $htmlPageGroups = [];
+
 	/**
 	 * @var array
 	 */
@@ -63,7 +67,8 @@ class Parser extends \YetiForcePDF\Base
 	{
 		$html = htmlspecialchars_decode($html, ENT_HTML5);
 		$this->html = $this->cleanUpHtml($html);
-		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', $fromEncoding);
+		$this->html = html_entity_decode($this->html, ENT_COMPAT, $fromEncoding);
+
 		return $this;
 	}
 
@@ -72,7 +77,7 @@ class Parser extends \YetiForcePDF\Base
 	 *
 	 * @return string
 	 */
-	public function getHtml()
+	public function getHtml(): string
 	{
 		return $this->html;
 	}
