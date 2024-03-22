@@ -918,7 +918,7 @@ class Document
 		$offset = \strlen($this->buffer);
 		$this->buffer .= implode("\n", [
 			'xref',
-			'0 ' . ($objectSize + 1),
+			'0 ' . $objectSize,
 			'0000000000 65535 f ',
 			$xref,
 		]);
