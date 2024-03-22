@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
+use Exception;
+use YetiForcePDF\Html\Parser;
 use YetiForcePDF\Layout\FooterBox;
 use YetiForcePDF\Layout\HeaderBox;
 use YetiForcePDF\Layout\WatermarkBox;
@@ -95,7 +97,7 @@ class Document
 	protected $objects = [];
 
 	/**
-	 * @var \YetiForcePDF\Html\Parser
+	 * @var Parser
 	 */
 	protected $htmlParser;
 
@@ -786,14 +788,19 @@ class Document
 	 * Load html string.
 	 *
 	 * @param string $html
-	 * @param string $inputEncoding
+	 * @param string $fromEncoding
 	 *
 	 * @return $this
+	 * @throws Exception
 	 */
-	public function loadHtml(string $html, string $inputEncoding = 'UTF-8')
+	public function loadHtml(string $html, string $fromEncoding = 'UTF-8'): self
 	{
-		$this->htmlParser = (new \YetiForcePDF\Html\Parser())->setDocument($this)->init();
-		$this->htmlParser->loadHtml($html, $inputEncoding);
+		if ($fromEncoding === '') {
+			throw new Exception('Encoding can not be empty');
+		}
+
+		$this->htmlParser = (new Parser())->setDocument($this)->init();
+		$this->htmlParser->loadHtml($html, $fromEncoding);
 
 		return $this;
 	}
