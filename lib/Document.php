@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace YetiForcePDF;
 
+use Exception;
+use YetiForcePDF\Html\Parser;
 use YetiForcePDF\Layout\FooterBox;
 use YetiForcePDF\Layout\HeaderBox;
 use YetiForcePDF\Layout\WatermarkBox;
@@ -31,34 +33,40 @@ class Document
 	 * @var int
 	 */
 	protected $actualId = 0;
+
 	/**
 	 * Main output buffer / content for pdf file.
 	 *
 	 * @var string
 	 */
 	protected $buffer = '';
+
 	/**
 	 * Main entry point - root element.
 	 *
 	 * @var \YetiForcePDF\Catalog
 	 */
 	protected $catalog;
+
 	/**
 	 * Pages dictionary.
 	 *
 	 * @var Pages
 	 */
 	protected $pagesObject;
+
 	/**
 	 * Current page object.
 	 *
 	 * @var Page
 	 */
 	protected $currentPageObject;
+
 	/**
 	 * @var string default page format
 	 */
 	protected $defaultFormat = 'A4';
+
 	/**
 	 * @var string default page orientation
 	 */
@@ -68,6 +76,7 @@ class Document
 	 * @var Page[] all pages in the document
 	 */
 	protected $pages = [];
+
 	/**
 	 * Default page margins.
 	 *
@@ -79,68 +88,82 @@ class Document
 		'right' => 40,
 		'bottom' => 40,
 	];
+
 	/**
 	 * All objects inside document.
 	 *
 	 * @var \YetiForcePDF\Objects\PdfObject[]
 	 */
 	protected $objects = [];
+
 	/**
-	 * @var \YetiForcePDF\Html\Parser
+	 * @var Parser
 	 */
 	protected $htmlParser;
+
 	/**
 	 * Fonts data.
 	 *
 	 * @var array
 	 */
 	protected $fontsData = [];
+
 	/**
 	 * @var array
 	 */
 	protected $fontInstances = [];
+
 	/**
 	 * Actual font id.
 	 *
 	 * @var int
 	 */
 	protected $actualFontId = 0;
+
 	/**
 	 * Actual graphic state id.
 	 *
 	 * @var int
 	 */
 	protected $actualGraphicStateId = 0;
+
 	/**
 	 * @var bool
 	 */
 	protected $debugMode = false;
+
 	/**
 	 * @var HeaderBox|null
 	 */
 	protected $header;
+
 	/**
 	 * @var FooterBox|null
 	 */
 	protected $footer;
+
 	/**
 	 * @var WatermarkBox|null
 	 */
 	protected $watermark;
+
 	/**
 	 * @var Meta
 	 */
 	protected $meta;
+
 	/**
 	 * @var bool
 	 */
 	protected $parsed = false;
+
 	/**
 	 * Characters int values cache for fonts.
 	 *
 	 * @var array
 	 */
-	protected $ordCache = [];
+	public $ordCache = [];
+
 	/**
 	 * Css selectors like classes ids.
 	 *
@@ -444,7 +467,7 @@ class Document
 	 */
 	public static function addFonts(array $fonts)
 	{
-		return \YetiForcePDF\Objects\Font::loadFromArray($fonts);
+		\YetiForcePDF\Objects\Font::loadFromArray($fonts);
 	}
 
 	/**
@@ -765,14 +788,19 @@ class Document
 	 * Load html string.
 	 *
 	 * @param string $html
-	 * @param string $inputEncoding
+	 * @param string $fromEncoding
 	 *
 	 * @return $this
+	 * @throws Exception
 	 */
-	public function loadHtml(string $html, string $inputEncoding = 'UTF-8')
+	public function loadHtml(string $html, string $fromEncoding = 'UTF-8'): self
 	{
-		$this->htmlParser = (new \YetiForcePDF\Html\Parser())->setDocument($this)->init();
-		$this->htmlParser->loadHtml($html, $inputEncoding);
+		if ($fromEncoding === '') {
+			throw new Exception('Encoding can not be empty');
+		}
+
+		$this->htmlParser = (new Parser())->setDocument($this)->init();
+		$this->htmlParser->loadHtml($html, $fromEncoding);
 
 		return $this;
 	}
@@ -872,10 +900,13 @@ class Document
 	 */
 	public function render(): string
 	{
-		$xref = $this->buffer = '';
+		$xref = '';
+		$this->buffer = '';
+
 		$this->buffer .= $this->getDocumentHeader();
 		$this->parse();
 		$objectSize = 0;
+
 		foreach ($this->objects as $object) {
 			if (\in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Array'])) {
 				$xref .= sprintf("%010d 00000 n \n", \strlen($this->buffer));
@@ -883,23 +914,27 @@ class Document
 				++$objectSize;
 			}
 		}
+
 		$offset = \strlen($this->buffer);
 		$this->buffer .= implode("\n", [
 			'xref',
-			'0 ' . ($objectSize + 1),
+			'0 ' . $objectSize,
 			'0000000000 65535 f ',
 			$xref,
 		]);
+
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)->setRootObject($this->catalog)->setSize($objectSize);
+
 		$this->buffer .= $trailer->render() . "\n";
-		// $this->buffer .= implode("\n", [
-		// 	'startxref',
-		// 	$offset,
-		// 	'',
-		// ]);
+		$this->buffer .= implode("\n", [
+			'startxref',
+			$offset,
+			'',
+		]);
 		$this->buffer .= $this->getDocumentFooter();
 		$this->removeObject($trailer);
+
 		return $this->buffer;
 	}
 
@@ -910,7 +945,7 @@ class Document
 	 *
 	 * @return array
 	 */
-	public function getCssSelectorRules(string $selector)
+	public function getCssSelectorRules(string $selector): array
 	{
 		$rules = [];
 		foreach (explode(' ', $selector) as $className) {

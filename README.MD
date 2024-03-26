@@ -2,11 +2,13 @@
 [![Latest Stable Version](https://poser.pugx.org/yetiforce/yetiforcepdf/v/stable)](https://packagist.org/packages/yetiforce/yetiforcepdf)
 [![Build Status](https://travis-ci.org/YetiForceCompany/YetiForcePDF.svg?branch=developer)](https://travis-ci.org/YetiForceCompany/YetiForcePDF)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2e8645f5091496089ed203d05a05d61)](https://app.codacy.com/app/mariuszkrzaczkowski/YetiForcePDF?utm_source=github.com&utm_medium=referral&utm_content=YetiForceCompany/YetiForcePDF&utm_campaign=Badge_Grade_Settings)
 [![Maintainability](https://api.codeclimate.com/v1/badges/af478ddd07cf7278841a/maintainability)](https://codeclimate.com/github/YetiForceCompany/YetiForcePDF/maintainability)
 
 ## PDF generation library for PHP
 The best library in the world to generate PDF from HTML
+
+## Issues & bugs
+Report errors related to PDF in https://github.com/YetiForceCompany/YetiForceCRM/issues
 
 ## Basic usage (for more take a look at examples folder)
 
@@ -196,3 +198,12 @@ When you want to place page number (in header or footer for example) you can do 
 ## License
 
 Distributed under the MIT license. See LICENSE for details.
+
+## 👥 Contributors
+
+This project exists thanks to all the people who contribute. 
+
+<a href="https://github.com/YetiForceCompany/YetiForcePDF/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=YetiForceCompany/YetiForcePDF" />
+</a>
+

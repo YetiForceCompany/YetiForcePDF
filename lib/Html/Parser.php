@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * Parser class.
  *
@@ -13,25 +14,29 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Html;
 
+use YetiForcePDF\Base;
 use YetiForcePDF\Layout\PageGroupBox;
 
 /**
  * Class Parser.
  */
-class Parser extends \YetiForcePDF\Base
+class Parser extends Base
 {
 	/**
 	 * @var \DOMDocument
 	 */
 	protected $domDocument;
+
 	/**
 	 * @var string
 	 */
 	protected $html = '';
+
 	/**
 	 * @var array page groups with html content divided
 	 */
 	protected $htmlPageGroups = [];
+
 	/**
 	 * @var array
 	 */
@@ -57,13 +62,19 @@ class Parser extends \YetiForcePDF\Base
 	 * @param string $html
 	 * @param string $fromEncoding
 	 *
-	 * @return \YetiForcePDF\Html\Parser
+	 * @return Parser
 	 */
-	public function loadHtml(string $html, string $fromEncoding = ''): self
+	public function loadHtml(string $html, string $fromEncoding): self
 	{
-		$html = htmlspecialchars_decode($html, ENT_HTML5);
+		$this->html = htmlspecialchars_decode($html, ENT_HTML5);
 		$this->html = $this->cleanUpHtml($html);
-		$this->html = mb_convert_encoding($this->html, 'HTML-ENTITIES', $fromEncoding);
+
+		// 0x80 - start of unicode range
+		// 0x10FFFF - end of unicode range
+		// 0 - do not ommit any unicode char
+		// ~0 - negated 0 - convert negation of nothing (so convert all)
+		$this->html = mb_encode_numericentity($this->html, [0x80, 0x10FFFF, 0, ~0], $fromEncoding);
+
 		return $this;
 	}
 
@@ -72,7 +83,7 @@ class Parser extends \YetiForcePDF\Base
 	 *
 	 * @return string
 	 */
-	public function getHtml()
+	public function getHtml(): string
 	{
 		return $this->html;
 	}
