@@ -46,10 +46,18 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	 * @var string image original width
 	 */
 	protected $width = '0';
+
+	/** @var string Display width */
+	protected $displayWidth = '';
+
 	/**
 	 * @var string image original height
 	 */
 	protected $height = '0';
+
+	/** @var string Display height */
+	protected $displayHeight = '';
+
 	/**
 	 * Width / Height ratio.
 	 *

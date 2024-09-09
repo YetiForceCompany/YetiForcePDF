@@ -388,7 +388,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	/**
 	 * Get font size.
 	 *
-	 * @return string
+	 * @return NumericValue
 	 */
 	public function getSize(): NumericValue
 	{
@@ -650,7 +650,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 				return $this->fontDir . $match;
 			}
 			if (\defined('ROOT_DIRECTORY')) {
-				$path = ROOT_DIRECTORY;
+				$path = \ROOT_DIRECTORY;
 				$path .= \DIRECTORY_SEPARATOR . 'public_html';
 				$path .= \DIRECTORY_SEPARATOR . 'vendor';
 				$path .= \DIRECTORY_SEPARATOR . 'yetiforce';
