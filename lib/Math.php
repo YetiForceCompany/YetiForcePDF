@@ -65,6 +65,10 @@ class Math
 	public static function add(string ...$numbers)
 	{
 		if (!isset($numbers[2])) {
+			// % is not fully supported, so if % appears here for some reason, it is removed.
+			if(!is_numeric($numbers[0])) {
+				$numbers[0] = (string) (float) $numbers[0];
+			}
 			return bcadd($numbers[0], $numbers[1], static::$scale);
 		}
 		$result = '0';

@@ -25,10 +25,10 @@
     "ext-zlib": "*",
     "ext-gd": "*",
     "ext-filter": "*",
-    "phenx/php-font-lib": "^0.5",
+    "dompdf/php-font-lib": "^1.0",
     "guzzlehttp/guzzle": "^7",
     "composer/ca-bundle": "^1",
-    "milon/barcode": "^11",
+    "milon/barcode": "^12",
     "sabberworm/php-css-parser": "^8"
   },
   "autoload": {
