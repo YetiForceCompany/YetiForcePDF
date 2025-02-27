@@ -25,7 +25,7 @@
     "ext-zlib": "*",
     "ext-gd": "*",
     "ext-filter": "*",
-    "phenx/php-font-lib": "^1.0",
+    "dompdf/php-font-lib": "^1.0",
     "guzzlehttp/guzzle": "^7",
     "composer/ca-bundle": "^1",
     "milon/barcode": "^12",
