@@ -66,15 +66,17 @@ class Math
 	{
 		if (!isset($numbers[2])) {
 			// % is not fully supported, so if % appears here for some reason, it is removed.
-			if(!is_numeric($numbers[0])) {
-				$numbers[0] = (string) (float) $numbers[0];
-			}
-			return bcadd($numbers[0], $numbers[1], static::$scale);
+			return bcadd(
+				is_numeric($numbers[0]) ? $numbers[0] : ((string) (float) $numbers[0]),
+				is_numeric($numbers[1]) ? $numbers[1] : ((string) (float) $numbers[1]),
+				static::$scale
+			);
 		}
 		$result = '0';
 		foreach ($numbers as $number) {
-			$result = bcadd($result, $number, static::$scale);
+			$result = bcadd($result, is_numeric($number) ? $number : ((string) (float) $number), static::$scale);
 		}
+
 		return $result;
 	}
 
