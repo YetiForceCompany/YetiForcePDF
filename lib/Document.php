@@ -902,37 +902,41 @@ class Document
 	{
 		$xref = '';
 		$this->buffer = '';
+		$objectSize = 0;
 
 		$this->buffer .= $this->getDocumentHeader();
 		$this->parse();
-		$objectSize = 0;
 
-		foreach ($this->objects as $object) {
+		$sortedObjects = $this->objects;
+		usort($sortedObjects, function($a, $b) {
+			return $a->getId() - $b->getId();
+		});
+
+		foreach ($sortedObjects as $object) {
 			if (\in_array($object->getBasicType(), ['Dictionary', 'Stream', 'Array'])) {
-				$xref .= sprintf("%010d 00000 n \n", \strlen($this->buffer));
-				$this->buffer .= $object->render() . "\n";
+				$offset = mb_strlen($this->buffer, '8bit');
+				$this->buffer .= $object->render();
+				$xref .= sprintf("%010d 00000 n \n", $offset);
 				++$objectSize;
 			}
 		}
 
-		$offset = \strlen($this->buffer);
-		$this->buffer .= implode("\n", [
-			'xref',
-			'0 ' . $objectSize,
-			'0000000000 65535 f ',
-			$xref,
-		]);
+		$xrefOffset = mb_strlen($this->buffer, '8bit');
+
+		$this->buffer .= "xref\n";
+		$this->buffer .= "0 " . ($objectSize + 1) . "\n";
+		$this->buffer .= "0000000000 65535 f \n";
+		$this->buffer .= $xref;
 
 		$trailer = (new \YetiForcePDF\Objects\Trailer())
 			->setDocument($this)->setRootObject($this->catalog)->setSize($objectSize);
 
 		$this->buffer .= $trailer->render() . "\n";
-		$this->buffer .= implode("\n", [
-			'startxref',
-			$offset,
-			'',
-		]);
+
+		$this->buffer .= "startxref\n";
+		$this->buffer .= "{$xrefOffset}\n";
 		$this->buffer .= $this->getDocumentFooter();
+
 		$this->removeObject($trailer);
 
 		return $this->buffer;

@@ -60,7 +60,7 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	 *
 	 * @param string $text
 	 *
-	 * @return \YetiForcePDF\Objects\Basic\TextStream
+	 * @return self
 	 */
 	public function setText(string $text): self
 	{
@@ -148,9 +148,11 @@ class TextStream extends \YetiForcePDF\Objects\Basic\StreamObject
 	public function render(): string
 	{
 		$stream = $this->getRawStream();
+		$dict = '<< /Length ' . mb_strlen($stream, '8bit') . ' >>';
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			'<</Length ' . \strlen($stream) . '>>stream',
+			$dict,
+			'stream',
 			$stream,
 			'endstream',
 			'endobj',

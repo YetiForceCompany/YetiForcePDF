@@ -173,18 +173,19 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 	public function render(): string
 	{
 		$stream = $this->imageData;
+		$length = mb_strlen($stream, '8bit');
+		$dict = '<< /Type /XObject'
+			. ' /Subtype /Image'
+			. ' /ColorSpace /DeviceRGB'
+			. ' /Width ' . $this->width
+			. ' /Height ' . $this->height
+			. ' /BitsPerComponent ' . $this->bitsPerComponent
+			. ' /Length ' . $length
+			. ' /Filter /DCTDecode >>';
+
 		return implode("\n", [
 			$this->getRawId() . ' obj',
-			'<<',
-			'  /Type /XObject',
-			'  /Subtype  /Image',
-			'  /ColorSpace  /DeviceRGB',
-			'  /Width ' . $this->width,
-			'  /Height ' . $this->height,
-			'  /BitsPerComponent ' . $this->bitsPerComponent,
-			'  /Length  ' . \strlen($stream),
-			'  /Filter /DCTDecode',
-			'>>',
+			$dict,
 			'stream',
 			$stream,
 			'endstream',
