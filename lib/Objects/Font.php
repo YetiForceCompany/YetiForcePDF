@@ -465,7 +465,7 @@ class Font extends \YetiForcePDF\Objects\Resource
 	 *
 	 * @return string
 	 */
-	public function getTextHeight(string $text = null): string
+	public function getTextHeight(?string $text = null): string
 	{
 		if (null === $this->textHeight) {
 			$this->textHeight = Math::add($this->getAscender(), Math::mul($this->getDescender(), '-1'));

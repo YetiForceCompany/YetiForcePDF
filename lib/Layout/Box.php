@@ -158,7 +158,7 @@ class Box extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setParent(self $parent = null)
+	public function setParent(?self $parent = null)
 	{
 		$this->parent = $parent;
 
@@ -182,7 +182,7 @@ class Box extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setNext(self $next = null)
+	public function setNext(?self $next = null)
 	{
 		$this->next = $next;
 
@@ -206,7 +206,7 @@ class Box extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setPrevious(self $previous = null)
+	public function setPrevious(?self $previous = null)
 	{
 		$this->previous = $previous;
 
