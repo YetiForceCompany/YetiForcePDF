@@ -166,7 +166,7 @@ class PdfObject extends \YetiForcePDF\Base
 	 *
 	 * @return PdfObject
 	 */
-	public function addChild(self $child, self $after = null): self
+	public function addChild(self $child, ?self $after = null): self
 	{
 		$afterIndex = \count($this->children);
 		if ($after) {

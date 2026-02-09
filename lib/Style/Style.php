@@ -693,7 +693,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setContent(string $content = null)
+	public function setContent(?string $content = null)
 	{
 		if ($content) {
 			$content = preg_replace('/data:image\/([a-z]+);/', 'data_image/$1_', $content);
@@ -712,7 +712,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setMargins(string $top = null, string $right = null, string $bottom = null, string $left = null)
+	public function setMargins(?string $top = null, ?string $right = null, ?string $bottom = null, ?string $left = null)
 	{
 		if (null !== $top) {
 			$this->rules['margin-top'] = $top;
@@ -802,7 +802,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return array|string
 	 */
-	public function getRules(string $ruleName = null)
+	public function getRules(?string $ruleName = null)
 	{
 		if ($ruleName) {
 			if (isset($this->rules[$ruleName])) {
@@ -825,7 +825,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return array|mixed
 	 */
-	public function getOriginalRules(string $ruleName = null)
+	public function getOriginalRules(?string $ruleName = null)
 	{
 		if ($ruleName) {
 			if (isset($this->originalRules[$ruleName])) {

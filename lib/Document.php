@@ -601,7 +601,7 @@ class Document
 	 *
 	 * @return \YetiForcePDF\Page
 	 */
-	public function addPage(string $format = '', string $orientation = '', Page $page = null, Page $after = null): Page
+	public function addPage(string $format = '', string $orientation = '', ?Page $page = null, ?Page $after = null): Page
 	{
 		if (null === $page) {
 			$page = (new Page())->setDocument($this)->init();
@@ -662,7 +662,7 @@ class Document
 	 *
 	 * @return Page[]
 	 */
-	public function getPages(int $groupIndex = null)
+	public function getPages(?int $groupIndex = null)
 	{
 		if ($groupIndex) {
 			$pages = [];

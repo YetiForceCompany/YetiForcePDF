@@ -1044,7 +1044,7 @@ class Page extends \YetiForcePDF\Objects\Basic\DictionaryObject
 	 *
 	 * @return Box[]|null cloned boxes
 	 */
-	public function cloneAndDivideChildrenAfterY(string $yPos, array $boxes = null)
+	public function cloneAndDivideChildrenAfterY(string $yPos, ?array $boxes = null)
 	{
 		if (null === $boxes) {
 			$boxes = [];
