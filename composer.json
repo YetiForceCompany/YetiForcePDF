@@ -28,7 +28,7 @@
     "dompdf/php-font-lib": "^1.0",
     "guzzlehttp/guzzle": "^7",
     "composer/ca-bundle": "^1",
-    "milon/barcode": "^12",
+    "milon/barcode": "^13",
     "sabberworm/php-css-parser": "^9"
   },
   "autoload": {
