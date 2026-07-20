@@ -26,7 +26,7 @@
     "ext-gd": "*",
     "ext-filter": "*",
     "dompdf/php-font-lib": "^1.0",
-    "guzzlehttp/guzzle": "^7",
+    "guzzlehttp/guzzle": "^8",
     "composer/ca-bundle": "^1",
     "milon/barcode": "^13",
     "sabberworm/php-css-parser": "^9"
