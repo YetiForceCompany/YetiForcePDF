@@ -257,6 +257,9 @@ class Color
 	public static function toRGBA($colorInput, bool $inPDFColorSpace = false): array
 	{
 		$colorInput = trim(strtolower($colorInput));
+		if (!isset(static::$colorNames[$colorInput])) {
+			return [0, 0, 0, 1];
+		}
 		if ($colorInput) {
 			if ('#' === $colorInput[0]) {
 				$color = static::fromHash($colorInput);
