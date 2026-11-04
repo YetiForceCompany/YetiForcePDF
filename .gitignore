@@ -3,3 +3,4 @@ vendor/
 .vscode/
 .sonarlint/
 .history/
+.claude/

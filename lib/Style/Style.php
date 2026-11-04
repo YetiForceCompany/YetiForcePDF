@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace YetiForcePDF\Style;
 
+use Sabberworm\CSS\OutputFormat;
 use Sabberworm\CSS\Parser as CSSParser;
+use Sabberworm\CSS\Renderable;
 use YetiForcePDF\Html\Element;
 use YetiForcePDF\Layout\Box;
 use YetiForcePDF\Layout\InlineBox;
+use YetiForcePDF\Layout\LineBox;
 use YetiForcePDF\Layout\TableBox;
 use YetiForcePDF\Layout\TableCellBox;
 use YetiForcePDF\Math;
@@ -604,7 +607,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Initialisation.
 	 *
-	 * @return \YetiForcePDF\Style\Style
+	 * @return Style
 	 */
 	public function init(): self
 	{
@@ -642,7 +645,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @param \YetiForcePDF\Html\Element $element
 	 *
-	 * @return \YetiForcePDF\Style\Style
+	 * @return Style
 	 */
 	public function setElement(Element $element): self
 	{
@@ -693,7 +696,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setContent(?string $content = null)
+	public function setContent(?string $content = null): self
 	{
 		if ($content) {
 			$content = preg_replace('/data:image\/([a-z]+);/', 'data_image/$1_', $content);
@@ -705,14 +708,14 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Set margins.
 	 *
-	 * @param string $top
-	 * @param string $right
-	 * @param string $bottom
-	 * @param string $left
+	 * @param string|null $top
+	 * @param string|null $right
+	 * @param string|null $bottom
+	 * @param string|null $left
 	 *
 	 * @return $this
 	 */
-	public function setMargins(?string $top = null, ?string $right = null, ?string $bottom = null, ?string $left = null)
+	public function setMargins(?string $top = null, ?string $right = null, ?string $bottom = null, ?string $left = null): self
 	{
 		if (null !== $top) {
 			$this->rules['margin-top'] = $top;
@@ -749,9 +752,9 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @param array $rules - filter styles with specified rules
 	 *
-	 * @return \YetiForcePDF\Style\Style[]
+	 * @return Style[]
 	 */
-	public function getChildren(array $rules = [])
+	public function getChildren(array $rules = []): array
 	{
 		$childrenStyles = [];
 		foreach ($this->box->getChildren() as $childBox) {
@@ -774,7 +777,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Get previous element style.
 	 *
-	 * @return \YetiForcePDF\Style\Style
+	 * @return Style
 	 */
 	public function getPrevious()
 	{
@@ -786,7 +789,7 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Get next element style.
 	 *
-	 * @return \YetiForcePDF\Style\Style
+	 * @return Style
 	 */
 	public function getNext()
 	{
@@ -860,7 +863,7 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @return $this
 	 */
-	public function setRules(array $rules)
+	public function setRules(array $rules): self
 	{
 		$this->rules = array_merge($this->rules, $rules);
 
@@ -989,8 +992,6 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Get offset left - get left border width and left padding.
 	 *
-	 * @param bool $withBorders
-	 *
 	 * @return string
 	 */
 	public function getOffsetLeft()
@@ -1022,10 +1023,10 @@ class Style extends \YetiForcePDF\Base
 	 * Convert units from unit to pdf document units.
 	 *
 	 * @param string $unit
-	 * @param float  $size
-	 * @param mixed  $isFont
+	 * @param string $size
+	 * @param mixed $isFont
 	 *
-	 * @return NumericValue
+	 * @return string
 	 */
 	public function convertUnits(string $unit, string $size, $isFont = false)
 	{
@@ -1096,7 +1097,7 @@ class Style extends \YetiForcePDF\Base
 		}
 		$box = $this->getBox();
 		$lineHeight = $this->getRules('line-height');
-		if (false !== strpos($lineHeight, '%')) {
+		if (str_contains($lineHeight, '%')) {
 			// TODO: Add percentage support
 			$lineHeight = '0.00';
 		}
@@ -1115,8 +1116,6 @@ class Style extends \YetiForcePDF\Base
 
 	/**
 	 * Get mandatory rules - with default for all elements.
-	 *
-	 * @param string $elementName
 	 *
 	 * @return array
 	 */
@@ -1158,7 +1157,7 @@ class Style extends \YetiForcePDF\Base
 		$rulesParsed = [];
 		foreach ($rules as $rule) {
 			$rule = trim($rule);
-			if ('' !== $rule && false !== strpos($rule, ':')) {
+			if ('' !== $rule && str_contains($rule, ':')) {
 				$ruleExploded = explode(':', $rule);
 				$ruleName = trim($ruleExploded[0]);
 				$ruleValue = trim($ruleExploded[1]);
@@ -1181,13 +1180,13 @@ class Style extends \YetiForcePDF\Base
 	 *
 	 * @param array $rulesParsed
 	 *
-	 * @return $this
+	 * @return array
 	 */
 	protected function parseFont(array $rulesParsed)
 	{
 		$finalRules = [];
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
-			if ('font' === substr($ruleName, 0, 4)) {
+			if (str_starts_with($ruleName, 'font')) {
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())
 					->setDocument($this->document)
@@ -1234,7 +1233,7 @@ class Style extends \YetiForcePDF\Base
 			return $rulesParsed;
 		}
 		$src = $rulesParsed['background-image'];
-		if ('url' !== substr($src, 0, 3)) {
+		if (!str_starts_with($src, 'url')) {
 			return $rulesParsed;
 		}
 		$src = trim(substr($src, 3), ';)(\'\"');
@@ -1258,7 +1257,7 @@ class Style extends \YetiForcePDF\Base
 	{
 		$ruleName = 'opacity';
 		if (!isset($rulesParsed[$ruleName])) {
-			return $this;
+			return $rulesParsed;
 		}
 		$ruleValue = $rulesParsed['opacity'];
 		$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
@@ -1348,9 +1347,9 @@ class Style extends \YetiForcePDF\Base
 	/**
 	 * Import class rules if exists.
 	 *
-	 * @param array $parsed rules
+	 * @return array
 	 */
-	protected function importClassRules()
+	protected function importClassRules(): array
 	{
 		$element = $this->getElement();
 		if ($element && !empty($element->getClassNames())) {
@@ -1427,7 +1426,7 @@ class Style extends \YetiForcePDF\Base
 		$inline = [];
 		foreach ($inlineTemp as $rule) {
 			$rule = trim($rule);
-			if ('' !== $rule && false !== strpos($rule, ':')) {
+			if ('' !== $rule && str_contains($rule, ':')) {
 				$ruleExploded = explode(':', $rule);
 				$inline[trim($ruleExploded[0])] = trim($ruleExploded[1]);
 			}
@@ -1453,7 +1452,7 @@ class Style extends \YetiForcePDF\Base
 		$rulesParsed = $this->parseGraphicState($rulesParsed);
 		$finalRules = [];
 		foreach ($rulesParsed as $ruleName => $ruleValue) {
-			if ('font' !== substr($ruleName, 0, 4)) {
+			if (!str_starts_with($ruleName, 'font')) {
 				$normalizerName = \YetiForcePDF\Style\Normalizer\Normalizer::getNormalizerClassName($ruleName);
 				$normalizer = (new $normalizerName())
 					->setDocument($this->document)
@@ -1716,14 +1715,19 @@ class Style extends \YetiForcePDF\Base
 	public function parseCss(string $cssString): self
 	{
 		$css = (new CSSParser($cssString))->parse();
-		foreach ($css->getAllRuleSets() as $ruleSet) {
-			$selector = implode(' ', $ruleSet->getSelector());
-			$selectorRules = (array) $ruleSet->getRules();
-			$rules = [];
-			foreach ($selectorRules as $rule) {
-				$rules[$rule->getRule()] = trim((string) $rule->getValue(), '" \'');
+		$outputFormat = OutputFormat::create();
+		foreach ($css->getAllDeclarationBlocks() as $declarationBlock) {
+			$selectors = [];
+			foreach ($declarationBlock->getSelectors() as $selector) {
+				$selectors[] = $selector->render($outputFormat);
 			}
-			$this->document->addCssSelectorRules($selector, $rules);
+			$rules = [];
+			foreach ($declarationBlock->getDeclarations() as $declaration) {
+				$value = $declaration->getValue();
+				$value = $value instanceof Renderable ? $value->render($outputFormat) : (string) $value;
+				$rules[$declaration->getPropertyName()] = trim($value, '" \'');
+			}
+			$this->document->addCssSelectorRules(implode(' ', $selectors), $rules);
 		}
 
 		return $this;
