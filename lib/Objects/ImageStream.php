@@ -92,8 +92,6 @@ class ImageStream extends \YetiForcePDF\Objects\Resource
 		imagejpeg($bg, null, 90);
 		$imageString = ob_get_contents();
 		ob_end_clean();
-		imagedestroy($image);
-		imagedestroy($bg);
 		return $imageString;
 	}
 

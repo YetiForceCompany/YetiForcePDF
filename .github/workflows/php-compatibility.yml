@@ -1,0 +1,112 @@
+# Verifies the library on the minimum PHP version and proves that the very same dependency set
+# (resolved for the minimum PHP) keeps working on every newer supported PHP version.
+#
+# Bumping PHP:
+#  - new max PHP  -> add it to `jobs.test.strategy.matrix.php` (and to composer.json "require.php").
+#  - new min PHP  -> change MIN_PHP, drop the old version from the matrix, update composer.json.
+name: PHP compatibility
+
+on:
+  push:
+    branches:
+      - developer
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MIN_PHP: '8.2'
+  PHP_EXTENSIONS: mbstring, dom, libxml, bcmath, zlib, gd, filter, iconv, json, openssl
+  COMPOSER_NO_INTERACTION: '1'
+
+jobs:
+  resolve:
+    name: Resolve dependencies on min PHP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.MIN_PHP }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish --no-check-lock
+
+      # Resolving on the real min PHP runtime picks the newest versions that still support it.
+      # The lock file only lives in this workflow run; nothing is committed.
+      - name: Resolve dependencies for PHP ${{ env.MIN_PHP }}
+        run: |
+          composer update --no-install --no-progress --prefer-stable
+          composer show --locked --no-dev
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: composer-lock-php-min
+          path: composer.lock
+          retention-days: 7
+
+  test:
+    name: PHP ${{ matrix.php }} (dependencies locked for min PHP)
+    needs: resolve
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          tools: composer:v2
+          coverage: none
+          ini-values: error_reporting=-1, display_errors=On, zend.assertions=1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: composer-lock-php-min
+
+      # `composer install` refuses to install if any locked package does not allow this PHP version.
+      - name: Install locked dependencies
+        run: composer install --no-progress --prefer-dist --no-dev
+
+      - name: Check platform requirements
+        run: composer check-platform-reqs --no-dev
+
+      - name: Lint (errors and deprecations fail)
+        shell: bash
+        run: |
+          status=0
+          while IFS= read -r -d '' file; do
+            if ! out=$(php -d error_reporting=-1 -d display_errors=stderr -l "$file" 2>&1); then
+              echo "::error file=$file::$out"; status=1
+            elif grep -qE 'Deprecated|Warning|Notice' <<<"$out"; then
+              echo "::error file=$file::$out"; status=1
+            fi
+          done < <(find lib examples .github/scripts -name '*.php' -print0)
+          exit $status
+
+      # Compile-time deprecations in dependencies are reported, not fatal: they are pinned to min PHP.
+      - name: Lint dependencies (report only)
+        shell: bash
+        run: |
+          find vendor -name '*.php' -not -path '*/tests/*' -not -path '*/Tests/*' -print0 \
+            | xargs -0 -n 1 -P 4 php -d error_reporting=-1 -d display_errors=stderr -l 2>&1 \
+            | grep -vE '^(No syntax errors detected|$)' \
+            | sed 's/^/::warning::/' || true
+
+      - name: Render all examples
+        run: php .github/scripts/render-examples.php
