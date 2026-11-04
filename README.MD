@@ -1,6 +1,5 @@
 # YetiForcePDF
 [![Latest Stable Version](https://poser.pugx.org/yetiforce/yetiforcepdf/v/stable)](https://packagist.org/packages/yetiforce/yetiforcepdf)
-[![Build Status](https://travis-ci.org/YetiForceCompany/YetiForcePDF.svg?branch=developer)](https://travis-ci.org/YetiForceCompany/YetiForcePDF)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/YetiForceCompany/YetiForcePDF/?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/af478ddd07cf7278841a/maintainability)](https://codeclimate.com/github/YetiForceCompany/YetiForcePDF/maintainability)
 
@@ -201,9 +200,9 @@ Distributed under the MIT license. See LICENSE for details.
 
 ## 👥 Contributors
 
-This project exists thanks to all the people who contribute. 
+This project exists thanks to all the people who contribute.
 
 <a href="https://github.com/YetiForceCompany/YetiForcePDF/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=YetiForceCompany/YetiForcePDF" />
+<img src="https://contrib.rocks/image?repo=YetiForceCompany/YetiForcePDF" alt="Contributors"/>
 </a>
 
