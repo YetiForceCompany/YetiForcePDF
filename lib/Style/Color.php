@@ -266,6 +266,8 @@ class Color
 				$color = static::fromName($colorInput);
 			} elseif (isset(static::$colorCustomNames[$colorInput])) {
 				return static::$colorCustomNames[$colorInput];
+			} else {
+				return [0, 0, 0, 1];
 			}
 			$r = $inPDFColorSpace ? Math::div($color[0], '255') : $color[0];
 			$g = $inPDFColorSpace ? Math::div($color[1], '255') : $color[1];
