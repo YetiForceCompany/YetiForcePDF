@@ -29,7 +29,7 @@
     "guzzlehttp/guzzle": "^8",
     "composer/ca-bundle": "^1",
     "milon/barcode": "^13",
-    "sabberworm/php-css-parser": "^9"
+    "sabberworm/php-css-parser": "^9.2"
   },
   "autoload": {
     "psr-4": {

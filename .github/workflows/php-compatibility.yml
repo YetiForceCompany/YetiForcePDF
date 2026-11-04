@@ -8,6 +8,9 @@ name: PHP compatibility
 
 on:
   push:
+    branches:
+      - developer
+      - master
   pull_request:
   workflow_dispatch:
 
