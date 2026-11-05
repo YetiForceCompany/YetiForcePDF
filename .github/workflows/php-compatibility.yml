@@ -50,7 +50,7 @@ jobs:
           composer update --no-install --no-progress --prefer-stable
           composer show --locked --no-dev
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: composer-lock-php-min
           path: composer.lock
@@ -75,7 +75,7 @@ jobs:
           coverage: none
           ini-values: error_reporting=-1, display_errors=On, zend.assertions=1
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: composer-lock-php-min
 
